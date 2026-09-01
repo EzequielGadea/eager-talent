@@ -8,6 +8,7 @@ export const auth = betterAuth({
   baseURL: {
     allowedHosts: [
       "*.vercel.app",
+      "localhost:3000",
     ],
   },
   database: prismaAdapter(prisma, {

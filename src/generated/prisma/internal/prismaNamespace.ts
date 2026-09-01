@@ -400,8 +400,7 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification',
-  ToDoItem: 'ToDoItem'
+  Verification: 'Verification'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -417,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "toDoItem"
+    modelProps: "user" | "session" | "account" | "verification"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -717,80 +716,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ToDoItem: {
-      payload: Prisma.$ToDoItemPayload<ExtArgs>
-      fields: Prisma.ToDoItemFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ToDoItemFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ToDoItemFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>
-        }
-        findFirst: {
-          args: Prisma.ToDoItemFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ToDoItemFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>
-        }
-        findMany: {
-          args: Prisma.ToDoItemFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>[]
-        }
-        create: {
-          args: Prisma.ToDoItemCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>
-        }
-        createMany: {
-          args: Prisma.ToDoItemCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.ToDoItemCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>[]
-        }
-        delete: {
-          args: Prisma.ToDoItemDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>
-        }
-        update: {
-          args: Prisma.ToDoItemUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>
-        }
-        deleteMany: {
-          args: Prisma.ToDoItemDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ToDoItemUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.ToDoItemUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>[]
-        }
-        upsert: {
-          args: Prisma.ToDoItemUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToDoItemPayload>
-        }
-        aggregate: {
-          args: Prisma.ToDoItemAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateToDoItem>
-        }
-        groupBy: {
-          args: Prisma.ToDoItemGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ToDoItemGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ToDoItemCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ToDoItemCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -887,18 +812,6 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
-
-
-export const ToDoItemScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  completed: 'completed',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy'
-} as const
-
-export type ToDoItemScalarFieldEnum = (typeof ToDoItemScalarFieldEnum)[keyof typeof ToDoItemScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1134,7 +1047,6 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
-  toDoItem?: Prisma.ToDoItemOmit
 }
 
 /* Types for Logging */

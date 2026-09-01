@@ -37,8 +37,3 @@ export type Account = Prisma.AccountModel
  * 
  */
 export type Verification = Prisma.VerificationModel
-/**
- * Model ToDoItem
- * 
- */
-export type ToDoItem = Prisma.ToDoItemModel

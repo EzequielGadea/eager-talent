@@ -9,10 +9,14 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "db:local": "bun run ./scripts/db-local.ts",
+    "db:local:stop": "prisma dev stop eager-talent",
+    "db:local:remove": "prisma dev rm eager-talent",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "setup:local": "bun run db:local && bun run db:deploy && bun run db:generate"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
