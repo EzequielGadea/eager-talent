@@ -4,8 +4,8 @@ These reflect how this codebase is actually built today. Follow them for new cod
 
 ## Server vs. Client Components
 - Default to Server Components. Only add `"use client"` when the component actually needs interactivity — state, effects, event handlers, `useMutation`, hooks like `useRouter`/`useTransition`.
-- Server Components read the session directly with `auth.api.getSession({ headers: await headers() })` (`~/lib/auth`) and fetch data directly with the tRPC **server caller** (`~/lib/trpc/server`), e.g. `await api.toDoItem.list()`. No hooks, no loading state — just `await`.
-- Client Components never call the server caller or `auth.api` directly. They mutate/query through the tRPC **React** client (`~/lib/trpc/react`, e.g. `api.toDoItem.create.useMutation()`) and drive auth flows through `authClient` (`~/lib/auth/client`, from `better-auth/react`).
+- Server Components read the session directly with `auth.api.getSession({ headers: await headers() })` (`~/lib/auth`) and fetch data directly with the tRPC **server caller** (`~/lib/trpc/server`), e.g. `await api.resource.list()`. No hooks, no loading state — just `await`.
+- Client Components never call the server caller or `auth.api` directly. They mutate/query through the tRPC **React** client (`~/lib/trpc/react`, e.g. `api.resource.create.useMutation()`) and drive auth flows through `authClient` (`~/lib/auth/client`, from `better-auth/react`).
 - Each async, data-fetching Server Component that lives in a route's `_components/` folder is wrapped in its own `<Suspense fallback={<Loading />}>` at the `page.tsx` level (see `dashboard/page.tsx`), so independent sections stream in on their own instead of blocking the whole page on the slowest fetch.
 - Route protection is handled in `src/proxy.ts` (this Next.js version renamed `middleware.ts` → `proxy.ts` — see the breaking-changes note above), using `getSessionCookie` from `better-auth/cookies` plus `authRoutes`/`publicRoutes` allow-lists and an exported `matcher` config. Don't create a `middleware.ts`.
 
