@@ -30,6 +30,8 @@ jobs:
       - name: Build
         id: build
         run: bun run build
+        env:
+          DATABASE_URL: "postgresql://user:pass@localhost:5432/dummy"
 
       - name: Discord notification on failure
         if: failure()
