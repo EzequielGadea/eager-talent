@@ -20,4 +20,4 @@ jobs:
 
           curl -H "Content-Type: application/json" \
           -d "{\"content\": \"${EMOJI} Deploy de Vercel: **${STATE}** — Environment: **${{ github.event.deployment_status.environment }}** — Branch: ${{ github.event.deployment.ref }} — URL: ${{ github.event.deployment_status.target_url }}\"}" \
-          ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ${{ secrets.DISCORD_WEBHOOK_URL_DEPLOYS }}
