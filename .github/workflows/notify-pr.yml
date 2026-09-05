@@ -28,4 +28,4 @@ jobs:
 
           curl -H "Content-Type: application/json" \
           -d "{\"content\": \"PR **#${{ github.event.pull_request.number }}** ${STATUS} por ${{ github.event.pull_request.user.login }}: ${{ github.event.pull_request.title }} → ${{ github.head_ref }} → ${{ github.base_ref }}\"}" \
-          ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ${{ secrets.DISCORD_WEBHOOK_URL_PRS }}
