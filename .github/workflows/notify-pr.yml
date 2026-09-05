@@ -1,0 +1,31 @@
+name: Discord Notify - Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    types: [opened, closed, reopened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord notification
+        run: |
+          ACTION="${{ github.event.action }}"
+          MERGED="${{ github.event.pull_request.merged }}"
+
+          if [ "$ACTION" == "closed" ] && [ "$MERGED" == "true" ]; then
+            STATUS="✅ mergeado"
+          elif [ "$ACTION" == "closed" ]; then
+            STATUS="❌ cerrado (sin merge)"
+          elif [ "$ACTION" == "reopened" ]; then
+            STATUS="🔁 reabierto"
+          else
+            STATUS="🟢 abierto"
+          fi
+
+          curl -H "Content-Type: application/json" \
+          -d "{\"content\": \"PR **#${{ github.event.pull_request.number }}** ${STATUS} por ${{ github.event.pull_request.user.login }}: ${{ github.event.pull_request.title }} → ${{ github.head_ref }} → ${{ github.base_ref }}\"}" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
