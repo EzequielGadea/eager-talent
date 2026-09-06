@@ -41,3 +41,20 @@ These reflect how this codebase is actually built today. Follow them for new cod
   - `onSuccess` runs its "after success" side effects (closing a dialog, `router.refresh()`) inside `startTransition` from `useTransition`. The submit button's `disabled` state and label account for both the mutation's `isPending` and the transition's pending flag. This keeps the current UI (e.g. an open dialog) on screen until the refreshed Server Component data has actually streamed in, instead of closing/flashing before the new data is visible.
 - Non-tRPC submissions (e.g. `better-auth` sign-in/sign-out via `authClient`) follow the same shape: RHF `handleSubmit` wraps an async handler that awaits the client SDK call and routes success/failure explicitly (`router.push(...)` / `setError("root", ...)`).
 - Format dates with `date-fns` (e.g. `format(item.createdAt, "d/M/yyyy")`) going forward, rather than `Intl`/`toLocaleString`.
+<<<<<<< HEAD
+=======
+
+## Database, migrations & environments
+- PostgreSQL is the only database provider used by the project. Keep a single `schema.prisma` and migration history across all environments; do not introduce SQLite, H2, or environment-specific Prisma schemas.
+- Local development uses Prisma Dev, backed by PGlite, so developers do not need Docker or a separately installed PostgreSQL server.
+- Database connection resolution is centralized in `src/server/db/database-url.ts`. An explicit `DATABASE_URL` always takes precedence.
+- The implicit local database fallback is allowed only for local development. CI, Vercel, and Production must fail if `DATABASE_URL` is missing instead of silently connecting to localhost.
+- Schema changes must create versioned migrations with `bun run db:migrate` (`prisma migrate dev`) and the generated migrations must be committed.
+- Existing migrations are applied with `bun run db:deploy` (`prisma migrate deploy`). CI and deployed environments must never generate migrations with `prisma migrate dev`.
+- Do not use `prisma db push` as a replacement for versioned migrations.
+- Preview and Production must use separate PostgreSQL databases and separate `DATABASE_URL` values.
+- GitHub Actions is responsible for CI validation and Vercel remains responsible for application deployments. CI must not connect to or migrate Preview or Production databases.
+
+## Coding style
+- Use only English for variable names and comments.
+>>>>>>> f0b1168 (Prisma tables)
