@@ -61,3 +61,73 @@ export type Account = Prisma.AccountModel
  * 
  */
 export type Verification = Prisma.VerificationModel
+/**
+ * Model Applicant
+ * 
+ */
+export type Applicant = Prisma.ApplicantModel
+/**
+ * Model Role
+ * 
+ */
+export type Role = Prisma.RoleModel
+/**
+ * Model Area
+ * 
+ */
+export type Area = Prisma.AreaModel
+/**
+ * Model Seniority
+ * 
+ */
+export type Seniority = Prisma.SeniorityModel
+/**
+ * Model Tag
+ * 
+ */
+export type Tag = Prisma.TagModel
+/**
+ * Model JobOpening
+ * 
+ */
+export type JobOpening = Prisma.JobOpeningModel
+/**
+ * Model StageTemplate
+ * 
+ */
+export type StageTemplate = Prisma.StageTemplateModel
+/**
+ * Model Application
+ * 
+ */
+export type Application = Prisma.ApplicationModel
+/**
+ * Model Interview
+ * 
+ */
+export type Interview = Prisma.InterviewModel
+/**
+ * Model ApplicantNote
+ * 
+ */
+export type ApplicantNote = Prisma.ApplicantNoteModel
+/**
+ * Model InterviewNote
+ * 
+ */
+export type InterviewNote = Prisma.InterviewNoteModel
+/**
+ * Model Activity
+ * 
+ */
+export type Activity = Prisma.ActivityModel
+/**
+ * Model Invitation
+ * 
+ */
+export type Invitation = Prisma.InvitationModel
+/**
+ * Model PublicLink
+ * 
+ */
+export type PublicLink = Prisma.PublicLinkModel

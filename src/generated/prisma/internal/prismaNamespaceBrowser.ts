@@ -54,7 +54,21 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   Account: 'Account',
-  Verification: 'Verification'
+  Verification: 'Verification',
+  Applicant: 'Applicant',
+  Role: 'Role',
+  Area: 'Area',
+  Seniority: 'Seniority',
+  Tag: 'Tag',
+  JobOpening: 'JobOpening',
+  StageTemplate: 'StageTemplate',
+  Application: 'Application',
+  Interview: 'Interview',
+  ApplicantNote: 'ApplicantNote',
+  InterviewNote: 'InterviewNote',
+  Activity: 'Activity',
+  Invitation: 'Invitation',
+  PublicLink: 'PublicLink'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -80,7 +94,14 @@ export const UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  lastName: 'lastName',
+  role: 'role',
+  status: 'status',
+  lastAccess: 'lastAccess',
+  banned: 'banned',
+  banReason: 'banReason',
+  banExpires: 'banExpires'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -94,7 +115,8 @@ export const SessionScalarFieldEnum = {
   updatedAt: 'updatedAt',
   ipAddress: 'ipAddress',
   userAgent: 'userAgent',
-  userId: 'userId'
+  userId: 'userId',
+  impersonatedBy: 'impersonatedBy'
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
@@ -132,12 +154,201 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const ApplicantScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  lastName: 'lastName',
+  email: 'email',
+  phone: 'phone',
+  photo: 'photo',
+  country: 'country',
+  linkedin: 'linkedin',
+  englishLevel: 'englishLevel',
+  source: 'source',
+  hearAboutUs: 'hearAboutUs',
+  title: 'title',
+  academicInstitution: 'academicInstitution',
+  careerStartYear: 'careerStartYear',
+  careerEndYear: 'careerEndYear',
+  education: 'education',
+  resume: 'resume',
+  roleId: 'roleId',
+  areaId: 'areaId',
+  seniorityId: 'seniorityId'
+} as const
+
+export type ApplicantScalarFieldEnum = (typeof ApplicantScalarFieldEnum)[keyof typeof ApplicantScalarFieldEnum]
+
+
+export const RoleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  deletedAt: 'deletedAt'
+} as const
+
+export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
+
+
+export const AreaScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  deletedAt: 'deletedAt'
+} as const
+
+export type AreaScalarFieldEnum = (typeof AreaScalarFieldEnum)[keyof typeof AreaScalarFieldEnum]
+
+
+export const SeniorityScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  color: 'color',
+  deletedAt: 'deletedAt'
+} as const
+
+export type SeniorityScalarFieldEnum = (typeof SeniorityScalarFieldEnum)[keyof typeof SeniorityScalarFieldEnum]
+
+
+export const TagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  isSkill: 'isSkill',
+  color: 'color',
+  deletedAt: 'deletedAt'
+} as const
+
+export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
+
+
+export const JobOpeningScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  status: 'status',
+  stages: 'stages',
+  location: 'location',
+  openingDate: 'openingDate',
+  targetClosingDate: 'targetClosingDate',
+  closingDate: 'closingDate',
+  areaId: 'areaId'
+} as const
+
+export type JobOpeningScalarFieldEnum = (typeof JobOpeningScalarFieldEnum)[keyof typeof JobOpeningScalarFieldEnum]
+
+
+export const StageTemplateScalarFieldEnum = {
+  id: 'id',
+  stages: 'stages',
+  lastModified: 'lastModified',
+  deletedAt: 'deletedAt'
+} as const
+
+export type StageTemplateScalarFieldEnum = (typeof StageTemplateScalarFieldEnum)[keyof typeof StageTemplateScalarFieldEnum]
+
+
+export const ApplicationScalarFieldEnum = {
+  applicantId: 'applicantId',
+  jobOpeningId: 'jobOpeningId',
+  applicationDate: 'applicationDate',
+  active: 'active',
+  currentStage: 'currentStage',
+  stageEntryDate: 'stageEntryDate',
+  disqualificationDate: 'disqualificationDate',
+  disqualificationReason: 'disqualificationReason',
+  desiredSalary: 'desiredSalary',
+  availability: 'availability'
+} as const
+
+export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
+
+
+export const InterviewScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  duration: 'duration',
+  modality: 'modality',
+  date: 'date',
+  status: 'status',
+  summary: 'summary',
+  applicantId: 'applicantId',
+  jobOpeningId: 'jobOpeningId'
+} as const
+
+export type InterviewScalarFieldEnum = (typeof InterviewScalarFieldEnum)[keyof typeof InterviewScalarFieldEnum]
+
+
+export const ApplicantNoteScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  lastModified: 'lastModified',
+  applicantId: 'applicantId',
+  lastModifiedById: 'lastModifiedById'
+} as const
+
+export type ApplicantNoteScalarFieldEnum = (typeof ApplicantNoteScalarFieldEnum)[keyof typeof ApplicantNoteScalarFieldEnum]
+
+
+export const InterviewNoteScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  lastModified: 'lastModified',
+  interviewId: 'interviewId',
+  lastModifiedById: 'lastModifiedById'
+} as const
+
+export type InterviewNoteScalarFieldEnum = (typeof InterviewNoteScalarFieldEnum)[keyof typeof InterviewNoteScalarFieldEnum]
+
+
+export const ActivityScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  date: 'date',
+  applicantId: 'applicantId',
+  jobOpeningId: 'jobOpeningId'
+} as const
+
+export type ActivityScalarFieldEnum = (typeof ActivityScalarFieldEnum)[keyof typeof ActivityScalarFieldEnum]
+
+
+export const InvitationScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  sentDate: 'sentDate',
+  expirationDate: 'expirationDate',
+  senderId: 'senderId',
+  recipientId: 'recipientId'
+} as const
+
+export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
+
+
+export const PublicLinkScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  token: 'token',
+  includeSalary: 'includeSalary',
+  creationDate: 'creationDate',
+  expirationDate: 'expirationDate',
+  createdById: 'createdById',
+  applicantId: 'applicantId',
+  jobOpeningId: 'jobOpeningId'
+} as const
+
+export type PublicLinkScalarFieldEnum = (typeof PublicLinkScalarFieldEnum)[keyof typeof PublicLinkScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -154,4 +365,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
