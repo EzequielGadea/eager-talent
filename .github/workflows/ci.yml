@@ -2,12 +2,35 @@ name: CI
 on:
   pull_request:
     branches:
-    - main
-    - dev
+      - main
+      - dev
+
 jobs:
   eslint:
-    name: Lint and Build
+    name: Database, Lint and Build
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: eager_talent_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Ephemeral CI database only; never use Preview/Production secrets here.
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/eager_talent_test
+      # Public test-only key; never reuse it in deployed environments.
+      BETTER_AUTH_SECRET: eager-talent-ci-only-secret-for-disposable-tests
+
     steps:
       - name: Checkout
         id: checkout
@@ -23,6 +46,22 @@ jobs:
         id: install
         run: bun install --frozen-lockfile
 
+      - name: Generate Prisma Client
+        id: generate
+        run: bun run db:generate
+
+      - name: Validate database schema
+        id: schema
+        run: bun x prisma validate
+
+      - name: Apply versioned migrations
+        id: migrations
+        run: bun run db:deploy
+
+      - name: Typecheck
+        id: typecheck
+        run: bun run typecheck
+
       - name: Lint
         id: lint
         run: bun run lint
@@ -30,19 +69,37 @@ jobs:
       - name: Build
         id: build
         run: bun run build
-        env:
-          DATABASE_URL: "postgresql://user:pass@localhost:5432/dummy"
 
       - name: Discord notification on failure
         if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_PRS }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "Discord webhook is unavailable; skipping notification."
+            exit 0
+          fi
+
           FAILED_STEP=""
           if [ "${{ steps.checkout.outcome }}" == "failure" ]; then FAILED_STEP="Checkout"; fi
           if [ "${{ steps.setup-bun.outcome }}" == "failure" ]; then FAILED_STEP="Setup Bun"; fi
           if [ "${{ steps.install.outcome }}" == "failure" ]; then FAILED_STEP="Install dependencies"; fi
+          if [ "${{ steps.generate.outcome }}" == "failure" ]; then FAILED_STEP="Generate Prisma Client"; fi
+          if [ "${{ steps.schema.outcome }}" == "failure" ]; then FAILED_STEP="Validate database schema"; fi
+          if [ "${{ steps.migrations.outcome }}" == "failure" ]; then FAILED_STEP="Apply versioned migrations"; fi
+          if [ "${{ steps.typecheck.outcome }}" == "failure" ]; then FAILED_STEP="Typecheck"; fi
           if [ "${{ steps.lint.outcome }}" == "failure" ]; then FAILED_STEP="Lint"; fi
           if [ "${{ steps.build.outcome }}" == "failure" ]; then FAILED_STEP="Build"; fi
 
-          curl -H "Content-Type: application/json" \
-          -d "{\"content\": \"🔴 **CI falló** en PR #${{ github.event.pull_request.number }} (${{ github.event.pull_request.title }})\n**Paso que falló:** ${FAILED_STEP}\n**Rama:** ${{ github.head_ref }} → ${{ github.base_ref }}\n**Autor:** ${{ github.event.pull_request.user.login }}\n🔗 Ver detalles: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
-          ${{ secrets.DISCORD_WEBHOOK_URL_PRS }}
+          MESSAGE=$(printf '🔴 **CI falló** en PR #%s (%s)\n**Paso que falló:** %s\n**Rama:** %s → %s\n**Autor:** %s\n🔗 Ver detalles: %s' \
+            "$PR_NUMBER" "$PR_TITLE" "$FAILED_STEP" "$HEAD_REF" "$BASE_REF" "$PR_AUTHOR" "$RUN_URL")
+
+          jq -n --arg content "$MESSAGE" '{content: $content}' | \
+            curl --fail-with-body --silent --show-error \
+              -H "Content-Type: application/json" --data-binary @- "$DISCORD_WEBHOOK_URL"

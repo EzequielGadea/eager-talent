@@ -47,3 +47,6 @@ These reflect how this codebase is actually built today. Follow them for new cod
 - Do not use `prisma db push` as a replacement for versioned migrations.
 - Preview and Production must use separate PostgreSQL databases and separate `DATABASE_URL` values.
 - GitHub Actions is responsible for CI validation and Vercel remains responsible for application deployments. CI must not connect to or migrate Preview or Production databases.
+
+## Coding style
+- Use only English for variable names and comments.

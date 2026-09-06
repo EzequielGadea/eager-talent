@@ -32,6 +32,13 @@ export type UserMinAggregateOutputType = {
   image: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  lastName: string | null
+  role: $Enums.UserRole | null
+  status: $Enums.UserStatus | null
+  lastAccess: Date | null
+  banned: boolean | null
+  banReason: string | null
+  banExpires: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -42,6 +49,13 @@ export type UserMaxAggregateOutputType = {
   image: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  lastName: string | null
+  role: $Enums.UserRole | null
+  status: $Enums.UserStatus | null
+  lastAccess: Date | null
+  banned: boolean | null
+  banReason: string | null
+  banExpires: Date | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -52,6 +66,13 @@ export type UserCountAggregateOutputType = {
   image: number
   createdAt: number
   updatedAt: number
+  lastName: number
+  role: number
+  status: number
+  lastAccess: number
+  banned: number
+  banReason: number
+  banExpires: number
   _all: number
 }
 
@@ -64,6 +85,13 @@ export type UserMinAggregateInputType = {
   image?: true
   createdAt?: true
   updatedAt?: true
+  lastName?: true
+  role?: true
+  status?: true
+  lastAccess?: true
+  banned?: true
+  banReason?: true
+  banExpires?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -74,6 +102,13 @@ export type UserMaxAggregateInputType = {
   image?: true
   createdAt?: true
   updatedAt?: true
+  lastName?: true
+  role?: true
+  status?: true
+  lastAccess?: true
+  banned?: true
+  banReason?: true
+  banExpires?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -84,6 +119,13 @@ export type UserCountAggregateInputType = {
   image?: true
   createdAt?: true
   updatedAt?: true
+  lastName?: true
+  role?: true
+  status?: true
+  lastAccess?: true
+  banned?: true
+  banReason?: true
+  banExpires?: true
   _all?: true
 }
 
@@ -167,6 +209,13 @@ export type UserGroupByOutputType = {
   image: string | null
   createdAt: Date
   updatedAt: Date
+  lastName: string
+  role: $Enums.UserRole
+  status: $Enums.UserStatus
+  lastAccess: Date | null
+  banned: boolean
+  banReason: string | null
+  banExpires: Date | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -198,8 +247,23 @@ export type UserWhereInput = {
   image?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  lastName?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  lastAccess?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  banned?: Prisma.BoolFilter<"User"> | boolean
+  banReason?: Prisma.StringNullableFilter<"User"> | string | null
+  banExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  assignedJobOpenings?: Prisma.JobOpeningListRelationFilter
+  sharedApplicants?: Prisma.ApplicantListRelationFilter
+  interviews?: Prisma.InterviewListRelationFilter
+  applicantNotes?: Prisma.ApplicantNoteListRelationFilter
+  interviewNotes?: Prisma.InterviewNoteListRelationFilter
+  sentInvitations?: Prisma.InvitationListRelationFilter
+  invitations?: Prisma.InvitationListRelationFilter
+  publicLinks?: Prisma.PublicLinkListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -210,8 +274,23 @@ export type UserOrderByWithRelationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastAccess?: Prisma.SortOrderInput | Prisma.SortOrder
+  banned?: Prisma.SortOrder
+  banReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  banExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
+  assignedJobOpenings?: Prisma.JobOpeningOrderByRelationAggregateInput
+  sharedApplicants?: Prisma.ApplicantOrderByRelationAggregateInput
+  interviews?: Prisma.InterviewOrderByRelationAggregateInput
+  applicantNotes?: Prisma.ApplicantNoteOrderByRelationAggregateInput
+  interviewNotes?: Prisma.InterviewNoteOrderByRelationAggregateInput
+  sentInvitations?: Prisma.InvitationOrderByRelationAggregateInput
+  invitations?: Prisma.InvitationOrderByRelationAggregateInput
+  publicLinks?: Prisma.PublicLinkOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -225,8 +304,23 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   image?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  lastName?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  lastAccess?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  banned?: Prisma.BoolFilter<"User"> | boolean
+  banReason?: Prisma.StringNullableFilter<"User"> | string | null
+  banExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
+  assignedJobOpenings?: Prisma.JobOpeningListRelationFilter
+  sharedApplicants?: Prisma.ApplicantListRelationFilter
+  interviews?: Prisma.InterviewListRelationFilter
+  applicantNotes?: Prisma.ApplicantNoteListRelationFilter
+  interviewNotes?: Prisma.InterviewNoteListRelationFilter
+  sentInvitations?: Prisma.InvitationListRelationFilter
+  invitations?: Prisma.InvitationListRelationFilter
+  publicLinks?: Prisma.PublicLinkListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -237,6 +331,13 @@ export type UserOrderByWithAggregationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastAccess?: Prisma.SortOrderInput | Prisma.SortOrder
+  banned?: Prisma.SortOrder
+  banReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  banExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -253,6 +354,13 @@ export type UserScalarWhereWithAggregatesInput = {
   image?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  lastName?: Prisma.StringWithAggregatesFilter<"User"> | string
+  role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+  status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
+  lastAccess?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  banned?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  banReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  banExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
@@ -263,8 +371,23 @@ export type UserCreateInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -275,8 +398,23 @@ export type UserUncheckedCreateInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUpdateInput = {
@@ -287,8 +425,23 @@ export type UserUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -299,8 +452,23 @@ export type UserUncheckedUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -311,6 +479,13 @@ export type UserCreateManyInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -321,6 +496,13 @@ export type UserUpdateManyMutationInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -331,6 +513,13 @@ export type UserUncheckedUpdateManyInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -341,6 +530,13 @@ export type UserCountOrderByAggregateInput = {
   image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastAccess?: Prisma.SortOrder
+  banned?: Prisma.SortOrder
+  banReason?: Prisma.SortOrder
+  banExpires?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -351,6 +547,13 @@ export type UserMaxOrderByAggregateInput = {
   image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastAccess?: Prisma.SortOrder
+  banned?: Prisma.SortOrder
+  banReason?: Prisma.SortOrder
+  banExpires?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -361,11 +564,28 @@ export type UserMinOrderByAggregateInput = {
   image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastAccess?: Prisma.SortOrder
+  banned?: Prisma.SortOrder
+  banReason?: Prisma.SortOrder
+  banExpires?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
+}
+
+export type UserListRelationFilter = {
+  every?: Prisma.UserWhereInput
+  some?: Prisma.UserWhereInput
+  none?: Prisma.UserWhereInput
+}
+
+export type UserOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -382,6 +602,18 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type EnumUserRoleFieldUpdateOperationsInput = {
+  set?: $Enums.UserRole
+}
+
+export type EnumUserStatusFieldUpdateOperationsInput = {
+  set?: $Enums.UserStatus
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type UserCreateNestedOneWithoutSessionsInput = {
@@ -412,6 +644,190 @@ export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccountsInput, Prisma.UserUpdateWithoutAccountsInput>, Prisma.UserUncheckedUpdateWithoutAccountsInput>
 }
 
+export type UserCreateNestedManyWithoutSharedApplicantsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSharedApplicantsInput, Prisma.UserUncheckedCreateWithoutSharedApplicantsInput> | Prisma.UserCreateWithoutSharedApplicantsInput[] | Prisma.UserUncheckedCreateWithoutSharedApplicantsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSharedApplicantsInput | Prisma.UserCreateOrConnectWithoutSharedApplicantsInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUncheckedCreateNestedManyWithoutSharedApplicantsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSharedApplicantsInput, Prisma.UserUncheckedCreateWithoutSharedApplicantsInput> | Prisma.UserCreateWithoutSharedApplicantsInput[] | Prisma.UserUncheckedCreateWithoutSharedApplicantsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSharedApplicantsInput | Prisma.UserCreateOrConnectWithoutSharedApplicantsInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUpdateManyWithoutSharedApplicantsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSharedApplicantsInput, Prisma.UserUncheckedCreateWithoutSharedApplicantsInput> | Prisma.UserCreateWithoutSharedApplicantsInput[] | Prisma.UserUncheckedCreateWithoutSharedApplicantsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSharedApplicantsInput | Prisma.UserCreateOrConnectWithoutSharedApplicantsInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutSharedApplicantsInput | Prisma.UserUpsertWithWhereUniqueWithoutSharedApplicantsInput[]
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutSharedApplicantsInput | Prisma.UserUpdateWithWhereUniqueWithoutSharedApplicantsInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutSharedApplicantsInput | Prisma.UserUpdateManyWithWhereWithoutSharedApplicantsInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSharedApplicantsInput, Prisma.UserUncheckedCreateWithoutSharedApplicantsInput> | Prisma.UserCreateWithoutSharedApplicantsInput[] | Prisma.UserUncheckedCreateWithoutSharedApplicantsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSharedApplicantsInput | Prisma.UserCreateOrConnectWithoutSharedApplicantsInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutSharedApplicantsInput | Prisma.UserUpsertWithWhereUniqueWithoutSharedApplicantsInput[]
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutSharedApplicantsInput | Prisma.UserUpdateWithWhereUniqueWithoutSharedApplicantsInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutSharedApplicantsInput | Prisma.UserUpdateManyWithWhereWithoutSharedApplicantsInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserCreateNestedManyWithoutAssignedJobOpeningsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput> | Prisma.UserCreateWithoutAssignedJobOpeningsInput[] | Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput | Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput> | Prisma.UserCreateWithoutAssignedJobOpeningsInput[] | Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput | Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUpdateManyWithoutAssignedJobOpeningsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput> | Prisma.UserCreateWithoutAssignedJobOpeningsInput[] | Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput | Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutAssignedJobOpeningsInput | Prisma.UserUpsertWithWhereUniqueWithoutAssignedJobOpeningsInput[]
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutAssignedJobOpeningsInput | Prisma.UserUpdateWithWhereUniqueWithoutAssignedJobOpeningsInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutAssignedJobOpeningsInput | Prisma.UserUpdateManyWithWhereWithoutAssignedJobOpeningsInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput> | Prisma.UserCreateWithoutAssignedJobOpeningsInput[] | Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput | Prisma.UserCreateOrConnectWithoutAssignedJobOpeningsInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutAssignedJobOpeningsInput | Prisma.UserUpsertWithWhereUniqueWithoutAssignedJobOpeningsInput[]
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutAssignedJobOpeningsInput | Prisma.UserUpdateWithWhereUniqueWithoutAssignedJobOpeningsInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutAssignedJobOpeningsInput | Prisma.UserUpdateManyWithWhereWithoutAssignedJobOpeningsInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserCreateNestedManyWithoutInterviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewsInput, Prisma.UserUncheckedCreateWithoutInterviewsInput> | Prisma.UserCreateWithoutInterviewsInput[] | Prisma.UserUncheckedCreateWithoutInterviewsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewsInput | Prisma.UserCreateOrConnectWithoutInterviewsInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUncheckedCreateNestedManyWithoutInterviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewsInput, Prisma.UserUncheckedCreateWithoutInterviewsInput> | Prisma.UserCreateWithoutInterviewsInput[] | Prisma.UserUncheckedCreateWithoutInterviewsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewsInput | Prisma.UserCreateOrConnectWithoutInterviewsInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUpdateManyWithoutInterviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewsInput, Prisma.UserUncheckedCreateWithoutInterviewsInput> | Prisma.UserCreateWithoutInterviewsInput[] | Prisma.UserUncheckedCreateWithoutInterviewsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewsInput | Prisma.UserCreateOrConnectWithoutInterviewsInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutInterviewsInput | Prisma.UserUpsertWithWhereUniqueWithoutInterviewsInput[]
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutInterviewsInput | Prisma.UserUpdateWithWhereUniqueWithoutInterviewsInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutInterviewsInput | Prisma.UserUpdateManyWithWhereWithoutInterviewsInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserUncheckedUpdateManyWithoutInterviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewsInput, Prisma.UserUncheckedCreateWithoutInterviewsInput> | Prisma.UserCreateWithoutInterviewsInput[] | Prisma.UserUncheckedCreateWithoutInterviewsInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewsInput | Prisma.UserCreateOrConnectWithoutInterviewsInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutInterviewsInput | Prisma.UserUpsertWithWhereUniqueWithoutInterviewsInput[]
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutInterviewsInput | Prisma.UserUpdateWithWhereUniqueWithoutInterviewsInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutInterviewsInput | Prisma.UserUpdateManyWithWhereWithoutInterviewsInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserCreateNestedOneWithoutApplicantNotesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApplicantNotesInput, Prisma.UserUncheckedCreateWithoutApplicantNotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplicantNotesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutApplicantNotesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApplicantNotesInput, Prisma.UserUncheckedCreateWithoutApplicantNotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApplicantNotesInput
+  upsert?: Prisma.UserUpsertWithoutApplicantNotesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApplicantNotesInput, Prisma.UserUpdateWithoutApplicantNotesInput>, Prisma.UserUncheckedUpdateWithoutApplicantNotesInput>
+}
+
+export type UserCreateNestedOneWithoutInterviewNotesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewNotesInput, Prisma.UserUncheckedCreateWithoutInterviewNotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewNotesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutInterviewNotesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewNotesInput, Prisma.UserUncheckedCreateWithoutInterviewNotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewNotesInput
+  upsert?: Prisma.UserUpsertWithoutInterviewNotesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInterviewNotesInput, Prisma.UserUpdateWithoutInterviewNotesInput>, Prisma.UserUncheckedUpdateWithoutInterviewNotesInput>
+}
+
+export type UserCreateNestedOneWithoutSentInvitationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentInvitationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutInvitationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInvitationsInput, Prisma.UserUncheckedCreateWithoutInvitationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInvitationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSentInvitationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentInvitationsInput
+  upsert?: Prisma.UserUpsertWithoutSentInvitationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentInvitationsInput, Prisma.UserUpdateWithoutSentInvitationsInput>, Prisma.UserUncheckedUpdateWithoutSentInvitationsInput>
+}
+
+export type UserUpdateOneRequiredWithoutInvitationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInvitationsInput, Prisma.UserUncheckedCreateWithoutInvitationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInvitationsInput
+  upsert?: Prisma.UserUpsertWithoutInvitationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInvitationsInput, Prisma.UserUpdateWithoutInvitationsInput>, Prisma.UserUncheckedUpdateWithoutInvitationsInput>
+}
+
+export type UserCreateNestedOneWithoutPublicLinksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPublicLinksInput, Prisma.UserUncheckedCreateWithoutPublicLinksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPublicLinksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPublicLinksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPublicLinksInput, Prisma.UserUncheckedCreateWithoutPublicLinksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPublicLinksInput
+  upsert?: Prisma.UserUpsertWithoutPublicLinksInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPublicLinksInput, Prisma.UserUpdateWithoutPublicLinksInput>, Prisma.UserUncheckedUpdateWithoutPublicLinksInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id: string
   name: string
@@ -420,7 +836,22 @@ export type UserCreateWithoutSessionsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -431,7 +862,22 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -458,7 +904,22 @@ export type UserUpdateWithoutSessionsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -469,7 +930,22 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -480,7 +956,22 @@ export type UserCreateWithoutAccountsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -491,7 +982,22 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -518,7 +1024,22 @@ export type UserUpdateWithoutAccountsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -529,7 +1050,1068 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutSharedApplicantsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutSharedApplicantsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutSharedApplicantsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSharedApplicantsInput, Prisma.UserUncheckedCreateWithoutSharedApplicantsInput>
+}
+
+export type UserUpsertWithWhereUniqueWithoutSharedApplicantsInput = {
+  where: Prisma.UserWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSharedApplicantsInput, Prisma.UserUncheckedUpdateWithoutSharedApplicantsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSharedApplicantsInput, Prisma.UserUncheckedCreateWithoutSharedApplicantsInput>
+}
+
+export type UserUpdateWithWhereUniqueWithoutSharedApplicantsInput = {
+  where: Prisma.UserWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSharedApplicantsInput, Prisma.UserUncheckedUpdateWithoutSharedApplicantsInput>
+}
+
+export type UserUpdateManyWithWhereWithoutSharedApplicantsInput = {
+  where: Prisma.UserScalarWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsInput>
+}
+
+export type UserScalarWhereInput = {
+  AND?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+  OR?: Prisma.UserScalarWhereInput[]
+  NOT?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+  id?: Prisma.StringFilter<"User"> | string
+  name?: Prisma.StringFilter<"User"> | string
+  email?: Prisma.StringFilter<"User"> | string
+  emailVerified?: Prisma.BoolFilter<"User"> | boolean
+  image?: Prisma.StringNullableFilter<"User"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  lastName?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
+  lastAccess?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  banned?: Prisma.BoolFilter<"User"> | boolean
+  banReason?: Prisma.StringNullableFilter<"User"> | string | null
+  banExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+}
+
+export type UserCreateWithoutAssignedJobOpeningsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutAssignedJobOpeningsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutAssignedJobOpeningsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput>
+}
+
+export type UserUpsertWithWhereUniqueWithoutAssignedJobOpeningsInput = {
+  where: Prisma.UserWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedUpdateWithoutAssignedJobOpeningsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedCreateWithoutAssignedJobOpeningsInput>
+}
+
+export type UserUpdateWithWhereUniqueWithoutAssignedJobOpeningsInput = {
+  where: Prisma.UserWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAssignedJobOpeningsInput, Prisma.UserUncheckedUpdateWithoutAssignedJobOpeningsInput>
+}
+
+export type UserUpdateManyWithWhereWithoutAssignedJobOpeningsInput = {
+  where: Prisma.UserScalarWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsInput>
+}
+
+export type UserCreateWithoutInterviewsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutInterviewsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutInterviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewsInput, Prisma.UserUncheckedCreateWithoutInterviewsInput>
+}
+
+export type UserUpsertWithWhereUniqueWithoutInterviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInterviewsInput, Prisma.UserUncheckedUpdateWithoutInterviewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewsInput, Prisma.UserUncheckedCreateWithoutInterviewsInput>
+}
+
+export type UserUpdateWithWhereUniqueWithoutInterviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInterviewsInput, Prisma.UserUncheckedUpdateWithoutInterviewsInput>
+}
+
+export type UserUpdateManyWithWhereWithoutInterviewsInput = {
+  where: Prisma.UserScalarWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutInterviewsInput>
+}
+
+export type UserCreateWithoutApplicantNotesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutApplicantNotesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutApplicantNotesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApplicantNotesInput, Prisma.UserUncheckedCreateWithoutApplicantNotesInput>
+}
+
+export type UserUpsertWithoutApplicantNotesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApplicantNotesInput, Prisma.UserUncheckedUpdateWithoutApplicantNotesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApplicantNotesInput, Prisma.UserUncheckedCreateWithoutApplicantNotesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApplicantNotesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApplicantNotesInput, Prisma.UserUncheckedUpdateWithoutApplicantNotesInput>
+}
+
+export type UserUpdateWithoutApplicantNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApplicantNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutInterviewNotesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutInterviewNotesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutInterviewNotesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewNotesInput, Prisma.UserUncheckedCreateWithoutInterviewNotesInput>
+}
+
+export type UserUpsertWithoutInterviewNotesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInterviewNotesInput, Prisma.UserUncheckedUpdateWithoutInterviewNotesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewNotesInput, Prisma.UserUncheckedCreateWithoutInterviewNotesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInterviewNotesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInterviewNotesInput, Prisma.UserUncheckedUpdateWithoutInterviewNotesInput>
+}
+
+export type UserUpdateWithoutInterviewNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInterviewNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutSentInvitationsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutSentInvitationsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutSentInvitationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
+}
+
+export type UserCreateWithoutInvitationsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutInvitationsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutInvitationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInvitationsInput, Prisma.UserUncheckedCreateWithoutInvitationsInput>
+}
+
+export type UserUpsertWithoutSentInvitationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSentInvitationsInput, Prisma.UserUncheckedUpdateWithoutSentInvitationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSentInvitationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSentInvitationsInput, Prisma.UserUncheckedUpdateWithoutSentInvitationsInput>
+}
+
+export type UserUpdateWithoutSentInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSentInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUpsertWithoutInvitationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInvitationsInput, Prisma.UserUncheckedUpdateWithoutInvitationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInvitationsInput, Prisma.UserUncheckedCreateWithoutInvitationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInvitationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInvitationsInput, Prisma.UserUncheckedUpdateWithoutInvitationsInput>
+}
+
+export type UserUpdateWithoutInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutPublicLinksInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutRecipientInput
+}
+
+export type UserUncheckedCreateWithoutPublicLinksInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastName?: string
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  lastAccess?: Date | string | null
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedCreateNestedManyWithoutHiringManagersInput
+  sharedApplicants?: Prisma.ApplicantUncheckedCreateNestedManyWithoutHiringManagersInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutInterviewersInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedCreateNestedManyWithoutLastModifiedByInput
+  sentInvitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutSenderInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutRecipientInput
+}
+
+export type UserCreateOrConnectWithoutPublicLinksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPublicLinksInput, Prisma.UserUncheckedCreateWithoutPublicLinksInput>
+}
+
+export type UserUpsertWithoutPublicLinksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPublicLinksInput, Prisma.UserUncheckedUpdateWithoutPublicLinksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPublicLinksInput, Prisma.UserUncheckedCreateWithoutPublicLinksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPublicLinksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPublicLinksInput, Prisma.UserUncheckedUpdateWithoutPublicLinksInput>
+}
+
+export type UserUpdateWithoutPublicLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPublicLinksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+}
+
+export type UserUpdateWithoutSharedApplicantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSharedApplicantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateManyWithoutSharedApplicantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type UserUpdateWithoutAssignedJobOpeningsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAssignedJobOpeningsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutInterviewersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateManyWithoutAssignedJobOpeningsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type UserUpdateWithoutInterviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUpdateManyWithoutHiringManagersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInterviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  assignedJobOpenings?: Prisma.JobOpeningUncheckedUpdateManyWithoutHiringManagersNestedInput
+  sharedApplicants?: Prisma.ApplicantUncheckedUpdateManyWithoutHiringManagersNestedInput
+  applicantNotes?: Prisma.ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  interviewNotes?: Prisma.InterviewNoteUncheckedUpdateManyWithoutLastModifiedByNestedInput
+  sentInvitations?: Prisma.InvitationUncheckedUpdateManyWithoutSenderNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutRecipientNestedInput
+  publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateManyWithoutInterviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  lastAccess?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -540,11 +2122,27 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
 export type UserCountOutputType = {
   sessions: number
   accounts: number
+  assignedJobOpenings: number
+  sharedApplicants: number
+  interviews: number
+  applicantNotes: number
+  interviewNotes: number
+  sentInvitations: number
+  invitations: number
+  publicLinks: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+  assignedJobOpenings?: boolean | UserCountOutputTypeCountAssignedJobOpeningsArgs
+  sharedApplicants?: boolean | UserCountOutputTypeCountSharedApplicantsArgs
+  interviews?: boolean | UserCountOutputTypeCountInterviewsArgs
+  applicantNotes?: boolean | UserCountOutputTypeCountApplicantNotesArgs
+  interviewNotes?: boolean | UserCountOutputTypeCountInterviewNotesArgs
+  sentInvitations?: boolean | UserCountOutputTypeCountSentInvitationsArgs
+  invitations?: boolean | UserCountOutputTypeCountInvitationsArgs
+  publicLinks?: boolean | UserCountOutputTypeCountPublicLinksArgs
 }
 
 /**
@@ -571,6 +2169,62 @@ export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.AccountWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAssignedJobOpeningsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.JobOpeningWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSharedApplicantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApplicantWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInterviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InterviewWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApplicantNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApplicantNoteWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInterviewNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InterviewNoteWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSentInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InvitationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InvitationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPublicLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PublicLinkWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -580,8 +2234,23 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastName?: boolean
+  role?: boolean
+  status?: boolean
+  lastAccess?: boolean
+  banned?: boolean
+  banReason?: boolean
+  banExpires?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  assignedJobOpenings?: boolean | Prisma.User$assignedJobOpeningsArgs<ExtArgs>
+  sharedApplicants?: boolean | Prisma.User$sharedApplicantsArgs<ExtArgs>
+  interviews?: boolean | Prisma.User$interviewsArgs<ExtArgs>
+  applicantNotes?: boolean | Prisma.User$applicantNotesArgs<ExtArgs>
+  interviewNotes?: boolean | Prisma.User$interviewNotesArgs<ExtArgs>
+  sentInvitations?: boolean | Prisma.User$sentInvitationsArgs<ExtArgs>
+  invitations?: boolean | Prisma.User$invitationsArgs<ExtArgs>
+  publicLinks?: boolean | Prisma.User$publicLinksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -593,6 +2262,13 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastName?: boolean
+  role?: boolean
+  status?: boolean
+  lastAccess?: boolean
+  banned?: boolean
+  banReason?: boolean
+  banExpires?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -603,6 +2279,13 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastName?: boolean
+  role?: boolean
+  status?: boolean
+  lastAccess?: boolean
+  banned?: boolean
+  banReason?: boolean
+  banExpires?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -613,12 +2296,27 @@ export type UserSelectScalar = {
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  lastName?: boolean
+  role?: boolean
+  status?: boolean
+  lastAccess?: boolean
+  banned?: boolean
+  banReason?: boolean
+  banExpires?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "lastName" | "role" | "status" | "lastAccess" | "banned" | "banReason" | "banExpires", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
+  assignedJobOpenings?: boolean | Prisma.User$assignedJobOpeningsArgs<ExtArgs>
+  sharedApplicants?: boolean | Prisma.User$sharedApplicantsArgs<ExtArgs>
+  interviews?: boolean | Prisma.User$interviewsArgs<ExtArgs>
+  applicantNotes?: boolean | Prisma.User$applicantNotesArgs<ExtArgs>
+  interviewNotes?: boolean | Prisma.User$interviewNotesArgs<ExtArgs>
+  sentInvitations?: boolean | Prisma.User$sentInvitationsArgs<ExtArgs>
+  invitations?: boolean | Prisma.User$invitationsArgs<ExtArgs>
+  publicLinks?: boolean | Prisma.User$publicLinksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -629,6 +2327,14 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
+    assignedJobOpenings: Prisma.$JobOpeningPayload<ExtArgs>[]
+    sharedApplicants: Prisma.$ApplicantPayload<ExtArgs>[]
+    interviews: Prisma.$InterviewPayload<ExtArgs>[]
+    applicantNotes: Prisma.$ApplicantNotePayload<ExtArgs>[]
+    interviewNotes: Prisma.$InterviewNotePayload<ExtArgs>[]
+    sentInvitations: Prisma.$InvitationPayload<ExtArgs>[]
+    invitations: Prisma.$InvitationPayload<ExtArgs>[]
+    publicLinks: Prisma.$PublicLinkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -638,6 +2344,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     image: string | null
     createdAt: Date
     updatedAt: Date
+    lastName: string
+    role: $Enums.UserRole
+    status: $Enums.UserStatus
+    lastAccess: Date | null
+    banned: boolean
+    banReason: string | null
+    banExpires: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1034,6 +2747,14 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignedJobOpenings<T extends Prisma.User$assignedJobOpeningsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedJobOpeningsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobOpeningPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sharedApplicants<T extends Prisma.User$sharedApplicantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sharedApplicantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  interviews<T extends Prisma.User$interviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$interviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  applicantNotes<T extends Prisma.User$applicantNotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$applicantNotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicantNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  interviewNotes<T extends Prisma.User$interviewNotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$interviewNotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sentInvitations<T extends Prisma.User$sentInvitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentInvitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  invitations<T extends Prisma.User$invitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  publicLinks<T extends Prisma.User$publicLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$publicLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1070,6 +2791,13 @@ export interface UserFieldRefs {
   readonly image: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly lastName: Prisma.FieldRef<"User", 'String'>
+  readonly role: Prisma.FieldRef<"User", 'UserRole'>
+  readonly status: Prisma.FieldRef<"User", 'UserStatus'>
+  readonly lastAccess: Prisma.FieldRef<"User", 'DateTime'>
+  readonly banned: Prisma.FieldRef<"User", 'Boolean'>
+  readonly banReason: Prisma.FieldRef<"User", 'String'>
+  readonly banExpires: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 
@@ -1508,6 +3236,198 @@ export type User$accountsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.AccountScalarFieldEnum | Prisma.AccountScalarFieldEnum[]
+}
+
+/**
+ * User.assignedJobOpenings
+ */
+export type User$assignedJobOpeningsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the JobOpening
+   */
+  select?: Prisma.JobOpeningSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the JobOpening
+   */
+  omit?: Prisma.JobOpeningOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.JobOpeningInclude<ExtArgs> | null
+  where?: Prisma.JobOpeningWhereInput
+  orderBy?: Prisma.JobOpeningOrderByWithRelationInput | Prisma.JobOpeningOrderByWithRelationInput[]
+  cursor?: Prisma.JobOpeningWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.JobOpeningScalarFieldEnum | Prisma.JobOpeningScalarFieldEnum[]
+}
+
+/**
+ * User.sharedApplicants
+ */
+export type User$sharedApplicantsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Applicant
+   */
+  select?: Prisma.ApplicantSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Applicant
+   */
+  omit?: Prisma.ApplicantOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApplicantInclude<ExtArgs> | null
+  where?: Prisma.ApplicantWhereInput
+  orderBy?: Prisma.ApplicantOrderByWithRelationInput | Prisma.ApplicantOrderByWithRelationInput[]
+  cursor?: Prisma.ApplicantWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ApplicantScalarFieldEnum | Prisma.ApplicantScalarFieldEnum[]
+}
+
+/**
+ * User.interviews
+ */
+export type User$interviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Interview
+   */
+  select?: Prisma.InterviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Interview
+   */
+  omit?: Prisma.InterviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InterviewInclude<ExtArgs> | null
+  where?: Prisma.InterviewWhereInput
+  orderBy?: Prisma.InterviewOrderByWithRelationInput | Prisma.InterviewOrderByWithRelationInput[]
+  cursor?: Prisma.InterviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InterviewScalarFieldEnum | Prisma.InterviewScalarFieldEnum[]
+}
+
+/**
+ * User.applicantNotes
+ */
+export type User$applicantNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApplicantNote
+   */
+  select?: Prisma.ApplicantNoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApplicantNote
+   */
+  omit?: Prisma.ApplicantNoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApplicantNoteInclude<ExtArgs> | null
+  where?: Prisma.ApplicantNoteWhereInput
+  orderBy?: Prisma.ApplicantNoteOrderByWithRelationInput | Prisma.ApplicantNoteOrderByWithRelationInput[]
+  cursor?: Prisma.ApplicantNoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ApplicantNoteScalarFieldEnum | Prisma.ApplicantNoteScalarFieldEnum[]
+}
+
+/**
+ * User.interviewNotes
+ */
+export type User$interviewNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InterviewNote
+   */
+  select?: Prisma.InterviewNoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InterviewNote
+   */
+  omit?: Prisma.InterviewNoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InterviewNoteInclude<ExtArgs> | null
+  where?: Prisma.InterviewNoteWhereInput
+  orderBy?: Prisma.InterviewNoteOrderByWithRelationInput | Prisma.InterviewNoteOrderByWithRelationInput[]
+  cursor?: Prisma.InterviewNoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InterviewNoteScalarFieldEnum | Prisma.InterviewNoteScalarFieldEnum[]
+}
+
+/**
+ * User.sentInvitations
+ */
+export type User$sentInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invitation
+   */
+  select?: Prisma.InvitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invitation
+   */
+  omit?: Prisma.InvitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvitationInclude<ExtArgs> | null
+  where?: Prisma.InvitationWhereInput
+  orderBy?: Prisma.InvitationOrderByWithRelationInput | Prisma.InvitationOrderByWithRelationInput[]
+  cursor?: Prisma.InvitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InvitationScalarFieldEnum | Prisma.InvitationScalarFieldEnum[]
+}
+
+/**
+ * User.invitations
+ */
+export type User$invitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invitation
+   */
+  select?: Prisma.InvitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invitation
+   */
+  omit?: Prisma.InvitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvitationInclude<ExtArgs> | null
+  where?: Prisma.InvitationWhereInput
+  orderBy?: Prisma.InvitationOrderByWithRelationInput | Prisma.InvitationOrderByWithRelationInput[]
+  cursor?: Prisma.InvitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InvitationScalarFieldEnum | Prisma.InvitationScalarFieldEnum[]
+}
+
+/**
+ * User.publicLinks
+ */
+export type User$publicLinksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PublicLink
+   */
+  select?: Prisma.PublicLinkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PublicLink
+   */
+  omit?: Prisma.PublicLinkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PublicLinkInclude<ExtArgs> | null
+  where?: Prisma.PublicLinkWhereInput
+  orderBy?: Prisma.PublicLinkOrderByWithRelationInput | Prisma.PublicLinkOrderByWithRelationInput[]
+  cursor?: Prisma.PublicLinkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PublicLinkScalarFieldEnum | Prisma.PublicLinkScalarFieldEnum[]
 }
 
 /**
