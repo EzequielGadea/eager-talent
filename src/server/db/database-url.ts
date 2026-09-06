@@ -1,6 +1,36 @@
 export const LOCAL_DATABASE_URL =
   "postgres://postgres:postgres@localhost:51214/template1?sslmode=disable&connection_limit=10&connect_timeout=0&max_idle_connection_lifetime=0&pool_timeout=0&socket_timeout=0";
 
+// Prisma Dev runs a separate PGlite server for migration validation.
+export const LOCAL_SHADOW_DATABASE_URL = LOCAL_DATABASE_URL.replace(
+  ":51214/",
+  ":51215/",
+);
+
+export function getShadowDatabaseUrl(): string | undefined {
+  const explicit = process.env.SHADOW_DATABASE_URL?.trim();
+  if (explicit) return explicit;
+
+  const databaseUrl = getDatabaseUrl();
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.CI ||
+    process.env.VERCEL ||
+    process.env.VERCEL_ENV
+  )
+    return undefined;
+
+  const url = new URL(databaseUrl);
+  if (
+    ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) &&
+    url.port === "51214" &&
+    url.pathname === "/template1"
+  )
+    return LOCAL_SHADOW_DATABASE_URL;
+
+  return undefined;
+}
+
 export function getDatabaseUrl(): string {
   const databaseUrl = process.env.DATABASE_URL?.trim();
   if (databaseUrl) {

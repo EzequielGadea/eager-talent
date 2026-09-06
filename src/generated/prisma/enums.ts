@@ -9,7 +9,66 @@
 * 🟢 You can import this file directly.
 */
 
+export const UserRole = {
+  Recruiter: 'Recruiter',
+  HiringManager: 'HiringManager'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const UserStatus = {
+  Active: 'Active',
+  PendingInvitation: 'PendingInvitation',
+  Inactive: 'Inactive'
+} as const
+
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
+
+
+export const EnglishLevel = {
+  Basic: 'Basic',
+  Intermediate: 'Intermediate',
+  Advanced: 'Advanced',
+  Native: 'Native'
+} as const
+
+export type EnglishLevel = (typeof EnglishLevel)[keyof typeof EnglishLevel]
+
+
+export const Source = {
+  LinkedIn: 'LinkedIn',
+  Website: 'Website',
+  Outbound: 'Outbound',
+  Referral: 'Referral',
+  JobBoard: 'JobBoard'
+} as const
+
+export type Source = (typeof Source)[keyof typeof Source]
+
+
+export const JobOpeningStatus = {
+  Open: 'Open',
+  Paused: 'Paused',
+  Closed: 'Closed',
+  Cancelled: 'Cancelled'
+} as const
+
+export type JobOpeningStatus = (typeof JobOpeningStatus)[keyof typeof JobOpeningStatus]
+
+
+export const InterviewStatus = {
+  Completed: 'Completed',
+  Scheduled: 'Scheduled',
+  Pending: 'Pending'
+} as const
+
+export type InterviewStatus = (typeof InterviewStatus)[keyof typeof InterviewStatus]
+
+
+export const InterviewType = {
+  VideoCall: 'VideoCall',
+  InPerson: 'InPerson'
+} as const
+
+export type InterviewType = (typeof InterviewType)[keyof typeof InterviewType]
