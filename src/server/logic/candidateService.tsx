@@ -1,15 +1,14 @@
 import { PrismaClient } from "~prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaPg } from '@prisma/adapter-pg'
 import { getDatabaseUrl } from "../db/database-url";
 
-const adapter = new PrismaPg({ connectionString: getDatabaseUrl() });
-const prisma = new PrismaClient({ adapter });
+const adapter = new PrismaPg({ connectionString: getDatabaseUrl() })
+const prisma = new PrismaClient({ adapter })
 
-export async function listCandidates(/*{input contiene filtros}*/) {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  /*
+export async function listCandidates(/*{input contiene filtros}*/){
+    console.log("antes de crear");
+    console.log("DATABASE_URL:", getDatabaseUrl());
     try {
-        //dato de prueba basura
         const newCandidate = await prisma.applicant.create({
             data: {
                 id: '1',
@@ -23,6 +22,7 @@ export async function listCandidates(/*{input contiene filtros}*/) {
             }
         });
     } catch (error) { console.log(error); }
+<<<<<<< HEAD
     */
   const candidates = await prisma.applicant.findMany({
     include: {
@@ -62,3 +62,11 @@ export async function listCandidates(/*{input contiene filtros}*/) {
   });
   return candidates;
 }
+=======
+    console.log("antes de query");
+    const candidates = await prisma.applicant.findMany({
+        //agregar filtros a la consulta
+    })
+    return candidates;
+}
+>>>>>>> 9a3846b (prueba de agregar querie a DB y llamado trpc para consumir data)
