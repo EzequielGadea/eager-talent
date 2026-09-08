@@ -174,7 +174,7 @@ model Applicant {
   activities     Activity[]
   note           ApplicantNote?
 
-  @@index([roleId])
+  @@index([roleId]) 
   @@index([areaId])
   @@index([seniorityId])
   @@index([source])

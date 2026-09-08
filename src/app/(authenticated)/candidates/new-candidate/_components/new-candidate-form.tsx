@@ -17,6 +17,9 @@ import SourceAndLabels from "./source-and-labels";
 import EducationAndFiles from "./education-and-files";
 import NewCandidateButton from "./new-candidate-button";
 
+
+
+
 export type CandidateFormValues = {
   fullName: string;
   email: string;
@@ -40,7 +43,19 @@ export type CandidateFormValues = {
   academicRecord?: FileList;
 };
 
-export default function NewCandidateForm() {
+type Area = {
+  id: string;
+  name: string;
+};
+
+type NewCandidateFormProps = {
+  areas: Area[];
+};
+
+export default function NewCandidateForm({
+    areas,
+  }: NewCandidateFormProps) {
+
   const router = useRouter();
   const methods = useForm<CandidateFormValues>({
     defaultValues: {
@@ -81,7 +96,7 @@ export default function NewCandidateForm() {
         className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4"
       >
         <PersonalData />
-        <ProfessionalProfile />
+        <ProfessionalProfile areas={areas} />
         <SourceAndLabels />
         <EducationAndFiles />
 
