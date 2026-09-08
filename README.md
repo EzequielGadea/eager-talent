@@ -39,7 +39,6 @@ bun run setup:local
 bun run db:seed
 ```
 
-
 ### Consultar la DB local
 
 **Prisma Studio**

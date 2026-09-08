@@ -22,7 +22,6 @@ function randomSubset<T>(arr: T[], min: number, max: number): T[] {
 }
 
 export async function seedDatabase(prisma: PrismaClient): Promise<void> {
-
   // TEST ADMIN USER
   const existingAdmin = await prisma.user.findUnique({
     where: { email: ADMIN_EMAIL },
@@ -30,9 +29,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   if (existingAdmin) {
     if (existingAdmin.role !== "Recruiter") {
-      throw new Error(
-        `Ya existe ${ADMIN_EMAIL} con otro rol.`,
-      );
+      throw new Error(`Ya existe ${ADMIN_EMAIL} con otro rol.`);
     }
     console.log(`El usuario de prueba ${ADMIN_EMAIL} ya existe; se conserva.`);
   } else {
