@@ -25,7 +25,21 @@ import {
 
 import type { CandidateFormValues } from "./new-candidate-form";
 
-export default function ProfessionalProfile() {
+import { EnglishLevel } from "~/generated/prisma/enums";
+
+
+type Area = {
+  id: string;
+  name: string;
+};
+
+type ProfessionalProfileProps = {
+  areas: Area[];
+};
+
+export default  function ProfessionalProfile({ 
+    areas ,
+  }: ProfessionalProfileProps) {
   const { register, control } =
     useFormContext<CandidateFormValues>();
 
@@ -48,17 +62,27 @@ export default function ProfessionalProfile() {
     { label: "Senior", value: "senior" },
   ];
 
-  const areas = [
+/*  const areas = [
     { label: "Tecnología", value: "technology" },
     { label: "Diseño", value: "design" },
     { label: "Producto", value: "product" },
-  ];
+  ]; */
 
   const englishLevels = [
-    { label: "Básico (A1-A2)", value: "A1-A2" },
-    { label: "Intermedio (B1-B2)", value: "B1-B2" },
-    { label: "Avanzado (C1-C2)", value: "C1-C2" },
+    { label: "Básico (A1-A2)", value: EnglishLevel.Basic },
+    { label: "Intermedio (B1-B2)", value: EnglishLevel.Intermediate },
+    { label: "Avanzado (C1-C2)", value: EnglishLevel.Advanced },
+    { label: "Nativo", value: EnglishLevel.Native },
   ];
+
+
+  // ----- requests ------
+  type Area = {
+    id: string;
+    name: string;
+  };
+
+
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -182,12 +206,12 @@ export default function ProfessionalProfile() {
                   </SelectTrigger>
 
                   <SelectContent>
-                    {areas.map((area) => (
+                    {areas.map((Area) => (
                       <SelectItem
-                        key={area.value}
-                        value={area.value}
+                        key={Area.id}
+                        value={Area.id}
                       >
-                        {area.label}
+                        {Area.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

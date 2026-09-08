@@ -72,7 +72,8 @@ export default function PersonalData() {
 
             <div className="space-y-1">
               <Label htmlFor="email">
-                Correo electrónico
+                Correo electrónico{" "}
+                <span className="text-red-500">*</span>
               </Label>
 
               <Input
