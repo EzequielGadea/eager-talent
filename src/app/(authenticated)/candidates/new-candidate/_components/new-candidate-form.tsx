@@ -16,69 +16,69 @@ import ProfessionalProfile from "./professional-profile";
 import SourceAndLabels from "./source-and-labels";
 import EducationAndFiles from "./education-and-files";
 import NewCandidateButton from "./new-candidate-button";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
 
 
-export type CandidateFormValues = {
-  fullName: string;
-  email: string;
-  phone: string;
-  country: string;
-  linkedin: string;
+export const candidateFormSchema = z.object({
+  fullName: z.string().min(1, "El nombre es obligatorio"),
+  email: z.string().min(1, "El correo es obligatorio").email("Correo inválido"),
+  phone: z.string(),
+  country: z.string(),
+  linkedin: z.string(),
 
-  role: string;
-  jobOpening: string;
-  seniority: string;
-  area: string;
-  desiredSalary: string;
-  englishLevel: string;
+  role: z.string().min(1, "El rol es obligatorio"),
+  jobOpening: z.string(),
+  seniority: z.string(),
+  area: z.string(),
+  desiredSalary: z.string(),
+  englishLevel: z.string(),
 
-  source: string;
-  howDidYouHear: string;
-  tags: string;
+  source: z.string(),
+  howDidYouHear: z.string(),
+  tags: z.string(),
 
-  education: string;
-  cv?: FileList;
-  academicRecord?: FileList;
-};
+  education: z.string(),
+  cv: z.custom<FileList>().optional(),
+  academicRecord: z.custom<FileList>().optional(),
+});
 
-type Area = {
-  id: string;
-  name: string;
-};
 
-type NewCandidateFormProps = {
-  areas: Area[];
-};
+export type CandidateFormValues =
+  z.infer<typeof candidateFormSchema>;
 
-export default function NewCandidateForm({
-    areas,
-  }: NewCandidateFormProps) {
+
+
+
+export default function NewCandidateForm() {
 
   const router = useRouter();
   const methods = useForm<CandidateFormValues>({
-    defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
-      country: "",
-      linkedin: "",
+  resolver: zodResolver(candidateFormSchema),
 
-      role: "",
-      jobOpening: "",
-      seniority: "",
-      area: "",
-      desiredSalary: "",
-      englishLevel: "",
+  defaultValues: {
+    fullName: "",
+    email: "",
+    phone: "",
+    country: "",
+    linkedin: "",
 
-      source: "",
-      howDidYouHear: "",
-      tags: "",
+    role: "",
+    jobOpening: "",
+    seniority: "",
+    area: "",
+    desiredSalary: "",
+    englishLevel: "",
 
-      education: "",
-    },
-  });
+    source: "",
+    howDidYouHear: "",
+    tags: "",
+
+    education: "",
+  },
+});
 
   function onSubmit(data: CandidateFormValues) {
     console.log(data);
@@ -96,7 +96,7 @@ export default function NewCandidateForm({
         className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4"
       >
         <PersonalData />
-        <ProfessionalProfile areas={areas} />
+        <ProfessionalProfile />
         <SourceAndLabels />
         <EducationAndFiles />
 

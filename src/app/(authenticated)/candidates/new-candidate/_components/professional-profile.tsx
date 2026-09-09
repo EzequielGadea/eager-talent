@@ -5,6 +5,8 @@ import {
   useFormContext,
 } from "react-hook-form";
 
+import { api } from "~/lib/trpc/react";
+
 import {
   Card,
   CardContent,
@@ -37,36 +39,21 @@ type ProfessionalProfileProps = {
   areas: Area[];
 };
 
-export default  function ProfessionalProfile({ 
-    areas ,
-  }: ProfessionalProfileProps) {
-  const { register, control } =
+export default  function ProfessionalProfile() {
+  const { register, control, formState: { errors } } =
     useFormContext<CandidateFormValues>();
 
-  const roles = [
-    { label: "Backend Developer", value: "backend-developer" },
-    { label: "Frontend Developer", value: "frontend-developer" },
-    { label: "Fullstack Developer", value: "fullstack-developer" },
-    { label: "QA Engineer", value: "qa-engineer" },
-  ];
+  const { data: areas, isLoading: isLoadingArea } =
+  api.area.getAllAreas.useQuery({});
 
-  const jobOpenings = [
-    { label: "Sin vacante — base de talentos", value: "no-opening" },
-    { label: "Backend Developer", value: "backend-developer" },
-    { label: "Frontend Developer", value: "frontend-developer" },
-  ];
+const { data: roles, isLoading: isLoadingRole } =
+  api.role.getAllRoles.useQuery({});
 
-  const seniorityLevels = [
-    { label: "Junior", value: "junior" },
-    { label: "Semi Senior", value: "semi-senior" },
-    { label: "Senior", value: "senior" },
-  ];
+const { data: seniorities, isLoading: isLoadingSeniority } =
+  api.seniority.getAllSeniorities.useQuery({});
 
-/*  const areas = [
-    { label: "Tecnología", value: "technology" },
-    { label: "Diseño", value: "design" },
-    { label: "Producto", value: "product" },
-  ]; */
+const { data: jobOpenings, isLoading: isLoadingJobOpening } =
+  api.jobOpening.getAllJobOpenings.useQuery({});
 
   const englishLevels = [
     { label: "Básico (A1-A2)", value: EnglishLevel.Basic },
@@ -76,12 +63,7 @@ export default  function ProfessionalProfile({
   ];
 
 
-  // ----- requests ------
-  type Area = {
-    id: string;
-    name: string;
-  };
-
+ 
 
 
   return (
@@ -110,24 +92,35 @@ export default  function ProfessionalProfile({
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
+                  disabled={isLoadingRole}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar rol" />
+                    <SelectValue
+                        placeholder={
+                          isLoadingRole
+                            ? "Cargando roles..."
+                            : "Seleccionar roles"
+                        }
+                      >
+                 {roles?.find((rol) => rol.id === field.value)?.name}
+                   </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
-                    {roles.map((role) => (
+                    {roles?.map((rol) => (
                       <SelectItem
-                        key={role.value}
-                        value={role.value}
+                        key={rol.id}
+                        value={rol.id}
                       >
-                        {role.label}
+                        {rol.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               )}
             />
+           
+
           </div>
 
           <div className="space-y-1">
@@ -140,48 +133,68 @@ export default  function ProfessionalProfile({
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
+                  disabled={isLoadingJobOpening}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar vacante" />
+                    <SelectValue
+                        placeholder={
+                          isLoadingJobOpening
+                            ? "Cargando vacantes..."
+                            : "Seleccionar vacante"
+                        }
+                      >
+                 {jobOpenings?.find((jobOpening) => jobOpening.id === field.value)?.name}
+                   </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
-                    {jobOpenings.map((jobOpening) => (
+                    {jobOpenings?.map((jobOpening) => (
                       <SelectItem
-                        key={jobOpening.value}
-                        value={jobOpening.value}
+                        key={jobOpening.id}
+                        value={jobOpening.id}
                       >
-                        {jobOpening.label}
+                        {jobOpening.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               )}
             />
+           
+
           </div>
 
           <div className="space-y-1">
             <Label>Seniority</Label>
 
-            <Controller
+             <Controller
               name="seniority"
               control={control}
               render={({ field }) => (
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
+                  disabled={isLoadingSeniority}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar seniority" />
+                    <SelectValue
+                        placeholder={
+                          isLoadingSeniority
+                            ? "Cargando seniorities..."
+                            : "Seleccionar seniority"
+                        }
+                      >
+                 {seniorities?.find((seniority) => seniority.id === field.value)?.name}
+                   </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
-                    {seniorityLevels.map((level) => (
+                    {seniorities?.map((seniority) => (
                       <SelectItem
-                        key={level.value}
-                        value={level.value}
+                        key={seniority.id}
+                        value={seniority.id}
                       >
-                        {level.label}
+                        {seniority.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -200,18 +213,27 @@ export default  function ProfessionalProfile({
                 <Select
                   value={field.value}
                   onValueChange={field.onChange}
+                  disabled={isLoadingArea}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar área" />
+                    <SelectValue
+                        placeholder={
+                          isLoadingArea
+                            ? "Cargando áreas..."
+                            : "Seleccionar área"
+                        }
+                      >
+                 {areas?.find((area) => area.id === field.value)?.name}
+                   </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
-                    {areas.map((Area) => (
+                    {areas?.map((area) => (
                       <SelectItem
-                        key={Area.id}
-                        value={Area.id}
+                        key={area.id}
+                        value={area.id}
                       >
-                        {Area.name}
+                        {area.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
