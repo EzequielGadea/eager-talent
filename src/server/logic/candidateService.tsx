@@ -6,9 +6,10 @@ const adapter = new PrismaPg({ connectionString: getDatabaseUrl() })
 const prisma = new PrismaClient({ adapter })
 
 export async function listCandidates(/*{input contiene filtros}*/){
-    console.log("antes de crear");
-    console.log("DATABASE_URL:", getDatabaseUrl());
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    /*
     try {
+        //dato de prueba basura
         const newCandidate = await prisma.applicant.create({
             data: {
                 id: '1',
@@ -22,8 +23,41 @@ export async function listCandidates(/*{input contiene filtros}*/){
             }
         });
     } catch (error) { console.log(error); }
-    console.log("antes de query");
+    */
     const candidates = await prisma.applicant.findMany({
+        include: { 
+            role: { 
+                select: {
+                    name: true,
+                }
+            },
+            tags: {
+                select: {
+                    name: true,
+                    color: true,
+                }
+            },
+            seniority: {
+                select: {
+                    name: true,
+                    color: true,
+                }
+            },
+            applications: {
+                include: {
+                    jobOpening : {
+                        select: {
+                            name: true,
+                        }
+                    }
+                }
+            },
+            area: {
+                select: {
+                    name: true,
+                }
+            },
+        },
         //agregar filtros a la consulta
     })
     return candidates;
