@@ -30,16 +30,17 @@ import type { CandidateFormValues } from "./new-candidate-form";
 import { EnglishLevel } from "~/generated/prisma/enums";
 
 
-type Area = {
-  id: string;
-  name: string;
-};
 
-type ProfessionalProfileProps = {
-  areas: Area[];
-};
+
+
 
 export default  function ProfessionalProfile() {
+  
+  const englishLevels = Object.values(EnglishLevel).map((englishLevel) => ({
+    value: englishLevel,
+    label: englishLevel,
+  }));
+  
   const { register, control, formState: { errors } } =
     useFormContext<CandidateFormValues>();
 
@@ -55,13 +56,7 @@ const { data: seniorities, isLoading: isLoadingSeniority } =
 const { data: jobOpenings, isLoading: isLoadingJobOpening } =
   api.jobOpening.getAllJobOpenings.useQuery({});
 
-  const englishLevels = [
-    { label: "Básico (A1-A2)", value: EnglishLevel.Basic },
-    { label: "Intermedio (B1-B2)", value: EnglishLevel.Intermediate },
-    { label: "Avanzado (C1-C2)", value: EnglishLevel.Advanced },
-    { label: "Nativo", value: EnglishLevel.Native },
-  ];
-
+  
 
  
 

@@ -12,9 +12,10 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
+import { TagSelector } from "./tag-selector";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-
+import { api } from "~/lib/trpc/react";
 import {
   Select,
   SelectContent,
@@ -22,19 +23,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-
+import { Source } from "~/generated/prisma/enums";
 import type { CandidateFormValues } from "./new-candidate-form";
 
-export default function SourceAndLabels() {
+
+
+export default function SourceAndTags() {
   const { register, control } =
     useFormContext<CandidateFormValues>();
 
-  const sources = [
+const sources = Object.values(Source).map((source) => ({
+  value: source,
+  label: source,
+}));
+
+const { data: availableTags, isLoading} =
+  api.tag.getAllTags.useQuery({});
+
+ /* const sources = [
     { label: "LinkedIn", value: "linkedin" },
     { label: "Referido", value: "referral" },
     { label: "Sitio web", value: "website" },
     { label: "Otro", value: "other" },
-  ];
+  ];*/
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -63,10 +74,7 @@ export default function SourceAndLabels() {
 
                   <SelectContent>
                     {sources.map((source) => (
-                      <SelectItem
-                        key={source.value}
-                        value={source.value}
-                      >
+                      <SelectItem key={source.value} value={source.value}>
                         {source.label}
                       </SelectItem>
                     ))}
@@ -93,11 +101,17 @@ export default function SourceAndLabels() {
               Etiquetas
             </Label>
 
-            <Input
-              id="tags"
-              placeholder="Ej. Node, Postgres"
-              {...register("tags")}
-            />
+            <Controller
+  name="tags"
+  control={control}
+  render={({ field }) => (
+    <TagSelector
+      tags={availableTags ??  []}
+      value={field.value}
+      onChange={field.onChange}
+    />
+  )}
+/>
           </div>
         </div>
       </CardContent>
