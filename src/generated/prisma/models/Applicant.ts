@@ -47,7 +47,7 @@ export type ApplicantMinAggregateOutputType = {
   linkedin: string | null
   englishLevel: $Enums.EnglishLevel | null
   source: $Enums.Source | null
-  hearAboutUs: string | null
+  hearAboutUs: $Enums.HearAboutUs | null
   title: string | null
   academicInstitution: string | null
   careerStartYear: number | null
@@ -70,7 +70,7 @@ export type ApplicantMaxAggregateOutputType = {
   linkedin: string | null
   englishLevel: $Enums.EnglishLevel | null
   source: $Enums.Source | null
-  hearAboutUs: string | null
+  hearAboutUs: $Enums.HearAboutUs | null
   title: string | null
   academicInstitution: string | null
   careerStartYear: number | null
@@ -284,7 +284,7 @@ export type ApplicantGroupByOutputType = {
   linkedin: string | null
   englishLevel: $Enums.EnglishLevel | null
   source: $Enums.Source | null
-  hearAboutUs: string | null
+  hearAboutUs: $Enums.HearAboutUs | null
   title: string | null
   academicInstitution: string | null
   careerStartYear: number | null
@@ -330,7 +330,7 @@ export type ApplicantWhereInput = {
   linkedin?: Prisma.StringNullableFilter<"Applicant"> | string | null
   englishLevel?: Prisma.EnumEnglishLevelNullableFilter<"Applicant"> | $Enums.EnglishLevel | null
   source?: Prisma.EnumSourceNullableFilter<"Applicant"> | $Enums.Source | null
-  hearAboutUs?: Prisma.StringNullableFilter<"Applicant"> | string | null
+  hearAboutUs?: Prisma.EnumHearAboutUsNullableFilter<"Applicant"> | $Enums.HearAboutUs | null
   title?: Prisma.StringNullableFilter<"Applicant"> | string | null
   academicInstitution?: Prisma.StringNullableFilter<"Applicant"> | string | null
   careerStartYear?: Prisma.IntNullableFilter<"Applicant"> | number | null
@@ -397,7 +397,7 @@ export type ApplicantWhereUniqueInput = Prisma.AtLeast<{
   linkedin?: Prisma.StringNullableFilter<"Applicant"> | string | null
   englishLevel?: Prisma.EnumEnglishLevelNullableFilter<"Applicant"> | $Enums.EnglishLevel | null
   source?: Prisma.EnumSourceNullableFilter<"Applicant"> | $Enums.Source | null
-  hearAboutUs?: Prisma.StringNullableFilter<"Applicant"> | string | null
+  hearAboutUs?: Prisma.EnumHearAboutUsNullableFilter<"Applicant"> | $Enums.HearAboutUs | null
   title?: Prisma.StringNullableFilter<"Applicant"> | string | null
   academicInstitution?: Prisma.StringNullableFilter<"Applicant"> | string | null
   careerStartYear?: Prisma.IntNullableFilter<"Applicant"> | number | null
@@ -460,7 +460,7 @@ export type ApplicantScalarWhereWithAggregatesInput = {
   linkedin?: Prisma.StringNullableWithAggregatesFilter<"Applicant"> | string | null
   englishLevel?: Prisma.EnumEnglishLevelNullableWithAggregatesFilter<"Applicant"> | $Enums.EnglishLevel | null
   source?: Prisma.EnumSourceNullableWithAggregatesFilter<"Applicant"> | $Enums.Source | null
-  hearAboutUs?: Prisma.StringNullableWithAggregatesFilter<"Applicant"> | string | null
+  hearAboutUs?: Prisma.EnumHearAboutUsNullableWithAggregatesFilter<"Applicant"> | $Enums.HearAboutUs | null
   title?: Prisma.StringNullableWithAggregatesFilter<"Applicant"> | string | null
   academicInstitution?: Prisma.StringNullableWithAggregatesFilter<"Applicant"> | string | null
   careerStartYear?: Prisma.IntNullableWithAggregatesFilter<"Applicant"> | number | null
@@ -483,7 +483,7 @@ export type ApplicantCreateInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -512,7 +512,7 @@ export type ApplicantUncheckedCreateInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -541,7 +541,7 @@ export type ApplicantUpdateInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -570,7 +570,7 @@ export type ApplicantUncheckedUpdateInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -599,7 +599,7 @@ export type ApplicantCreateManyInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -622,7 +622,7 @@ export type ApplicantUpdateManyMutationInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -642,7 +642,7 @@ export type ApplicantUncheckedUpdateManyInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -792,6 +792,10 @@ export type NullableEnumEnglishLevelFieldUpdateOperationsInput = {
 
 export type NullableEnumSourceFieldUpdateOperationsInput = {
   set?: $Enums.Source | null
+}
+
+export type NullableEnumHearAboutUsFieldUpdateOperationsInput = {
+  set?: $Enums.HearAboutUs | null
 }
 
 export type NullableIntFieldUpdateOperationsInput = {
@@ -1033,7 +1037,7 @@ export type ApplicantCreateWithoutHiringManagersInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1061,7 +1065,7 @@ export type ApplicantUncheckedCreateWithoutHiringManagersInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1113,7 +1117,7 @@ export type ApplicantScalarWhereInput = {
   linkedin?: Prisma.StringNullableFilter<"Applicant"> | string | null
   englishLevel?: Prisma.EnumEnglishLevelNullableFilter<"Applicant"> | $Enums.EnglishLevel | null
   source?: Prisma.EnumSourceNullableFilter<"Applicant"> | $Enums.Source | null
-  hearAboutUs?: Prisma.StringNullableFilter<"Applicant"> | string | null
+  hearAboutUs?: Prisma.EnumHearAboutUsNullableFilter<"Applicant"> | $Enums.HearAboutUs | null
   title?: Prisma.StringNullableFilter<"Applicant"> | string | null
   academicInstitution?: Prisma.StringNullableFilter<"Applicant"> | string | null
   careerStartYear?: Prisma.IntNullableFilter<"Applicant"> | number | null
@@ -1136,7 +1140,7 @@ export type ApplicantCreateWithoutRoleInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1164,7 +1168,7 @@ export type ApplicantUncheckedCreateWithoutRoleInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1218,7 +1222,7 @@ export type ApplicantCreateWithoutAreaInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1246,7 +1250,7 @@ export type ApplicantUncheckedCreateWithoutAreaInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1300,7 +1304,7 @@ export type ApplicantCreateWithoutSeniorityInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1328,7 +1332,7 @@ export type ApplicantUncheckedCreateWithoutSeniorityInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1382,7 +1386,7 @@ export type ApplicantCreateWithoutTagsInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1410,7 +1414,7 @@ export type ApplicantUncheckedCreateWithoutTagsInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1459,7 +1463,7 @@ export type ApplicantCreateWithoutApplicationsInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1487,7 +1491,7 @@ export type ApplicantUncheckedCreateWithoutApplicationsInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1531,7 +1535,7 @@ export type ApplicantUpdateWithoutApplicationsInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1559,7 +1563,7 @@ export type ApplicantUncheckedUpdateWithoutApplicationsInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1587,7 +1591,7 @@ export type ApplicantCreateWithoutInterviewsInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1615,7 +1619,7 @@ export type ApplicantUncheckedCreateWithoutInterviewsInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1659,7 +1663,7 @@ export type ApplicantUpdateWithoutInterviewsInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1687,7 +1691,7 @@ export type ApplicantUncheckedUpdateWithoutInterviewsInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1715,7 +1719,7 @@ export type ApplicantCreateWithoutNoteInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1743,7 +1747,7 @@ export type ApplicantUncheckedCreateWithoutNoteInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1787,7 +1791,7 @@ export type ApplicantUpdateWithoutNoteInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1815,7 +1819,7 @@ export type ApplicantUncheckedUpdateWithoutNoteInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1843,7 +1847,7 @@ export type ApplicantCreateWithoutActivitiesInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1871,7 +1875,7 @@ export type ApplicantUncheckedCreateWithoutActivitiesInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -1915,7 +1919,7 @@ export type ApplicantUpdateWithoutActivitiesInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1943,7 +1947,7 @@ export type ApplicantUncheckedUpdateWithoutActivitiesInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1971,7 +1975,7 @@ export type ApplicantUpdateWithoutHiringManagersInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1999,7 +2003,7 @@ export type ApplicantUncheckedUpdateWithoutHiringManagersInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2027,7 +2031,7 @@ export type ApplicantUncheckedUpdateManyWithoutHiringManagersInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2050,7 +2054,7 @@ export type ApplicantCreateManyRoleInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -2072,7 +2076,7 @@ export type ApplicantUpdateWithoutRoleInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2100,7 +2104,7 @@ export type ApplicantUncheckedUpdateWithoutRoleInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2128,7 +2132,7 @@ export type ApplicantUncheckedUpdateManyWithoutRoleInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2150,7 +2154,7 @@ export type ApplicantCreateManyAreaInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -2172,7 +2176,7 @@ export type ApplicantUpdateWithoutAreaInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2200,7 +2204,7 @@ export type ApplicantUncheckedUpdateWithoutAreaInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2228,7 +2232,7 @@ export type ApplicantUncheckedUpdateManyWithoutAreaInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2250,7 +2254,7 @@ export type ApplicantCreateManySeniorityInput = {
   linkedin?: string | null
   englishLevel?: $Enums.EnglishLevel | null
   source?: $Enums.Source | null
-  hearAboutUs?: string | null
+  hearAboutUs?: $Enums.HearAboutUs | null
   title?: string | null
   academicInstitution?: string | null
   careerStartYear?: number | null
@@ -2272,7 +2276,7 @@ export type ApplicantUpdateWithoutSeniorityInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2300,7 +2304,7 @@ export type ApplicantUncheckedUpdateWithoutSeniorityInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2328,7 +2332,7 @@ export type ApplicantUncheckedUpdateManyWithoutSeniorityInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2350,7 +2354,7 @@ export type ApplicantUpdateWithoutTagsInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2378,7 +2382,7 @@ export type ApplicantUncheckedUpdateWithoutTagsInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2406,7 +2410,7 @@ export type ApplicantUncheckedUpdateManyWithoutTagsInput = {
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   englishLevel?: Prisma.NullableEnumEnglishLevelFieldUpdateOperationsInput | $Enums.EnglishLevel | null
   source?: Prisma.NullableEnumSourceFieldUpdateOperationsInput | $Enums.Source | null
-  hearAboutUs?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hearAboutUs?: Prisma.NullableEnumHearAboutUsFieldUpdateOperationsInput | $Enums.HearAboutUs | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   academicInstitution?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   careerStartYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -2641,7 +2645,7 @@ export type $ApplicantPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     linkedin: string | null
     englishLevel: $Enums.EnglishLevel | null
     source: $Enums.Source | null
-    hearAboutUs: string | null
+    hearAboutUs: $Enums.HearAboutUs | null
     title: string | null
     academicInstitution: string | null
     careerStartYear: number | null
@@ -3093,7 +3097,7 @@ export interface ApplicantFieldRefs {
   readonly linkedin: Prisma.FieldRef<"Applicant", 'String'>
   readonly englishLevel: Prisma.FieldRef<"Applicant", 'EnglishLevel'>
   readonly source: Prisma.FieldRef<"Applicant", 'Source'>
-  readonly hearAboutUs: Prisma.FieldRef<"Applicant", 'String'>
+  readonly hearAboutUs: Prisma.FieldRef<"Applicant", 'HearAboutUs'>
   readonly title: Prisma.FieldRef<"Applicant", 'String'>
   readonly academicInstitution: Prisma.FieldRef<"Applicant", 'String'>
   readonly careerStartYear: Prisma.FieldRef<"Applicant", 'Int'>

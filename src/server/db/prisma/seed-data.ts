@@ -6,6 +6,7 @@ import type {
   PrismaClient,
   EnglishLevel,
   Source,
+  HearAboutUs,
   JobOpeningStatus,
   InterviewStatus,
   InterviewType,
@@ -64,6 +65,26 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     console.log(`Usuario de prueba creado: ${ADMIN_EMAIL} (Recruiter).`);
   }
 
+  // ---------- LIMPIEZA PREVIA PARA IDEMPOTENCIA ----------
+  await prisma.$transaction([
+    prisma.publicLink.deleteMany(),
+    prisma.invitation.deleteMany(),
+    prisma.activity.deleteMany(),
+    prisma.interviewNote.deleteMany(),
+    prisma.applicantNote.deleteMany(),
+    prisma.interview.deleteMany(),
+    prisma.application.deleteMany(),
+    prisma.applicant.deleteMany(),
+    prisma.jobOpening.deleteMany(),
+    prisma.tag.deleteMany(),
+    prisma.seniority.deleteMany(),
+    prisma.area.deleteMany(),
+    prisma.role.deleteMany(),
+    prisma.stageTemplate.deleteMany(),
+    prisma.user.deleteMany({
+      where: { email: { not: ADMIN_EMAIL } },
+    }),
+  ]);
 
   //A PARTIR DE AQUI SE PUEDEN AGREGAR DATOS DE PRUEBA
 
@@ -78,14 +99,16 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     "QA Engineer",
     "UI/UX Designer",
   ];
-  const roles = await Promise.all(
-    roleNames.map((name) => prisma.role.create({ data: { name } })),
-  );
+  const roles = [];
+  for (const name of roleNames) {
+    roles.push(await prisma.role.create({ data: { name } }));
+  }
 
   const areaNames = ["Engineering", "Product", "Design", "Data", "Sales", "Marketing"];
-  const areas = await Promise.all(
-    areaNames.map((name) => prisma.area.create({ data: { name } })),
-  );
+  const areas = [];
+  for (const name of areaNames) {
+    areas.push(await prisma.area.create({ data: { name } }));
+  }
 
   const seniorityDefs = [
     { name: "Junior", order: 1, color: "#60A5FA" },
@@ -94,27 +117,39 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     { name: "Staff", order: 4, color: "#F87171" },
     { name: "Lead", order: 5, color: "#A78BFA" },
   ];
-  const seniorities = await Promise.all(
-    seniorityDefs.map((s) => prisma.seniority.create({ data: s })),
-  );
+  const seniorities = [];
+  for (const s of seniorityDefs) {
+    seniorities.push(await prisma.seniority.create({ data: s }));
+  }
 
   const skillTagNames = [
-    "React", "Node.js", "TypeScript", "Python", "AWS",
-    "Docker", "Kubernetes", "SQL", "GraphQL", "Figma",
+    "React",
+    "Node.js",
+    "TypeScript",
+    "Python",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "SQL",
+    "GraphQL",
+    "Figma",
   ];
   const otherTagNames = ["Remote", "Urgente", "Referido", "Top Candidate", "Follow Up"];
-  const tags = await Promise.all([
-    ...skillTagNames.map((name) =>
-      prisma.tag.create({
+  const tags = [];
+  for (const name of skillTagNames) {
+    tags.push(
+      await prisma.tag.create({
         data: { name, isSkill: true, color: faker.color.rgb({ format: "hex" }) },
       }),
-    ),
-    ...otherTagNames.map((name) =>
-      prisma.tag.create({
+    );
+  }
+  for (const name of otherTagNames) {
+    tags.push(
+      await prisma.tag.create({
         data: { name, isSkill: false, color: faker.color.rgb({ format: "hex" }) },
       }),
-    ),
-  ]);
+    );
+  }
 
   // ---------- USERS (Recruiters / Hiring Managers) ----------
   const additionalUsersCount = 8;
@@ -141,7 +176,17 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // ---------- APPLICANTS ----------
   const englishLevels: EnglishLevel[] = ["Basic", "Intermediate", "Advanced", "Native"];
-  const sources: Source[] = ["LinkedIn", "Website", "Outbound", "Referral", "JobBoard"];
+  const sources: Source[] = ["Inbound", "Outbound", "Referral"];
+  const hearAboutUsOptions: HearAboutUs[] = [
+    "LinkedInPost",
+    "LinkedInJobs",
+    "JobBoard",
+    "Referral",
+    "AiRecommendation",
+    "InternetSearch",
+    "RecruiterContact",
+    "Other",
+  ];
   const applicantsCount = 40;
   const applicants = [];
 
@@ -169,7 +214,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           : null,
         englishLevel: faker.helpers.arrayElement(englishLevels),
         source: faker.helpers.arrayElement(sources),
-        hearAboutUs: faker.lorem.sentence(),
+        hearAboutUs: faker.helpers.arrayElement(hearAboutUsOptions),
         title: faker.person.jobTitle(),
         academicInstitution: `${faker.company.name()} University`,
         careerStartYear: faker.number.int({ min: 2005, max: 2020 }),
@@ -211,7 +256,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         targetClosingDate,
         closingDate:
           status === "Closed"
-            ? faker.date.between({ from: targetClosingDate, to: new Date() })
+            ? faker.date.between({ from: openingDate, to: new Date() })
             : null,
         areaId: area.id,
         seniorities: { connect: jobSeniorities.map((s) => ({ id: s.id })) },
@@ -413,6 +458,6 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   }
 
   console.log(
-    `Seed completo: ${roles.length} roles, ${areas.length} áreas, ${seniorities.length} senioridades, ${tags.length} tags, ${users.length} usuarios, ${applicants.length} applicants, ${jobOpenings.length} job openings, ${applications.length} applications, ${interviews.length} entrevistas.`,
+    `Seed completo: ${roles.length} roles, ${areas.length} áreas, ${seniorities.length} seniorities, ${tags.length} tags, ${users.length} usuarios, ${applicants.length} applicants, ${jobOpenings.length} job openings, ${applications.length} applications, ${interviews.length} entrevistas.`,
   );
 }
