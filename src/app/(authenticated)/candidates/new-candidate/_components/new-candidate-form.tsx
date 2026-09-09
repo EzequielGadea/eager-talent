@@ -9,6 +9,8 @@ import {
   useForm,
 } from "react-hook-form";
 
+import { api } from "~/lib/trpc/react";
+
 import { Button } from "~/components/ui/button";
 
 import PersonalData from "./personal-data";
@@ -19,6 +21,7 @@ import NewCandidateButton from "./new-candidate-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SourceAndTags from "./source-and-tags";
+import { EnglishLevel, Source } from "~/generated/prisma/browser";
 
 
 
@@ -35,9 +38,26 @@ export const candidateFormSchema = z.object({
   seniority: z.string(),
   area: z.string(),
   desiredSalary: z.string(),
-  englishLevel: z.string(),
+  englishLevel: z.union([
+    z.enum([
+      EnglishLevel.Basic,
+      EnglishLevel.Intermediate,
+      EnglishLevel.Advanced,
+      EnglishLevel.Native,
+    ]),
+    z.literal(""),
+  ]),
 
-  source: z.string(),
+  source: z.union([
+    z.enum([
+      Source.LinkedIn,
+      Source.Website,
+      Source.Outbound,
+      Source.Referral,
+      Source.JobBoard,
+    ]),
+    z.literal(""),
+  ]),
   howDidYouHear: z.string(),
   tags: z.array(z.string()),
 
@@ -58,6 +78,7 @@ export default function NewCandidateForm() {
   const router = useRouter();
   const methods = useForm<CandidateFormValues>({
   resolver: zodResolver(candidateFormSchema),
+
 
   defaultValues: {
     fullName: "",
@@ -81,8 +102,36 @@ export default function NewCandidateForm() {
   },
 });
 
+
+  const createCandidateMutation = api.applicant.createApplicant.useMutation({
+    onSuccess: () => {
+      router.push("/candidatos");
+    },
+    onError: (error) => {
+      console.error("Error creating candidate:", error);
+    }
+  });
+
   function onSubmit(data: CandidateFormValues) {
     console.log(data);
+    createCandidateMutation.mutate({
+    fullName: data.fullName,
+    email: data.email,
+    phone: data.phone,
+    country: data.country,
+    linkedin: data.linkedin,
+
+    roleId: data.role,
+    areaId: data.area || undefined,
+    seniorityId: data.seniority || undefined,
+
+    englishLevel: data.englishLevel || undefined,
+    source: data.source || undefined,
+
+    hearAboutUs: data.howDidYouHear || undefined,
+    education: data.education,
+    tagIds: data.tags,
+  });
   }
 
   function handleCancel() {
@@ -115,7 +164,7 @@ export default function NewCandidateForm() {
               Cancelar
             </Button>
 
-            <NewCandidateButton />
+            <NewCandidateButton/>
           </div>
         </footer>
       </form>
