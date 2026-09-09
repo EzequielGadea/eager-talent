@@ -13,11 +13,12 @@ import { Button } from "~/components/ui/button";
 
 import PersonalData from "./personal-data";
 import ProfessionalProfile from "./professional-profile";
-import SourceAndLabels from "./source-and-labels";
+
 import EducationAndFiles from "./education-and-files";
 import NewCandidateButton from "./new-candidate-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import SourceAndTags from "./source-and-tags";
 
 
 
@@ -38,7 +39,7 @@ export const candidateFormSchema = z.object({
 
   source: z.string(),
   howDidYouHear: z.string(),
-  tags: z.string(),
+  tags: z.array(z.string()),
 
   education: z.string(),
   cv: z.custom<FileList>().optional(),
@@ -74,7 +75,7 @@ export default function NewCandidateForm() {
 
     source: "",
     howDidYouHear: "",
-    tags: "",
+    tags:  [],
 
     education: "",
   },
@@ -97,7 +98,7 @@ export default function NewCandidateForm() {
       >
         <PersonalData />
         <ProfessionalProfile />
-        <SourceAndLabels />
+        <SourceAndTags />
         <EducationAndFiles />
 
         <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
