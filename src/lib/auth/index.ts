@@ -6,10 +6,7 @@ import { prisma } from "~/lib/prisma";
 
 export const auth = betterAuth({
   baseURL: {
-    allowedHosts: [
-      "*.vercel.app",
-      "localhost:3000",
-    ],
+    allowedHosts: ["*.vercel.app", "localhost:3000"],
   },
   database: prismaAdapter(prisma, {
     provider: "postgresql",

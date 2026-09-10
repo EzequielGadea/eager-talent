@@ -1,7 +1,6 @@
 name: Discord Notify - Vercel Deploy
 
-on:
-  deployment_status
+on: deployment_status
 
 jobs:
   notify:
