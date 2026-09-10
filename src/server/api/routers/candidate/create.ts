@@ -6,7 +6,8 @@ import { protectedProcedure } from "~/server/api/trpc";
 export const createApplicant = protectedProcedure
   .input(
     z.object({
-        fullName: z.string().min(1),
+        name: z.string().min(1),
+        lastname: z.string().min(1),
         email: z.string().optional(), 
         phone: z.string().optional(),
         photo: z.string().optional(),
@@ -47,8 +48,8 @@ export const createApplicant = protectedProcedure
     .mutation(({ ctx, input }) => {
         return ctx.db.applicant.create({
             data: {
-                name: input.fullName,
-                lastName: input.fullName,
+                name: input.name,
+                lastName: input.lastname,
                 email: input.email,
                 phone: input.phone,
                 photo: input.photo,
@@ -89,10 +90,6 @@ export const createApplicant = protectedProcedure
                 tags: {
                 connect: input.tagIds.map((id) => ({ id })),
                 },
-
-
-
-
             }
         });
     });

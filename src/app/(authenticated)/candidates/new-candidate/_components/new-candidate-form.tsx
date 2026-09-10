@@ -28,10 +28,12 @@ import { useUploadThing } from "~/components/ui/uploadthing";
 
 
 export const candidateFormSchema = z.object({
-  fullName: z.string().min(1, "El nombre es obligatorio"),
+  name : z.string().min(1, "El nombre es obligatorio"),
+  lastname: z.string().min(1, "El apellido es obligatorio"),
   email: z.string().min(1, "El correo es obligatorio").email("Correo inválido"),
   phone: z.string(),
   country: z.string(),
+  photo : z.custom<FileList>().optional(),
   linkedin: z.string(),
 
   role: z.string().min(1, "El rol es obligatorio"),
@@ -83,7 +85,8 @@ export default function NewCandidateForm() {
 
 
   defaultValues: {
-    fullName: "",
+    name: "",
+    lastname: "",
     email: "",
     phone: "",
     country: "",
@@ -115,7 +118,7 @@ export default function NewCandidateForm() {
 
   async function onSubmit(data: CandidateFormValues) {
 
-    let resumeUrl, educationUrl: string | undefined;
+    let resumeUrl, educationUrl, photoUrl: string | undefined;
 
     const resume = data.resume?.[0];
 
@@ -131,13 +134,21 @@ export default function NewCandidateForm() {
       educationUrl = uploadedFiles?.[0]?.url;
     }
 
+    const photo = data.photo?.[0];
+
+    if (photo) {
+      const uploadedFiles = await startUpload([photo]);
+      photoUrl = uploadedFiles?.[0]?.url;
+    }
+
 
 
 
 
     console.log(data);
     createCandidateMutation.mutate({
-    fullName: data.fullName,
+    name : data.name,
+    lastname: data.lastname,
     email: data.email,
     phone: data.phone,
     country: data.country,
@@ -154,6 +165,7 @@ export default function NewCandidateForm() {
     academicInstitution: data.academicInstitution,
     resume: resumeUrl,
     education: educationUrl,
+    photo: photoUrl,
     tagIds: data.tags
   });
   }
