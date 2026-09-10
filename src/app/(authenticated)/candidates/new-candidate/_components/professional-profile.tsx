@@ -79,6 +79,7 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
             <Label>
               Rol <span className="text-red-500">*</span>
             </Label>
+            
 
             <Controller
               name="role"
@@ -114,6 +115,9 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
                 </Select>
               )}
             />
+            {errors.role && (
+              <p>{errors.role.message}</p>  
+            )}
            
 
           </div>
