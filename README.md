@@ -96,10 +96,13 @@ En pocas palabras, un rebase es un método para unir dos branches, que rebobina 
 la branch base (en este caso `dev`) y reproduce (es decir, vuelve a aplicar) sus commits sobre `HEAD`. Esto tiene el objetivo de 
 que el historial sea más limpio y que al presional el botón de Merge de la PR aparezcan pocos (o ningún) conflicto.
 
-> Warning! Hacer un rebase sobreescribe el historial de la branch. Si algun colaborador no hizo un push de sus cambios antes de
-> hacer el rebase, podría potencialmente perder su trabajo. Es importante que se coordinen antes de hacer el rebase y solo hacerlo
-> cuando sepan que no agregarán más commits.
+> [!WARNING]
+> Hacer un rebase sobreescribe el historial de la branch. Si quien hace el rebase tiene una versión desactualizada de la branch 
+> local a la que esta haciendole rebase, un colaborador que haya pusheado un cambio al remoto podría perder su trabajo.
+> Es importante que se coordinen antes de hacer el rebase y solo hacerlo cuando sepan que no les faltan commits localmente y nadie agregará más commits.
+> DEBEN pushear usando `git push --force-with-lease` para verificar que su branch local NO esté por detrás de la branch remota.
 
+> [!TIP]
 > `HEAD` es una "variable" que mantiene la referencia (el SHA-1 de un commit) del commit más reciente de la branch actual.
 
 <img width="950" height="600" alt="image" src="https://github.com/user-attachments/assets/9d5b95e5-fba1-41e1-b3e1-8d346bde3272" />
@@ -109,7 +112,8 @@ desarrollaron su funcionalidad, mientras `C` representa la branch destino (en nu
 funcionalidades que sus compañeros ya integraron, y con quienes potencialmente podrían tener conflictos. Luego de aplicar el rebase
 obtenemos un historial más limpio de la branch donde desarrollaron y sin conflictos.
 
-> Nota: existe un escenario donde aún después de un rebase tengan conflictos con `dev`. Esto sucede cuando alguien hacer Merge de una PR
+> [!IMPORTANT]
+> Existe un escenario donde aún después de un rebase tengan conflictos con `dev`. Esto sucede cuando alguien hacer Merge de una PR
 > justo después de que ustedes hayan comenzado su rebase, pero antes de que hagan Merge hacia `dev`.
 
 PUEDEN ver [Learn Git Rebase in 6 minutes // explained with live animations!](https://www.youtube.com/watch?v=f1wnYdLEpgI) donde se explica
