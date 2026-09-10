@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Zap } from "lucide-react";
+import { Eye, EyeOff, Zap } from "lucide-react";
 import { z } from "zod";
 
 import { Button } from "~/components/ui/button";
@@ -54,6 +55,7 @@ function EagerTalentLogo() {
 }
 
 export function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const {
@@ -117,10 +119,27 @@ export function LoginForm() {
 
         <Input
           id="password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           label="Contraseña"
           autoComplete="current-password"
           errorMessage={errors.password?.message}
+          iconRight={
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              aria-label={
+                showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+              }
+              aria-pressed={showPassword}
+              className="flex size-8 items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
+            >
+              {showPassword ? (
+                <EyeOff aria-hidden="true" className="size-4" />
+              ) : (
+                <Eye aria-hidden="true" className="size-4" />
+              )}
+            </button>
+          }
           className="h-9.5 rounded-md border-slate-200 px-3 focus-visible:border-emerald-500 focus-visible:ring-emerald-500/20"
           {...register("password")}
         />
