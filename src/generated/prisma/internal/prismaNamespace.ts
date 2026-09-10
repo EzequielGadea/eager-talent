@@ -2192,6 +2192,20 @@ export type ListEnumSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 
 
 /**
+ * Reference to a field of type 'HearAboutUs'
+ */
+export type EnumHearAboutUsFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HearAboutUs'>
+    
+
+
+/**
+ * Reference to a field of type 'HearAboutUs[]'
+ */
+export type ListEnumHearAboutUsFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HearAboutUs[]'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>

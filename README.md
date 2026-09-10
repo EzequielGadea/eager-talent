@@ -14,19 +14,30 @@ Abrir [http://localhost:3000](http://localhost:3000).
 
 `setup:local` inicia la base local, aplica las migraciones y genera Prisma Client. Una base nueva queda sin datos de aplicación hasta ejecutar el seed.
 
-### Seed (cargar datos iniciales)
+### Seed (cargar o reiniciar datos iniciales)
 
 ```bash
 bun run db:seed
 ```
 
-El seed (en este momento) crea un único administrador de prueba (rol `Recruiter`):
+El script de seed (`src/server/db/prisma/seed-data.ts`) es **idempotente**: se puede ejecutar N veces sin duplicar datos. Solo se permite ejecutar contra PostgreSQL local.
 
-- Email: `admin@example.com`
-- Contraseña: `admin123`
+- **Administrador principal (con credenciales de login):**
+   - **Rol:** `Recruiter`
+   - **Email:** `admin@example.com`
+   - **Contraseña:** `admin123`
 
 
-`src/server/db/prisma/seed-data.ts` queda como plantilla para futuros datos de prueba (solo permite PostgreSQL local!!). No se ejecuta durante la instalación, el build, `setup:local` ni la aplicación de migraciones.
+
+#### Reiniciar la base de datos local desde cero
+
+Por si en algún momento es necesario vaciar completamente la instancia local de Prisma Dev y empezar de cero:
+
+```bash
+bun run db:local:remove
+bun run setup:local
+bun run db:seed
+```
 
 
 ### Consultar la DB local

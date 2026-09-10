@@ -196,6 +196,13 @@ export type EnumSourceNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumSourceNullableFilter<$PrismaModel> | $Enums.Source | null
 }
 
+export type EnumHearAboutUsNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.HearAboutUs | Prisma.EnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHearAboutUsNullableFilter<$PrismaModel> | $Enums.HearAboutUs | null
+}
+
 export type IntNullableFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
@@ -225,6 +232,16 @@ export type EnumSourceNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumSourceNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumSourceNullableFilter<$PrismaModel>
+}
+
+export type EnumHearAboutUsNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HearAboutUs | Prisma.EnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHearAboutUsNullableWithAggregatesFilter<$PrismaModel> | $Enums.HearAboutUs | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHearAboutUsNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHearAboutUsNullableFilter<$PrismaModel>
 }
 
 export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -567,6 +584,13 @@ export type NestedEnumSourceNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumSourceNullableFilter<$PrismaModel> | $Enums.Source | null
 }
 
+export type NestedEnumHearAboutUsNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.HearAboutUs | Prisma.EnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHearAboutUsNullableFilter<$PrismaModel> | $Enums.HearAboutUs | null
+}
+
 export type NestedEnumEnglishLevelNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.EnglishLevel | Prisma.EnumEnglishLevelFieldRefInput<$PrismaModel> | null
   in?: $Enums.EnglishLevel[] | Prisma.ListEnumEnglishLevelFieldRefInput<$PrismaModel> | null
@@ -585,6 +609,16 @@ export type NestedEnumSourceNullableWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumSourceNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumSourceNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumHearAboutUsNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.HearAboutUs | Prisma.EnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  in?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.HearAboutUs[] | Prisma.ListEnumHearAboutUsFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumHearAboutUsNullableWithAggregatesFilter<$PrismaModel> | $Enums.HearAboutUs | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumHearAboutUsNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumHearAboutUsNullableFilter<$PrismaModel>
 }
 
 export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
