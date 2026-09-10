@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SourceAndTags from "./source-and-tags";
 import { EnglishLevel, Source } from "~/generated/prisma/browser";
 
+import { useUploadThing } from "~/components/ui/uploadthing";
 
 
 
@@ -60,10 +61,9 @@ export const candidateFormSchema = z.object({
   ]),
   howDidYouHear: z.string(),
   tags: z.array(z.string()),
-
-  education: z.string(),
-  cv: z.custom<FileList>().optional(),
-  academicRecord: z.custom<FileList>().optional(),
+  resume: z.custom<FileList>().optional(),
+  academicInstitution: z.string(),
+  education: z.custom<FileList>().optional(),
 });
 
 
@@ -74,10 +74,12 @@ export type CandidateFormValues =
 
 
 export default function NewCandidateForm() {
-
+  
+  const { startUpload } = useUploadThing("candidateFiles");
   const router = useRouter();
   const methods = useForm<CandidateFormValues>({
   resolver: zodResolver(candidateFormSchema),
+  
 
 
   defaultValues: {
@@ -98,21 +100,41 @@ export default function NewCandidateForm() {
     howDidYouHear: "",
     tags:  [],
 
-    education: "",
+    academicInstitution: "",
   },
 });
 
-
   const createCandidateMutation = api.applicant.createApplicant.useMutation({
     onSuccess: () => {
-      router.push("/candidatos");
+      router.push("/candidates");
     },
     onError: (error) => {
       console.error("Error creating candidate:", error);
     }
   });
 
-  function onSubmit(data: CandidateFormValues) {
+  async function onSubmit(data: CandidateFormValues) {
+
+    let resumeUrl, educationUrl: string | undefined;
+
+    const resume = data.resume?.[0];
+
+    if (resume) {
+      const uploadedFiles = await startUpload([resume]);
+      resumeUrl = uploadedFiles?.[0]?.url;
+    }
+
+    const education = data.education?.[0];
+
+    if (education) {
+      const uploadedFiles = await startUpload([education]);
+      educationUrl = uploadedFiles?.[0]?.url;
+    }
+
+
+
+
+
     console.log(data);
     createCandidateMutation.mutate({
     fullName: data.fullName,
@@ -129,14 +151,16 @@ export default function NewCandidateForm() {
     source: data.source || undefined,
 
     hearAboutUs: data.howDidYouHear || undefined,
-    education: data.education,
-    tagIds: data.tags,
+    academicInstitution: data.academicInstitution,
+    resume: resumeUrl,
+    education: educationUrl,
+    tagIds: data.tags
   });
   }
 
   function handleCancel() {
   methods.reset();
-  router.push("/candidatos");
+  router.push("/candidates");
 }
 
   return (
