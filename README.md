@@ -119,6 +119,10 @@ obtenemos un historial más limpio de la branch donde desarrollaron y sin confli
 PUEDEN ver [Learn Git Rebase in 6 minutes // explained with live animations!](https://www.youtube.com/watch?v=f1wnYdLEpgI) donde se explica
 especificamente qué comandos correr. PUEDEN investigar sobre rebase interactivo.
 
+Finalmente, una vez que la funcionalidad fue implementada, testeada, pasa los chequeos automáticos y la branch de desarrollo fue rebaseada
+sobre `dev`, tienen disponible el merge. En particular la estrategia de mergeo que vamos a usar es Squash and Commit, crea un solo commit
+con el listado de los mensajes de commit de la branch origen; esto permite ver qué cambios introduce una PR a simple vista en el historial de `dev`.
+
 ## Sobre los commits
 Su flujo de creación de commits NO DEBERÍA ser así
 
