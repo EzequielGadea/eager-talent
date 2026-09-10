@@ -30,31 +30,31 @@ export default function EducationAndFiles() {
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="education">
+            <Label htmlFor="academicInstitution">
               Formación académica
             </Label>
 
             <Input
-              id="education"
+              id="academicInstitution"
               placeholder="Ej. Ing. en Sistemas — Universidad de Buenos Aires"
-              {...register("education")}
+              {...register("academicInstitution")}
             />
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <div className="space-y-1">
-              <Label htmlFor="cv">CV</Label>
+              <Label htmlFor="resume">CV</Label>
 
               <input
-                id="cv"
+                id="resume"
                 type="file"
                 accept=".pdf"
                 className="hidden"
-                {...register("cv")}
+                {...register("resume")}
               />
 
               <label
-                htmlFor="cv"
+                htmlFor="resume"
                 className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
               >
                 <Upload className="h-4 w-4" />
@@ -63,20 +63,20 @@ export default function EducationAndFiles() {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="academicRecord">
+              <Label htmlFor="education">
                 Escolaridad
               </Label>
 
               <input
-                id="academicRecord"
+                id="education"
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 className="hidden"
-                {...register("academicRecord")}
+                {...register("education")}
               />
 
               <label
-                htmlFor="academicRecord"
+                htmlFor="education"
                 className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
               >
                 <Upload className="h-4 w-4" />

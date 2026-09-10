@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  generateReactHelpers,
   generateUploadButton,
   generateUploadDropzone,
 } from "@uploadthing/react";
@@ -12,3 +13,6 @@ export const UploadButton =
 
 export const UploadDropzone =
   generateUploadDropzone<OurFileRouter>();
+
+  export const { useUploadThing } =
+  generateReactHelpers<OurFileRouter>();
