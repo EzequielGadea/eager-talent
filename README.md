@@ -169,4 +169,4 @@ UploadThing provee un paquete para facilitar el desarrollo, ya esta instalado en
 una cuenta, crear un bucket y obtener un API TOKEN para poder probar sus funcionalidades. Los ambientes de PREVIEW y PRODUCTION ya tienen
 un API TOKEN configurado que proveen acceso a buckets de la cuenta del Responsable de SCM.
 
-Para más información consulten los (docs de UploadThing)[https://docs.uploadthing.com/getting-started/appdir].
+Para más información consulten los [docs de UploadThing](https://docs.uploadthing.com/getting-started/appdir).
