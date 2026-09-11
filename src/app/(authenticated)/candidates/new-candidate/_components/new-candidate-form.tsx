@@ -109,9 +109,20 @@ export default function NewCandidateForm() {
 
   const createCandidateMutation = api.applicant.createApplicant.useMutation({
     onSuccess: () => {
+      methods.reset();
       router.push("/candidates");
     },
     onError: (error) => {
+      if (error.data?.code === "CONFLICT") {
+      methods.setError("email", {
+        type: "server",
+        message: "Ya existe un candidato con ese email",
+      });
+
+      return;
+    }
+      
+      
       console.error("Error creating candidate:", error);
     }
   });
