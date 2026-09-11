@@ -1,7 +1,8 @@
 "use client";
 
-import { Upload } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import { Upload, X } from "lucide-react";
+import { useFormContext, useWatch } from "react-hook-form";
+
 
 import {
   Card,
@@ -16,8 +17,22 @@ import { Label } from "~/components/ui/label";
 import type { CandidateFormValues } from "./new-candidate-form";
 
 export default function EducationAndFiles() {
-  const { register } =
+  const { control, register , resetField } =
     useFormContext<CandidateFormValues>();
+
+    const educationWatch = useWatch({
+      control,
+      name: "education"
+    });
+
+    const resumeWatch = useWatch({
+      control,
+      name: "resume"
+    });
+
+    const resumeFile=resumeWatch?.[0];
+
+    const educationFile = educationWatch?.[0];
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -53,13 +68,27 @@ export default function EducationAndFiles() {
                 {...register("resume")}
               />
 
-              <label
-                htmlFor="resume"
-                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
-              >
-                <Upload className="h-4 w-4" />
-                Subir CV (PDF)
-              </label>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="resume"
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
+                >
+                  <Upload className="h-4 w-4 shrink-0" />
+                  <span className="truncate">
+                    {resumeFile ? resumeFile.name : "Subir CV (PDF)"}
+                  </span>
+                </label>
+                {resumeFile && (
+                  <button
+                    type="button"
+                    onClick={() => resetField("resume")}
+                    aria-label="Eliminar CV"
+                    className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -75,13 +104,27 @@ export default function EducationAndFiles() {
                 {...register("education")}
               />
 
-              <label
-                htmlFor="education"
-                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
-              >
-                <Upload className="h-4 w-4" />
-                Subir certificado
-              </label>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="education"
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
+                >
+                  <Upload className="h-4 w-4 shrink-0" />
+                  <span className="truncate">
+                    {educationFile ? educationFile.name : "Subir certificado"}
+                  </span>
+                </label>
+                {educationFile && (
+                  <button
+                    type="button"
+                    onClick={() => resetField("education")}
+                    aria-label="Eliminar certificado"
+                    className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
