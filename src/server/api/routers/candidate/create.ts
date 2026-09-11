@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { EnglishLevel, Source } from "~/generated/prisma/enums";
 import { protectedProcedure } from "~/server/api/trpc";
+import { Prisma } from "~/generated/prisma/client";
+import { TRPCError } from "@trpc/server";
 
 export const createApplicant = protectedProcedure
   .input(
@@ -39,14 +41,15 @@ export const createApplicant = protectedProcedure
         education: z.string().optional(),
         resume: z.string().optional(),
 
-        roleId: z.string().optional(),
+        roleId: z.string(),
         areaId: z.string().optional(),
         seniorityId: z.string().optional(),
         tagIds: z.array(z.string()).default([])
         }),
     )
-    .mutation(({ ctx, input }) => {
-        return ctx.db.applicant.create({
+    .mutation(async ({ ctx, input }) => {
+        try {
+            return await ctx.db.applicant.create({
             data: {
                 name: input.name,
                 lastName: input.lastname,
@@ -64,7 +67,7 @@ export const createApplicant = protectedProcedure
                 careerEndYear: input.careerEndYear,
                 education: input.education,
                 resume: input.resume,
-                
+
                 role: {
                 connect: {
                     id: input.roleId,
@@ -90,9 +93,22 @@ export const createApplicant = protectedProcedure
                 tags: {
                 connect: input.tagIds.map((id) => ({ id })),
                 },
+            },
+            });
+        } catch (error) {
+            if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002"
+            ) {
+            throw new TRPCError({
+                code: "CONFLICT",
+                message: "Ya existe un candidato con ese email",
+            });
             }
-        });
-    });
+
+            throw error;
+        }
+});
 
 /*
 
