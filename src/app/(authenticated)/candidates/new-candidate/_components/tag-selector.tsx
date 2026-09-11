@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { api } from "~/lib/trpc/react";
+import { Button } from "~/components/ui/button";
+import { Switch } from "~/components/ui/switch";
 
 import { Badge } from "~/components/ui/badge";
 import {
@@ -21,6 +24,7 @@ import {
 type Tag = {
   id: string;
   name: string;
+  color: string;
 };
 
 type Props = {
@@ -36,6 +40,31 @@ export function TagSelector({
 }: Props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [newTagColor, setNewTagColor] = useState("#94a3b8");
+  const [newTagIsSkill, setNewTagIsSkill] = useState(false);
+
+  const utils = api.useUtils();
+
+  const createTag = api.tag.createTag.useMutation({
+    onSuccess: async () => {
+      await utils.tag.getAllTags.invalidate();
+    },
+  });
+
+  const handleCreateTag = async () => {
+    const newTag = await createTag.mutateAsync({
+      name: search.trim(),
+      color: newTagColor,
+      isSkill: newTagIsSkill,
+    });
+
+    onChange([...value, newTag.id]);
+
+    setSearch("");
+   
+    closeCreateForm();
+  };
 
   const addTag = (tagId: string) => {
     if (!value.includes(tagId)) {
@@ -43,6 +72,7 @@ export function TagSelector({
     }
 
     setSearch("");
+     closeCreateForm();
   };
 
   const removeTag = (tagId: string) => {
@@ -54,6 +84,17 @@ export function TagSelector({
       tag.name.toLowerCase().includes(search.toLowerCase()) &&
       !value.includes(tag.id),
   );
+
+
+
+  const tagAlreadyExists = tags.some(
+    (tag) => tag.name.toLowerCase() === search.trim().toLowerCase(),
+  );
+  const closeCreateForm = () => {
+    setCreating(false);
+    setNewTagColor("#94a3b8");
+    setNewTagIsSkill(false);
+  };
 
   return (
     <div className="space-y-2">
@@ -68,15 +109,19 @@ export function TagSelector({
           return (
             <Badge
               key={tag.id}
-              variant="secondary"
-              className="flex items-center gap-1"
+              variant="outline"
+              style={{
+                backgroundColor: `${tag.color}20`,
+                borderColor: `${tag.color}60`,
+                color: tag.color,
+              }}
             >
               {tag.name}
 
               <button
                 type="button"
                 onClick={() => removeTag(tag.id)}
-                className="cursor-pointer"
+                className="ml-1 cursor-pointer"
               >
                 <X className="h-3 w-3" />
               </button>
@@ -103,23 +148,91 @@ export function TagSelector({
                 onValueChange={setSearch}
               />
 
-              <CommandList>
-                <CommandEmpty>
-                  No se encontraron etiquetas.
-                </CommandEmpty>
+             <CommandList>
+  {filteredTags.length > 0 && (
+    <CommandGroup>
+      {filteredTags.map((tag) => (
+        <CommandItem
+          key={tag.id}
+          value={tag.name}
+          onSelect={() => addTag(tag.id)}
+        >
+          <Badge
+            variant="outline"
+            style={{
+              backgroundColor: `${tag.color}20`,
+              borderColor: `${tag.color}60`,
+              color: tag.color,
+            }}
+          >
+            {tag.name}
+          </Badge>
+        </CommandItem>
+      ))}
+    </CommandGroup>
+  )}
 
-                <CommandGroup>
-                  {filteredTags.map((tag) => (
-                    <CommandItem
-                      key={tag.id}
-                      value={tag.name}
-                      onSelect={() => addTag(tag.id)}
-                    >
-                      {tag.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
+  {search.trim() !== "" && !tagAlreadyExists && !creating && (
+    <CommandGroup>
+      <CommandItem value={search} onSelect={() => setCreating(true)}>
+        <Badge className="bg-green-600 border-green-700 text-white hover:bg-green-700"
+            variant="outline"
+            
+          >
+           + Crear
+          </Badge>
+      </CommandItem>
+    </CommandGroup>
+  )}
+
+{creating && (
+  <div className="space-y-3 border-t p-3">
+    <div className="flex items-center gap-3">
+      <label className="text-xs font-medium">
+        Color
+      </label>
+
+      <input
+        type="color"
+        value={newTagColor}
+        onChange={(e) => setNewTagColor(e.target.value)}
+        className="h-7 w-9 cursor-pointer"
+      />
+    </div>
+
+    <div className="flex items-center justify-between">
+      <label className="text-xs font-medium">
+        Skill
+      </label>
+
+      <Switch
+        checked={newTagIsSkill}
+        onCheckedChange={setNewTagIsSkill}
+      />
+    </div>
+    <Button className="w-full rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground"
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={closeCreateForm}
+        
+    >
+        Cancelar
+    </Button>
+
+    <Button
+      type="button"
+      variant="outline"
+      onClick={handleCreateTag}
+      className="w-full rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground"
+    >
+      Crear etiqueta
+    </Button>
+  </div>
+)}
+
+
+</CommandList>
             </Command>
           </PopoverContent>
         </Popover>

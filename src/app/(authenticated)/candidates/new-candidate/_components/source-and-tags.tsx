@@ -102,16 +102,16 @@ const { data: availableTags, isLoading} =
             </Label>
 
             <Controller
-  name="tags"
-  control={control}
-  render={({ field }) => (
-    <TagSelector
-      tags={availableTags ??  []}
-      value={field.value}
-      onChange={field.onChange}
-    />
-  )}
-/>
+              name="tags"
+              control={control}
+              render={({ field }) => (
+                <TagSelector
+                  tags={availableTags ??  []}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
           </div>
         </div>
       </CardContent>
