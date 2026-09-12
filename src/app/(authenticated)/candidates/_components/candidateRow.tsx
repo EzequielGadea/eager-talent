@@ -76,10 +76,10 @@ export function CandidateRow(props : {candidate : CandidateInfo}) {
                   <Badge
                     variant="secondary"
                     className={`rounded-md border-transparent px-2 py-1 text-xs font-bold whitespace-normal break-words text-center ${getSeniorityClasses(
-                      props.candidate.seniority
+                      props.candidate.seniorityName
                     )}`}
                   >
-                    {props.candidate.seniority}
+                    {props.candidate.seniorityName}
                   </Badge>
                 </TableCell>
 

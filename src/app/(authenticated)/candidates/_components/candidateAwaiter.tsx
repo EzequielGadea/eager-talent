@@ -14,26 +14,30 @@ async function Await(promise : CandidatesPromise) {
           initials: cand.name[0] + cand.lastName[0],
           name: cand.name + ' ' + cand.lastName,
           avatarBg: avatarPalette[0],
-          tags: [{ //cand.tags, //TODO mapear color -> type
-            label: "tag", 
-            type: "purple" as TagType,
-          }],
-          vacancy: "—", //TODO cand.applications.jobOpening.name,
-          role: cand.role.name,
-          seniority: "Senior",//TODO mapeo color cand.seniority?.name,
-          area: (cand.area) ? cand.area.name : "Sin aréa",
-          sourceText: "Inbound", //TODO falta en el esquema de DB
+          tags: (cand.tags) ? cand.tags.map(
+            (tag) => ({
+              label: tag.name,
+              type: "purple" as TagType, //TODO mapear color -> type
+            })
+            ) : [],
+          vacancy: (cand.applications) ? cand.applications.map(
+            application => application.jobOpening.name) : [], 
+          role: (cand.role.name) ?? "-",
+          seniorityName: (cand.seniority?.name) ?? "-",
+          seniorityColor: (cand.seniority?.color) ?? "-",
+          area: (cand.area?.name) ?? "-",
+          sourceText: (cand.source)  ?? "-", 
           sourceIcon: "f", //TODO 
           hasCv: cand.resume != null,
           hasLinkedin: cand.linkedin != null,
-          linkedinUrl: (cand.linkedin != null) ? cand.linkedin : "undefined",
-          email: (cand.email == null) ? "no email error" : cand.email,
+          linkedinUrl: (cand.linkedin != null) ? cand.linkedin : "-",
+          email: (cand.email == null) ? "-" : cand.email,
         }
       }) : [];
     const countCand = candidatesData.length
-    let uniqueVacancy = new Set<String>();
-    for (var cand of candidatesData) {
-      for (var vac of cand.vacancy) {
+    const uniqueVacancy = new Set<string>();
+    for (const cand of candidatesData) {
+      for (const vac of cand.vacancy) {
         uniqueVacancy.add(vac);
       }
     }
@@ -72,7 +76,7 @@ export async function CandidateAwaiterFilters(props : { promise : CandidatesProm
     const { candidatesData, countCand, countVacancy } = await Await(props.promise);
     return (
       <>
-        <Filters/>
+        <Filters candidates={candidatesData}/>
       </>
     )
 }
