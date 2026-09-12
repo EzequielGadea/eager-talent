@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Source } from "~/generated/prisma/enums";
+import { HearAboutUs } from "~/generated/prisma/enums";
 import type { CandidateFormValues } from "./new-candidate-form";
 
 
@@ -35,6 +36,11 @@ export default function SourceAndTags() {
 const sources = Object.values(Source).map((source) => ({
   value: source,
   label: source,
+}));
+
+const hearAboutUs = Object.values(HearAboutUs).map((hearAbout) => ({
+  value: hearAbout,
+  label: hearAbout,
 }));
 
 const { data: availableTags, isLoading} =
@@ -89,10 +95,27 @@ const { data: availableTags, isLoading} =
               ¿Cómo escuchó de nosotros?
             </Label>
 
-            <Input
-              id="howDidYouHear"
-              placeholder="Ej. A través de LinkedIn"
-              {...register("howDidYouHear")}
+            <Controller
+              name="howDidYouHear"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Seleccionar origen" />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {hearAboutUs.map((hearAbout) => (
+                      <SelectItem key={hearAbout.value} value={hearAbout.value}>
+                        {hearAbout.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             />
           </div>
 
