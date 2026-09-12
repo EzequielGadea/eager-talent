@@ -141,7 +141,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // ---------- APPLICANTS ----------
   const englishLevels: EnglishLevel[] = ["Basic", "Intermediate", "Advanced", "Native"];
-  const sources: Source[] = ["LinkedIn", "Website", "Outbound", "Referral", "JobBoard"];
+  const sources: Source[] = ["Inbound", "Outbound", "Referido"];
   const applicantsCount = 40;
   const applicants = [];
 

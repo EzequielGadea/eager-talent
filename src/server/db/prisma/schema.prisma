@@ -336,11 +336,10 @@ enum EnglishLevel {
 }
 
 enum Source {
-  LinkedIn
-  Website
+  Inbound
   Outbound
-  Referral
-  JobBoard
+  Referido
+
 }
 
 enum JobOpeningStatus {

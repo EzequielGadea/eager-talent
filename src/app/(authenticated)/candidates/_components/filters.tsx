@@ -59,7 +59,7 @@ const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
   },
   {
     id: "Source",
-    label: "Source",
+    label: "Fuente",
     options: [
       "LinkedIn",
       "Outbound",
