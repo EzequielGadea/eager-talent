@@ -8,11 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
-import type { CandidateFormValues } from "./new-candidate-form";
+import type { ApplicantFormValues } from "./new-applicant-form";
 
 export default function EducationAndFiles() {
   const { control, register, resetField } =
-    useFormContext<CandidateFormValues>();
+    useFormContext<ApplicantFormValues>();
 
   const educationWatch = useWatch({
     control,

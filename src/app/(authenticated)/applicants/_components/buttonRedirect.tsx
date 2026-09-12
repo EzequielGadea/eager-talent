@@ -13,6 +13,6 @@ export default function ButtonRedirect() {
 
 
         function redirect() {
-      router.push("/candidates/new-candidate");
+      router.push("/applicants/new-applicant");
     }
 }

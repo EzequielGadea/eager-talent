@@ -2,13 +2,13 @@ import { ArrowRight } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 
-interface NewCandidateButtonProps {
+interface NewApplicantButtonProps {
   disabled?: boolean;
 }
 
-export default function NewCandidateButton({
+export default function NewApplicantButton({
   disabled = false,
-}: NewCandidateButtonProps) {
+}: NewApplicantButtonProps) {
   return (
     <Button type="submit" disabled={disabled}>
       {disabled ? "Guardando..." : "Guardar candidato"}
