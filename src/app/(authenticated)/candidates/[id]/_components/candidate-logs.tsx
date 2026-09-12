@@ -42,7 +42,7 @@ export async function CandidateLogs({ candidateId }: CandidateLogsProps) {
       ) : (
         <>
           <div className="px-5">
-            <div className="grid grid-cols-[170px_minmax(0,1fr)_160px] gap-3 border-b py-3 text-xs font-semibold uppercase text-muted-foreground">
+            <div className="grid grid-cols-[170px_minmax(0,1fr)_230px] gap-3 border-b py-3 text-xs font-semibold uppercase text-muted-foreground">
               <span>Fecha</span>
               <span>Evento</span>
               <span>Postulación</span>
@@ -51,19 +51,17 @@ export async function CandidateLogs({ candidateId }: CandidateLogsProps) {
             {activities.map((activity) => (
               <div
                 key={activity.id}
-                className="grid grid-cols-[170px_minmax(0,1fr)_160px] items-center gap-3 border-b py-3 text-sm last:border-b-0"
+                className="grid grid-cols-[170px_minmax(0,1fr)_230px] items-center gap-3 border-b py-3 text-sm last:border-b-0"
               >
-                <span className="text-muted-foreground">
+                <span className="whitespace-nowrap text-muted-foreground">
                   {formatActivityDate(activity.date)}
                 </span>
 
                 <span>{activity.description}</span>
 
-                <div>
-                  <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
-                    {activity.application?.jobOpening.name ?? "Candidato"}
-                  </span>
-                </div>
+                <ApplicationBadge
+                  applicationName={activity.application?.jobOpening.name}
+                />
               </div>
             ))}
           </div>
@@ -74,6 +72,30 @@ export async function CandidateLogs({ candidateId }: CandidateLogsProps) {
         </>
       )}
     </section>
+  );
+}
+
+type ApplicationBadgeProps = {
+  applicationName?: string;
+};
+
+function ApplicationBadge({ applicationName }: ApplicationBadgeProps) {
+  if (applicationName) {
+    return (
+      <div>
+        <span className="inline-flex max-w-full rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium leading-tight text-blue-700">
+          {applicationName}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+        Candidato
+      </span>
+    </div>
   );
 }
 

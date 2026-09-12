@@ -5,7 +5,6 @@ import { CandidateNotes } from "./candidate-notes";
 import { CandidateOverviewCard } from "./candidate-overview-card";
 import { CandidateTags } from "./candidate-tags";
 import { CandidateInfoCards } from "./candidate-info-cards";
-import { CandidateApplications } from "./candidate-applications";
 import { CandidateLogs } from "./candidate-logs";
 
 type CandidateDetailsProps = {
@@ -27,6 +26,7 @@ export async function CandidateDetails({ params }: CandidateDetailsProps) {
         <CandidateOverviewCard
           name={candidate.name}
           lastName={candidate.lastName}
+          photo={candidate.photo}
           email={candidate.email}
           phone={candidate.phone}
           country={candidate.country}
@@ -36,6 +36,7 @@ export async function CandidateDetails({ params }: CandidateDetailsProps) {
           englishLevel={candidate.englishLevel}
           role={candidate.role}
           seniority={candidate.seniority}
+          canEditProfile={candidate.permissions.canEditProfile}
         />
 
         <CandidateInfoCards
@@ -47,9 +48,7 @@ export async function CandidateDetails({ params }: CandidateDetailsProps) {
           resume={candidate.resume}
         />
 
-        <Suspense fallback={<div>Cargando postulación...</div>}>
-          <CandidateApplications candidateId={id} />
-        </Suspense>
+        {/* La sección de postulaciones será integrada por su subtarea correspondiente */}
 
         <Suspense fallback={<div>Cargando actividad...</div>}>
           <CandidateLogs candidateId={id} />
@@ -58,7 +57,10 @@ export async function CandidateDetails({ params }: CandidateDetailsProps) {
 
       <aside className="min-w-0 space-y-4">
         <CandidateNotes />
-        <CandidateTags tags={candidate.tags} />
+        <CandidateTags
+          tags={candidate.tags}
+          canEditProfile={candidate.permissions.canEditProfile}
+        />
       </aside>
     </div>
   );

@@ -1,8 +1,17 @@
-import { Link, Mail, MapPin, Phone } from "lucide-react";
+import {
+  Link,
+  Mail,
+  MapPin,
+  Phone,
+  Ellipsis,
+  UserRoundPlus,
+} from "lucide-react";
+import { Button } from "~/components/ui/button";
 
 type CandidateOverviewCardProps = {
   name: string;
   lastName: string;
+  photo: string | null;
   email: string | null;
   phone: string | null;
   country: string | null;
@@ -10,6 +19,8 @@ type CandidateOverviewCardProps = {
   title: string | null;
   source: string | null;
   englishLevel: string | null;
+  canEditProfile: boolean;
+
   role: {
     name: string;
   };
@@ -30,6 +41,7 @@ export function CandidateOverviewCard({
   englishLevel,
   role,
   seniority,
+  canEditProfile,
 }: CandidateOverviewCardProps) {
   const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
@@ -78,6 +90,23 @@ export function CandidateOverviewCard({
             )}
           </div>
         </div>
+        {canEditProfile && (
+          <div className="flex shrink-0 gap-2">
+            <Button variant="outline" size="sm" type="button">
+              <UserRoundPlus className="size-4" />
+              Compartir con un HM
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              type="button"
+              aria-label="Más acciones"
+            >
+              <Ellipsis className="size-4" />
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
