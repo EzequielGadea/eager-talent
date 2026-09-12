@@ -123,6 +123,7 @@
   --color-tag-red-fg: var(--tag-red-fg);
   --color-tag-gray-bg: var(--tag-gray-bg);
   --color-tag-gray-fg: var(--tag-gray-fg);
+  --color-tag-default-color: var(--tag-default-color);
 }
 
 .dark {
