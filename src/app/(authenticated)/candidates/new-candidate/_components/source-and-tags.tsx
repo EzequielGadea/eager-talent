@@ -13,7 +13,6 @@ import {
 } from "~/components/ui/card";
 
 import { TagSelector } from "./tag-selector";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { api } from "~/lib/trpc/react";
 import {
@@ -30,7 +29,7 @@ import type { CandidateFormValues } from "./new-candidate-form";
 
 
 export default function SourceAndTags() {
-  const { register, control } =
+  const { control } =
     useFormContext<CandidateFormValues>();
 
 const sources = Object.values(Source).map((source) => ({
@@ -43,7 +42,7 @@ const hearAboutUs = Object.values(HearAboutUs).map((hearAbout) => ({
   label: hearAbout,
 }));
 
-const { data: availableTags, isLoading} =
+const { data: availableTags } =
   api.tag.getAllTags.useQuery({});
 
  /* const sources = [
