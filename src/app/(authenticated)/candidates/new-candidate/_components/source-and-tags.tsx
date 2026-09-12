@@ -1,16 +1,8 @@
 "use client";
 
-import {
-  Controller,
-  useFormContext,
-} from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { TagSelector } from "./tag-selector";
 import { Label } from "~/components/ui/label";
@@ -26,26 +18,22 @@ import { Source } from "~/generated/prisma/enums";
 import { HearAboutUs } from "~/generated/prisma/enums";
 import type { CandidateFormValues } from "./new-candidate-form";
 
-
-
 export default function SourceAndTags() {
-  const { control } =
-    useFormContext<CandidateFormValues>();
+  const { control } = useFormContext<CandidateFormValues>();
 
-const sources = Object.values(Source).map((source) => ({
-  value: source,
-  label: source,
-}));
+  const sources = Object.values(Source).map((source) => ({
+    value: source,
+    label: source,
+  }));
 
-const hearAboutUs = Object.values(HearAboutUs).map((hearAbout) => ({
-  value: hearAbout,
-  label: hearAbout,
-}));
+  const hearAboutUs = Object.values(HearAboutUs).map((hearAbout) => ({
+    value: hearAbout,
+    label: hearAbout,
+  }));
 
-const { data: availableTags } =
-  api.tag.getAllTags.useQuery({});
+  const { data: availableTags } = api.tag.getAllTags.useQuery({});
 
- /* const sources = [
+  /* const sources = [
     { label: "LinkedIn", value: "linkedin" },
     { label: "Referido", value: "referral" },
     { label: "Sitio web", value: "website" },
@@ -69,18 +57,13 @@ const { data: availableTags } =
               name="source"
               control={control}
               render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Seleccionar origen" />
                   </SelectTrigger>
 
                   <SelectContent>
-                    <SelectItem value="">
-                      Sin seleccionar
-                    </SelectItem>
+                    <SelectItem value="">Sin seleccionar</SelectItem>
                     {sources.map((source) => (
                       <SelectItem key={source.value} value={source.value}>
                         {source.label}
@@ -93,26 +76,19 @@ const { data: availableTags } =
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="howDidYouHear">
-              ¿Cómo escuchó de nosotros?
-            </Label>
+            <Label htmlFor="howDidYouHear">¿Cómo escuchó de nosotros?</Label>
 
             <Controller
               name="howDidYouHear"
               control={control}
               render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                >
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Seleccionar origen" />
                   </SelectTrigger>
 
                   <SelectContent>
-                    <SelectItem value="">
-                      Sin seleccionar
-                    </SelectItem>
+                    <SelectItem value="">Sin seleccionar</SelectItem>
                     {hearAboutUs.map((hearAbout) => (
                       <SelectItem key={hearAbout.value} value={hearAbout.value}>
                         {hearAbout.label}
@@ -125,16 +101,14 @@ const { data: availableTags } =
           </div>
 
           <div className="space-y-1 md:col-span-2">
-            <Label htmlFor="tags">
-              Etiquetas
-            </Label>
+            <Label htmlFor="tags">Etiquetas</Label>
 
             <Controller
               name="tags"
               control={control}
               render={({ field }) => (
                 <TagSelector
-                  tags={availableTags ??  []}
+                  tags={availableTags ?? []}
                   value={field.value}
                   onChange={field.onChange}
                 />
