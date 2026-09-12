@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../tokens/colors.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -81,6 +82,47 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* --- nueva capa: texto --- */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-text-on-dark: var(--text-on-dark);
+  --color-text-link: var(--text-link);
+ 
+  /* --- nueva capa: acentos --- */
+  --color-accent-green: var(--accent-green);
+  --color-accent-green-strong: var(--accent-green-strong);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-purple-strong: var(--accent-purple-strong);
+ 
+  /* --- nueva capa: bordes --- */
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+  --color-border-focus: var(--border-focus);
+ 
+  /* --- nueva capa: estados --- */
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+ 
+  /* --- nueva capa: tags --- */
+  --color-tag-green-bg: var(--tag-green-bg);
+  --color-tag-green-fg: var(--tag-green-fg);
+  --color-tag-purple-bg: var(--tag-purple-bg);
+  --color-tag-purple-fg: var(--tag-purple-fg);
+  --color-tag-blue-bg: var(--tag-blue-bg);
+  --color-tag-blue-fg: var(--tag-blue-fg);
+  --color-tag-amber-bg: var(--tag-amber-bg);
+  --color-tag-amber-fg: var(--tag-amber-fg);
+  --color-tag-red-bg: var(--tag-red-bg);
+  --color-tag-red-fg: var(--tag-red-fg);
+  --color-tag-gray-bg: var(--tag-gray-bg);
+  --color-tag-gray-fg: var(--tag-gray-fg);
 }
 
 .dark {
