@@ -32,20 +32,16 @@ type Props = {
   onChange: (tags: string[]) => void;
 };
 
-export function TagSelector({
-  tags,
-  value,
-  onChange,
-}: Props) {
+export function TagSelector({ tags, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [creating, setCreating] = useState(false);
   const [newTagColor, setNewTagColor] = useState("");
   const [newTagIsSkill, setNewTagIsSkill] = useState(false);
   const getDefaultTagColor = () =>
-  getComputedStyle(document.documentElement)
-    .getPropertyValue("--tag-default-color")
-    .trim();
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--tag-default-color")
+      .trim();
   const utils = api.useUtils();
 
   const createTag = api.tag.createTag.useMutation({
@@ -64,7 +60,7 @@ export function TagSelector({
     onChange([...value, newTag.id]);
 
     setSearch("");
-   
+
     closeCreateForm();
   };
 
@@ -74,7 +70,7 @@ export function TagSelector({
     }
 
     setSearch("");
-     closeCreateForm();
+    closeCreateForm();
   };
 
   const removeTag = (tagId: string) => {
@@ -87,8 +83,6 @@ export function TagSelector({
       !value.includes(tag.id),
   );
 
-
-
   const tagAlreadyExists = tags.some(
     (tag) => tag.name.toLowerCase() === search.trim().toLowerCase(),
   );
@@ -97,7 +91,7 @@ export function TagSelector({
     setNewTagColor(getDefaultTagColor());
     setNewTagIsSkill(false);
   };
-  
+
   return (
     <div className="space-y-2">
       <div className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-default px-3 py-2">
@@ -131,14 +125,8 @@ export function TagSelector({
           );
         })}
 
-        <Popover
-          open={open}
-          onOpenChange={setOpen}
-        >
-          <PopoverTrigger
-            type="button"
-            className="text-sm text-text-secondary"
-          >
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger type="button" className="text-sm text-text-secondary">
             Agregar etiqueta
           </PopoverTrigger>
 
@@ -150,97 +138,91 @@ export function TagSelector({
                 onValueChange={setSearch}
               />
 
-             <CommandList>
-  {filteredTags.length > 0 && (
-    <CommandGroup>
-      {filteredTags.map((tag) => (
-        <CommandItem
-          key={tag.id}
-          value={tag.name}
-          onSelect={() => addTag(tag.id)}
-        >
-          <Badge
-            variant="outline"
-            style={{
-              backgroundColor: `${tag.color}20`,
-              borderColor: `${tag.color}60`,
-              color: tag.color,
-            }}
-          >
-            {tag.name}
-          </Badge>
-        </CommandItem>
-      ))}
-    </CommandGroup>
-  )}
+              <CommandList>
+                {filteredTags.length > 0 && (
+                  <CommandGroup>
+                    {filteredTags.map((tag) => (
+                      <CommandItem
+                        key={tag.id}
+                        value={tag.name}
+                        onSelect={() => addTag(tag.id)}
+                      >
+                        <Badge
+                          variant="outline"
+                          style={{
+                            backgroundColor: `${tag.color}20`,
+                            borderColor: `${tag.color}60`,
+                            color: tag.color,
+                          }}
+                        >
+                          {tag.name}
+                        </Badge>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                )}
 
-  {search.trim() !== "" && !tagAlreadyExists && !creating && (
-    <CommandGroup>
-      <CommandItem
-        value={search}
-        onSelect={() => {
-          setNewTagColor(getDefaultTagColor());
-          setCreating(true);
-        }}
-      >
-        <Badge
-          className="border-tag-green-fg bg-tag-green-bg text-tag-green-fg hover:bg-tag-green-bg"
-          variant="outline"
-        >
-          + Crear
-        </Badge>
-      </CommandItem>
-    </CommandGroup>
-  )}
+                {search.trim() !== "" && !tagAlreadyExists && !creating && (
+                  <CommandGroup>
+                    <CommandItem
+                      value={search}
+                      onSelect={() => {
+                        setNewTagColor(getDefaultTagColor());
+                        setCreating(true);
+                      }}
+                    >
+                      <Badge
+                        className="border-tag-green-fg bg-tag-green-bg text-tag-green-fg hover:bg-tag-green-bg"
+                        variant="outline"
+                      >
+                        + Crear
+                      </Badge>
+                    </CommandItem>
+                  </CommandGroup>
+                )}
 
-{creating && (
-  <div className="space-y-3 border-t p-3">
-    <div className="flex items-center gap-3">
-      <label className="text-xs font-medium">
-        Color
-      </label>
+                {creating && (
+                  <div className="space-y-3 border-t p-3">
+                    <div className="flex items-center gap-3">
+                      <label className="text-xs font-medium">Color</label>
 
-      <input
-        type="color"
-        value={newTagColor}
-        onChange={(e) => setNewTagColor(e.target.value)}
-        className="h-7 w-9 cursor-pointer"
-      />
-    </div>
+                      <input
+                        type="color"
+                        value={newTagColor}
+                        onChange={(e) => setNewTagColor(e.target.value)}
+                        className="h-7 w-9 cursor-pointer"
+                      />
+                    </div>
 
-    <div className="flex items-center justify-between">
-      <label className="text-xs font-medium">
-        Skill
-      </label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-medium">Skill</label>
 
-      <Switch
-        checked={newTagIsSkill}
-        onCheckedChange={setNewTagIsSkill}
-      />
-    </div>
-    <Button
-      className="w-full rounded-md bg-accent-green-strong px-3 py-1.5 text-xs text-text-on-dark"
-      type="button"
-      variant="outline"
-      size="sm"
-      onClick={closeCreateForm}
-    >
-      Cancelar
-    </Button>
+                      <Switch
+                        checked={newTagIsSkill}
+                        onCheckedChange={setNewTagIsSkill}
+                      />
+                    </div>
+                    <Button
+                      className="w-full rounded-md bg-accent-green-strong px-3 py-1.5 text-xs text-text-on-dark"
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={closeCreateForm}
+                    >
+                      Cancelar
+                    </Button>
 
-    <Button
-      type="button"
-      variant="outline"
-      onClick={handleCreateTag}
-      className="w-full rounded-md bg-accent-green-strong px-3 py-1.5 text-xs text-text-on-dark"
-    >
-      Crear etiqueta
-    </Button>
-  </div>
-)}
-
-
-</CommandList>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCreateTag}
+                      className="w-full rounded-md bg-accent-green-strong px-3 py-1.5 text-xs text-text-on-dark"
+                    >
+                      Crear etiqueta
+                    </Button>
+                  </div>
+                )}
+              </CommandList>
             </Command>
           </PopoverContent>
         </Popover>

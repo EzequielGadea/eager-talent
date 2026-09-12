@@ -4,10 +4,10 @@ const upload = createUploadthing();
 
 export const ourFileRouter = {
   candidateFiles: upload({
-         image: {
-        maxFileSize: "4MB",
-        maxFileCount: 1,
-        }, 
+    image: {
+      maxFileSize: "4MB",
+      maxFileCount: 1,
+    },
     pdf: {
       maxFileSize: "8MB",
       maxFileCount: 1,

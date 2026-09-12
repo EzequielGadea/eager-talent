@@ -3,13 +3,7 @@
 import { Upload, X } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 
-
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -17,22 +11,22 @@ import { Label } from "~/components/ui/label";
 import type { CandidateFormValues } from "./new-candidate-form";
 
 export default function EducationAndFiles() {
-  const { control, register , resetField } =
+  const { control, register, resetField } =
     useFormContext<CandidateFormValues>();
 
-    const educationWatch = useWatch({
-      control,
-      name: "education"
-    });
+  const educationWatch = useWatch({
+    control,
+    name: "education",
+  });
 
-    const resumeWatch = useWatch({
-      control,
-      name: "resume"
-    });
+  const resumeWatch = useWatch({
+    control,
+    name: "resume",
+  });
 
-    const resumeFile=resumeWatch?.[0];
+  const resumeFile = resumeWatch?.[0];
 
-    const educationFile = educationWatch?.[0];
+  const educationFile = educationWatch?.[0];
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -45,9 +39,7 @@ export default function EducationAndFiles() {
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="academicInstitution">
-              Formación académica
-            </Label>
+            <Label htmlFor="academicInstitution">Formación académica</Label>
 
             <Input
               id="academicInstitution"
@@ -55,12 +47,10 @@ export default function EducationAndFiles() {
               {...register("academicInstitution")}
             />
           </div>
-          
+
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             <div className="space-y-1 md:col-span-1">
-              <Label htmlFor="title">
-                Título
-              </Label>
+              <Label htmlFor="title">Título</Label>
 
               <Input
                 id="title"
@@ -70,9 +60,7 @@ export default function EducationAndFiles() {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="careerStartYear">
-                Año de inicio
-              </Label>
+              <Label htmlFor="careerStartYear">Año de inicio</Label>
 
               <Input
                 id="careerStartYear"
@@ -86,9 +74,7 @@ export default function EducationAndFiles() {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="careerEndYear">
-                Año de fin
-              </Label>
+              <Label htmlFor="careerEndYear">Año de fin</Label>
 
               <Input
                 id="careerEndYear"
@@ -138,9 +124,7 @@ export default function EducationAndFiles() {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="education">
-                Escolaridad
-              </Label>
+              <Label htmlFor="education">Escolaridad</Label>
 
               <input
                 id="education"

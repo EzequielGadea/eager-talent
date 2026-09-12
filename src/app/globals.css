@@ -88,18 +88,18 @@
   --color-text-tertiary: var(--text-tertiary);
   --color-text-on-dark: var(--text-on-dark);
   --color-text-link: var(--text-link);
- 
+
   /* --- nueva capa: acentos --- */
   --color-accent-green: var(--accent-green);
   --color-accent-green-strong: var(--accent-green-strong);
   --color-accent-purple: var(--accent-purple);
   --color-accent-purple-strong: var(--accent-purple-strong);
- 
+
   /* --- nueva capa: bordes --- */
   --color-border-default: var(--border-default);
   --color-border-strong: var(--border-strong);
   --color-border-focus: var(--border-focus);
- 
+
   /* --- nueva capa: estados --- */
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
@@ -109,7 +109,7 @@
   --color-danger-bg: var(--danger-bg);
   --color-info: var(--info);
   --color-info-bg: var(--info-bg);
- 
+
   /* --- nueva capa: tags --- */
   --color-tag-green-bg: var(--tag-green-bg);
   --color-tag-green-fg: var(--tag-green-fg);
