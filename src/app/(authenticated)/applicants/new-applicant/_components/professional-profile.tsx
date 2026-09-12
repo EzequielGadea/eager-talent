@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-import type { CandidateFormValues } from "./new-candidate-form";
+import type { ApplicantFormValues } from "./new-applicant-form";
 
 import { EnglishLevel } from "~/generated/prisma/enums";
 
@@ -31,7 +31,7 @@ export default function ProfessionalProfile() {
     register,
     control,
     formState: { errors },
-  } = useFormContext<CandidateFormValues>();
+  } = useFormContext<ApplicantFormValues>();
 
   const { data: areas, isLoading: isLoadingArea } =
     api.area.getAllAreas.useQuery({});

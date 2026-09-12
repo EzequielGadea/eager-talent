@@ -28,7 +28,7 @@ import {
 
 import { paises as countries } from "~/lib/countries";
 
-import type { CandidateFormValues } from "./new-candidate-form";
+import type { ApplicantFormValues } from "./new-applicant-form";
 
 type PersonalDataProps = {
   photoPreview?: string;
@@ -44,7 +44,7 @@ export default function PersonalData({
     control,
     setValue,
     formState: { errors },
-  } = useFormContext<CandidateFormValues>();
+  } = useFormContext<ApplicantFormValues>();
 
   useEffect(() => {
     return () => {

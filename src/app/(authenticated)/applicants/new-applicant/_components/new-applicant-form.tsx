@@ -13,7 +13,7 @@ import PersonalData from "./personal-data";
 import ProfessionalProfile from "./professional-profile";
 
 import EducationAndFiles from "./education-and-files";
-import NewCandidateButton from "./new-candidate-button";
+import NewCandidateButton from "./new-applicant-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SourceAndTags from "./source-and-tags";
@@ -21,7 +21,7 @@ import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/browser";
 
 import { useUploadThing } from "~/components/ui/uploadthing";
 
-export const candidateFormSchema = z.object({
+export const applicantFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
   email: z.string().min(1, "El correo es obligatorio").email("Correo inválido"),
@@ -52,15 +52,15 @@ export const candidateFormSchema = z.object({
   careerEndYear: z.number().optional(),
 });
 
-export type CandidateFormValues = z.infer<typeof candidateFormSchema>;
+export type ApplicantFormValues = z.infer<typeof applicantFormSchema>;
 
-export default function NewCandidateForm() {
-  const { startUpload } = useUploadThing("candidateFiles");
+export default function NewApplicantForm() {
+  const { startUpload } = useUploadThing("applicantFiles");
   const router = useRouter();
   const [photoPreview, setPhotoPreview] = useState<string>();
 
-  const methods = useForm<CandidateFormValues>({
-    resolver: zodResolver(candidateFormSchema),
+  const methods = useForm<ApplicantFormValues>({
+    resolver: zodResolver(applicantFormSchema),
 
     defaultValues: {
       name: "",
@@ -111,7 +111,7 @@ export default function NewCandidateForm() {
     },
   });
 
-  async function onSubmit(data: CandidateFormValues) {
+  async function onSubmit(data: ApplicantFormValues) {
     const [resumeResult, educationResult, photoResult] = await Promise.all([
       data.resume?.[0] ? startUpload([data.resume[0]]) : undefined,
       data.education?.[0] ? startUpload([data.education[0]]) : undefined,

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import "server-only";
 
 import { Table, TableBody } from "~/components/ui/table";
@@ -92,5 +93,14 @@ async function ProtectedApplicantsPage() {
         />
       </Suspense>
     </div>
+=======
+import  ButtonRedirect  from "./_components/buttonRedirect";
+
+
+export default async function DashboardPage() {
+  return (
+    <div> <ButtonRedirect /> </div>
+    
+>>>>>>> 0435989 (feature: alta-de-candidato fix: correccion de carpetas y variables candidate a applicant)
   );
 }
