@@ -132,66 +132,48 @@ export default function NewCandidateForm() {
   });
 
   async function onSubmit(data: CandidateFormValues) {
+    const [resumeResult, educationResult, photoResult] = await Promise.all([
+      data.resume?.[0] ? startUpload([data.resume[0]]) : undefined,
+      data.education?.[0] ? startUpload([data.education[0]]) : undefined,
+      data.photo?.[0] ? startUpload([data.photo[0]]) : undefined,
+    ]);
 
-    let resumeUrl, educationUrl, photoUrl: string | undefined;
-
-    const resume = data.resume?.[0];
-
-    if (resume) {
-      const uploadedFiles = await startUpload([resume]);
-      resumeUrl = uploadedFiles?.[0]?.url;
-    }
-
-    const education = data.education?.[0];
-
-    if (education) {
-      const uploadedFiles = await startUpload([education]);
-      educationUrl = uploadedFiles?.[0]?.url;
-    }
-
-    const photo = data.photo?.[0];
-
-    if (photo) {
-      const uploadedFiles = await startUpload([photo]);
-      photoUrl = uploadedFiles?.[0]?.url;
-    }
-
-
-
-
+    const resumeUrl = resumeResult?.[0]?.ufsUrl;
+    const educationUrl = educationResult?.[0]?.ufsUrl;
+    const photoUrl = photoResult?.[0]?.ufsUrl;
 
     console.log(data);
+
     await createCandidateMutation.mutateAsync({
-    name : data.name,
-    lastname: data.lastname,
-    email: data.email,
-    phone: data.phone,
-    country: data.country,
-    linkedin: data.linkedin,
+      name: data.name,
+      lastname: data.lastname,
+      email: data.email,
+      phone: data.phone,
+      country: data.country,
+      linkedin: data.linkedin,
 
-    roleId: data.role,
-    areaId: data.area || undefined,
-    seniorityId: data.seniority || undefined,
+      roleId: data.role,
+      areaId: data.area || undefined,
+      seniorityId: data.seniority || undefined,
 
-    englishLevel: data.englishLevel || undefined,
-    source: data.source || undefined,
-    hearAboutUs: data.howDidYouHear || undefined,
+      englishLevel: data.englishLevel || undefined,
+      source: data.source || undefined,
+      hearAboutUs: data.howDidYouHear || undefined,
 
-    academicInstitution: data.academicInstitution,
-    title: data.title,
-    careerStartYear: data.careerStartYear,
-    careerEndYear: data.careerEndYear,
+      academicInstitution: data.academicInstitution,
+      title: data.title,
+      careerStartYear: data.careerStartYear,
+      careerEndYear: data.careerEndYear,
 
-    resume: resumeUrl,
-    education: educationUrl,
-    photo: photoUrl,
-    tagIds: data.tags,
-    
-    jobOpeningId: data.jobOpening || undefined,
-    desiredSalary: data.desiredSalary || undefined,
-    availability: data.availability,
+      resume: resumeUrl,
+      education: educationUrl,
+      photo: photoUrl,
+      tagIds: data.tags,
 
-  });
+      jobOpeningId: data.jobOpening || undefined,
+      desiredSalary: data.desiredSalary || undefined,
+      availability: data.availability,
+    });
   }
 
   function handleCancel() {
