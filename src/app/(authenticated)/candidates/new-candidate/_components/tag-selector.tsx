@@ -98,7 +98,7 @@ export function TagSelector({
 
   return (
     <div className="space-y-2">
-      <div className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border px-3 py-2">
+      <div className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-default px-3 py-2">
         {value.map((tagId) => {
           const tag = tags.find((tag) => tag.id === tagId);
 
@@ -135,7 +135,7 @@ export function TagSelector({
         >
           <PopoverTrigger
             type="button"
-            className="text-sm text-muted-foreground"
+            className="text-sm text-text-secondary"
           >
             Agregar etiqueta
           </PopoverTrigger>
@@ -175,12 +175,12 @@ export function TagSelector({
   {search.trim() !== "" && !tagAlreadyExists && !creating && (
     <CommandGroup>
       <CommandItem value={search} onSelect={() => setCreating(true)}>
-        <Badge className="bg-green-600 border-green-700 text-white hover:bg-green-700"
-            variant="outline"
-            
-          >
-           + Crear
-          </Badge>
+        <Badge
+          className="border-tag-green-fg bg-tag-green-bg text-tag-green-fg hover:bg-tag-green-bg"
+          variant="outline"
+        >
+          + Crear
+        </Badge>
       </CommandItem>
     </CommandGroup>
   )}
@@ -210,21 +210,21 @@ export function TagSelector({
         onCheckedChange={setNewTagIsSkill}
       />
     </div>
-    <Button className="w-full rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground"
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={closeCreateForm}
-        
+    <Button
+      className="w-full rounded-md bg-accent-green-strong px-3 py-1.5 text-xs text-text-on-dark"
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={closeCreateForm}
     >
-        Cancelar
+      Cancelar
     </Button>
 
     <Button
       type="button"
       variant="outline"
       onClick={handleCreateTag}
-      className="w-full rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground"
+      className="w-full rounded-md bg-accent-green-strong px-3 py-1.5 text-xs text-text-on-dark"
     >
       Crear etiqueta
     </Button>

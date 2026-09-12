@@ -79,6 +79,9 @@ const { data: availableTags, isLoading} =
                   </SelectTrigger>
 
                   <SelectContent>
+                    <SelectItem value="">
+                      Sin seleccionar
+                    </SelectItem>
                     {sources.map((source) => (
                       <SelectItem key={source.value} value={source.value}>
                         {source.label}
@@ -108,6 +111,9 @@ const { data: availableTags, isLoading} =
                   </SelectTrigger>
 
                   <SelectContent>
+                    <SelectItem value="">
+                      Sin seleccionar
+                    </SelectItem>
                     {hearAboutUs.map((hearAbout) => (
                       <SelectItem key={hearAbout.value} value={hearAbout.value}>
                         {hearAbout.label}
