@@ -73,7 +73,7 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
           Perfil profesional
         </CardTitle>
 
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-text-secondary">
           El Rol es el perfil del candidato. La Vacante es opcional.
         </p>
       </CardHeader>
@@ -82,7 +82,7 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
         <div className="grid grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
           <div className="space-y-1">
             <Label>
-              Rol <span className="text-red-500">*</span>
+              Rol <span className="text-danger">*</span>
             </Label>
             
 
@@ -108,6 +108,9 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
                   </SelectTrigger>
 
                   <SelectContent>
+                    <SelectItem value="">
+                      Sin seleccionar
+                    </SelectItem>
                     {roles?.map((rol) => (
                       <SelectItem
                         key={rol.id}
@@ -121,7 +124,7 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
               )}
             />
             {errors.role && (
-              <p>{errors.role.message}</p>  
+              <p className="text-danger">{errors.role.message}</p>
             )}
            
 
@@ -152,6 +155,9 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
                   </SelectTrigger>
 
                   <SelectContent>
+                    <SelectItem value="">
+                      Sin seleccionar
+                    </SelectItem>
                     {jobOpenings?.map((jobOpening) => (
                       <SelectItem
                         key={jobOpening.id}
@@ -193,6 +199,10 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
                   </SelectTrigger>
 
                   <SelectContent>
+                    <SelectItem value="">
+                      Sin seleccionar
+                    </SelectItem>
+                    
                     {seniorities?.map((seniority) => (
                       <SelectItem
                         key={seniority.id}
@@ -232,6 +242,9 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
                   </SelectTrigger>
 
                   <SelectContent>
+                    <SelectItem value="">
+                      Sin seleccionar
+                    </SelectItem>
                     {areas?.map((area) => (
                       <SelectItem
                         key={area.id}
@@ -290,6 +303,9 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
                   </SelectTrigger>
 
                   <SelectContent>
+                    <SelectItem value="">
+                      Sin seleccionar
+                    </SelectItem>
                     {englishLevels.map((level) => (
                       <SelectItem
                         key={level.value}

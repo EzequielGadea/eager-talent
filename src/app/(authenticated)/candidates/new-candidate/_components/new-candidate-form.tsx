@@ -109,6 +109,8 @@ export default function NewCandidateForm() {
   },
 });
 
+  const { isSubmitting } = methods.formState;
+
   const createCandidateMutation = api.applicant.createApplicant.useMutation({
     onSuccess: () => {
       methods.reset();
@@ -159,7 +161,7 @@ export default function NewCandidateForm() {
 
 
     console.log(data);
-    createCandidateMutation.mutate({
+    await createCandidateMutation.mutateAsync({
     name : data.name,
     lastname: data.lastname,
     email: data.email,
@@ -209,7 +211,7 @@ export default function NewCandidateForm() {
         <EducationAndFiles />
 
         <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-text-secondary">
             Podés completar el resto de los campos más tarde desde el perfil.
           </p>
 
@@ -222,7 +224,7 @@ export default function NewCandidateForm() {
               Cancelar
             </Button>
 
-            <NewCandidateButton/>
+            <NewCandidateButton disabled={isSubmitting} />
           </div>
         </footer>
       </form>
