@@ -164,6 +164,7 @@
   --color-dashboard-dark-hover: var(--dashboard-dark-hover);
   --color-dashboard-text-light: var(--dashboard-text-light);
   --color-dashboard-success-light: var(--dashboard-success-light);
+  --color-tag-default-color: var(--tag-default-color);
 }
 
 .dark {
