@@ -1,10 +1,6 @@
 import { z } from "zod";
 
-import {
-  EnglishLevel,
-  Source,
-  HearAboutUs,
-} from "~/generated/prisma/enums";
+import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 
 import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
@@ -80,7 +76,7 @@ export const createApplicant = protectedProcedure
       // Primero creamos el candidato
       const applicant = await ctx.db.$transaction(async (tx) => {
         const applicant = await tx.applicant.create({
-            data: {
+          data: {
             name: input.name,
             lastName: input.lastname,
             email: input.email,
@@ -101,51 +97,51 @@ export const createApplicant = protectedProcedure
             resume: input.resume,
 
             role: {
-                connect: {
+              connect: {
                 id: input.roleId,
-                },
+              },
             },
 
             area: input.areaId
-                ? {
-                    connect: {
+              ? {
+                  connect: {
                     id: input.areaId,
-                    },
+                  },
                 }
-                : undefined,
+              : undefined,
 
             seniority: input.seniorityId
-                ? {
-                    connect: {
+              ? {
+                  connect: {
                     id: input.seniorityId,
-                    },
+                  },
                 }
-                : undefined,
+              : undefined,
 
             tags: {
-                connect: input.tagIds.map((id) => ({
+              connect: input.tagIds.map((id) => ({
                 id,
-                })),
+              })),
             },
-            },
+          },
         });
 
         if (input.jobOpeningId && firstStage) {
-            await tx.application.create({
+          await tx.application.create({
             data: {
-                applicantId: applicant.id,
-                jobOpeningId: input.jobOpeningId,
-                currentStage: firstStage,
-                desiredSalary: input.desiredSalary,
-                availability: input.availability,
+              applicantId: applicant.id,
+              jobOpeningId: input.jobOpeningId,
+              currentStage: firstStage,
+              desiredSalary: input.desiredSalary,
+              availability: input.availability,
             },
-            });
+          });
         }
 
         return applicant;
-        });
+      });
 
-        return applicant;
+      return applicant;
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&

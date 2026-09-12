@@ -1,21 +1,13 @@
 "use client";
 
 import { Upload } from "lucide-react";
-import {
-  Controller,
-  useFormContext,
-} from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 import Image from "next/image";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect } from "react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -131,16 +123,13 @@ export default function PersonalData({
               )}
             </div>
 
-            <span className="mt-1 text-xs text-text-secondary">
-              Foto
-            </span>
+            <span className="mt-1 text-xs text-text-secondary">Foto</span>
           </div>
 
           <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
             <div className="space-y-1">
               <Label htmlFor="name">
-                Nombre {" "}
-                <span className="text-danger">*</span>
+                Nombre <span className="text-danger">*</span>
               </Label>
 
               <Input
@@ -155,8 +144,7 @@ export default function PersonalData({
 
             <div className="space-y-1">
               <Label htmlFor="lastname">
-                Apellido{" "}
-                <span className="text-danger">*</span>
+                Apellido <span className="text-danger">*</span>
               </Label>
 
               <Input
@@ -171,8 +159,7 @@ export default function PersonalData({
 
             <div className="space-y-1">
               <Label htmlFor="email">
-                Correo electrónico{" "}
-                <span className="text-danger">*</span>
+                Correo electrónico <span className="text-danger">*</span>
               </Label>
 
               <Input
@@ -187,9 +174,7 @@ export default function PersonalData({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="phone">
-                Teléfono
-              </Label>
+              <Label htmlFor="phone">Teléfono</Label>
 
               <Input
                 id="phone"
@@ -199,31 +184,20 @@ export default function PersonalData({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="country">
-                País
-              </Label>
+              <Label htmlFor="country">País</Label>
 
               <Controller
                 name="country"
                 control={control}
                 render={({ field }) => (
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger
-                      id="country"
-                      className="w-full"
-                    >
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="country" className="w-full">
                       <SelectValue placeholder="Seleccionar país" />
                     </SelectTrigger>
 
                     <SelectContent>
                       {countries.map((country) => (
-                        <SelectItem
-                          key={country.codigo}
-                          value={country.codigo}
-                        >
+                        <SelectItem key={country.codigo} value={country.codigo}>
                           {country.nombre}
                         </SelectItem>
                       ))}
@@ -234,9 +208,7 @@ export default function PersonalData({
             </div>
 
             <div className="space-y-1 md:col-span-2">
-              <Label htmlFor="linkedin">
-                LinkedIn
-              </Label>
+              <Label htmlFor="linkedin">LinkedIn</Label>
 
               <Input
                 id="linkedin"

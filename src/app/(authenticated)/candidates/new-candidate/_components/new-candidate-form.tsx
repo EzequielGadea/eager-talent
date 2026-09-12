@@ -1,14 +1,9 @@
 "use client";
 
-
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-
-import {
-  FormProvider,
-  useForm,
-} from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { api } from "~/lib/trpc/react";
 
@@ -26,14 +21,13 @@ import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/browser";
 
 import { useUploadThing } from "~/components/ui/uploadthing";
 
-
 export const candidateFormSchema = z.object({
-  name : z.string().min(1, "El nombre es obligatorio"),
+  name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
   email: z.string().min(1, "El correo es obligatorio").email("Correo inválido"),
   phone: z.string(),
   country: z.string(),
-  photo : z.custom<FileList>().optional(),
+  photo: z.custom<FileList>().optional(),
   linkedin: z.string(),
 
   role: z.string().min(1, "El rol es obligatorio"),
@@ -42,20 +36,11 @@ export const candidateFormSchema = z.object({
   area: z.string(),
   desiredSalary: z.string(),
   availability: z.string(),
-  englishLevel: z.union([
-    z.enum(EnglishLevel),
-    z.literal(""),
-  ]),
+  englishLevel: z.union([z.enum(EnglishLevel), z.literal("")]),
 
-  source: z.union([
-    z.enum(Source),
-    z.literal(""),
-  ]),
-  
-  howDidYouHear: z.union([
-    z.enum(HearAboutUs),
-    z.literal(""),
-  ]),
+  source: z.union([z.enum(Source), z.literal("")]),
+
+  howDidYouHear: z.union([z.enum(HearAboutUs), z.literal("")]),
 
   tags: z.array(z.string()),
   resume: z.custom<FileList>().optional(),
@@ -67,50 +52,42 @@ export const candidateFormSchema = z.object({
   careerEndYear: z.number().optional(),
 });
 
-
-export type CandidateFormValues =
-  z.infer<typeof candidateFormSchema>;
-
-
-
+export type CandidateFormValues = z.infer<typeof candidateFormSchema>;
 
 export default function NewCandidateForm() {
-  
   const { startUpload } = useUploadThing("candidateFiles");
   const router = useRouter();
   const [photoPreview, setPhotoPreview] = useState<string>();
 
   const methods = useForm<CandidateFormValues>({
-  resolver: zodResolver(candidateFormSchema),
-  
+    resolver: zodResolver(candidateFormSchema),
 
+    defaultValues: {
+      name: "",
+      lastname: "",
+      email: "",
+      phone: "",
+      country: "",
+      linkedin: "",
 
-  defaultValues: {
-    name: "",
-    lastname: "",
-    email: "",
-    phone: "",
-    country: "",
-    linkedin: "",
+      role: "",
+      jobOpening: "",
+      seniority: "",
+      area: "",
+      desiredSalary: "",
+      availability: "",
+      englishLevel: "",
 
-    role: "",
-    jobOpening: "",
-    seniority: "",
-    area: "",
-    desiredSalary: "",
-    availability: "",
-    englishLevel: "",
+      source: "",
+      howDidYouHear: "",
+      tags: [],
 
-    source: "",
-    howDidYouHear: "",
-    tags:  [],
-
-    academicInstitution: "",
-    title: "",
-    careerStartYear: undefined,
-    careerEndYear: undefined,
-  },
-});
+      academicInstitution: "",
+      title: "",
+      careerStartYear: undefined,
+      careerEndYear: undefined,
+    },
+  });
 
   const { isSubmitting } = methods.formState;
 
@@ -122,17 +99,16 @@ export default function NewCandidateForm() {
     },
     onError: (error) => {
       if (error.data?.code === "CONFLICT") {
-      methods.setError("email", {
-        type: "server",
-        message: "Ya existe un candidato con ese email",
-      });
+        methods.setError("email", {
+          type: "server",
+          message: "Ya existe un candidato con ese email",
+        });
 
-      return;
-    }
-      
-      
+        return;
+      }
+
       console.error("Error creating candidate:", error);
-    }
+    },
   });
 
   async function onSubmit(data: CandidateFormValues) {
@@ -205,11 +181,7 @@ export default function NewCandidateForm() {
           </p>
 
           <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-            >
+            <Button type="button" variant="outline" onClick={handleCancel}>
               Cancelar
             </Button>
 
