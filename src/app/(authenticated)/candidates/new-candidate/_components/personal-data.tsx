@@ -1,6 +1,6 @@
 "use client";
 
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 
 import Image from "next/image";
@@ -11,6 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentMedia,
+} from "~/components/ui/attachment";
 
 import {
   Select,
@@ -70,7 +76,7 @@ export default function PersonalData({
       <CardContent>
         <div className="flex flex-col gap-4 md:flex-row">
           {/* Photo */}
-          <div className="flex shrink-0 flex-col items-center">
+          <div className="flex shrink-0 flex-col items-center md:w-32 md:pt-6">
             <input
               id="photo"
               type="file"
@@ -87,41 +93,46 @@ export default function PersonalData({
                   return;
                 }
 
-                const objectUrl = URL.createObjectURL(file);
-                setPhotoPreview(objectUrl);
+                setPhotoPreview(URL.createObjectURL(file));
               }}
             />
 
-            <div className="relative">
-              <label
-                htmlFor="photo"
-                className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border-default text-text-tertiary hover:bg-surface-hover"
-              >
-                {photoPreview ? (
-                  <Image
-                    src={photoPreview}
-                    alt="Vista previa de la foto"
-                    width={80}
-                    height={80}
-                    unoptimized
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <Upload className="h-6 w-6" />
-                )}
-              </label>
+            <Attachment
+              orientation="vertical"
+              size="sm"
+              className="!h-32 !w-32 border-dashed"
+            >
+              <AttachmentMedia variant="image" className="!h-full !w-full p-0">
+                <label
+                  htmlFor="photo"
+                  className="flex h-full w-full cursor-pointer items-center justify-center"
+                >
+                  {photoPreview ? (
+                    <Image
+                      src={photoPreview}
+                      alt="Vista previa de la foto"
+                      width={128}
+                      height={128}
+                      unoptimized
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <Upload className="h-8 w-8" />
+                  )}
+                </label>
+              </AttachmentMedia>
 
               {photoPreview && (
-                <button
+                <AttachmentAction
                   type="button"
-                  onClick={handleRemovePhoto}
-                  className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-border-default bg-surface-card text-xs text-danger hover:bg-surface-hover"
                   aria-label="Quitar foto"
+                  onClick={handleRemovePhoto}
+                  className="absolute right-1 top-1 !h-6 !w-6 rounded-full bg-surface-card p-0 text-danger"
                 >
-                  ×
-                </button>
+                  <X className="!h-3 !w-3" />
+                </AttachmentAction>
               )}
-            </div>
+            </Attachment>
 
             <span className="mt-1 text-xs text-text-secondary">Foto</span>
           </div>
