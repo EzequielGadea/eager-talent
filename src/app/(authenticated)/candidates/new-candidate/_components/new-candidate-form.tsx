@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation"
 
-import { buttonVariants } from "~/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+
 import {
   FormProvider,
   useForm,
@@ -77,6 +78,8 @@ export default function NewCandidateForm() {
   
   const { startUpload } = useUploadThing("candidateFiles");
   const router = useRouter();
+  const [photoPreview, setPhotoPreview] = useState<string>();
+
   const methods = useForm<CandidateFormValues>({
   resolver: zodResolver(candidateFormSchema),
   
@@ -114,6 +117,7 @@ export default function NewCandidateForm() {
   const createCandidateMutation = api.applicant.createApplicant.useMutation({
     onSuccess: () => {
       methods.reset();
+      setPhotoPreview(undefined);
       router.push("/candidates");
     },
     onError: (error) => {
@@ -177,17 +181,20 @@ export default function NewCandidateForm() {
   }
 
   function handleCancel() {
-  methods.reset();
-  router.push("/candidates");
-}
-
+    methods.reset();
+    setPhotoPreview(undefined);
+    router.push("/candidates");
+  }
   return (
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
         className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4"
       >
-        <PersonalData />
+        <PersonalData
+          photoPreview={photoPreview}
+          setPhotoPreview={setPhotoPreview}
+        />
         <ProfessionalProfile />
         <SourceAndTags />
         <EducationAndFiles />
