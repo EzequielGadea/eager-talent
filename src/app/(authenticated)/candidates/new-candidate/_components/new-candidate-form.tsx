@@ -60,6 +60,10 @@ export const candidateFormSchema = z.object({
   resume: z.custom<FileList>().optional(),
   academicInstitution: z.string(),
   education: z.custom<FileList>().optional(),
+
+  title: z.string(),
+  careerStartYear: z.number().optional(),
+  careerEndYear: z.number().optional(),
 });
 
 
@@ -99,6 +103,9 @@ export default function NewCandidateForm() {
     tags:  [],
 
     academicInstitution: "",
+    title: "",
+    careerStartYear: undefined,
+    careerEndYear: undefined,
   },
 });
 
@@ -169,6 +176,10 @@ export default function NewCandidateForm() {
     hearAboutUs: data.howDidYouHear || undefined,
 
     academicInstitution: data.academicInstitution,
+    title: data.title,
+    careerStartYear: data.careerStartYear,
+    careerEndYear: data.careerEndYear,
+
     resume: resumeUrl,
     education: educationUrl,
     photo: photoUrl,
