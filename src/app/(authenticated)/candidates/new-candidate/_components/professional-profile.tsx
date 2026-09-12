@@ -3,6 +3,7 @@
 import {
   Controller,
   useFormContext,
+  useWatch,
 } from "react-hook-form";
 
 import { api } from "~/lib/trpc/react";
@@ -56,6 +57,10 @@ const { data: seniorities, isLoading: isLoadingSeniority } =
 const { data: jobOpenings, isLoading: isLoadingJobOpening } =
   api.jobOpening.getAllJobOpenings.useQuery({});
 
+  const jobOpening = useWatch({
+    control,
+    name: "jobOpening",
+  });
   
 
  
@@ -241,17 +246,33 @@ const { data: jobOpenings, isLoading: isLoadingJobOpening } =
             />
           </div>
 
-          <div className="space-y-1">
-            <Label htmlFor="desiredSalary">
-              Salario deseado
-            </Label>
+          {jobOpening && (
+            <>
+              <div className="space-y-1">
+                <Label htmlFor="desiredSalary">
+                  Salario deseado
+                </Label>
 
-            <Input
-              id="desiredSalary"
-              placeholder="Ej. USD 3.000 - 3.500"
-              {...register("desiredSalary")}
-            />
-          </div>
+                <Input
+                  id="desiredSalary"
+                  placeholder="Ej. USD 3.000 - 3.500"
+                  {...register("desiredSalary")}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="availability">
+                  Disponibilidad
+                </Label>
+
+                <Input
+                  id="availability"
+                  placeholder="Ej. Inmediata, 15 días, 1 mes"
+                  {...register("availability")}
+                />
+              </div>
+            </>
+          )}
 
           <div className="space-y-1">
             <Label>Nivel de inglés</Label>
