@@ -79,7 +79,8 @@ export default function EducationAndFiles() {
                 type="number"
                 placeholder="Ej. 2020"
                 {...register("careerStartYear", {
-                  valueAsNumber: true,
+                  setValueAs: (value) =>
+                    value === "" ? undefined : Number(value),
                 })}
               />
             </div>
@@ -94,7 +95,8 @@ export default function EducationAndFiles() {
                 type="number"
                 placeholder="Ej. 2024"
                 {...register("careerEndYear", {
-                  valueAsNumber: true,
+                  setValueAs: (value) =>
+                    value === "" ? undefined : Number(value),
                 })}
               />
             </div>
@@ -115,7 +117,7 @@ export default function EducationAndFiles() {
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="resume"
-                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-secondary hover:bg-surface-hover"
                 >
                   <Upload className="h-4 w-4 shrink-0" />
                   <span className="truncate">
@@ -127,7 +129,7 @@ export default function EducationAndFiles() {
                     type="button"
                     onClick={() => resetField("resume")}
                     aria-label="Eliminar CV"
-                    className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    className="shrink-0 rounded-md p-2 text-text-secondary hover:bg-surface-hover hover:text-danger"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -151,7 +153,7 @@ export default function EducationAndFiles() {
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="education"
-                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed px-3 py-3 text-sm text-muted-foreground hover:bg-muted"
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-secondary hover:bg-surface-hover"
                 >
                   <Upload className="h-4 w-4 shrink-0" />
                   <span className="truncate">
@@ -163,7 +165,7 @@ export default function EducationAndFiles() {
                     type="button"
                     onClick={() => resetField("education")}
                     aria-label="Eliminar certificado"
-                    className="shrink-0 rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    className="shrink-0 rounded-md p-2 text-text-secondary hover:bg-surface-hover hover:text-danger"
                   >
                     <X className="h-4 w-4" />
                   </button>

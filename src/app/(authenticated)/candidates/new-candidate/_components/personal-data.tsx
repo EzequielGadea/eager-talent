@@ -4,7 +4,11 @@ import { Plus, Upload } from "lucide-react";
 import {
   Controller,
   useFormContext,
+  useWatch,
 } from "react-hook-form";
+
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 import {
   Card,
@@ -29,8 +33,42 @@ import { paises as countries } from "~/lib/countries";
 import type { CandidateFormValues } from "./new-candidate-form";
 
 export default function PersonalData() {
-  const { register, control, formState: { errors } } =
-    useFormContext<CandidateFormValues>();
+  const {
+    register,
+    control,
+    setValue,
+    formState: { errors },
+  } = useFormContext<CandidateFormValues>();
+
+  const photo = useWatch({
+    control,
+    name: "photo",
+  });
+
+  const photoFile = photo?.[0];
+
+  const [photoPreview, setPhotoPreview] = useState<string>();
+
+  useEffect(() => {
+    if (!photoFile) {
+      setPhotoPreview(undefined);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(photoFile);
+    setPhotoPreview(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [photoFile]);
+
+  function handleRemovePhoto() {
+    setValue("photo", undefined, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  }
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -47,20 +85,45 @@ export default function PersonalData() {
           {/* Photo */}
           <div className="flex shrink-0 flex-col items-center">
             <input
-                id="photo"
-                type="file"
-                accept=".jpg,.jpeg,.png"
-                className="hidden"
-                {...register("photo")}
-              />
-            <label 
-              htmlFor="photo" className="flex h-16 w-16 items-center justify-center rounded-xl border border-dashed text-muted-foreground hover:bg-muted">
-            <Upload
-              className="h-6 w-6"
+              id="photo"
+              type="file"
+              accept=".jpg,.jpeg,.png"
+              className="hidden"
+              {...register("photo")}
             />
-            </label>
 
-            <span className="mt-1 text-xs text-muted-foreground">
+            <div className="relative">
+              <label
+                htmlFor="photo"
+                className="flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-border-default text-text-tertiary hover:bg-surface-hover"
+              >
+                {photoPreview ? (
+                  <Image
+                    src={photoPreview}
+                    alt="Vista previa de la foto"
+                    width={80}
+                    height={80}
+                    unoptimized
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <Upload className="h-6 w-6" />
+                )}
+              </label>
+
+              {photoPreview && (
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-border-default bg-surface-card text-xs text-danger hover:bg-surface-hover"
+                  aria-label="Quitar foto"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            <span className="mt-1 text-xs text-text-secondary">
               Foto
             </span>
           </div>
@@ -69,7 +132,7 @@ export default function PersonalData() {
             <div className="space-y-1">
               <Label htmlFor="name">
                 Nombre {" "}
-                <span className="text-red-500">*</span>
+                <span className="text-danger">*</span>
               </Label>
 
               <Input
@@ -78,7 +141,7 @@ export default function PersonalData() {
                 {...register("name")}
               />
               {errors.name && (
-                <p>{errors.name.message}</p>  
+                <p className="text-danger">{errors.name.message}</p>
               )}
             </div>
 
@@ -86,7 +149,7 @@ export default function PersonalData() {
             <div className="space-y-1">
               <Label htmlFor="lastname">
                 Apellido{" "}
-                <span className="text-red-500">*</span>
+                <span className="text-danger">*</span>
               </Label>
 
               <Input
@@ -95,14 +158,14 @@ export default function PersonalData() {
                 {...register("lastname")}
               />
               {errors.lastname && (
-                <p>{errors.lastname.message}</p>  
+                <p className="text-danger">{errors.lastname.message}</p>
               )}
             </div>
 
             <div className="space-y-1">
               <Label htmlFor="email">
                 Correo electrónico{" "}
-                <span className="text-red-500">*</span>
+                <span className="text-danger">*</span>
               </Label>
 
               <Input
@@ -112,7 +175,7 @@ export default function PersonalData() {
                 {...register("email")}
               />
               {errors.email && (
-                <p>{errors.email.message}</p>  
+                <p className="text-danger">{errors.email.message}</p>
               )}
             </div>
 
