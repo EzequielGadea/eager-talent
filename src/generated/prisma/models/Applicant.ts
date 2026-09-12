@@ -340,15 +340,15 @@ export type ApplicantWhereInput = {
   roleId?: Prisma.StringFilter<"Applicant"> | string
   areaId?: Prisma.StringNullableFilter<"Applicant"> | string | null
   seniorityId?: Prisma.StringNullableFilter<"Applicant"> | string | null
-  role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
+  activities?: Prisma.ActivityListRelationFilter
   area?: Prisma.XOR<Prisma.AreaNullableScalarRelationFilter, Prisma.AreaWhereInput> | null
+  role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   seniority?: Prisma.XOR<Prisma.SeniorityNullableScalarRelationFilter, Prisma.SeniorityWhereInput> | null
-  tags?: Prisma.TagListRelationFilter
-  hiringManagers?: Prisma.UserListRelationFilter
+  note?: Prisma.XOR<Prisma.ApplicantNoteNullableScalarRelationFilter, Prisma.ApplicantNoteWhereInput> | null
   applications?: Prisma.ApplicationListRelationFilter
   interviews?: Prisma.InterviewListRelationFilter
-  activities?: Prisma.ActivityListRelationFilter
-  note?: Prisma.XOR<Prisma.ApplicantNoteNullableScalarRelationFilter, Prisma.ApplicantNoteWhereInput> | null
+  hiringManagers?: Prisma.UserListRelationFilter
+  tags?: Prisma.TagListRelationFilter
 }
 
 export type ApplicantOrderByWithRelationInput = {
@@ -372,15 +372,15 @@ export type ApplicantOrderByWithRelationInput = {
   roleId?: Prisma.SortOrder
   areaId?: Prisma.SortOrderInput | Prisma.SortOrder
   seniorityId?: Prisma.SortOrderInput | Prisma.SortOrder
-  role?: Prisma.RoleOrderByWithRelationInput
+  activities?: Prisma.ActivityOrderByRelationAggregateInput
   area?: Prisma.AreaOrderByWithRelationInput
+  role?: Prisma.RoleOrderByWithRelationInput
   seniority?: Prisma.SeniorityOrderByWithRelationInput
-  tags?: Prisma.TagOrderByRelationAggregateInput
-  hiringManagers?: Prisma.UserOrderByRelationAggregateInput
+  note?: Prisma.ApplicantNoteOrderByWithRelationInput
   applications?: Prisma.ApplicationOrderByRelationAggregateInput
   interviews?: Prisma.InterviewOrderByRelationAggregateInput
-  activities?: Prisma.ActivityOrderByRelationAggregateInput
-  note?: Prisma.ApplicantNoteOrderByWithRelationInput
+  hiringManagers?: Prisma.UserOrderByRelationAggregateInput
+  tags?: Prisma.TagOrderByRelationAggregateInput
 }
 
 export type ApplicantWhereUniqueInput = Prisma.AtLeast<{
@@ -407,15 +407,15 @@ export type ApplicantWhereUniqueInput = Prisma.AtLeast<{
   roleId?: Prisma.StringFilter<"Applicant"> | string
   areaId?: Prisma.StringNullableFilter<"Applicant"> | string | null
   seniorityId?: Prisma.StringNullableFilter<"Applicant"> | string | null
-  role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
+  activities?: Prisma.ActivityListRelationFilter
   area?: Prisma.XOR<Prisma.AreaNullableScalarRelationFilter, Prisma.AreaWhereInput> | null
+  role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   seniority?: Prisma.XOR<Prisma.SeniorityNullableScalarRelationFilter, Prisma.SeniorityWhereInput> | null
-  tags?: Prisma.TagListRelationFilter
-  hiringManagers?: Prisma.UserListRelationFilter
+  note?: Prisma.XOR<Prisma.ApplicantNoteNullableScalarRelationFilter, Prisma.ApplicantNoteWhereInput> | null
   applications?: Prisma.ApplicationListRelationFilter
   interviews?: Prisma.InterviewListRelationFilter
-  activities?: Prisma.ActivityListRelationFilter
-  note?: Prisma.XOR<Prisma.ApplicantNoteNullableScalarRelationFilter, Prisma.ApplicantNoteWhereInput> | null
+  hiringManagers?: Prisma.UserListRelationFilter
+  tags?: Prisma.TagListRelationFilter
 }, "id" | "email">
 
 export type ApplicantOrderByWithAggregationInput = {
@@ -490,15 +490,15 @@ export type ApplicantCreateInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateInput = {
@@ -522,12 +522,12 @@ export type ApplicantUncheckedCreateInput = {
   roleId: string
   areaId?: string | null
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUpdateInput = {
@@ -548,15 +548,15 @@ export type ApplicantUpdateInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateInput = {
@@ -580,12 +580,12 @@ export type ApplicantUncheckedUpdateInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantCreateManyInput = {
@@ -1040,14 +1040,14 @@ export type ApplicantCreateWithoutHiringManagersInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
+  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutHiringManagersInput = {
@@ -1071,11 +1071,11 @@ export type ApplicantUncheckedCreateWithoutHiringManagersInput = {
   roleId: string
   areaId?: string | null
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutHiringManagersInput = {
@@ -1143,14 +1143,14 @@ export type ApplicantCreateWithoutRoleInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutRoleInput = {
@@ -1173,12 +1173,12 @@ export type ApplicantUncheckedCreateWithoutRoleInput = {
   resume?: string | null
   areaId?: string | null
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutRoleInput = {
@@ -1225,14 +1225,14 @@ export type ApplicantCreateWithoutAreaInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
   role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutAreaInput = {
@@ -1255,12 +1255,12 @@ export type ApplicantUncheckedCreateWithoutAreaInput = {
   resume?: string | null
   roleId: string
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutAreaInput = {
@@ -1307,14 +1307,14 @@ export type ApplicantCreateWithoutSeniorityInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutSeniorityInput = {
@@ -1337,12 +1337,12 @@ export type ApplicantUncheckedCreateWithoutSeniorityInput = {
   resume?: string | null
   roleId: string
   areaId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutSeniorityInput = {
@@ -1389,14 +1389,14 @@ export type ApplicantCreateWithoutTagsInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutTagsInput = {
@@ -1420,11 +1420,11 @@ export type ApplicantUncheckedCreateWithoutTagsInput = {
   roleId: string
   areaId?: string | null
   seniorityId?: string | null
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutTagsInput = {
@@ -1466,14 +1466,14 @@ export type ApplicantCreateWithoutApplicationsInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
-  area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
-  seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
-  interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
+  area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutApplicationsInput = {
@@ -1497,11 +1497,11 @@ export type ApplicantUncheckedCreateWithoutApplicationsInput = {
   roleId: string
   areaId?: string | null
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutApplicationsInput = {
@@ -1538,14 +1538,14 @@ export type ApplicantUpdateWithoutApplicationsInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
-  area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
-  seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
-  interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
+  area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutApplicationsInput = {
@@ -1569,11 +1569,11 @@ export type ApplicantUncheckedUpdateWithoutApplicationsInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantCreateWithoutInterviewsInput = {
@@ -1594,14 +1594,14 @@ export type ApplicantCreateWithoutInterviewsInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
-  area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
-  seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
-  applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
+  area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutInterviewsInput = {
@@ -1625,11 +1625,11 @@ export type ApplicantUncheckedCreateWithoutInterviewsInput = {
   roleId: string
   areaId?: string | null
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
-  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutInterviewsInput = {
@@ -1666,14 +1666,14 @@ export type ApplicantUpdateWithoutInterviewsInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
-  area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
-  seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
-  applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
+  area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutInterviewsInput = {
@@ -1697,11 +1697,11 @@ export type ApplicantUncheckedUpdateWithoutInterviewsInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantCreateWithoutNoteInput = {
@@ -1722,14 +1722,14 @@ export type ApplicantCreateWithoutNoteInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutNoteInput = {
@@ -1753,11 +1753,11 @@ export type ApplicantUncheckedCreateWithoutNoteInput = {
   roleId: string
   areaId?: string | null
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
-  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutNoteInput = {
@@ -1794,14 +1794,14 @@ export type ApplicantUpdateWithoutNoteInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutNoteInput = {
@@ -1825,11 +1825,11 @@ export type ApplicantUncheckedUpdateWithoutNoteInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantCreateWithoutActivitiesInput = {
@@ -1850,14 +1850,14 @@ export type ApplicantCreateWithoutActivitiesInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
+  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
-  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteCreateNestedOneWithoutApplicantInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantUncheckedCreateWithoutActivitiesInput = {
@@ -1881,11 +1881,11 @@ export type ApplicantUncheckedCreateWithoutActivitiesInput = {
   roleId: string
   areaId?: string | null
   seniorityId?: string | null
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutApplicantInput
   interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicantInput
-  note?: Prisma.ApplicantNoteUncheckedCreateNestedOneWithoutApplicantInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutSharedApplicantsInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutApplicantsInput
 }
 
 export type ApplicantCreateOrConnectWithoutActivitiesInput = {
@@ -1922,14 +1922,14 @@ export type ApplicantUpdateWithoutActivitiesInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutActivitiesInput = {
@@ -1953,11 +1953,11 @@ export type ApplicantUncheckedUpdateWithoutActivitiesInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUpdateWithoutHiringManagersInput = {
@@ -1978,14 +1978,14 @@ export type ApplicantUpdateWithoutHiringManagersInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutHiringManagersInput = {
@@ -2009,11 +2009,11 @@ export type ApplicantUncheckedUpdateWithoutHiringManagersInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateManyWithoutHiringManagersInput = {
@@ -2079,14 +2079,14 @@ export type ApplicantUpdateWithoutRoleInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutRoleInput = {
@@ -2109,12 +2109,12 @@ export type ApplicantUncheckedUpdateWithoutRoleInput = {
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateManyWithoutRoleInput = {
@@ -2179,14 +2179,14 @@ export type ApplicantUpdateWithoutAreaInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
   role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutAreaInput = {
@@ -2209,12 +2209,12 @@ export type ApplicantUncheckedUpdateWithoutAreaInput = {
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateManyWithoutAreaInput = {
@@ -2279,14 +2279,14 @@ export type ApplicantUpdateWithoutSeniorityInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
-  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutSeniorityInput = {
@@ -2309,12 +2309,12 @@ export type ApplicantUncheckedUpdateWithoutSeniorityInput = {
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateManyWithoutSeniorityInput = {
@@ -2357,14 +2357,14 @@ export type ApplicantUpdateWithoutTagsInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
+  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
+  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutApplicantNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicantNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicantNestedInput
-  note?: Prisma.ApplicantNoteUpdateOneWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateWithoutTagsInput = {
@@ -2388,11 +2388,11 @@ export type ApplicantUncheckedUpdateWithoutTagsInput = {
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   seniorityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
-  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicantNestedInput
   note?: Prisma.ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput
+  applications?: Prisma.ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicantNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutSharedApplicantsNestedInput
 }
 
 export type ApplicantUncheckedUpdateManyWithoutTagsInput = {
@@ -2424,19 +2424,19 @@ export type ApplicantUncheckedUpdateManyWithoutTagsInput = {
  */
 
 export type ApplicantCountOutputType = {
-  tags: number
-  hiringManagers: number
+  activities: number
   applications: number
   interviews: number
-  activities: number
+  hiringManagers: number
+  tags: number
 }
 
 export type ApplicantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  tags?: boolean | ApplicantCountOutputTypeCountTagsArgs
-  hiringManagers?: boolean | ApplicantCountOutputTypeCountHiringManagersArgs
+  activities?: boolean | ApplicantCountOutputTypeCountActivitiesArgs
   applications?: boolean | ApplicantCountOutputTypeCountApplicationsArgs
   interviews?: boolean | ApplicantCountOutputTypeCountInterviewsArgs
-  activities?: boolean | ApplicantCountOutputTypeCountActivitiesArgs
+  hiringManagers?: boolean | ApplicantCountOutputTypeCountHiringManagersArgs
+  tags?: boolean | ApplicantCountOutputTypeCountTagsArgs
 }
 
 /**
@@ -2452,15 +2452,8 @@ export type ApplicantCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ex
 /**
  * ApplicantCountOutputType without action
  */
-export type ApplicantCountOutputTypeCountTagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TagWhereInput
-}
-
-/**
- * ApplicantCountOutputType without action
- */
-export type ApplicantCountOutputTypeCountHiringManagersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.UserWhereInput
+export type ApplicantCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityWhereInput
 }
 
 /**
@@ -2480,8 +2473,15 @@ export type ApplicantCountOutputTypeCountInterviewsArgs<ExtArgs extends runtime.
 /**
  * ApplicantCountOutputType without action
  */
-export type ApplicantCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ActivityWhereInput
+export type ApplicantCountOutputTypeCountHiringManagersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserWhereInput
+}
+
+/**
+ * ApplicantCountOutputType without action
+ */
+export type ApplicantCountOutputTypeCountTagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TagWhereInput
 }
 
 
@@ -2506,15 +2506,15 @@ export type ApplicantSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   roleId?: boolean
   areaId?: boolean
   seniorityId?: boolean
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  activities?: boolean | Prisma.Applicant$activitiesArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
+  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
-  tags?: boolean | Prisma.Applicant$tagsArgs<ExtArgs>
-  hiringManagers?: boolean | Prisma.Applicant$hiringManagersArgs<ExtArgs>
+  note?: boolean | Prisma.Applicant$noteArgs<ExtArgs>
   applications?: boolean | Prisma.Applicant$applicationsArgs<ExtArgs>
   interviews?: boolean | Prisma.Applicant$interviewsArgs<ExtArgs>
-  activities?: boolean | Prisma.Applicant$activitiesArgs<ExtArgs>
-  note?: boolean | Prisma.Applicant$noteArgs<ExtArgs>
+  hiringManagers?: boolean | Prisma.Applicant$hiringManagersArgs<ExtArgs>
+  tags?: boolean | Prisma.Applicant$tagsArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["applicant"]>
 
@@ -2539,8 +2539,8 @@ export type ApplicantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roleId?: boolean
   areaId?: boolean
   seniorityId?: boolean
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
+  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }, ExtArgs["result"]["applicant"]>
 
@@ -2565,8 +2565,8 @@ export type ApplicantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roleId?: boolean
   areaId?: boolean
   seniorityId?: boolean
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
+  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }, ExtArgs["result"]["applicant"]>
 
@@ -2595,40 +2595,40 @@ export type ApplicantSelectScalar = {
 
 export type ApplicantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lastName" | "email" | "phone" | "photo" | "country" | "linkedin" | "englishLevel" | "source" | "hearAboutUs" | "title" | "academicInstitution" | "careerStartYear" | "careerEndYear" | "education" | "resume" | "roleId" | "areaId" | "seniorityId", ExtArgs["result"]["applicant"]>
 export type ApplicantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  activities?: boolean | Prisma.Applicant$activitiesArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
+  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
-  tags?: boolean | Prisma.Applicant$tagsArgs<ExtArgs>
-  hiringManagers?: boolean | Prisma.Applicant$hiringManagersArgs<ExtArgs>
+  note?: boolean | Prisma.Applicant$noteArgs<ExtArgs>
   applications?: boolean | Prisma.Applicant$applicationsArgs<ExtArgs>
   interviews?: boolean | Prisma.Applicant$interviewsArgs<ExtArgs>
-  activities?: boolean | Prisma.Applicant$activitiesArgs<ExtArgs>
-  note?: boolean | Prisma.Applicant$noteArgs<ExtArgs>
+  hiringManagers?: boolean | Prisma.Applicant$hiringManagersArgs<ExtArgs>
+  tags?: boolean | Prisma.Applicant$tagsArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ApplicantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
+  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }
 export type ApplicantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
+  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }
 
 export type $ApplicantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Applicant"
   objects: {
-    role: Prisma.$RolePayload<ExtArgs>
+    activities: Prisma.$ActivityPayload<ExtArgs>[]
     area: Prisma.$AreaPayload<ExtArgs> | null
+    role: Prisma.$RolePayload<ExtArgs>
     seniority: Prisma.$SeniorityPayload<ExtArgs> | null
-    tags: Prisma.$TagPayload<ExtArgs>[]
-    hiringManagers: Prisma.$UserPayload<ExtArgs>[]
+    note: Prisma.$ApplicantNotePayload<ExtArgs> | null
     applications: Prisma.$ApplicationPayload<ExtArgs>[]
     interviews: Prisma.$InterviewPayload<ExtArgs>[]
-    activities: Prisma.$ActivityPayload<ExtArgs>[]
-    note: Prisma.$ApplicantNotePayload<ExtArgs> | null
+    hiringManagers: Prisma.$UserPayload<ExtArgs>[]
+    tags: Prisma.$TagPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3045,15 +3045,15 @@ readonly fields: ApplicantFieldRefs;
  */
 export interface Prisma__ApplicantClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  role<T extends Prisma.RoleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RoleDefaultArgs<ExtArgs>>): Prisma.Prisma__RoleClient<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  activities<T extends Prisma.Applicant$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   area<T extends Prisma.Applicant$areaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$areaArgs<ExtArgs>>): Prisma.Prisma__AreaClient<runtime.Types.Result.GetResult<Prisma.$AreaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  role<T extends Prisma.RoleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RoleDefaultArgs<ExtArgs>>): Prisma.Prisma__RoleClient<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   seniority<T extends Prisma.Applicant$seniorityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$seniorityArgs<ExtArgs>>): Prisma.Prisma__SeniorityClient<runtime.Types.Result.GetResult<Prisma.$SeniorityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  tags<T extends Prisma.Applicant$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  hiringManagers<T extends Prisma.Applicant$hiringManagersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$hiringManagersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  note<T extends Prisma.Applicant$noteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$noteArgs<ExtArgs>>): Prisma.Prisma__ApplicantNoteClient<runtime.Types.Result.GetResult<Prisma.$ApplicantNotePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   applications<T extends Prisma.Applicant$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   interviews<T extends Prisma.Applicant$interviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$interviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  activities<T extends Prisma.Applicant$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  note<T extends Prisma.Applicant$noteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$noteArgs<ExtArgs>>): Prisma.Prisma__ApplicantNoteClient<runtime.Types.Result.GetResult<Prisma.$ApplicantNotePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  hiringManagers<T extends Prisma.Applicant$hiringManagersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$hiringManagersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tags<T extends Prisma.Applicant$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3504,6 +3504,30 @@ export type ApplicantDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * Applicant.activities
+ */
+export type Applicant$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Activity
+   */
+  select?: Prisma.ActivitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Activity
+   */
+  omit?: Prisma.ActivityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ActivityInclude<ExtArgs> | null
+  where?: Prisma.ActivityWhereInput
+  orderBy?: Prisma.ActivityOrderByWithRelationInput | Prisma.ActivityOrderByWithRelationInput[]
+  cursor?: Prisma.ActivityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
+}
+
+/**
  * Applicant.area
  */
 export type Applicant$areaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3542,51 +3566,22 @@ export type Applicant$seniorityArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * Applicant.tags
+ * Applicant.note
  */
-export type Applicant$tagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Applicant$noteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Tag
+   * Select specific fields to fetch from the ApplicantNote
    */
-  select?: Prisma.TagSelect<ExtArgs> | null
+  select?: Prisma.ApplicantNoteSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Tag
+   * Omit specific fields from the ApplicantNote
    */
-  omit?: Prisma.TagOmit<ExtArgs> | null
+  omit?: Prisma.ApplicantNoteOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.TagInclude<ExtArgs> | null
-  where?: Prisma.TagWhereInput
-  orderBy?: Prisma.TagOrderByWithRelationInput | Prisma.TagOrderByWithRelationInput[]
-  cursor?: Prisma.TagWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TagScalarFieldEnum | Prisma.TagScalarFieldEnum[]
-}
-
-/**
- * Applicant.hiringManagers
- */
-export type Applicant$hiringManagersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the User
-   */
-  select?: Prisma.UserSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the User
-   */
-  omit?: Prisma.UserOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
-  orderBy?: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[]
-  cursor?: Prisma.UserWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
+  include?: Prisma.ApplicantNoteInclude<ExtArgs> | null
+  where?: Prisma.ApplicantNoteWhereInput
 }
 
 /**
@@ -3638,46 +3633,51 @@ export type Applicant$interviewsArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * Applicant.activities
+ * Applicant.hiringManagers
  */
-export type Applicant$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Applicant$hiringManagersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Activity
+   * Select specific fields to fetch from the User
    */
-  select?: Prisma.ActivitySelect<ExtArgs> | null
+  select?: Prisma.UserSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Activity
+   * Omit specific fields from the User
    */
-  omit?: Prisma.ActivityOmit<ExtArgs> | null
+  omit?: Prisma.UserOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ActivityInclude<ExtArgs> | null
-  where?: Prisma.ActivityWhereInput
-  orderBy?: Prisma.ActivityOrderByWithRelationInput | Prisma.ActivityOrderByWithRelationInput[]
-  cursor?: Prisma.ActivityWhereUniqueInput
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+  orderBy?: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[]
+  cursor?: Prisma.UserWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
+  distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
 }
 
 /**
- * Applicant.note
+ * Applicant.tags
  */
-export type Applicant$noteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Applicant$tagsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the ApplicantNote
+   * Select specific fields to fetch from the Tag
    */
-  select?: Prisma.ApplicantNoteSelect<ExtArgs> | null
+  select?: Prisma.TagSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the ApplicantNote
+   * Omit specific fields from the Tag
    */
-  omit?: Prisma.ApplicantNoteOmit<ExtArgs> | null
+  omit?: Prisma.TagOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ApplicantNoteInclude<ExtArgs> | null
-  where?: Prisma.ApplicantNoteWhereInput
+  include?: Prisma.TagInclude<ExtArgs> | null
+  where?: Prisma.TagWhereInput
+  orderBy?: Prisma.TagOrderByWithRelationInput | Prisma.TagOrderByWithRelationInput[]
+  cursor?: Prisma.TagWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TagScalarFieldEnum | Prisma.TagScalarFieldEnum[]
 }
 
 /**

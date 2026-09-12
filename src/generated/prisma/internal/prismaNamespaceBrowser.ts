@@ -95,13 +95,13 @@ export const UserScalarFieldEnum = {
   image: 'image',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  banExpires: 'banExpires',
+  banReason: 'banReason',
+  banned: 'banned',
+  lastAccess: 'lastAccess',
   lastName: 'lastName',
   role: 'role',
-  status: 'status',
-  lastAccess: 'lastAccess',
-  banned: 'banned',
-  banReason: 'banReason',
-  banExpires: 'banExpires'
+  status: 'status'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -126,7 +126,6 @@ export const AccountScalarFieldEnum = {
   id: 'id',
   accountId: 'accountId',
   providerId: 'providerId',
-  issuer: 'issuer',
   userId: 'userId',
   accessToken: 'accessToken',
   refreshToken: 'refreshToken',
@@ -136,7 +135,8 @@ export const AccountScalarFieldEnum = {
   scope: 'scope',
   password: 'password',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  issuer: 'issuer'
 } as const
 
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
