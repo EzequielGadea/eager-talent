@@ -21,10 +21,9 @@ import NewCandidateButton from "./new-candidate-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SourceAndTags from "./source-and-tags";
-import { EnglishLevel, Source } from "~/generated/prisma/browser";
+import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/browser";
 
 import { useUploadThing } from "~/components/ui/uploadthing";
-
 
 
 export const candidateFormSchema = z.object({
@@ -41,27 +40,22 @@ export const candidateFormSchema = z.object({
   seniority: z.string(),
   area: z.string(),
   desiredSalary: z.string(),
+  availability: z.string(),
   englishLevel: z.union([
-    z.enum([
-      EnglishLevel.Basic,
-      EnglishLevel.Intermediate,
-      EnglishLevel.Advanced,
-      EnglishLevel.Native,
-    ]),
+    z.enum(EnglishLevel),
     z.literal(""),
   ]),
 
   source: z.union([
-    z.enum([
-      Source.LinkedIn,
-      Source.Website,
-      Source.Outbound,
-      Source.Referral,
-      Source.JobBoard,
-    ]),
+    z.enum(Source),
     z.literal(""),
   ]),
-  howDidYouHear: z.string(),
+  
+  howDidYouHear: z.union([
+    z.enum(HearAboutUs),
+    z.literal(""),
+  ]),
+
   tags: z.array(z.string()),
   resume: z.custom<FileList>().optional(),
   academicInstitution: z.string(),
@@ -97,6 +91,7 @@ export default function NewCandidateForm() {
     seniority: "",
     area: "",
     desiredSalary: "",
+    availability: "",
     englishLevel: "",
 
     source: "",
@@ -171,13 +166,18 @@ export default function NewCandidateForm() {
 
     englishLevel: data.englishLevel || undefined,
     source: data.source || undefined,
-
     hearAboutUs: data.howDidYouHear || undefined,
+
     academicInstitution: data.academicInstitution,
     resume: resumeUrl,
     education: educationUrl,
     photo: photoUrl,
-    tagIds: data.tags
+    tagIds: data.tags,
+    
+    jobOpeningId: data.jobOpening || undefined,
+    desiredSalary: data.desiredSalary || undefined,
+    availability: data.availability,
+
   });
   }
 
