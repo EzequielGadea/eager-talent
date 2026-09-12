@@ -1,14 +1,14 @@
 "use client";
 
-import { Plus, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import {
   Controller,
   useFormContext,
-  useWatch,
 } from "react-hook-form";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect } from "react";
 
 import {
   Card,
@@ -32,7 +32,15 @@ import { paises as countries } from "~/lib/countries";
 
 import type { CandidateFormValues } from "./new-candidate-form";
 
-export default function PersonalData() {
+type PersonalDataProps = {
+  photoPreview?: string;
+  setPhotoPreview: Dispatch<SetStateAction<string | undefined>>;
+};
+
+export default function PersonalData({
+  photoPreview,
+  setPhotoPreview,
+}: PersonalDataProps) {
   const {
     register,
     control,
@@ -40,34 +48,23 @@ export default function PersonalData() {
     formState: { errors },
   } = useFormContext<CandidateFormValues>();
 
-  const photo = useWatch({
-    control,
-    name: "photo",
-  });
-
-  const photoFile = photo?.[0];
-
-  const [photoPreview, setPhotoPreview] = useState<string>();
-
   useEffect(() => {
-    if (!photoFile) {
-      setPhotoPreview(undefined);
-      return;
-    }
-
-    const objectUrl = URL.createObjectURL(photoFile);
-    setPhotoPreview(objectUrl);
-
     return () => {
-      URL.revokeObjectURL(objectUrl);
+      if (photoPreview) {
+        URL.revokeObjectURL(photoPreview);
+      }
     };
-  }, [photoFile]);
+  }, [photoPreview]);
+
+  const photoField = register("photo");
 
   function handleRemovePhoto() {
     setValue("photo", undefined, {
       shouldDirty: true,
       shouldValidate: true,
     });
+
+    setPhotoPreview(undefined);
   }
 
   return (
@@ -79,8 +76,6 @@ export default function PersonalData() {
       </CardHeader>
 
       <CardContent>
-
-
         <div className="flex flex-col gap-4 md:flex-row">
           {/* Photo */}
           <div className="flex shrink-0 flex-col items-center">
@@ -89,7 +84,20 @@ export default function PersonalData() {
               type="file"
               accept=".jpg,.jpeg,.png"
               className="hidden"
-              {...register("photo")}
+              {...photoField}
+              onChange={(event) => {
+                photoField.onChange(event);
+
+                const file = event.target.files?.[0];
+
+                if (!file) {
+                  setPhotoPreview(undefined);
+                  return;
+                }
+
+                const objectUrl = URL.createObjectURL(file);
+                setPhotoPreview(objectUrl);
+              }}
             />
 
             <div className="relative">
@@ -144,7 +152,6 @@ export default function PersonalData() {
                 <p className="text-danger">{errors.name.message}</p>
               )}
             </div>
-
 
             <div className="space-y-1">
               <Label htmlFor="lastname">
