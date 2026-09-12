@@ -16,10 +16,10 @@ import {
 } from "~/components/ui/select";
 import { Source } from "~/generated/prisma/enums";
 import { HearAboutUs } from "~/generated/prisma/enums";
-import type { CandidateFormValues } from "./new-applicant-form";
+import type { ApplicantFormValues } from "./new-applicant-form";
 
 export default function SourceAndTags() {
-  const { control } = useFormContext<CandidateFormValues>();
+  const { control } = useFormContext<ApplicantFormValues>();
 
   const sources = Object.values(Source).map((source) => ({
     value: source,
