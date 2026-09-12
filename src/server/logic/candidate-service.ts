@@ -1,9 +1,34 @@
 import { prisma } from "~/lib/prisma";
 
-export async function getCandidateById(candidateId: string) {
-  const candidate = await prisma.applicant.findUnique({
+export async function getCandidateById(
+  candidateId: string,
+  currentUserId: string,
+) {
+  const currentUser = await prisma.user.findUnique({
+    where: {
+      id: currentUserId,
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  if (!currentUser) {
+    return null;
+  }
+
+  const candidate = await prisma.applicant.findFirst({
     where: {
       id: candidateId,
+      ...(currentUser.role === "HiringManager"
+        ? {
+            hiringManagers: {
+              some: {
+                id: currentUserId,
+              },
+            },
+          }
+        : {}),
     },
     include: {
       role: {
@@ -33,5 +58,15 @@ export async function getCandidateById(candidateId: string) {
     },
   });
 
-  return candidate;
+  if (!candidate) {
+    return null;
+  }
+
+  return {
+    ...candidate,
+    permissions: {
+      canEditProfile: currentUser.role === "Recruiter",
+      readOnly: currentUser.role === "HiringManager",
+    },
+  };
 }

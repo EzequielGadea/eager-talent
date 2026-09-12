@@ -10,8 +10,8 @@ export const getCandidateByIdProcedure = protectedProcedure
       id: z.string().min(1),
     }),
   )
-  .query(async ({ input }) => {
-    const candidate = await getCandidateById(input.id);
+  .query(async ({ input, ctx }) => {
+    const candidate = await getCandidateById(input.id, ctx.session.user.id);
 
     if (!candidate) {
       throw new TRPCError({
