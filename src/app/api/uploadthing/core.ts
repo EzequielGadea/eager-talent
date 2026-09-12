@@ -3,7 +3,7 @@ import { createUploadthing, type FileRouter } from "uploadthing/next";
 const upload = createUploadthing();
 
 export const ourFileRouter = {
-  candidateFiles: upload({
+  applicantFiles: upload({
     image: {
       maxFileSize: "4MB",
       maxFileCount: 1,
