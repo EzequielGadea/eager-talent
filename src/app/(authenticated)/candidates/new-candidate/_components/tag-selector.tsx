@@ -41,9 +41,12 @@ export function TagSelector({
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [creating, setCreating] = useState(false);
-  const [newTagColor, setNewTagColor] = useState("#94a3b8");
+  const [newTagColor, setNewTagColor] = useState("");
   const [newTagIsSkill, setNewTagIsSkill] = useState(false);
-
+  const getDefaultTagColor = () =>
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--tag-default-color")
+    .trim();
   const utils = api.useUtils();
 
   const createTag = api.tag.createTag.useMutation({
@@ -92,10 +95,10 @@ export function TagSelector({
   );
   const closeCreateForm = () => {
     setCreating(false);
-    setNewTagColor("#94a3b8");
+    setNewTagColor(getDefaultTagColor());
     setNewTagIsSkill(false);
   };
-
+  
   return (
     <div className="space-y-2">
       <div className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-default px-3 py-2">
@@ -174,7 +177,13 @@ export function TagSelector({
 
   {search.trim() !== "" && !tagAlreadyExists && !creating && (
     <CommandGroup>
-      <CommandItem value={search} onSelect={() => setCreating(true)}>
+      <CommandItem
+        value={search}
+        onSelect={() => {
+          setNewTagColor(getDefaultTagColor());
+          setCreating(true);
+        }}
+      >
         <Badge
           className="border-tag-green-fg bg-tag-green-bg text-tag-green-fg hover:bg-tag-green-bg"
           variant="outline"
