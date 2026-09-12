@@ -51,9 +51,53 @@ export default function EducationAndFiles() {
 
             <Input
               id="academicInstitution"
-              placeholder="Ej. Ing. en Sistemas — Universidad de Buenos Aires"
+              placeholder="Ej. Universidad de Buenos Aires"
               {...register("academicInstitution")}
             />
+          </div>
+          
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="space-y-1 md:col-span-1">
+              <Label htmlFor="title">
+                Título
+              </Label>
+
+              <Input
+                id="title"
+                placeholder="Ej. Ingeniería en Sistemas"
+                {...register("title")}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="careerStartYear">
+                Año de inicio
+              </Label>
+
+              <Input
+                id="careerStartYear"
+                type="number"
+                placeholder="Ej. 2020"
+                {...register("careerStartYear", {
+                  valueAsNumber: true,
+                })}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="careerEndYear">
+                Año de fin
+              </Label>
+
+              <Input
+                id="careerEndYear"
+                type="number"
+                placeholder="Ej. 2024"
+                {...register("careerEndYear", {
+                  valueAsNumber: true,
+                })}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
