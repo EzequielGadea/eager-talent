@@ -26,7 +26,6 @@ export type AggregateApplicantNote = {
 
 export type ApplicantNoteMinAggregateOutputType = {
   id: string | null
-  content: string | null
   lastModified: Date | null
   applicantId: string | null
   lastModifiedById: string | null
@@ -34,7 +33,6 @@ export type ApplicantNoteMinAggregateOutputType = {
 
 export type ApplicantNoteMaxAggregateOutputType = {
   id: string | null
-  content: string | null
   lastModified: Date | null
   applicantId: string | null
   lastModifiedById: string | null
@@ -52,7 +50,6 @@ export type ApplicantNoteCountAggregateOutputType = {
 
 export type ApplicantNoteMinAggregateInputType = {
   id?: true
-  content?: true
   lastModified?: true
   applicantId?: true
   lastModifiedById?: true
@@ -60,7 +57,6 @@ export type ApplicantNoteMinAggregateInputType = {
 
 export type ApplicantNoteMaxAggregateInputType = {
   id?: true
-  content?: true
   lastModified?: true
   applicantId?: true
   lastModifiedById?: true
@@ -149,7 +145,7 @@ export type ApplicantNoteGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 
 export type ApplicantNoteGroupByOutputType = {
   id: string
-  content: string
+  content: runtime.JsonValue
   lastModified: Date
   applicantId: string
   lastModifiedById: string
@@ -178,7 +174,7 @@ export type ApplicantNoteWhereInput = {
   OR?: Prisma.ApplicantNoteWhereInput[]
   NOT?: Prisma.ApplicantNoteWhereInput | Prisma.ApplicantNoteWhereInput[]
   id?: Prisma.StringFilter<"ApplicantNote"> | string
-  content?: Prisma.StringFilter<"ApplicantNote"> | string
+  content?: Prisma.JsonFilter<"ApplicantNote">
   lastModified?: Prisma.DateTimeFilter<"ApplicantNote"> | Date | string
   applicantId?: Prisma.StringFilter<"ApplicantNote"> | string
   lastModifiedById?: Prisma.StringFilter<"ApplicantNote"> | string
@@ -202,7 +198,7 @@ export type ApplicantNoteWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.ApplicantNoteWhereInput | Prisma.ApplicantNoteWhereInput[]
   OR?: Prisma.ApplicantNoteWhereInput[]
   NOT?: Prisma.ApplicantNoteWhereInput | Prisma.ApplicantNoteWhereInput[]
-  content?: Prisma.StringFilter<"ApplicantNote"> | string
+  content?: Prisma.JsonFilter<"ApplicantNote">
   lastModified?: Prisma.DateTimeFilter<"ApplicantNote"> | Date | string
   lastModifiedById?: Prisma.StringFilter<"ApplicantNote"> | string
   applicant?: Prisma.XOR<Prisma.ApplicantScalarRelationFilter, Prisma.ApplicantWhereInput>
@@ -225,7 +221,7 @@ export type ApplicantNoteScalarWhereWithAggregatesInput = {
   OR?: Prisma.ApplicantNoteScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ApplicantNoteScalarWhereWithAggregatesInput | Prisma.ApplicantNoteScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ApplicantNote"> | string
-  content?: Prisma.StringWithAggregatesFilter<"ApplicantNote"> | string
+  content?: Prisma.JsonWithAggregatesFilter<"ApplicantNote">
   lastModified?: Prisma.DateTimeWithAggregatesFilter<"ApplicantNote"> | Date | string
   applicantId?: Prisma.StringWithAggregatesFilter<"ApplicantNote"> | string
   lastModifiedById?: Prisma.StringWithAggregatesFilter<"ApplicantNote"> | string
@@ -233,7 +229,7 @@ export type ApplicantNoteScalarWhereWithAggregatesInput = {
 
 export type ApplicantNoteCreateInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   applicant: Prisma.ApplicantCreateNestedOneWithoutNoteInput
   lastModifiedBy: Prisma.UserCreateNestedOneWithoutApplicantNotesInput
@@ -241,7 +237,7 @@ export type ApplicantNoteCreateInput = {
 
 export type ApplicantNoteUncheckedCreateInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   applicantId: string
   lastModifiedById: string
@@ -249,7 +245,7 @@ export type ApplicantNoteUncheckedCreateInput = {
 
 export type ApplicantNoteUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutNoteNestedInput
   lastModifiedBy?: Prisma.UserUpdateOneRequiredWithoutApplicantNotesNestedInput
@@ -257,7 +253,7 @@ export type ApplicantNoteUpdateInput = {
 
 export type ApplicantNoteUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicantId?: Prisma.StringFieldUpdateOperationsInput | string
   lastModifiedById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -265,7 +261,7 @@ export type ApplicantNoteUncheckedUpdateInput = {
 
 export type ApplicantNoteCreateManyInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   applicantId: string
   lastModifiedById: string
@@ -273,13 +269,13 @@ export type ApplicantNoteCreateManyInput = {
 
 export type ApplicantNoteUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ApplicantNoteUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicantId?: Prisma.StringFieldUpdateOperationsInput | string
   lastModifiedById?: Prisma.StringFieldUpdateOperationsInput | string
@@ -310,7 +306,6 @@ export type ApplicantNoteCountOrderByAggregateInput = {
 
 export type ApplicantNoteMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  content?: Prisma.SortOrder
   lastModified?: Prisma.SortOrder
   applicantId?: Prisma.SortOrder
   lastModifiedById?: Prisma.SortOrder
@@ -318,7 +313,6 @@ export type ApplicantNoteMaxOrderByAggregateInput = {
 
 export type ApplicantNoteMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  content?: Prisma.SortOrder
   lastModified?: Prisma.SortOrder
   applicantId?: Prisma.SortOrder
   lastModifiedById?: Prisma.SortOrder
@@ -400,14 +394,14 @@ export type ApplicantNoteUncheckedUpdateOneWithoutApplicantNestedInput = {
 
 export type ApplicantNoteCreateWithoutLastModifiedByInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   applicant: Prisma.ApplicantCreateNestedOneWithoutNoteInput
 }
 
 export type ApplicantNoteUncheckedCreateWithoutLastModifiedByInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   applicantId: string
 }
@@ -443,7 +437,7 @@ export type ApplicantNoteScalarWhereInput = {
   OR?: Prisma.ApplicantNoteScalarWhereInput[]
   NOT?: Prisma.ApplicantNoteScalarWhereInput | Prisma.ApplicantNoteScalarWhereInput[]
   id?: Prisma.StringFilter<"ApplicantNote"> | string
-  content?: Prisma.StringFilter<"ApplicantNote"> | string
+  content?: Prisma.JsonFilter<"ApplicantNote">
   lastModified?: Prisma.DateTimeFilter<"ApplicantNote"> | Date | string
   applicantId?: Prisma.StringFilter<"ApplicantNote"> | string
   lastModifiedById?: Prisma.StringFilter<"ApplicantNote"> | string
@@ -451,14 +445,14 @@ export type ApplicantNoteScalarWhereInput = {
 
 export type ApplicantNoteCreateWithoutApplicantInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   lastModifiedBy: Prisma.UserCreateNestedOneWithoutApplicantNotesInput
 }
 
 export type ApplicantNoteUncheckedCreateWithoutApplicantInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   lastModifiedById: string
 }
@@ -481,42 +475,42 @@ export type ApplicantNoteUpdateToOneWithWhereWithoutApplicantInput = {
 
 export type ApplicantNoteUpdateWithoutApplicantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastModifiedBy?: Prisma.UserUpdateOneRequiredWithoutApplicantNotesNestedInput
 }
 
 export type ApplicantNoteUncheckedUpdateWithoutApplicantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastModifiedById?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ApplicantNoteCreateManyLastModifiedByInput = {
   id?: string
-  content: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Date | string
   applicantId: string
 }
 
 export type ApplicantNoteUpdateWithoutLastModifiedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutNoteNestedInput
 }
 
 export type ApplicantNoteUncheckedUpdateWithoutLastModifiedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ApplicantNoteUncheckedUpdateManyWithoutLastModifiedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   lastModified?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   applicantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -583,7 +577,7 @@ export type $ApplicantNotePayload<ExtArgs extends runtime.Types.Extensions.Inter
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    content: string
+    content: runtime.JsonValue
     lastModified: Date
     applicantId: string
     lastModifiedById: string
@@ -1013,7 +1007,7 @@ export interface Prisma__ApplicantNoteClient<T, Null = never, ExtArgs extends ru
  */
 export interface ApplicantNoteFieldRefs {
   readonly id: Prisma.FieldRef<"ApplicantNote", 'String'>
-  readonly content: Prisma.FieldRef<"ApplicantNote", 'String'>
+  readonly content: Prisma.FieldRef<"ApplicantNote", 'Json'>
   readonly lastModified: Prisma.FieldRef<"ApplicantNote", 'DateTime'>
   readonly applicantId: Prisma.FieldRef<"ApplicantNote", 'String'>
   readonly lastModifiedById: Prisma.FieldRef<"ApplicantNote", 'String'>

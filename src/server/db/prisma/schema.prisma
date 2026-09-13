@@ -299,7 +299,7 @@ model Interview {
 
 model ApplicantNote {
   id               String    @id @default(cuid())
-  content          String
+  content          Json
   lastModified     DateTime  @default(now()) @updatedAt @map("last_modified")
   applicantId      String    @unique @map("applicant_id")
   lastModifiedById String    @map("last_modified_by_id")
