@@ -34,6 +34,8 @@ export function TRPCReactProvider(props: { children: ReactNode }) {
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          // keepalive lets in-flight saves (e.g. note autosave) complete even if the tab is closing.
+          fetch: (input, init) => fetch(input, { ...init, keepalive: true }),
         }),
       ],
     }),

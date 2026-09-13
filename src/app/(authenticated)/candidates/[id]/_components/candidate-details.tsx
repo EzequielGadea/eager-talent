@@ -56,9 +56,11 @@ export async function CandidateDetails({ params }: CandidateDetailsProps) {
       </main>
 
       <aside className="min-w-0 space-y-4">
-        <CandidateNotes />
-        <CandidateTags
-          tags={candidate.tags}
+        <Suspense fallback={<div>Cargando notas...</div>}>
+          <CandidateNotes candidateId={id} />
+        </Suspense>
+        <CandidateTags 
+          tags={candidate.tags} 
           canEditProfile={candidate.permissions.canEditProfile}
         />
       </aside>
