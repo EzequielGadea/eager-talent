@@ -19,11 +19,11 @@ import { api } from "~/lib/trpc/server";
 import { Filters } from "./_components/filters";
 import { Suspense } from "react";
 import { 
-  CandidateAwaiterHeader, 
-  CandidateAwaiterPagination, 
-  CandidateAwaiterTable,
-  CandidateAwaiterFilters,
-} from './_components/candidateAwaiter';
+  ApplicantAwaiterHeader, 
+  ApplicantAwaiterPagination, 
+  ApplicantAwaiterTable,
+  ApplicantAwaiterFilters,
+} from './_components/applicant-awaiter';
 import { 
   FiltersFallback,
   HeaderFallback, 
@@ -36,26 +36,26 @@ import {
 export default async function CandidatosPage() {
 
   // llamado a obtener los candidatos
-  const data = api.candidate.fetchCandidates();
+  const data = api.applicant.fetchAll();
 
 
   return (
     <div className="flex-1 min-w-0 w-full max-w-full p-8 font-sans text-dashboard-text-primary overflow-x-hidden">
       <Suspense fallback= {<HeaderFallback/>}>
-        <CandidateAwaiterHeader promise = { data }/>
+        <ApplicantAwaiterHeader promise = { data }/>
       </Suspense>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Suspense fallback = {<FiltersFallback/>}>
-          <CandidateAwaiterFilters promise = { data }/>
+          <ApplicantAwaiterFilters promise = { data }/>
         </Suspense>
       </div>{/*102.05 36*/}
       <Suspense fallback= {<TableFallback/>}>
-        <CandidateAwaiterTable promise = { data }/>
+        <ApplicantAwaiterTable promise = { data }/>
       </Suspense>
       
       <Suspense fallback= {<PaginationFallback/>}>
-        <CandidateAwaiterPagination promise = { data }/>
+        <ApplicantAwaiterPagination promise = { data }/>
       </Suspense>
     </div>
   );

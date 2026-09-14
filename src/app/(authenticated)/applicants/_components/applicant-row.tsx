@@ -10,31 +10,31 @@ import {
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
-import { CandidateInfo, getTagClasses, getSeniorityClasses } from "../types";
+import { ApplicantInfo, getTagClasses, getSeniorityClasses } from "../types";
 
-export function CandidateRow(props : {candidate : CandidateInfo}) {
+export function ApplicantRow(props : {applicant : ApplicantInfo}) {
     const router = useRouter();
 
-    const handleCandidateClick = (candidateId: string) => {
-        router.push(`/candidatos/${candidateId}`);
+    const handleApplicantClick = (applicantId: string) => {
+        router.push(`/candidatos/${applicantId}`);
     };
 
     return (
         <TableRow
-                key={props.candidate.id}
-                onClick={() => handleCandidateClick(props.candidate.id)}
+                key={props.applicant.id}
+                onClick={() => handleApplicantClick(props.applicant.id)}
                 className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-dashboard-success-light last:border-0"
               >
                 {/* Candidato */}
                 <TableCell className="px-5 py-4 pl-5">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${props.candidate.avatarBg}`}
+                      className={`flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${props.applicant.avatarBg}`}
                     >
-                      {props.candidate.initials}
+                      {props.applicant.initials}
                     </div>
                     <span className="max-w-36 truncate text-sm font-bold text-dashboard-dark whitespace-normal break-words text-center">
-                      {props.candidate.name}
+                      {props.applicant.name}
                     </span>
                   </div>
                 </TableCell>
@@ -42,7 +42,7 @@ export function CandidateRow(props : {candidate : CandidateInfo}) {
                 {/* Etiquetas */}
                 <TableCell className="px-3 py-4">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    {props.candidate.tags.map((tag, i) => (
+                    {props.applicant.tags.map((tag, i) => (
                       <Badge
                         key={i}
                         variant="secondary"
@@ -60,15 +60,15 @@ export function CandidateRow(props : {candidate : CandidateInfo}) {
                 <TableCell className="px-3 py-4">
                   <div
                     className="max-w-44 truncate text-sm font-semibold text-dashboard-text-muted whitespace-normal break-words text-center"
-                    title={props.candidate.vacancy}
+                    title={props.applicant.jobOpening}
                   >
-                    {props.candidate.vacancy}
+                    {props.applicant.jobOpening}
                   </div>
                 </TableCell>
 
                 {/* Rol */}
                 <TableCell className="px-3 py-4 text-sm font-medium text-dashboard-text-muted whitespace-normal break-words text-center">
-                  {props.candidate.role}
+                  {props.applicant.role}
                 </TableCell>
 
                 {/* Seniority */}
@@ -76,29 +76,29 @@ export function CandidateRow(props : {candidate : CandidateInfo}) {
                   <Badge
                     variant="secondary"
                     className={`rounded-md border-transparent px-2 py-1 text-xs font-bold whitespace-normal break-words text-center ${getSeniorityClasses(
-                      props.candidate.seniority
+                      props.applicant.seniority
                     )}`}
                   >
-                    {props.candidate.seniority}
+                    {props.applicant.seniority}
                   </Badge>
                 </TableCell>
 
                 {/* Área */}
                 <TableCell className="px-3 py-4 text-sm font-medium text-dashboard-text-muted whitespace-normal break-words text-center">
-                  {props.candidate.area}
+                  {props.applicant.area}
                 </TableCell>
 
                 {/* Source */}
                 <TableCell className="px-3 py-4">
                   <div className="flex items-center gap-1.5 text-sm font-semibold text-dashboard-text-muted text-center">
-                    <span className="shrink-0">{props.candidate.sourceIcon}</span>
-                    <span className="truncate">{props.candidate.sourceText}</span>
+                    <span className="shrink-0">{props.applicant.sourceIcon}</span>
+                    <span className="truncate">{props.applicant.sourceText}</span>
                   </div>
                 </TableCell>
 
                 {/* CV */}
                 <TableCell className="px-3 py-4 text-center">
-                  {props.candidate.hasCv && (
+                  {props.applicant.hasCv && (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -113,9 +113,9 @@ export function CandidateRow(props : {candidate : CandidateInfo}) {
 
                 {/* LinkedIn */}
                 <TableCell className="px-3 py-4 text-center">
-                  {props.candidate.hasLinkedin && props.candidate.linkedinUrl ? (
+                  {props.applicant.hasLinkedin && props.applicant.linkedinUrl ? (
                     <a
-                      href={props.candidate.linkedinUrl}
+                      href={props.applicant.linkedinUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
@@ -131,9 +131,9 @@ export function CandidateRow(props : {candidate : CandidateInfo}) {
                 <TableCell className="px-3 py-4 pr-5">
                   <div
                     className="max-w-48 truncate text-sm font-medium text-dashboard-text-muted text-center"
-                    title={props.candidate.email}
+                    title={props.applicant.email}
                   >
-                    {props.candidate.email}
+                    {props.applicant.email}
                   </div>
                 </TableCell>
               </TableRow>

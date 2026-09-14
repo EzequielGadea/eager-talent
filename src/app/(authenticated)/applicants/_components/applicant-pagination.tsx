@@ -9,12 +9,12 @@ import {
   PaginationPrevious,
 } from "~/components/ui/pagination";
 
-export function CandidatePagination(props : {countCand : number}) {
+export function ApplicantPagination(props : {countApplicants : number}) {
 
     return (
         <div className="mt-4 flex items-center justify-between pb-6">
         <p className="text-sm font-medium text-dashboard-text-muted">
-          Mostrando 1 - 8 de { props.countCand } candidatos
+          Mostrando 1 - 8 de { props.countApplicants } candidatos
         </p>
 
         <Pagination className="mx-0 w-auto">
