@@ -33,6 +33,31 @@ model User {
   interviews          Interview[]     @relation("InterviewUsers")
   assignedJobOpenings JobOpening[]    @relation("JobOpeningHiringManagers")
 
+  id                  String          @id
+  name                String
+  email               String          @unique
+  emailVerified       Boolean         @default(false)
+  image               String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  banExpires          DateTime?
+  banReason           String?
+  banned              Boolean         @default(false)
+  lastAccess          DateTime?       @map("last_access")
+  lastName            String          @default("") @map("last_name")
+  role                UserRole        @default(HiringManager)
+  status              UserStatus      @default(Active)
+  accounts            Account[]
+  applicantNotes      ApplicantNote[]
+  interviewNotes      InterviewNote[]
+  invitations         Invitation[]    @relation("InvitationRecipient")
+  sentInvitations     Invitation[]    @relation("InvitationSender")
+  publicLinks         PublicLink[]
+  sessions            Session[]
+  sharedApplicants    Applicant[]     @relation("ApplicantHiringManagers")
+  interviews          Interview[]     @relation("InterviewUsers")
+  assignedJobOpenings JobOpening[]    @relation("JobOpeningHiringManagers")
+
   @@map("user")
 }
 

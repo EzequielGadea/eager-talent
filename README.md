@@ -3,6 +3,7 @@
 ## Desarrollo local
 
 Requisitos: Git, Node.js 20 o superior y Bun 1.2.20. En local utiliza Prisma Dev (PGlite).
+Requisitos: Git, Node.js 20 o superior y Bun 1.2.20. En local utiliza Prisma Dev (PGlite).
 
 ```bash
 bun install

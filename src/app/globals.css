@@ -38,8 +38,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-
-  /*colores etiqetas*/
+/*colores etiqetas*/
   --dashboard-purple-avatar: #e9d5ff;
   --dashboard-purple-text: #7e22ce;
 
@@ -104,7 +103,7 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
- /* --- nueva capa: texto --- */
+/* --- nueva capa: texto --- */
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-tertiary: var(--text-tertiary);
@@ -201,6 +200,11 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --dashboard-dark: oklch(0.92 0.01 255);
+  --dashboard-dark-hover: oklch(0.85 0.01 255);
+  --dashboard-text-light: oklch(0.70 0.02 255);
+  --dashboard-success-light: oklch(0.25 0.06 155);
 
   --dashboard-dark: oklch(0.92 0.01 255);
   --dashboard-dark-hover: oklch(0.85 0.01 255);
