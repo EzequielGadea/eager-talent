@@ -39,7 +39,7 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /*maybe*/
+  /*colores etiqetas*/
   --dashboard-purple-avatar: #e9d5ff;
   --dashboard-purple-text: #7e22ce;
 
@@ -145,6 +145,28 @@
   --color-tag-red-fg: var(--tag-red-fg);
   --color-tag-gray-bg: var(--tag-gray-bg);
   --color-tag-gray-fg: var(--tag-gray-fg);
+
+  /*avatares para iniciales*/
+  --color-dashboard-purple-avatar: var(--dashboard-purple-avatar);
+  --color-dashboard-purple-text: var(--dashboard-purple-text);
+
+  --color-dashboard-sky-avatar: var(--dashboard-sky-avatar);
+  --color-dashboard-sky-text: var(--dashboard-sky-text);
+
+  --color-dashboard-success-avatar: var(--dashboard-success-avatar);
+  --color-dashboard-success-text: var(--dashboard-success-text);
+
+  --color-dashboard-orange-light: var(--dashboard-orange-light);
+  --color-dashboard-orange-text: var(--dashboard-orange-text);
+
+  --color-dashboard-track: var(--dashboard-track);
+  --color-dashboard-text-muted: var(--dashboard-text-muted);
+
+
+  --color-dashboard-dark: var(--dashboard-dark);
+  --color-dashboard-dark-hover: var(--dashboard-dark-hover);
+  --color-dashboard-text-light: var(--dashboard-text-light);
+  --color-dashboard-success-light: var(--dashboard-success-light);
 }
 
 .dark {

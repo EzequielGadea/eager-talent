@@ -13,7 +13,7 @@ export interface ApplicantInfo {
   name: string;
   avatarBg: string;
   tags: Tag[];
-  jobOpening: string[];
+  jobOpening: string;
   role: string;
   seniorityName: string | undefined//"Senior" | "Mid-Senior" | "Mid";
   seniorityColor: string;
