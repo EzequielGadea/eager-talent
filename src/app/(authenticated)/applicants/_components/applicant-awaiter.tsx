@@ -14,24 +14,28 @@ async function Await(promise : ApplicantsPromise) {
           initials: applicant.name[0] + applicant.lastName[0],
           name: applicant.name + ' ' + applicant.lastName,
           avatarBg: avatarPalette[0],
-          tags: [{ //applicant.tags, //TODO mapear color -> type
-            label: "tag", 
-            type: "purple" as TagType,
-          }],
-          jobOpening: "—", //TODO applicant.applications.jobOpening.name,
-          role: applicant.role.name,
-          seniority: "Senior",//TODO mapeo color applicant.seniority?.name,
-          area: (applicant.area) ? applicant.area.name : "Sin aréa",
-          sourceText: "Inbound", //TODO falta en el esquema de DB
+                    tags: (applicant.tags) ? applicant.tags.map(
+            (tag) => ({
+              label: tag.name,
+              type: "purple" as TagType, //TODO mapear color -> type
+            })
+            ) : [],
+          jobOpening: (applicant.applications) ? applicant.applications.map(
+            application => application.jobOpening.name) : [], 
+          role: (applicant.role.name) ?? "-",
+          seniorityName: (applicant.seniority?.name) ?? "-",
+          seniorityColor: (applicant.seniority?.color) ?? "-",
+          area: (applicant.area?.name) ?? "-",
+          sourceText: (applicant.source)  ?? "-",
           sourceIcon: "f", //TODO 
           hasCv: applicant.resume != null,
           hasLinkedin: applicant.linkedin != null,
-          linkedinUrl: (applicant.linkedin != null) ? applicant.linkedin : "undefined",
-          email: (applicant.email == null) ? "no email error" : applicant.email,
+          linkedinUrl: (applicant.linkedin != null) ? applicant.linkedin : "-",
+          email: (applicant.email == null) ? "-" : applicant.email,
         }
       }) : [];
     const countApplicants = applicantsData.length
-    let uniqueOpenings = new Set<String>();
+    const uniqueOpenings = new Set<String>();
     for (const applicant of applicantsData) {
       for (const open of applicant.jobOpening) {
         uniqueOpenings.add(open);
@@ -72,7 +76,7 @@ export async function ApplicantAwaiterFilters(props : { promise : ApplicantsProm
     const { applicantsData, countApplicants, countOpenings } = await Await(props.promise);
     return (
       <>
-        <Filters/>
+        <Filters applicants = { applicantsData }/>
       </>
     )
 }

@@ -13,9 +13,10 @@ export interface ApplicantInfo {
   name: string;
   avatarBg: string;
   tags: Tag[];
-  jobOpening: string;
+  jobOpening: string[];
   role: string;
-  seniority: string | undefined//"Senior" | "Mid-Senior" | "Mid";
+  seniorityName: string | undefined//"Senior" | "Mid-Senior" | "Mid";
+  seniorityColor: string;
   area: string;
   sourceText: string;
   sourceIcon: React.ReactNode;
@@ -40,7 +41,7 @@ export const getTagClasses = (type: TagType) => {
   }
 };
 
-export const getSeniorityClasses = (seniority: ApplicantInfo["seniority"]) => {
+export const getSeniorityClasses = (seniority: ApplicantInfo["seniorityName"]) => {
   switch (seniority) {
     case "Senior":
       return "bg-dashboard-success-light text-dashboard-success-text";
