@@ -1,17 +1,24 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-import { protectedProcedure } from "~/server/api/trpc";
-import { getCandidateById } from "~/server/logic/candidate-service";
+import { candidateUserProcedure } from "~/server/api/procedures/candidate-user";
 
-export const getCandidateByIdProcedure = protectedProcedure
+export const getCandidateByIdProcedure = candidateUserProcedure
   .input(
     z.object({
       id: z.string().min(1),
     }),
   )
   .query(async ({ input, ctx }) => {
-    const candidate = await getCandidateById(input.id, ctx.session.user.id);
+    const candidate = await ctx.db.applicant.findFirst({
+      where: { id: input.id, ...ctx.candidateAccessWhere },
+      include: {
+        role: { select: { name: true } },
+        area: { select: { name: true } },
+        seniority: { select: { name: true, color: true } },
+        tags: { select: { id: true, name: true, color: true, isSkill: true } },
+      },
+    });
 
     if (!candidate) {
       throw new TRPCError({
@@ -20,5 +27,5 @@ export const getCandidateByIdProcedure = protectedProcedure
       });
     }
 
-    return candidate;
+    return { ...candidate, permissions: ctx.candidatePermissions };
   });
