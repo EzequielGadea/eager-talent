@@ -12,11 +12,27 @@ export const getCandidateByIdProcedure = candidateUserProcedure
   .query(async ({ input, ctx }) => {
     const candidate = await ctx.db.applicant.findFirst({
       where: { id: input.id, ...ctx.candidateAccessWhere },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        photo: true,
+        country: true,
+        linkedin: true,
+        englishLevel: true,
+        source: true,
+        hearAboutUs: true,
+        title: true,
+        academicInstitution: true,
+        careerStartYear: true,
+        careerEndYear: true,
+        education: true,
+        resume: true,
         role: { select: { name: true } },
-        area: { select: { name: true } },
-        seniority: { select: { name: true, color: true } },
-        tags: { select: { id: true, name: true, color: true, isSkill: true } },
+        seniority: { select: { name: true } },
+        tags: { select: { id: true, name: true, color: true } },
       },
     });
 
