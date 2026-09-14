@@ -63,7 +63,6 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
         id: true,
         description: true,
         date: true,
-        jobOpeningId: true,
         application: {
           select: { jobOpening: { select: { name: true } } },
         },
