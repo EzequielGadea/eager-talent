@@ -10,7 +10,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
-import { ApplicantInfo, getTagClasses, getSeniorityClasses } from "../types";
+import { ApplicantInfo } from "../types";
 
 export function ApplicantRow(props : {applicant : ApplicantInfo}) {
     const router = useRouter();
@@ -46,9 +46,11 @@ export function ApplicantRow(props : {applicant : ApplicantInfo}) {
                       <Badge
                         key={i}
                         variant="secondary"
-                        className={`rounded-full border-transparent px-2 py-0.5 text-xs font-bold text-center ${getTagClasses(
-                          tag.type
-                        )}`}
+                        style={{ 
+                          color: tag.color,
+                          backgroundColor: `${tag.color}26`,
+                         }}
+                        className={`rounded-full border-transparent px-2 py-0.5 text-xs font-bold text-center`}
                       >
                         {tag.label}
                       </Badge>
@@ -74,10 +76,12 @@ export function ApplicantRow(props : {applicant : ApplicantInfo}) {
                 {/* Seniority */}
                 <TableCell className="px-3 py-4">
                   <Badge
+                    style={{ 
+                      color: props.applicant.seniorityColor,
+                      backgroundColor: `${props.applicant.seniorityColor}26`,
+                    }}
                     variant="secondary"
-                    className={`rounded-md border-transparent px-2 py-1 text-xs font-bold whitespace-normal break-words text-center ${getSeniorityClasses(
-                      props.applicant.seniorityName
-                    )}`}
+                    className={`rounded-md border-transparent px-2 py-1 text-xs font-bold whitespace-normal break-words text-center`}
                   >
                     {props.applicant.seniorityName}
                   </Badge>
