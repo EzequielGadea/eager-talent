@@ -1,11 +1,13 @@
-import { BookOpen, CircleHelp, FileText, GraduationCap } from "lucide-react";
+import { CircleHelp, FileText, GraduationCap } from "lucide-react";
+import type { HearAboutUs } from "~/generated/prisma/enums";
+import { hearAboutUsLabels } from "../_lib/candidate-labels";
 
 type CandidateInfoCardsProps = {
   education: string | null;
   academicInstitution: string | null;
   careerStartYear: number | null;
   careerEndYear: number | null;
-  hearAboutUs: string | null;
+  hearAboutUs: HearAboutUs | null;
   resume: string | null;
 };
 
@@ -23,7 +25,7 @@ export function CandidateInfoCards({
       : null;
 
   return (
-    <div className=" grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <InfoCard
         icon={<GraduationCap className="h-4 w-4 text-violet-500" />}
         title="Formación académica"
@@ -41,7 +43,9 @@ export function CandidateInfoCards({
         icon={<CircleHelp className="h-4 w-4 text-emerald-500" />}
         title="¿Cómo escuchaste de nosotros?"
       >
-        <p className="font-semibold">{hearAboutUs ?? "Sin información"}</p>
+        <p className="font-semibold">
+          {hearAboutUs ? hearAboutUsLabels[hearAboutUs] : "Sin información"}
+        </p>
       </InfoCard>
 
       <InfoCard
@@ -62,12 +66,7 @@ export function CandidateInfoCards({
         )}
       </InfoCard>
 
-      <InfoCard
-        icon={<BookOpen className="h-4 w-4 text-amber-500" />}
-        title="Escolaridad"
-      >
-        <p className="text-muted-foreground">Sin información</p>
-      </InfoCard>
+      {/* The transcript card will be integrated when its document field is available. */}
     </div>
   );
 }
