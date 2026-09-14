@@ -18,6 +18,7 @@ import {
 import { useState } from "react";
 
 import { getTagClasses, TagType } from "../types";
+import { ApplicantInfo } from "../types";
 
 const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
   {
@@ -59,7 +60,7 @@ const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
   },
   {
     id: "Source",
-    label: "Source",
+    label: "Fuente",
     options: [
       "LinkedIn",
       "Outbound",
@@ -87,7 +88,7 @@ const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
   },
 ];
 
-export function Filters() {
+export function Filters({ applicants } : {applicants : ApplicantInfo[] }) {
 
       const [selections, setSelections] = useState<Record<string, string[]>>({
         Vacantes: [],
