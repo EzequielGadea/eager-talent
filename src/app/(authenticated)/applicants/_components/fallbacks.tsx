@@ -1,4 +1,3 @@
-
 import {
     Download,
     Plus,
@@ -201,7 +200,7 @@ export function FiltersFallback() {
   | "Vacantes"
   | "Roles"
   | "Seniority"
-  | "Área"
+  | "Area"
   | "Source"
   | "Etiquetas";
 
@@ -224,12 +223,12 @@ export function FiltersFallback() {
     label: "Seniority",
   },
   {
-    id: "Área",
-    label: "Área",
+    id: "Area",
+    label: "Area",
   },
   {
     id: "Source",
-    label: "Source",
+    label: "Fuente",
   },
   {
     id: "Etiquetas",
@@ -242,7 +241,7 @@ export function FiltersFallback() {
     Vacantes: [],
     Roles: [],
     Seniority: [],
-    Área: [],
+    Area: [],
     Source: [],
     Etiquetas: [],
   });
