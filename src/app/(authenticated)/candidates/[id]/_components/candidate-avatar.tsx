@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { getSafeExternalUrl } from "../_lib/external-url";
+
 type CandidateAvatarProps = {
   name: string;
   lastName: string;
@@ -14,21 +16,22 @@ export function CandidateAvatar({
   lastName,
   photo,
 }: CandidateAvatarProps) {
+  const photoUrl = getSafeExternalUrl(photo);
   const [failedPhoto, setFailedPhoto] = useState<string | null>(null);
   const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   const fullName = `${name} ${lastName}`;
 
   return (
     <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-emerald-100 text-xl font-semibold text-emerald-700">
-      {photo && photo !== failedPhoto ? (
+      {photoUrl && photoUrl !== failedPhoto ? (
         <Image
-          src={photo}
+          src={photoUrl}
           alt={fullName}
           width={64}
           height={64}
           className="size-16 object-cover"
           unoptimized
-          onError={() => setFailedPhoto(photo)}
+          onError={() => setFailedPhoto(photoUrl)}
         />
       ) : (
         <span role="img" aria-label={fullName}>

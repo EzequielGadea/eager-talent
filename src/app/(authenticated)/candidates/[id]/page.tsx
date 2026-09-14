@@ -42,7 +42,7 @@ async function CandidatePageContent({
 
   return (
     <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)]">
-      <main className="flex min-w-0 flex-col gap-4">
+      <div className="flex min-w-0 flex-col gap-4">
         <Suspense fallback={<Loading />}>
           <CandidateDetails candidatePromise={candidatePromise} />
         </Suspense>
@@ -53,7 +53,7 @@ async function CandidatePageContent({
             searchParams={searchParams}
           />
         </Suspense>
-      </main>
+      </div>
 
       <aside className="min-w-0 space-y-4">
         {/* Candidate notes will be integrated here in a separate task. */}

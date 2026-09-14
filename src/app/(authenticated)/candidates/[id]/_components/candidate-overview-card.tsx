@@ -1,6 +1,7 @@
 import { Link, Mail, MapPin, Phone } from "lucide-react";
 import type { EnglishLevel, Source } from "~/generated/prisma/enums";
 import { englishLevelLabels, sourceLabels } from "../_lib/candidate-labels";
+import { getSafeExternalUrl } from "../_lib/external-url";
 import { CandidateAvatar } from "./candidate-avatar";
 
 type CandidateOverviewCardProps = {
@@ -37,6 +38,8 @@ export function CandidateOverviewCard({
   role,
   seniority,
 }: CandidateOverviewCardProps) {
+  const linkedinUrl = getSafeExternalUrl(linkedin);
+
   return (
     <section className="rounded-xl border bg-white p-5">
       <div className="flex gap-4">
@@ -67,11 +70,11 @@ export function CandidateOverviewCard({
               {country ?? "Sin país"}
             </span>
 
-            {linkedin && (
+            {linkedinUrl && (
               <a
-                href={linkedin}
+                href={linkedinUrl}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="flex items-center gap-1.5 hover:underline"
               >
                 <Link className="h-4 w-4 shrink-0" />

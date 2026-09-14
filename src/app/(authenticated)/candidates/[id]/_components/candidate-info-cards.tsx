@@ -1,6 +1,7 @@
 import { CircleHelp, FileText, GraduationCap } from "lucide-react";
 import type { HearAboutUs } from "~/generated/prisma/enums";
 import { hearAboutUsLabels } from "../_lib/candidate-labels";
+import { getSafeExternalUrl } from "../_lib/external-url";
 
 type CandidateInfoCardsProps = {
   education: string | null;
@@ -19,6 +20,7 @@ export function CandidateInfoCards({
   hearAboutUs,
   resume,
 }: CandidateInfoCardsProps) {
+  const resumeUrl = getSafeExternalUrl(resume);
   const careerYears =
     careerStartYear || careerEndYear
       ? `${careerStartYear ?? "?"}–${careerEndYear ?? "Actualidad"}`
@@ -52,11 +54,11 @@ export function CandidateInfoCards({
         icon={<FileText className="h-4 w-4 text-blue-500" />}
         title="CV"
       >
-        {resume ? (
+        {resumeUrl ? (
           <a
-            href={resume}
+            href={resumeUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="font-medium text-blue-600 hover:underline"
           >
             Ver CV
