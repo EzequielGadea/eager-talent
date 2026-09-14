@@ -14,7 +14,7 @@ export const fetchAll = protectedProcedure
         }).optional()
     )
     .query(async ({ctx, input}) => {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        //await new Promise((resolve) => setTimeout(resolve, 3000));
         /*
         try {
             //dato de prueba basura

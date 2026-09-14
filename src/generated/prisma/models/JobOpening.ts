@@ -210,10 +210,10 @@ export type JobOpeningWhereInput = {
   targetClosingDate?: Prisma.DateTimeFilter<"JobOpening"> | Date | string
   closingDate?: Prisma.DateTimeNullableFilter<"JobOpening"> | Date | string | null
   areaId?: Prisma.StringFilter<"JobOpening"> | string
-  area?: Prisma.XOR<Prisma.AreaScalarRelationFilter, Prisma.AreaWhereInput>
-  seniorities?: Prisma.SeniorityListRelationFilter
-  hiringManagers?: Prisma.UserListRelationFilter
   applications?: Prisma.ApplicationListRelationFilter
+  area?: Prisma.XOR<Prisma.AreaScalarRelationFilter, Prisma.AreaWhereInput>
+  hiringManagers?: Prisma.UserListRelationFilter
+  seniorities?: Prisma.SeniorityListRelationFilter
 }
 
 export type JobOpeningOrderByWithRelationInput = {
@@ -226,10 +226,10 @@ export type JobOpeningOrderByWithRelationInput = {
   targetClosingDate?: Prisma.SortOrder
   closingDate?: Prisma.SortOrderInput | Prisma.SortOrder
   areaId?: Prisma.SortOrder
-  area?: Prisma.AreaOrderByWithRelationInput
-  seniorities?: Prisma.SeniorityOrderByRelationAggregateInput
-  hiringManagers?: Prisma.UserOrderByRelationAggregateInput
   applications?: Prisma.ApplicationOrderByRelationAggregateInput
+  area?: Prisma.AreaOrderByWithRelationInput
+  hiringManagers?: Prisma.UserOrderByRelationAggregateInput
+  seniorities?: Prisma.SeniorityOrderByRelationAggregateInput
 }
 
 export type JobOpeningWhereUniqueInput = Prisma.AtLeast<{
@@ -245,10 +245,10 @@ export type JobOpeningWhereUniqueInput = Prisma.AtLeast<{
   targetClosingDate?: Prisma.DateTimeFilter<"JobOpening"> | Date | string
   closingDate?: Prisma.DateTimeNullableFilter<"JobOpening"> | Date | string | null
   areaId?: Prisma.StringFilter<"JobOpening"> | string
-  area?: Prisma.XOR<Prisma.AreaScalarRelationFilter, Prisma.AreaWhereInput>
-  seniorities?: Prisma.SeniorityListRelationFilter
-  hiringManagers?: Prisma.UserListRelationFilter
   applications?: Prisma.ApplicationListRelationFilter
+  area?: Prisma.XOR<Prisma.AreaScalarRelationFilter, Prisma.AreaWhereInput>
+  hiringManagers?: Prisma.UserListRelationFilter
+  seniorities?: Prisma.SeniorityListRelationFilter
 }, "id">
 
 export type JobOpeningOrderByWithAggregationInput = {
@@ -290,10 +290,10 @@ export type JobOpeningCreateInput = {
   openingDate: Date | string
   targetClosingDate: Date | string
   closingDate?: Date | string | null
-  area: Prisma.AreaCreateNestedOneWithoutJobOpeningsInput
-  seniorities?: Prisma.SeniorityCreateNestedManyWithoutJobOpeningsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutAssignedJobOpeningsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobOpeningInput
+  area: Prisma.AreaCreateNestedOneWithoutJobOpeningsInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutAssignedJobOpeningsInput
+  seniorities?: Prisma.SeniorityCreateNestedManyWithoutJobOpeningsInput
 }
 
 export type JobOpeningUncheckedCreateInput = {
@@ -306,9 +306,9 @@ export type JobOpeningUncheckedCreateInput = {
   targetClosingDate: Date | string
   closingDate?: Date | string | null
   areaId: string
-  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobOpeningInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput
+  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
 }
 
 export type JobOpeningUpdateInput = {
@@ -320,10 +320,10 @@ export type JobOpeningUpdateInput = {
   openingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  area?: Prisma.AreaUpdateOneRequiredWithoutJobOpeningsNestedInput
-  seniorities?: Prisma.SeniorityUpdateManyWithoutJobOpeningsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutAssignedJobOpeningsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobOpeningNestedInput
+  area?: Prisma.AreaUpdateOneRequiredWithoutJobOpeningsNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutAssignedJobOpeningsNestedInput
+  seniorities?: Prisma.SeniorityUpdateManyWithoutJobOpeningsNestedInput
 }
 
 export type JobOpeningUncheckedUpdateInput = {
@@ -336,9 +336,9 @@ export type JobOpeningUncheckedUpdateInput = {
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   areaId?: Prisma.StringFieldUpdateOperationsInput | string
-  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobOpeningNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput
+  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
 }
 
 export type JobOpeningCreateManyInput = {
@@ -570,9 +570,9 @@ export type JobOpeningCreateWithoutHiringManagersInput = {
   openingDate: Date | string
   targetClosingDate: Date | string
   closingDate?: Date | string | null
+  applications?: Prisma.ApplicationCreateNestedManyWithoutJobOpeningInput
   area: Prisma.AreaCreateNestedOneWithoutJobOpeningsInput
   seniorities?: Prisma.SeniorityCreateNestedManyWithoutJobOpeningsInput
-  applications?: Prisma.ApplicationCreateNestedManyWithoutJobOpeningInput
 }
 
 export type JobOpeningUncheckedCreateWithoutHiringManagersInput = {
@@ -585,8 +585,8 @@ export type JobOpeningUncheckedCreateWithoutHiringManagersInput = {
   targetClosingDate: Date | string
   closingDate?: Date | string | null
   areaId: string
-  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobOpeningInput
+  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
 }
 
 export type JobOpeningCreateOrConnectWithoutHiringManagersInput = {
@@ -634,9 +634,9 @@ export type JobOpeningCreateWithoutAreaInput = {
   openingDate: Date | string
   targetClosingDate: Date | string
   closingDate?: Date | string | null
-  seniorities?: Prisma.SeniorityCreateNestedManyWithoutJobOpeningsInput
-  hiringManagers?: Prisma.UserCreateNestedManyWithoutAssignedJobOpeningsInput
   applications?: Prisma.ApplicationCreateNestedManyWithoutJobOpeningInput
+  hiringManagers?: Prisma.UserCreateNestedManyWithoutAssignedJobOpeningsInput
+  seniorities?: Prisma.SeniorityCreateNestedManyWithoutJobOpeningsInput
 }
 
 export type JobOpeningUncheckedCreateWithoutAreaInput = {
@@ -648,9 +648,9 @@ export type JobOpeningUncheckedCreateWithoutAreaInput = {
   openingDate: Date | string
   targetClosingDate: Date | string
   closingDate?: Date | string | null
-  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobOpeningInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput
+  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
 }
 
 export type JobOpeningCreateOrConnectWithoutAreaInput = {
@@ -688,9 +688,9 @@ export type JobOpeningCreateWithoutSenioritiesInput = {
   openingDate: Date | string
   targetClosingDate: Date | string
   closingDate?: Date | string | null
+  applications?: Prisma.ApplicationCreateNestedManyWithoutJobOpeningInput
   area: Prisma.AreaCreateNestedOneWithoutJobOpeningsInput
   hiringManagers?: Prisma.UserCreateNestedManyWithoutAssignedJobOpeningsInput
-  applications?: Prisma.ApplicationCreateNestedManyWithoutJobOpeningInput
 }
 
 export type JobOpeningUncheckedCreateWithoutSenioritiesInput = {
@@ -703,8 +703,8 @@ export type JobOpeningUncheckedCreateWithoutSenioritiesInput = {
   targetClosingDate: Date | string
   closingDate?: Date | string | null
   areaId: string
-  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutJobOpeningInput
+  hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput
 }
 
 export type JobOpeningCreateOrConnectWithoutSenioritiesInput = {
@@ -738,8 +738,8 @@ export type JobOpeningCreateWithoutApplicationsInput = {
   targetClosingDate: Date | string
   closingDate?: Date | string | null
   area: Prisma.AreaCreateNestedOneWithoutJobOpeningsInput
-  seniorities?: Prisma.SeniorityCreateNestedManyWithoutJobOpeningsInput
   hiringManagers?: Prisma.UserCreateNestedManyWithoutAssignedJobOpeningsInput
+  seniorities?: Prisma.SeniorityCreateNestedManyWithoutJobOpeningsInput
 }
 
 export type JobOpeningUncheckedCreateWithoutApplicationsInput = {
@@ -752,8 +752,8 @@ export type JobOpeningUncheckedCreateWithoutApplicationsInput = {
   targetClosingDate: Date | string
   closingDate?: Date | string | null
   areaId: string
-  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
   hiringManagers?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedJobOpeningsInput
+  seniorities?: Prisma.SeniorityUncheckedCreateNestedManyWithoutJobOpeningsInput
 }
 
 export type JobOpeningCreateOrConnectWithoutApplicationsInput = {
@@ -782,8 +782,8 @@ export type JobOpeningUpdateWithoutApplicationsInput = {
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   area?: Prisma.AreaUpdateOneRequiredWithoutJobOpeningsNestedInput
-  seniorities?: Prisma.SeniorityUpdateManyWithoutJobOpeningsNestedInput
   hiringManagers?: Prisma.UserUpdateManyWithoutAssignedJobOpeningsNestedInput
+  seniorities?: Prisma.SeniorityUpdateManyWithoutJobOpeningsNestedInput
 }
 
 export type JobOpeningUncheckedUpdateWithoutApplicationsInput = {
@@ -796,8 +796,8 @@ export type JobOpeningUncheckedUpdateWithoutApplicationsInput = {
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   areaId?: Prisma.StringFieldUpdateOperationsInput | string
-  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
   hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput
+  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
 }
 
 export type JobOpeningUpdateWithoutHiringManagersInput = {
@@ -809,9 +809,9 @@ export type JobOpeningUpdateWithoutHiringManagersInput = {
   openingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  applications?: Prisma.ApplicationUpdateManyWithoutJobOpeningNestedInput
   area?: Prisma.AreaUpdateOneRequiredWithoutJobOpeningsNestedInput
   seniorities?: Prisma.SeniorityUpdateManyWithoutJobOpeningsNestedInput
-  applications?: Prisma.ApplicationUpdateManyWithoutJobOpeningNestedInput
 }
 
 export type JobOpeningUncheckedUpdateWithoutHiringManagersInput = {
@@ -824,8 +824,8 @@ export type JobOpeningUncheckedUpdateWithoutHiringManagersInput = {
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   areaId?: Prisma.StringFieldUpdateOperationsInput | string
-  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobOpeningNestedInput
+  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
 }
 
 export type JobOpeningUncheckedUpdateManyWithoutHiringManagersInput = {
@@ -860,9 +860,9 @@ export type JobOpeningUpdateWithoutAreaInput = {
   openingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  seniorities?: Prisma.SeniorityUpdateManyWithoutJobOpeningsNestedInput
-  hiringManagers?: Prisma.UserUpdateManyWithoutAssignedJobOpeningsNestedInput
   applications?: Prisma.ApplicationUpdateManyWithoutJobOpeningNestedInput
+  hiringManagers?: Prisma.UserUpdateManyWithoutAssignedJobOpeningsNestedInput
+  seniorities?: Prisma.SeniorityUpdateManyWithoutJobOpeningsNestedInput
 }
 
 export type JobOpeningUncheckedUpdateWithoutAreaInput = {
@@ -874,9 +874,9 @@ export type JobOpeningUncheckedUpdateWithoutAreaInput = {
   openingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobOpeningNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput
+  seniorities?: Prisma.SeniorityUncheckedUpdateManyWithoutJobOpeningsNestedInput
 }
 
 export type JobOpeningUncheckedUpdateManyWithoutAreaInput = {
@@ -899,9 +899,9 @@ export type JobOpeningUpdateWithoutSenioritiesInput = {
   openingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  applications?: Prisma.ApplicationUpdateManyWithoutJobOpeningNestedInput
   area?: Prisma.AreaUpdateOneRequiredWithoutJobOpeningsNestedInput
   hiringManagers?: Prisma.UserUpdateManyWithoutAssignedJobOpeningsNestedInput
-  applications?: Prisma.ApplicationUpdateManyWithoutJobOpeningNestedInput
 }
 
 export type JobOpeningUncheckedUpdateWithoutSenioritiesInput = {
@@ -914,8 +914,8 @@ export type JobOpeningUncheckedUpdateWithoutSenioritiesInput = {
   targetClosingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closingDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   areaId?: Prisma.StringFieldUpdateOperationsInput | string
-  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutJobOpeningNestedInput
+  hiringManagers?: Prisma.UserUncheckedUpdateManyWithoutAssignedJobOpeningsNestedInput
 }
 
 export type JobOpeningUncheckedUpdateManyWithoutSenioritiesInput = {
@@ -936,15 +936,15 @@ export type JobOpeningUncheckedUpdateManyWithoutSenioritiesInput = {
  */
 
 export type JobOpeningCountOutputType = {
-  seniorities: number
-  hiringManagers: number
   applications: number
+  hiringManagers: number
+  seniorities: number
 }
 
 export type JobOpeningCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  seniorities?: boolean | JobOpeningCountOutputTypeCountSenioritiesArgs
-  hiringManagers?: boolean | JobOpeningCountOutputTypeCountHiringManagersArgs
   applications?: boolean | JobOpeningCountOutputTypeCountApplicationsArgs
+  hiringManagers?: boolean | JobOpeningCountOutputTypeCountHiringManagersArgs
+  seniorities?: boolean | JobOpeningCountOutputTypeCountSenioritiesArgs
 }
 
 /**
@@ -960,8 +960,8 @@ export type JobOpeningCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.E
 /**
  * JobOpeningCountOutputType without action
  */
-export type JobOpeningCountOutputTypeCountSenioritiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.SeniorityWhereInput
+export type JobOpeningCountOutputTypeCountApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApplicationWhereInput
 }
 
 /**
@@ -974,8 +974,8 @@ export type JobOpeningCountOutputTypeCountHiringManagersArgs<ExtArgs extends run
 /**
  * JobOpeningCountOutputType without action
  */
-export type JobOpeningCountOutputTypeCountApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ApplicationWhereInput
+export type JobOpeningCountOutputTypeCountSenioritiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SeniorityWhereInput
 }
 
 
@@ -989,10 +989,10 @@ export type JobOpeningSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   targetClosingDate?: boolean
   closingDate?: boolean
   areaId?: boolean
-  area?: boolean | Prisma.AreaDefaultArgs<ExtArgs>
-  seniorities?: boolean | Prisma.JobOpening$senioritiesArgs<ExtArgs>
-  hiringManagers?: boolean | Prisma.JobOpening$hiringManagersArgs<ExtArgs>
   applications?: boolean | Prisma.JobOpening$applicationsArgs<ExtArgs>
+  area?: boolean | Prisma.AreaDefaultArgs<ExtArgs>
+  hiringManagers?: boolean | Prisma.JobOpening$hiringManagersArgs<ExtArgs>
+  seniorities?: boolean | Prisma.JobOpening$senioritiesArgs<ExtArgs>
   _count?: boolean | Prisma.JobOpeningCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["jobOpening"]>
 
@@ -1036,10 +1036,10 @@ export type JobOpeningSelectScalar = {
 
 export type JobOpeningOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "status" | "stages" | "location" | "openingDate" | "targetClosingDate" | "closingDate" | "areaId", ExtArgs["result"]["jobOpening"]>
 export type JobOpeningInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  area?: boolean | Prisma.AreaDefaultArgs<ExtArgs>
-  seniorities?: boolean | Prisma.JobOpening$senioritiesArgs<ExtArgs>
-  hiringManagers?: boolean | Prisma.JobOpening$hiringManagersArgs<ExtArgs>
   applications?: boolean | Prisma.JobOpening$applicationsArgs<ExtArgs>
+  area?: boolean | Prisma.AreaDefaultArgs<ExtArgs>
+  hiringManagers?: boolean | Prisma.JobOpening$hiringManagersArgs<ExtArgs>
+  seniorities?: boolean | Prisma.JobOpening$senioritiesArgs<ExtArgs>
   _count?: boolean | Prisma.JobOpeningCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type JobOpeningIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1052,10 +1052,10 @@ export type JobOpeningIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 export type $JobOpeningPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "JobOpening"
   objects: {
-    area: Prisma.$AreaPayload<ExtArgs>
-    seniorities: Prisma.$SeniorityPayload<ExtArgs>[]
-    hiringManagers: Prisma.$UserPayload<ExtArgs>[]
     applications: Prisma.$ApplicationPayload<ExtArgs>[]
+    area: Prisma.$AreaPayload<ExtArgs>
+    hiringManagers: Prisma.$UserPayload<ExtArgs>[]
+    seniorities: Prisma.$SeniorityPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1461,10 +1461,10 @@ readonly fields: JobOpeningFieldRefs;
  */
 export interface Prisma__JobOpeningClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  area<T extends Prisma.AreaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AreaDefaultArgs<ExtArgs>>): Prisma.Prisma__AreaClient<runtime.Types.Result.GetResult<Prisma.$AreaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  seniorities<T extends Prisma.JobOpening$senioritiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobOpening$senioritiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SeniorityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  hiringManagers<T extends Prisma.JobOpening$hiringManagersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobOpening$hiringManagersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applications<T extends Prisma.JobOpening$applicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobOpening$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  area<T extends Prisma.AreaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AreaDefaultArgs<ExtArgs>>): Prisma.Prisma__AreaClient<runtime.Types.Result.GetResult<Prisma.$AreaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  hiringManagers<T extends Prisma.JobOpening$hiringManagersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobOpening$hiringManagersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  seniorities<T extends Prisma.JobOpening$senioritiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobOpening$senioritiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SeniorityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1904,27 +1904,27 @@ export type JobOpeningDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * JobOpening.seniorities
+ * JobOpening.applications
  */
-export type JobOpening$senioritiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type JobOpening$applicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Seniority
+   * Select specific fields to fetch from the Application
    */
-  select?: Prisma.SenioritySelect<ExtArgs> | null
+  select?: Prisma.ApplicationSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Seniority
+   * Omit specific fields from the Application
    */
-  omit?: Prisma.SeniorityOmit<ExtArgs> | null
+  omit?: Prisma.ApplicationOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.SeniorityInclude<ExtArgs> | null
-  where?: Prisma.SeniorityWhereInput
-  orderBy?: Prisma.SeniorityOrderByWithRelationInput | Prisma.SeniorityOrderByWithRelationInput[]
-  cursor?: Prisma.SeniorityWhereUniqueInput
+  include?: Prisma.ApplicationInclude<ExtArgs> | null
+  where?: Prisma.ApplicationWhereInput
+  orderBy?: Prisma.ApplicationOrderByWithRelationInput | Prisma.ApplicationOrderByWithRelationInput[]
+  cursor?: Prisma.ApplicationWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.SeniorityScalarFieldEnum | Prisma.SeniorityScalarFieldEnum[]
+  distinct?: Prisma.ApplicationScalarFieldEnum | Prisma.ApplicationScalarFieldEnum[]
 }
 
 /**
@@ -1952,27 +1952,27 @@ export type JobOpening$hiringManagersArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
- * JobOpening.applications
+ * JobOpening.seniorities
  */
-export type JobOpening$applicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type JobOpening$senioritiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Application
+   * Select specific fields to fetch from the Seniority
    */
-  select?: Prisma.ApplicationSelect<ExtArgs> | null
+  select?: Prisma.SenioritySelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Application
+   * Omit specific fields from the Seniority
    */
-  omit?: Prisma.ApplicationOmit<ExtArgs> | null
+  omit?: Prisma.SeniorityOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.ApplicationInclude<ExtArgs> | null
-  where?: Prisma.ApplicationWhereInput
-  orderBy?: Prisma.ApplicationOrderByWithRelationInput | Prisma.ApplicationOrderByWithRelationInput[]
-  cursor?: Prisma.ApplicationWhereUniqueInput
+  include?: Prisma.SeniorityInclude<ExtArgs> | null
+  where?: Prisma.SeniorityWhereInput
+  orderBy?: Prisma.SeniorityOrderByWithRelationInput | Prisma.SeniorityOrderByWithRelationInput[]
+  cursor?: Prisma.SeniorityWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.ApplicationScalarFieldEnum | Prisma.ApplicationScalarFieldEnum[]
+  distinct?: Prisma.SeniorityScalarFieldEnum | Prisma.SeniorityScalarFieldEnum[]
 }
 
 /**

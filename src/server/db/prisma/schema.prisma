@@ -97,7 +97,11 @@ model Applicant {
   linkedin            String?
   englishLevel        EnglishLevel?  @map("english_level")
   source              Source?
+<<<<<<< HEAD
   hearAboutUs         String?        @map("hear_about_us")
+=======
+  hearAboutUs         HearAboutUs?   @map("hear_about_us")
+>>>>>>> 12daf0c (fix: regenerado prisma client, rrotoo por conflictos de pull de remoto)
   title               String?
   academicInstitution String?        @map("academic_institution")
   careerStartYear     Int?           @map("career_start_year")
@@ -315,48 +319,4 @@ model PublicLink {
   @@index([applicantId, jobOpeningId])
   @@index([expirationDate])
   @@map("public_link")
-}
-
-enum UserRole {
-  Recruiter
-  HiringManager
-}
-
-enum UserStatus {
-  Active
-  PendingInvitation
-  Inactive
-}
-
-enum EnglishLevel {
-  Basic
-  Intermediate
-  Advanced
-  Native
-}
-
-enum Source {
-  LinkedIn
-  Website
-  Outbound
-  Referral
-  JobBoard
-}
-
-enum JobOpeningStatus {
-  Open
-  Paused
-  Closed
-  Cancelled
-}
-
-enum InterviewStatus {
-  Completed
-  Scheduled
-  Pending
-}
-
-enum InterviewType {
-  VideoCall
-  InPerson
 }
