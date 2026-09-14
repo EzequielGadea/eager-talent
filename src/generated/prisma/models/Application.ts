@@ -222,10 +222,10 @@ export type ApplicationWhereInput = {
   disqualificationReason?: Prisma.StringNullableFilter<"Application"> | string | null
   desiredSalary?: Prisma.StringNullableFilter<"Application"> | string | null
   availability?: Prisma.StringNullableFilter<"Application"> | string | null
+  activities?: Prisma.ActivityListRelationFilter
   applicant?: Prisma.XOR<Prisma.ApplicantScalarRelationFilter, Prisma.ApplicantWhereInput>
   jobOpening?: Prisma.XOR<Prisma.JobOpeningScalarRelationFilter, Prisma.JobOpeningWhereInput>
   interviews?: Prisma.InterviewListRelationFilter
-  activities?: Prisma.ActivityListRelationFilter
   publicLinks?: Prisma.PublicLinkListRelationFilter
 }
 
@@ -240,10 +240,10 @@ export type ApplicationOrderByWithRelationInput = {
   disqualificationReason?: Prisma.SortOrderInput | Prisma.SortOrder
   desiredSalary?: Prisma.SortOrderInput | Prisma.SortOrder
   availability?: Prisma.SortOrderInput | Prisma.SortOrder
+  activities?: Prisma.ActivityOrderByRelationAggregateInput
   applicant?: Prisma.ApplicantOrderByWithRelationInput
   jobOpening?: Prisma.JobOpeningOrderByWithRelationInput
   interviews?: Prisma.InterviewOrderByRelationAggregateInput
-  activities?: Prisma.ActivityOrderByRelationAggregateInput
   publicLinks?: Prisma.PublicLinkOrderByRelationAggregateInput
 }
 
@@ -262,10 +262,10 @@ export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
   disqualificationReason?: Prisma.StringNullableFilter<"Application"> | string | null
   desiredSalary?: Prisma.StringNullableFilter<"Application"> | string | null
   availability?: Prisma.StringNullableFilter<"Application"> | string | null
+  activities?: Prisma.ActivityListRelationFilter
   applicant?: Prisma.XOR<Prisma.ApplicantScalarRelationFilter, Prisma.ApplicantWhereInput>
   jobOpening?: Prisma.XOR<Prisma.JobOpeningScalarRelationFilter, Prisma.JobOpeningWhereInput>
   interviews?: Prisma.InterviewListRelationFilter
-  activities?: Prisma.ActivityListRelationFilter
   publicLinks?: Prisma.PublicLinkListRelationFilter
 }, "applicantId_jobOpeningId">
 
@@ -310,10 +310,10 @@ export type ApplicationCreateInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicationInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutApplicationInput
 }
 
@@ -328,8 +328,8 @@ export type ApplicationUncheckedCreateInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutApplicationInput
 }
 
@@ -342,10 +342,10 @@ export type ApplicationUpdateInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicationNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUpdateManyWithoutApplicationNestedInput
 }
 
@@ -360,8 +360,8 @@ export type ApplicationUncheckedUpdateInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
@@ -605,9 +605,9 @@ export type ApplicationCreateWithoutApplicantInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicationInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutApplicationInput
 }
 
@@ -621,8 +621,8 @@ export type ApplicationUncheckedCreateWithoutApplicantInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutApplicationInput
 }
 
@@ -677,9 +677,9 @@ export type ApplicationCreateWithoutJobOpeningInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicationInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutApplicationInput
 }
 
@@ -693,8 +693,8 @@ export type ApplicationUncheckedCreateWithoutJobOpeningInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutApplicationInput
 }
 
@@ -733,9 +733,9 @@ export type ApplicationCreateWithoutInterviewsInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkCreateNestedManyWithoutApplicationInput
 }
 
@@ -779,9 +779,9 @@ export type ApplicationUpdateWithoutInterviewsInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUpdateManyWithoutApplicationNestedInput
 }
 
@@ -885,10 +885,10 @@ export type ApplicationCreateWithoutPublicLinksInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
+  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicationInput
-  activities?: Prisma.ActivityCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationUncheckedCreateWithoutPublicLinksInput = {
@@ -902,8 +902,8 @@ export type ApplicationUncheckedCreateWithoutPublicLinksInput = {
   disqualificationReason?: string | null
   desiredSalary?: string | null
   availability?: string | null
-  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
+  interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
 }
 
 export type ApplicationCreateOrConnectWithoutPublicLinksInput = {
@@ -931,10 +931,10 @@ export type ApplicationUpdateWithoutPublicLinksInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicationNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationUncheckedUpdateWithoutPublicLinksInput = {
@@ -948,8 +948,8 @@ export type ApplicationUncheckedUpdateWithoutPublicLinksInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
 export type ApplicationCreateManyApplicantInput = {
@@ -973,9 +973,9 @@ export type ApplicationUpdateWithoutApplicantInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicationNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUpdateManyWithoutApplicationNestedInput
 }
 
@@ -989,8 +989,8 @@ export type ApplicationUncheckedUpdateWithoutApplicantInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
@@ -1027,9 +1027,9 @@ export type ApplicationUpdateWithoutJobOpeningInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicationNestedInput
-  activities?: Prisma.ActivityUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUpdateManyWithoutApplicationNestedInput
 }
 
@@ -1043,8 +1043,8 @@ export type ApplicationUncheckedUpdateWithoutJobOpeningInput = {
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
+  interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutApplicationNestedInput
 }
 
@@ -1066,14 +1066,14 @@ export type ApplicationUncheckedUpdateManyWithoutJobOpeningInput = {
  */
 
 export type ApplicationCountOutputType = {
-  interviews: number
   activities: number
+  interviews: number
   publicLinks: number
 }
 
 export type ApplicationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  interviews?: boolean | ApplicationCountOutputTypeCountInterviewsArgs
   activities?: boolean | ApplicationCountOutputTypeCountActivitiesArgs
+  interviews?: boolean | ApplicationCountOutputTypeCountInterviewsArgs
   publicLinks?: boolean | ApplicationCountOutputTypeCountPublicLinksArgs
 }
 
@@ -1090,15 +1090,15 @@ export type ApplicationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.
 /**
  * ApplicationCountOutputType without action
  */
-export type ApplicationCountOutputTypeCountInterviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.InterviewWhereInput
+export type ApplicationCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ActivityWhereInput
 }
 
 /**
  * ApplicationCountOutputType without action
  */
-export type ApplicationCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ActivityWhereInput
+export type ApplicationCountOutputTypeCountInterviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InterviewWhereInput
 }
 
 /**
@@ -1120,10 +1120,10 @@ export type ApplicationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   disqualificationReason?: boolean
   desiredSalary?: boolean
   availability?: boolean
+  activities?: boolean | Prisma.Application$activitiesArgs<ExtArgs>
   applicant?: boolean | Prisma.ApplicantDefaultArgs<ExtArgs>
   jobOpening?: boolean | Prisma.JobOpeningDefaultArgs<ExtArgs>
   interviews?: boolean | Prisma.Application$interviewsArgs<ExtArgs>
-  activities?: boolean | Prisma.Application$activitiesArgs<ExtArgs>
   publicLinks?: boolean | Prisma.Application$publicLinksArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["application"]>
@@ -1173,10 +1173,10 @@ export type ApplicationSelectScalar = {
 
 export type ApplicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"applicantId" | "jobOpeningId" | "applicationDate" | "active" | "currentStage" | "stageEntryDate" | "disqualificationDate" | "disqualificationReason" | "desiredSalary" | "availability", ExtArgs["result"]["application"]>
 export type ApplicationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  activities?: boolean | Prisma.Application$activitiesArgs<ExtArgs>
   applicant?: boolean | Prisma.ApplicantDefaultArgs<ExtArgs>
   jobOpening?: boolean | Prisma.JobOpeningDefaultArgs<ExtArgs>
   interviews?: boolean | Prisma.Application$interviewsArgs<ExtArgs>
-  activities?: boolean | Prisma.Application$activitiesArgs<ExtArgs>
   publicLinks?: boolean | Prisma.Application$publicLinksArgs<ExtArgs>
   _count?: boolean | Prisma.ApplicationCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1192,10 +1192,10 @@ export type ApplicationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.
 export type $ApplicationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Application"
   objects: {
+    activities: Prisma.$ActivityPayload<ExtArgs>[]
     applicant: Prisma.$ApplicantPayload<ExtArgs>
     jobOpening: Prisma.$JobOpeningPayload<ExtArgs>
     interviews: Prisma.$InterviewPayload<ExtArgs>[]
-    activities: Prisma.$ActivityPayload<ExtArgs>[]
     publicLinks: Prisma.$PublicLinkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1603,10 +1603,10 @@ readonly fields: ApplicationFieldRefs;
  */
 export interface Prisma__ApplicationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  activities<T extends Prisma.Application$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   applicant<T extends Prisma.ApplicantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ApplicantDefaultArgs<ExtArgs>>): Prisma.Prisma__ApplicantClient<runtime.Types.Result.GetResult<Prisma.$ApplicantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   jobOpening<T extends Prisma.JobOpeningDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobOpeningDefaultArgs<ExtArgs>>): Prisma.Prisma__JobOpeningClient<runtime.Types.Result.GetResult<Prisma.$JobOpeningPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   interviews<T extends Prisma.Application$interviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$interviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  activities<T extends Prisma.Application$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   publicLinks<T extends Prisma.Application$publicLinksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Application$publicLinksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2048,30 +2048,6 @@ export type ApplicationDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * Application.interviews
- */
-export type Application$interviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Interview
-   */
-  select?: Prisma.InterviewSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Interview
-   */
-  omit?: Prisma.InterviewOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.InterviewInclude<ExtArgs> | null
-  where?: Prisma.InterviewWhereInput
-  orderBy?: Prisma.InterviewOrderByWithRelationInput | Prisma.InterviewOrderByWithRelationInput[]
-  cursor?: Prisma.InterviewWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.InterviewScalarFieldEnum | Prisma.InterviewScalarFieldEnum[]
-}
-
-/**
  * Application.activities
  */
 export type Application$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2093,6 +2069,30 @@ export type Application$activitiesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ActivityScalarFieldEnum | Prisma.ActivityScalarFieldEnum[]
+}
+
+/**
+ * Application.interviews
+ */
+export type Application$interviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Interview
+   */
+  select?: Prisma.InterviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Interview
+   */
+  omit?: Prisma.InterviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InterviewInclude<ExtArgs> | null
+  where?: Prisma.InterviewWhereInput
+  orderBy?: Prisma.InterviewOrderByWithRelationInput | Prisma.InterviewOrderByWithRelationInput[]
+  cursor?: Prisma.InterviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InterviewScalarFieldEnum | Prisma.InterviewScalarFieldEnum[]
 }
 
 /**

@@ -33,31 +33,6 @@ model User {
   interviews          Interview[]     @relation("InterviewUsers")
   assignedJobOpenings JobOpening[]    @relation("JobOpeningHiringManagers")
 
-  id                  String          @id
-  name                String
-  email               String          @unique
-  emailVerified       Boolean         @default(false)
-  image               String?
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
-  banExpires          DateTime?
-  banReason           String?
-  banned              Boolean         @default(false)
-  lastAccess          DateTime?       @map("last_access")
-  lastName            String          @default("") @map("last_name")
-  role                UserRole        @default(HiringManager)
-  status              UserStatus      @default(Active)
-  accounts            Account[]
-  applicantNotes      ApplicantNote[]
-  interviewNotes      InterviewNote[]
-  invitations         Invitation[]    @relation("InvitationRecipient")
-  sentInvitations     Invitation[]    @relation("InvitationSender")
-  publicLinks         PublicLink[]
-  sessions            Session[]
-  sharedApplicants    Applicant[]     @relation("ApplicantHiringManagers")
-  interviews          Interview[]     @relation("InterviewUsers")
-  assignedJobOpenings JobOpening[]    @relation("JobOpeningHiringManagers")
-
   @@map("user")
 }
 
@@ -175,7 +150,7 @@ model Applicant {
   linkedin            String?
   englishLevel        EnglishLevel?  @map("english_level")
   source              Source?
-  hearAboutUs         HearAboutUs?       @map("hear_about_us")
+  hearAboutUs         HearAboutUs?   @map("hear_about_us")
   title               String?
   academicInstitution String?        @map("academic_institution")
   careerStartYear     Int?           @map("career_start_year")
@@ -393,48 +368,4 @@ model PublicLink {
   @@index([applicantId, jobOpeningId])
   @@index([expirationDate])
   @@map("public_link")
-}
-
-enum UserRole {
-  Recruiter
-  HiringManager
-}
-
-enum UserStatus {
-  Active
-  PendingInvitation
-  Inactive
-}
-
-enum EnglishLevel {
-  Basic
-  Intermediate
-  Advanced
-  Native
-}
-
-enum Source {
-  LinkedIn
-  Website
-  Outbound
-  Referral
-  JobBoard
-}
-
-enum JobOpeningStatus {
-  Open
-  Paused
-  Closed
-  Cancelled
-}
-
-enum InterviewStatus {
-  Completed
-  Scheduled
-  Pending
-}
-
-enum InterviewType {
-  VideoCall
-  InPerson
 }
