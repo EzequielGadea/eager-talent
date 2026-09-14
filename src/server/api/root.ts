@@ -1,10 +1,8 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { z } from "zod";
-import { publicProcedure } from "~/server/api/trpc";
-import { listCandidates } from "~logic/candidateService";
+import { applicantRouter } from "./routers/applicant";
 
 export const appRouter = createTRPCRouter({
-    candidate: candidateRouter,
+    applicant: applicantRouter,
 });
 
 export type AppRouter = typeof appRouter;
