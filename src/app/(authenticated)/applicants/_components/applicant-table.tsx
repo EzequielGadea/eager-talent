@@ -8,10 +8,10 @@ import {
 } from "~/components/ui/table";
 
 
-import { CandidateInfo } from "../types";
-import { CandidateRow } from "./candidateRow";
+import { ApplicantInfo } from "../types";
+import { ApplicantRow } from "./applicant-row";
 
-export function CandidateTable(props : {candidatesData : CandidateInfo[]}) {
+export function ApplicantTable(props : {applicantsData : ApplicantInfo[]}) {
     
     return (
       <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
@@ -52,10 +52,10 @@ export function CandidateTable(props : {candidatesData : CandidateInfo[]}) {
           </TableHeader>
 
           <TableBody className="divide-y divide-dashboard-border">
-            { props.candidatesData?.map((c) => ( 
-                <CandidateRow 
-                  key={c.id}
-                  candidate = { c }
+            { props.applicantsData?.map((applicant) => ( 
+                <ApplicantRow 
+                  key={applicant.id}
+                  applicant = { applicant }
                 />
             ))}
           </TableBody>

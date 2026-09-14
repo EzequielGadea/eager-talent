@@ -7,7 +7,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/navigation";
 
-export function Header(props : {countCand : number, countVacancy : number}) {
+export function Header(props : {countApplicants : number, countOpenings : number}) {
   const router = useRouter();  
   return (
     <>
@@ -18,7 +18,7 @@ export function Header(props : {countCand : number, countVacancy : number}) {
             Candidatos
           </h1>
           <p className="mt-0.5 text-base font-medium text-dashboard-text-muted">
-            {props.countCand} candidatos activos en {props.countVacancy} vacantes
+            {props.countApplicants} candidatos activos en {props.countOpenings} vacantes
           </p>
         </div>
 

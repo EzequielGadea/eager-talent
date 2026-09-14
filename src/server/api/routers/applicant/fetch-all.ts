@@ -18,7 +18,7 @@ export const fetchAll = protectedProcedure
         /*
         try {
             //dato de prueba basura
-            const newCandidate = await prisma.applicant.create({
+            const newApplicant = await prisma.applicant.create({
                 data: {
                     id: '1',
                     name: 'martin',
@@ -69,5 +69,5 @@ export const fetchAll = protectedProcedure
         //agregar filtros a la consulta
     })
         console.log("antes de ir a front");
-        return {candidates: result};
+        return {applicants: result};
     })
