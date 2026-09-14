@@ -1,12 +1,7 @@
-import {
-  Link,
-  Mail,
-  MapPin,
-  Phone,
-  Ellipsis,
-  UserRoundPlus,
-} from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { Link, Mail, MapPin, Phone } from "lucide-react";
+import type { EnglishLevel, Source } from "~/generated/prisma/enums";
+import { englishLevelLabels, sourceLabels } from "../_lib/candidate-labels";
+import { CandidateAvatar } from "./candidate-avatar";
 
 type CandidateOverviewCardProps = {
   name: string;
@@ -17,9 +12,8 @@ type CandidateOverviewCardProps = {
   country: string | null;
   linkedin: string | null;
   title: string | null;
-  source: string | null;
-  englishLevel: string | null;
-  canEditProfile: boolean;
+  source: Source | null;
+  englishLevel: EnglishLevel | null;
 
   role: {
     name: string;
@@ -32,6 +26,7 @@ type CandidateOverviewCardProps = {
 export function CandidateOverviewCard({
   name,
   lastName,
+  photo,
   email,
   phone,
   country,
@@ -41,16 +36,11 @@ export function CandidateOverviewCard({
   englishLevel,
   role,
   seniority,
-  canEditProfile,
 }: CandidateOverviewCardProps) {
-  const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-
   return (
     <section className="rounded-xl border bg-white p-5">
       <div className="flex gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-xl font-semibold text-emerald-700">
-          {initials}
-        </div>
+        <CandidateAvatar name={name} lastName={lastName} photo={photo} />
 
         <div className="min-w-0 flex-1">
           <h1 className="text-xl font-semibold">
@@ -90,23 +80,6 @@ export function CandidateOverviewCard({
             )}
           </div>
         </div>
-        {canEditProfile && (
-          <div className="flex shrink-0 gap-2">
-            <Button variant="outline" size="sm" type="button">
-              <UserRoundPlus className="size-4" />
-              Compartir con un HM
-            </Button>
-
-            <Button
-              variant="outline"
-              size="icon"
-              type="button"
-              aria-label="Más acciones"
-            >
-              <Ellipsis className="size-4" />
-            </Button>
-          </div>
-        )}
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -119,10 +92,15 @@ export function CandidateOverviewCard({
 
         <CandidateAttribute
           label="Nivel de inglés"
-          value={englishLevel ?? "Sin información"}
+          value={
+            englishLevel ? englishLevelLabels[englishLevel] : "Sin información"
+          }
         />
 
-        <CandidateAttribute label="Fuente" value={source ?? "Sin fuente"} />
+        <CandidateAttribute
+          label="Fuente"
+          value={source ? sourceLabels[source] : "Sin fuente"}
+        />
       </div>
     </section>
   );
