@@ -7,13 +7,13 @@ interface Tag {
   type: TagType;
 }
 
-export interface CandidateInfo {
+export interface ApplicantInfo {
   id: string;
   initials: string;
   name: string;
   avatarBg: string;
   tags: Tag[];
-  vacancy: string;
+  jobOpening: string;
   role: string;
   seniority: string | undefined//"Senior" | "Mid-Senior" | "Mid";
   area: string;
@@ -40,7 +40,7 @@ export const getTagClasses = (type: TagType) => {
   }
 };
 
-export const getSeniorityClasses = (seniority: CandidateInfo["seniority"]) => {
+export const getSeniorityClasses = (seniority: ApplicantInfo["seniority"]) => {
   switch (seniority) {
     case "Senior":
       return "bg-dashboard-success-light text-dashboard-success-text";
@@ -53,7 +53,7 @@ export const getSeniorityClasses = (seniority: CandidateInfo["seniority"]) => {
   }
 };
 
-export type CandidatesPromise = ReturnType<typeof api.candidate.fetchCandidates>;
+export type ApplicantsPromise = ReturnType<typeof api.applicant.fetchAll>;
 
 export const avatarPalette = [
   "bg-dashboard-success-avatar text-dashboard-success-text",
