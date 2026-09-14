@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { avatarPalette, TagType, ApplicantsPromise } from "../types";
+import { ApplicantsPromise, getRandomColor } from "../types";
 import { ApplicantPagination } from './applicant-pagination';
 import { ApplicantTable } from './applicant-table';
 import { Header } from './header';
@@ -15,28 +15,28 @@ async function Await(promise : ApplicantsPromise) {
         .map(
           application => {
             if (application.active) { return application.jobOpening.name }
-          }
+          },
       ) : [];
         return {
           id: applicant.id,
           initials: applicant.name[0] + applicant.lastName[0],
           name: applicant.name + ' ' + applicant.lastName,
-          avatarBg: avatarPalette[0],
+          avatarBg: getRandomColor(),
           tags: (applicant.tags) ? applicant.tags.map(
             (tag) => ({
               label: tag.name,
-              type: "purple" as TagType, //TODO mapear color -> type
+              color: tag.color,
             })
           ) : [],
 
-          jobOpening: jobOpenings.length ? jobOpenings.join(",\n") : "-",
+          jobOpening: jobOpenings.length ? jobOpenings.join(", \r\n") : "-",
 
           role: (applicant.role.name) ?? "-",
           seniorityName: (applicant.seniority?.name) ?? "-",
           seniorityColor: (applicant.seniority?.color) ?? "-",
           area: (applicant.area?.name) ?? "-",
           sourceText: (applicant.source)  ?? "-",
-          sourceIcon: "f", //TODO 
+          sourceIcon: "TODO", //TODO 
           hasCv: applicant.resume != null,
           hasLinkedin: applicant.linkedin != null,
           linkedinUrl: (applicant.linkedin != null) ? applicant.linkedin : "-",
