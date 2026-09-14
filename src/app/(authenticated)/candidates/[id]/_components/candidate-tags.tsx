@@ -2,7 +2,6 @@ type CandidateTags = {
   id: string;
   name: string;
   color: string | null;
-  isSkill: boolean;
 };
 
 type CandidateTagsProps = {
