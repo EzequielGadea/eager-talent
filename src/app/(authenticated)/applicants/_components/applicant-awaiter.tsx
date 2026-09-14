@@ -9,19 +9,28 @@ import { Filters } from './filters';
 async function Await(promise : ApplicantsPromise) {
     const data = await promise;
     const applicantsData = (data) ? data.applicants.map((applicant) => {
+
+      const jobOpenings = (applicant.applications) ? applicant.applications
+        .filter((application) =>  (application.active))
+        .map(
+          application => {
+            if (application.active) { return application.jobOpening.name }
+          }
+      ) : [];
         return {
           id: applicant.id,
           initials: applicant.name[0] + applicant.lastName[0],
           name: applicant.name + ' ' + applicant.lastName,
           avatarBg: avatarPalette[0],
-                    tags: (applicant.tags) ? applicant.tags.map(
+          tags: (applicant.tags) ? applicant.tags.map(
             (tag) => ({
               label: tag.name,
               type: "purple" as TagType, //TODO mapear color -> type
             })
-            ) : [],
-          jobOpening: (applicant.applications) ? applicant.applications.map(
-            application => application.jobOpening.name) : [], 
+          ) : [],
+
+          jobOpening: jobOpenings.length ? jobOpenings.join(",\n") : "-",
+
           role: (applicant.role.name) ?? "-",
           seniorityName: (applicant.seniority?.name) ?? "-",
           seniorityColor: (applicant.seniority?.color) ?? "-",
