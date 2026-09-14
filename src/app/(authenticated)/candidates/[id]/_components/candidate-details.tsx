@@ -1,7 +1,8 @@
 import { api } from "~/lib/trpc/server";
 import { Suspense } from "react";
+import { TRPCError } from "@trpc/server";
+import { notFound } from "next/navigation";
 
-import { CandidateNotes } from "./candidate-notes";
 import { CandidateOverviewCard } from "./candidate-overview-card";
 import { CandidateTags } from "./candidate-tags";
 import { CandidateInfoCards } from "./candidate-info-cards";
@@ -11,17 +12,28 @@ type CandidateDetailsProps = {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export async function CandidateDetails({ params }: CandidateDetailsProps) {
+export async function CandidateDetails({
+  params,
+  searchParams,
+}: CandidateDetailsProps) {
   const { id } = await params;
 
-  const candidate = await api.candidate.getById({
-    id,
-  });
+  const candidate = await api.candidate
+    .getById({
+      id,
+    })
+    .catch((error: unknown) => {
+      if (error instanceof TRPCError && error.code === "NOT_FOUND") {
+        notFound();
+      }
+      throw error;
+    });
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)]">
+    <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)]">
       <main className="flex min-w-0 flex-col gap-4">
         <CandidateOverviewCard
           name={candidate.name}
@@ -36,7 +48,6 @@ export async function CandidateDetails({ params }: CandidateDetailsProps) {
           englishLevel={candidate.englishLevel}
           role={candidate.role}
           seniority={candidate.seniority}
-          canEditProfile={candidate.permissions.canEditProfile}
         />
 
         <CandidateInfoCards
@@ -48,19 +59,18 @@ export async function CandidateDetails({ params }: CandidateDetailsProps) {
           resume={candidate.resume}
         />
 
-        {/* La sección de postulaciones será integrada por su subtarea correspondiente */}
+        {/* Applications will be integrated here in a separate task. */}
 
-        <Suspense fallback={<div>Cargando actividad...</div>}>
-          <CandidateLogs candidateId={id} />
-        </Suspense>
+        {candidate.permissions.canViewLogs && (
+          <Suspense fallback={<div>Cargando actividad...</div>}>
+            <CandidateLogs candidateId={id} searchParams={searchParams} />
+          </Suspense>
+        )}
       </main>
 
       <aside className="min-w-0 space-y-4">
-        <CandidateNotes />
-        <CandidateTags
-          tags={candidate.tags}
-          canEditProfile={candidate.permissions.canEditProfile}
-        />
+        {/* Candidate notes will be integrated here in a separate task. */}
+        <CandidateTags tags={candidate.tags} />
       </aside>
     </div>
   );
