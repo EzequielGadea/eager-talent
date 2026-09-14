@@ -17,7 +17,6 @@ import {
 
 import { useState } from "react";
 
-import { getTagClasses, TagType } from "../types";
 import { ApplicantInfo } from "../types";
 
 const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
@@ -73,17 +72,7 @@ const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
     id: "Etiquetas",
     label: "Etiquetas",
     options: [
-      { label: "Go", type: "blue" as TagType },
-      { label: "Sr.", type: "purple" as TagType },
-      { label: "Node", type: "green" as TagType },
-      { label: "Postgres", type: "blue" as TagType },
-      { label: "UX", type: "purple" as TagType },
-      { label: "Growth", type: "orange" as TagType },
-      { label: "Cypress", type: "green" as TagType },
-      { label: "Figma", type: "blue" as TagType },
-      { label: "Estrategia", type: "purple" as TagType },
-      { label: "SQL", type: "blue" as TagType },
-      { label: "UX Writing", type: "purple" as TagType },
+
     ],
   },
 ];
@@ -155,7 +144,7 @@ export function Filters({ applicants } : {applicants : ApplicantInfo[] }) {
                 <div className="mb-3 flex max-h-56 flex-col gap-2.5 overflow-y-auto pr-1">
                   {config.options.map((opt) => {
                     const isTag = typeof opt !== "string";
-                    const label = isTag ? opt.label : opt;
+                    const label = isTag ? "test label"/*opt.label*/ : opt;
                     const isChecked = selections[config.id]?.includes(label);
 
                     return (
@@ -173,9 +162,7 @@ export function Filters({ applicants } : {applicants : ApplicantInfo[] }) {
                         {isTag ? (
                           <Badge
                             variant="secondary"
-                            className={`rounded-full border-transparent px-2 py-0.5 text-xs font-bold ${getTagClasses(
-                              opt.type
-                            )}`}
+                            className={`rounded-full border-transparent px-2 py-0.5 text-xs font-bold`}
                           >
                             {label}
                           </Badge>
