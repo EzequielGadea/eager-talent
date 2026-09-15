@@ -33,7 +33,7 @@ export function ApplicantPagination(props : {countApplicants : number;
         <p className="text-sm font-medium text-dashboard-text-muted">
           Mostrando {startItem} - {endItem} de {props.countApplicants} candidatos
         </p>
-
+        
         <Pagination className="mx-0 w-auto">
           <PaginationContent className="gap-1">
             <PaginationItem>
@@ -61,7 +61,6 @@ export function ApplicantPagination(props : {countApplicants : number;
           ))}
           <LastPage currentPage={currentPage} totalPages={totalPages} gotoPage={goToPage} />
 
-
             <PaginationItem>
               <PaginationNext
                 href="#"
@@ -83,9 +82,9 @@ function FirstPage(props : {currentPage: number, gotoPage: (page: number) => voi
         <PaginationItem>
           <PaginationLink
             href="#"
-            isActive
+            isActive={false}
             onClick={(e) => {e.preventDefault(); props.gotoPage(1);}}
-            className={`h-7 w-7 rounded-md text-sm font-bold shadow-smtext-dashboard-text-muted"}`}
+            className={`h-7 w-7 rounded-md text-sm font-bold shadow-sm text-dashboard-text-muted`}
           >
             1
           </PaginationLink>
@@ -106,9 +105,9 @@ function LastPage(props : {currentPage: number, totalPages : number, gotoPage: (
         <PaginationItem>
           <PaginationLink
             href="#"
-            isActive
+            isActive={false}
             onClick={(e) => {e.preventDefault(); props.gotoPage(props.totalPages);}}
-            className={`h-7 w-7 rounded-md text-sm font-bold shadow-smtext-dashboard-text-muted"}`}
+            className={`h-7 w-7 rounded-md text-sm font-bold shadow-sm text-dashboard-text-muted`}
           > 
           {props.totalPages}
           </PaginationLink>

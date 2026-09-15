@@ -36,15 +36,19 @@ async function Await(promise : ApplicantsPromise) {
           seniorityColor: (applicant.seniority?.color) ?? "-",
           area: (applicant.area?.name) ?? "-",
           sourceText: (applicant.source)  ?? "-",
-          sourceIcon: "TODO"
+          sourceIcon: "TODO",
+          hasCv: applicant.hasOwnProperty('resume'),
+          hasLinkedin: applicant.hasOwnProperty('linkedin'),
+          linkedinUrl: applicant.linkedin ?? "-",
+          email: applicant.email ?? "-",
        }
     }) : [];
     
     const countApplicants = applicantsData.length
     const uniqueOpenings = new Set<String>();
-    for (const applicant of applicantsData) {
-      for (const open of applicant.jobOpening) {
-        uniqueOpenings.add(open);
+    for (const applicant of data.applicants) {
+      for (const open of applicant.applications) {
+        uniqueOpenings.add(open.jobOpening.name);
       }
     }
     const countOpenings = (uniqueOpenings.has("—")) ? uniqueOpenings.size - 1 : uniqueOpenings.size
