@@ -137,7 +137,9 @@ export function ApplicantRow(props : {applicant : ApplicantInfo}) {
                     className="max-w-48 truncate text-sm font-medium text-dashboard-text-muted text-center"
                     title={props.applicant.email}
                   >
-                    {props.applicant.email}
+                    <span className="max-w-36 truncate text-sm whitespace-normal break-words text-center">
+                      {props.applicant.email}
+                    </span>
                   </div>
                 </TableCell>
               </TableRow>

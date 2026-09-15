@@ -24,7 +24,7 @@ export interface ApplicantInfo {
   email: string;
 }
 
-export const ITEMS_PER_PAGE = 2;
+export const ITEMS_PER_PAGE = 8;
 
 export type ApplicantsPromise = ReturnType<typeof api.applicant.fetchAll>;
 
