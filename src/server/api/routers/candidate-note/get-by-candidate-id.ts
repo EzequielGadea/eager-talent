@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { protectedProcedure } from "~/server/api/trpc";
@@ -28,10 +27,6 @@ export const getCandidateNoteByCandidateIdProcedure = protectedProcedure
         },
       },
     });
-
-    if (!note) {
-      throw new TRPCError({ code: "NOT_FOUND" });
-    }
 
     return note;
   });

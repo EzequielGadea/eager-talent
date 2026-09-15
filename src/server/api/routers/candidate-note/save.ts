@@ -1,31 +1,13 @@
-import { type JSONContent } from "@tiptap/react";
 import { TRPCError } from "@trpc/server";
 import type { Prisma } from "~/generated/prisma/client";
-import { z, type ZodType } from "zod";
+import { z } from "zod";
 import { protectedProcedure } from "~/server/api/trpc";
-
-const tiptapNodeSchema: ZodType<JSONContent> = z.lazy(() =>
-  z.object({
-    type: z.string().optional(),
-    attrs: z.record(z.string(), z.unknown()).optional(),
-    content: z.array(tiptapNodeSchema).optional(),
-    marks: z
-      .array(
-        z.object({
-          type: z.string(),
-          attrs: z.record(z.string(), z.unknown()).optional(),
-        }),
-      )
-      .optional(),
-    text: z.string().optional(),
-  })
-);
 
 export const saveCandidateNoteProcedure = protectedProcedure
   .input(
     z.object({
       candidateId: z.string().min(1),
-      content: tiptapNodeSchema,
+      content: z.json(),
     }),
   )
   .mutation(async ({ input, ctx }) => {
