@@ -49,7 +49,7 @@ export default async function CandidatosPage() {
         <Suspense fallback = {<FiltersFallback/>}>
           <ApplicantAwaiterFilters promise = { data }/>
         </Suspense>
-      </div>{/*102.05 36*/}
+      </div>
       <Suspense fallback= {<TableFallback/>}>
         <ApplicantAwaiterTable promise = { data }/>
       </Suspense>

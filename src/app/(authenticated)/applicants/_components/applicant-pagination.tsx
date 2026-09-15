@@ -8,13 +8,30 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
+import { ITEMS_PER_PAGE } from "../types";
 
-export function ApplicantPagination(props : {countApplicants : number}) {
+
+export function ApplicantPagination(props : {countApplicants : number;
+                                             currentPage: number;
+                                             onPageChange: (page: number) => void;
+                                            }) {
+
+    const totalPages = Math.max(1, Math.ceil(props.countApplicants / ITEMS_PER_PAGE));
+    const currentPage = props.currentPage;
+    const goToPage = (page: number) => {
+      if (page < 1 || page > totalPages) return;
+      props.onPageChange(page);
+    };
+    const startItem = props.countApplicants === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    const endItem = Math.min(currentPage * ITEMS_PER_PAGE, props.countApplicants);
+    const start = Math.max(1, currentPage-2);
+    const end = Math.min(totalPages ,currentPage + 2);
+    const pages = [...Array.from({ length: end - start + 1 }, (_, i) => start + i),];
 
     return (
         <div className="mt-4 flex items-center justify-between pb-6">
         <p className="text-sm font-medium text-dashboard-text-muted">
-          Mostrando 1 - 8 de { props.countApplicants } candidatos
+          Mostrando {startItem} - {endItem} de {props.countApplicants} candidatos
         </p>
 
         <Pagination className="mx-0 w-auto">
@@ -22,37 +39,83 @@ export function ApplicantPagination(props : {countApplicants : number}) {
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                className="h-7 w-7 rounded-md p-0 text-dashboard-text-muted hover:bg-dashboard-track [&>span]:hidden"
+                onClick={(e) => {e.preventDefault(); goToPage(currentPage - 1);}} 
+                className={'h-7 w-7 rounded-md p-0 text-dashboard-text-muted hover:bg-dashboard-track [&>span]:hidden'}
               />
             </PaginationItem>
-
-            <PaginationItem>
+            <FirstPage currentPage={currentPage} gotoPage={goToPage} />
+            
+            {pages.map((page) => (
+            <PaginationItem key={page}>
               <PaginationLink
                 href="#"
-                isActive
-                className="h-7 w-7 rounded-md bg-dashboard-dark text-sm font-bold text-white shadow-sm hover:bg-dashboard-dark-hover hover:text-white"
+                isActive={page === currentPage}
+                onClick={(e) => {e.preventDefault(); goToPage(page);}}
+                className={`h-7 w-7 rounded-md text-sm font-bold shadow-sm ${
+                  page === currentPage ? "bg-dashboard-dark text-white" : "text-dashboard-text-muted"
+                }`}
               >
-                1
+                {page}
               </PaginationLink>
             </PaginationItem>
+          ))}
+          <LastPage currentPage={currentPage} totalPages={totalPages} gotoPage={goToPage} />
 
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                className="h-7 w-7 rounded-md text-sm font-semibold text-dashboard-text-muted hover:bg-dashboard-track"
-              >
-                2
-              </PaginationLink>
-            </PaginationItem>
 
             <PaginationItem>
               <PaginationNext
                 href="#"
+                onClick={(e) => {e.preventDefault(); goToPage(currentPage + 1);}}
                 className="h-7 w-7 rounded-md p-0 text-dashboard-text-muted hover:bg-dashboard-track [&>span]:hidden"
               />
             </PaginationItem>
           </PaginationContent>
         </Pagination>
+      
       </div>
     )
 }
+
+function FirstPage(props : {currentPage: number, gotoPage: (page: number) => void}) {
+  if (props.currentPage >= 4) {
+    return (
+      <>
+        <PaginationItem>
+          <PaginationLink
+            href="#"
+            isActive
+            onClick={(e) => {e.preventDefault(); props.gotoPage(1);}}
+            className={`h-7 w-7 rounded-md text-sm font-bold shadow-smtext-dashboard-text-muted"}`}
+          >
+            1
+          </PaginationLink>
+        </PaginationItem>
+        <span>...</span>
+      </>
+    )
+  }
+  return (<></>)
+}
+
+function LastPage(props : {currentPage: number, totalPages : number, gotoPage: (page: number) => void
+}) {
+  if (props.currentPage <= props.totalPages - 3) {
+    return (
+      <>
+        <span>...</span>
+        <PaginationItem>
+          <PaginationLink
+            href="#"
+            isActive
+            onClick={(e) => {e.preventDefault(); props.gotoPage(props.totalPages);}}
+            className={`h-7 w-7 rounded-md text-sm font-bold shadow-smtext-dashboard-text-muted"}`}
+          > 
+          {props.totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      </>
+    )
+  }
+  return (<></>)
+}
+
