@@ -36,13 +36,10 @@ async function Await(promise : ApplicantsPromise) {
           seniorityColor: (applicant.seniority?.color) ?? "-",
           area: (applicant.area?.name) ?? "-",
           sourceText: (applicant.source)  ?? "-",
-          sourceIcon: "TODO", //TODO 
-          hasCv: applicant.resume != null,
-          hasLinkedin: applicant.linkedin != null,
-          linkedinUrl: (applicant.linkedin != null) ? applicant.linkedin : "-",
-          email: (applicant.email == null) ? "-" : applicant.email,
-        }
-      }) : [];
+          sourceIcon: "TODO"
+       }
+    }) : [];
+    
     const countApplicants = applicantsData.length
     const uniqueOpenings = new Set<String>();
     for (const applicant of applicantsData) {
@@ -76,9 +73,10 @@ export async function ApplicantAwaiterHeader(props : { promise : ApplicantsPromi
 
 export async function ApplicantAwaiterPagination(props : { promise : ApplicantsPromise }) {
     const { applicantsData, countApplicants, countOpenings } = await Await(props.promise);
-    return (
+    /*return (
       <ApplicantPagination countApplicants = { countApplicants }/>
-    )
+    )*/
+   return
 }
 
 export async function ApplicantAwaiterFilters(props : { promise : ApplicantsPromise }) {

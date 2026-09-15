@@ -1,3 +1,6 @@
+'use client'
+import { useState } from "react";
+
 import {
   Table,
   TableBody,
@@ -7,13 +10,17 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-
+import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantInfo } from "../types";
 import { ApplicantRow } from "./applicant-row";
+import { ITEMS_PER_PAGE} from "../types";
 
 export function ApplicantTable(props : {applicantsData : ApplicantInfo[]}) {
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const paginatedApplicants = props.applicantsData?.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
     return (
+      <>  
       <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
         <Table className="min-w-262.5 table-fixed">
           <TableHeader>
@@ -52,14 +59,18 @@ export function ApplicantTable(props : {applicantsData : ApplicantInfo[]}) {
           </TableHeader>
 
           <TableBody className="divide-y divide-dashboard-border">
-            { props.applicantsData?.map((applicant) => ( 
-                <ApplicantRow 
-                  key={applicant.id}
-                  applicant = { applicant }
-                />
+            {paginatedApplicants?.map((applicant) => (
+              <ApplicantRow key={applicant.id} applicant={applicant} />
             ))}
           </TableBody>
         </Table>
       </div>
+      
+        <ApplicantPagination
+          countApplicants={props.applicantsData?.length ?? 0}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+      </>
     )
 }
