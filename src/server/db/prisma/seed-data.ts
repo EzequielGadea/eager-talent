@@ -15,25 +15,16 @@ import type {
 } from "~/generated/prisma/client";
 
 const ADMIN_EMAIL = "admin@example.com";
+const HIRING_MGR_EMAIL = "hiring.manager@example.com"
+const HIRING_MGR_PASSWD = "hiring.manager"
 
 function randomSubset<T>(arr: T[], min: number, max: number): T[] {
   const count = faker.number.int({ min, max: Math.min(max, arr.length) });
   return faker.helpers.arrayElements(arr, count);
 }
 
-export async function seedDatabase(prisma: PrismaClient): Promise<void> {
-  // TEST ADMIN USER
-  const existingAdmin = await prisma.user.findUnique({
-    where: { email: ADMIN_EMAIL },
-  });
-
-  if (existingAdmin) {
-    if (existingAdmin.role !== "Recruiter") {
-      throw new Error(`Ya existe ${ADMIN_EMAIL} con otro rol.`);
-    }
-    console.log(`El usuario de prueba ${ADMIN_EMAIL} ya existe; se conserva.`);
-  } else {
-    const seedAuth = betterAuth({
+function getSeedAuth(prisma: PrismaClient) {
+  const seedAuth = betterAuth({
       baseURL: "http://localhost:3000",
       secret: randomBytes(32).toString("hex"),
       database: prismaAdapter(prisma, {
@@ -46,12 +37,28 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           role: {
             type: ["Recruiter", "HiringManager"],
             defaultValue: "Recruiter",
-            input: false,
+            input: true,
           },
         },
       },
     });
 
+    return seedAuth;
+}
+
+export async function seedDatabase(prisma: PrismaClient): Promise<void> {
+  // TEST ADMIN USER
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: ADMIN_EMAIL },
+  });
+
+  const seedAuth = getSeedAuth(prisma);
+  if (existingAdmin) {
+    if (existingAdmin.role !== "Recruiter") {
+      throw new Error(`Ya existe ${ADMIN_EMAIL} con otro rol.`);
+    }
+    console.log(`El usuario de prueba ${ADMIN_EMAIL} ya existe; se conserva.`);
+  } else {
     await seedAuth.api.signUpEmail({
       body: {
         name: "Admin de prueba",
@@ -60,6 +67,23 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       },
     });
     console.log(`Usuario de prueba creado: ${ADMIN_EMAIL} (Recruiter).`);
+  }
+
+  const existingHiringManager = await prisma.user.findUnique({
+    where: { email: HIRING_MGR_EMAIL },
+  });
+  if (existingHiringManager) {
+    console.log(`El usuario de prueba ${HIRING_MGR_EMAIL} ya existe; se conserva.`)
+  } else {
+    await seedAuth.api.signUpEmail({
+      body: {
+        name: "Hiring manager prueba",
+        email: HIRING_MGR_EMAIL,
+        password: HIRING_MGR_PASSWD,
+        role: "HiringManager",
+      },
+    });
+    console.log(`Hiring manager de prueba creado\nCorreo: ${HIRING_MGR_EMAIL}\nPasswd: ${HIRING_MGR_PASSWD}`);
   }
 
   // ---------- LIMPIEZA PREVIA PARA IDEMPOTENCIA ----------
@@ -79,7 +103,12 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     prisma.role.deleteMany(),
     prisma.stageTemplate.deleteMany(),
     prisma.user.deleteMany({
-      where: { email: { not: ADMIN_EMAIL } },
+      where: {
+        AND: [
+          { email: { not: ADMIN_EMAIL } }, 
+          { email: { not: HIRING_MGR_EMAIL } }
+        ],
+      }
     }),
   ]);
 
