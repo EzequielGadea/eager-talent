@@ -15,10 +15,11 @@ export const fetchAll = protectedProcedure
       .optional(),
   )
   .query(async ({ ctx, input }) => {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    //delay para probar fallbacks, dejar
+    //await new Promise((resolve) => setTimeout(resolve, 3000));
     /*
         try {
-            //dato de prueba basura
+            //dato de prueba con muchos atributos faltantes
             const newApplicant = await ctx.db.applicant.create({
                 data: {
                     id: '1',

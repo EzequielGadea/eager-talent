@@ -1,6 +1,5 @@
-import { getSourceIcon } from "./page";
+import { getSourceIcon } from "./_components/source-icon";
 import { ApplicantsPromise } from "./types";
-import { api } from "~/lib/trpc/server";
 import { avatarPalette } from "./constants";
 
 export async function transformApplicants(promise: ApplicantsPromise) {
@@ -61,10 +60,6 @@ export async function transformApplicants(promise: ApplicantsPromise) {
     ? uniqueOpenings.size - 1
     : uniqueOpenings.size;
   return { applicantsData, countApplicants, countOpenings };
-}
-
-export async function getApplicantsPage(currentPage: number) {
-  return api.applicant.fetchAll({ currentPage });
 }
 
 export function getRandomColor() {

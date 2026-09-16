@@ -7,7 +7,7 @@ import { TableCell, TableRow } from "~/components/ui/table";
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
-import { getSourceIcon } from "../page";
+import { getSourceIcon } from "./source-icon";
 
 export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   const router = useRouter();
