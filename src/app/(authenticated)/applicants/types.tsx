@@ -1,5 +1,5 @@
 import { api } from "~/lib/trpc/server";
-
+import { Globe, Send, Users } from "lucide-react"
 interface Tag {
   label: string;
   color: string;
@@ -40,6 +40,14 @@ export function getRandomColor() {
   return avatarPalette[index]
 }
 
+function getSourceIcon(sourceText : string) {
+  switch(sourceText) {
+    case "Inbound": return (<Globe size={14} className="text-dashboard-text-muted" />);
+    case "Outbound": return (<Send size={14} className="text-dashboard-text-muted" />);
+    case "Referral": return (<Users size={14} className="text-dashboard-text-muted"/>);
+  }
+}
+
 export async function transformApplicants(promise : ApplicantsPromise){
   const data = await promise;
     const applicantsData = (data) ? data.applicants.map((applicant) => {
@@ -70,7 +78,7 @@ export async function transformApplicants(promise : ApplicantsPromise){
           seniorityColor: (applicant.seniority?.color) ?? "-",
           area: (applicant.area?.name) ?? "-",
           sourceText: (applicant.source)  ?? "-",
-          sourceIcon: "TODO",
+          sourceIcon: getSourceIcon(applicant.source ?? "null"),
           hasCv: applicant.hasOwnProperty('resume'),
           hasLinkedin: applicant.hasOwnProperty('linkedin'),
           linkedinUrl: applicant.linkedin ?? "-",
