@@ -14,8 +14,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { FiltersProps } from "../types";
+import { useRouter, useSearchParams } from "next/navigation";
 
-import { ApplicantInfo } from "../types";
+
+
 
 const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
   {
@@ -75,17 +78,15 @@ const filterConfigs = [ //TODO recibir las options de cada uno dinamico de DB
   },
 ];
 
-
-
-export function Filters({ applicants }: { applicants: ApplicantInfo[] }) {
-  function handleSearch(term: string){
-
-
-  }
-
-    
-
-
+export function Filters({
+  roleData,
+  seniorityData,
+  areaData,
+  jobOpeningData,
+  tagData,
+}: FiltersProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   return (
     <>
@@ -94,6 +95,7 @@ export function Filters({ applicants }: { applicants: ApplicantInfo[] }) {
           size={15}
           className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-dashboard-text-muted"
         />
+
         <Input
           type="text"
           placeholder="Buscar por nombre..."
@@ -101,76 +103,70 @@ export function Filters({ applicants }: { applicants: ApplicantInfo[] }) {
         />
       </div>
 
-      {filterConfigs.map((config) => {
-        const count = selections[config.id]?.length || 0;
-        const buttonText =
-          count > 0 ? `${config.id} · ${count}` : config.label;
+      {filterConfigs.map((config) => (
+        <Popover key={config.id}>
+          <PopoverTrigger className="flex h-8 items-center gap-1.5 rounded-lg border border-dashboard-border bg-white px-4 text-sm font-medium text-dashboard-text-muted shadow-sm transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text">
+            <span>{config.id}</span>
 
-        return (
-          <Popover key={config.id}>
-            <PopoverTrigger className="flex h-8 items-center gap-1.5 rounded-lg border border-dashboard-border bg-white px-4 text-sm font-medium text-dashboard-text-muted shadow-sm transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text">
-              <span>{buttonText}</span>
-              <ChevronDown size={14} className="text-dashboard-text-muted" />
-            </PopoverTrigger>
+            <ChevronDown
+              size={14}
+              className="text-dashboard-text-muted"
+            />
+          </PopoverTrigger>
 
-            <PopoverContent align="start" className="w-56 rounded-xl p-3">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-dashboard-text-light">
-                Filtrar por {config.id.toLowerCase()}
-              </p>
+          <PopoverContent
+            align="start"
+            className="w-56 rounded-xl p-3"
+          >
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-dashboard-text-light">
+              Filtrar por {config.id.toLowerCase()}
+            </p>
 
-              <Input
-                type="text"
-                placeholder={`Buscar ${config.id.toLowerCase()}...`}
-                className="mb-3 h-8 rounded-md border-dashboard-border bg-dashboard-track/40 text-sm"
-              />
+            <Input
+              type="text"
+              placeholder={`Buscar ${config.id.toLowerCase()}...`}
+              className="mb-3 h-8 rounded-md border-dashboard-border bg-dashboard-track/40 text-sm"
+            />
 
-              <div className="mb-3 flex max-h-56 flex-col gap-2.5 overflow-y-auto pr-1">
-                {config.options.map((opt) => {
-                  const isTag = typeof opt !== "string";
-                  const label = isTag ? "test label"/*opt.label*/ : opt;
-                  const isChecked = selections[config.id]?.includes(label);
+            <div className="mb-3 flex max-h-56 flex-col gap-2.5 overflow-y-auto pr-1">
+              {config.options.map((opt) => {
+                const isTag = typeof opt !== "string";
+                const label = isTag ? opt.label : opt;
 
-                  return (
-                    <label
-                      key={label}
-                      className="flex cursor-pointer items-center gap-2"
-                    >
-                      <Checkbox
-                        checked={isChecked}
-                        onCheckedChange={() =>
-                          handleSelectionToggle(config.id, label)
-                        }
-                      />
+                return (
+                  <label
+                    key={label}
+                    className="flex cursor-pointer items-center gap-2"
+                  >
+                    <Checkbox />
 
-                      {isTag ? (
-                        <Badge
-                          variant="secondary"
-                          className={`rounded-full border-transparent px-2 py-0.5 text-xs font-bold`}
-                        >
-                          {label}
-                        </Badge>
-                      ) : (
-                        <span className="text-sm font-medium text-dashboard-text-muted">
-                          {label}
-                        </span>
-                      )}
-                    </label>
-                  );
-                })}
-              </div>
+                    {isTag ? (
+                      <Badge
+                        variant="secondary"
+                        className="rounded-full border-transparent px-2 py-0.5 text-xs font-bold"
+                      >
+                        {label}
+                      </Badge>
+                    ) : (
+                      <span className="text-sm font-medium text-dashboard-text-muted">
+                        {label}
+                      </span>
+                    )}
+                  </label>
+                );
+              })}
+            </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => clearSelection(config.id)}
-                className="h-auto p-0 text-xs font-bold text-dashboard-text-muted hover:bg-transparent hover:text-dashboard-success-text"
-              >
-                Limpiar
-              </Button>
-            </PopoverContent>
-          </Popover>
-        );
-      })}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto p-0 text-xs font-bold text-dashboard-text-muted hover:bg-transparent hover:text-dashboard-success-text"
+            >
+              Limpiar
+            </Button>
+          </PopoverContent>
+        </Popover>
+      ))}
     </>
-  )
+  );
 }

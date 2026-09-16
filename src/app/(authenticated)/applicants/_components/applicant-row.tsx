@@ -1,6 +1,16 @@
 'use client'
 
-import { FileText } from "lucide-react";
+import {
+  Search,
+  ChevronDown,
+  FileText,
+  Globe,
+  Send,
+  Users,
+  Briefcase,
+  X,
+} from "lucide-react";
+
 import { FaLinkedin } from "react-icons/fa";
 import {
   TableCell,
@@ -11,7 +21,15 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
-import { getSourceIcon } from "../page";
+
+export function getSourceIcon(sourceText: string) {
+  switch (sourceText) {
+    case "Inbound": return (<Globe size={14} className="text-dashboard-text-muted" />);
+    case "Outbound": return (<Send size={14} className="text-dashboard-text-muted" />);
+    case "Referral": return (<Users size={14} className="text-dashboard-text-muted" />);
+    default: return (<X size={14} className="text-dashboard-text-muted" />)
+  }
+}
 
 export function ApplicantRow(props : {applicant : ApplicantInfo}) {
     const router = useRouter();

@@ -25,34 +25,12 @@ export interface ApplicantInfo {
 
 export type ApplicantsPromise = ReturnType<typeof api.applicant.fetchAll>;
 
-export interface Role {
-  id: string;
-  name: string;
-}
-
-export interface Seniority {
-  id: string;
-  name: string;
-  color: string;
-}
-
-export interface Area {
-  id: string;
-  name: string;
-}
-
-export interface JobOpening {
-  id: string;
-  name: string;
-}
-
 export interface FiltersProps {
-  applicants: ApplicantInfo[];
-  roles: Role[];
-  seniorities: Seniority[];
-  areas: Area[];
-  jobOpenings: JobOpening[];
-  tags: Tag[];
+  roleData: ReturnType<typeof api.role.getAllRoles>;
+  seniorityData: ReturnType<typeof api.seniority.getAllSeniorities>;
+  areaData: ReturnType<typeof api.area.getAllAreas>;
+  jobOpeningData: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
+  tagData: ReturnType<typeof api.tag.getAllTags>;
 }
 
 
