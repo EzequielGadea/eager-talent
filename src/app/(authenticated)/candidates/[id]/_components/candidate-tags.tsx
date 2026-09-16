@@ -1,43 +1,52 @@
-type CandidateTags = {
-  id: string;
-  name: string;
-  color: string | null;
-};
+import type { CSSProperties } from "react";
 
-type CandidateTagsProps = {
-  tags: CandidateTags[];
-};
+import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
+import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
+import { getCandidate } from "../_lib/get-candidate";
+import { Badge } from "~/components/ui/badge";
 
-export function CandidateTags({ tags }: CandidateTagsProps) {
+type CandidateTagsProps = { candidateId: string };
+
+export async function CandidateTags({ candidateId }: CandidateTagsProps) {
+  const { tags } = await getCandidate(candidateId);
   return (
-    <section className="rounded-xl border bg-white p-4">
-      <h2 className="mb-3 text-xs font-semibold uppercase text-muted-foreground">
-        Etiquetas
-      </h2>
+    <Card size="sm">
+      <CardHeader>
+        <CardTitle>
+          <h2>Etiquetas</h2>
+        </CardTitle>
+      </CardHeader>
 
-      <div className="flex flex-wrap gap-2">
+      <CardContent className="flex flex-wrap gap-2">
         {tags.length === 0 && (
-          <p className="text-sm text-muted-foreground">Sin etiquetas</p>
+          <Empty className="p-0">
+            <EmptyHeader>
+              <EmptyDescription>Sin etiquetas</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         )}
 
         {tags.map((tag) => {
-          const tagColor = tag.color ?? "#64748b";
+          const tagColor = tag.color ?? "var(--muted-foreground)";
 
           return (
-            <span
+            <Badge
               key={tag.id}
-              className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-sm font-medium"
-              style={{
-                backgroundColor: `${tagColor}2A`,
-                borderColor: `${tagColor}70`,
-                color: `color-mix(in srgb, ${tagColor} 65%, black)`,
-              }}
+              variant="tag"
+              className="h-auto max-w-full whitespace-normal"
+              style={
+                {
+                  "--badge-background": `color-mix(in srgb, ${tagColor} 16%, transparent)`,
+                  "--badge-border": `color-mix(in srgb, ${tagColor} 44%, transparent)`,
+                  "--badge-foreground": `color-mix(in srgb, ${tagColor} 35%, var(--card-foreground))`,
+                } as CSSProperties
+              }
             >
-              {tag.name}
-            </span>
+              <span className="min-w-0 break-words">{tag.name}</span>
+            </Badge>
           );
         })}
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }

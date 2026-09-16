@@ -1,25 +1,22 @@
 import { CircleHelp, FileText, GraduationCap } from "lucide-react";
-import type { HearAboutUs } from "~/generated/prisma/enums";
+import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
+import { getCandidate } from "../_lib/get-candidate";
 import { hearAboutUsLabels } from "../_lib/candidate-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
 
-type CandidateInfoCardsProps = {
-  education: string | null;
-  academicInstitution: string | null;
-  careerStartYear: number | null;
-  careerEndYear: number | null;
-  hearAboutUs: HearAboutUs | null;
-  resume: string | null;
-};
+type CandidateInfoCardsProps = { candidateId: string };
 
-export function CandidateInfoCards({
-  education,
-  academicInstitution,
-  careerStartYear,
-  careerEndYear,
-  hearAboutUs,
-  resume,
+export async function CandidateInfoCards({
+  candidateId,
 }: CandidateInfoCardsProps) {
+  const {
+    education,
+    academicInstitution,
+    careerStartYear,
+    careerEndYear,
+    hearAboutUs,
+    resume,
+  } = await getCandidate(candidateId);
   const resumeUrl = getSafeExternalUrl(resume);
   const careerYears =
     careerStartYear || careerEndYear
@@ -29,7 +26,7 @@ export function CandidateInfoCards({
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <InfoCard
-        icon={<GraduationCap className="h-4 w-4 text-violet-500" />}
+        icon={<GraduationCap className="size-4 text-accent-purple" />}
         title="Formación académica"
       >
         <p className="font-semibold">{education ?? "Sin información"}</p>
@@ -42,7 +39,7 @@ export function CandidateInfoCards({
       </InfoCard>
 
       <InfoCard
-        icon={<CircleHelp className="h-4 w-4 text-emerald-500" />}
+        icon={<CircleHelp className="size-4 text-accent-green" />}
         title="¿Cómo escuchaste de nosotros?"
       >
         <p className="font-semibold">
@@ -50,16 +47,13 @@ export function CandidateInfoCards({
         </p>
       </InfoCard>
 
-      <InfoCard
-        icon={<FileText className="h-4 w-4 text-blue-500" />}
-        title="CV"
-      >
+      <InfoCard icon={<FileText className="size-4 text-info" />} title="CV">
         {resumeUrl ? (
           <a
             href={resumeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-blue-600 hover:underline"
+            className="font-medium text-text-link hover:underline"
           >
             Ver CV
           </a>
@@ -81,16 +75,18 @@ type InfoCardProps = {
 
 function InfoCard({ icon, title, children }: InfoCardProps) {
   return (
-    <section className="rounded-xl border bg-white p-4">
-      <div className="mb-3 flex items-start gap-2 text-sm text-muted-foreground">
+    <Card size="sm" className="min-w-0">
+      <CardHeader className="flex items-start gap-2">
         <span className="mt-0.5 shrink-0">{icon}</span>
 
-        <h2 className="font-semibold leading-tight text-muted-foreground">
-          {title}
-        </h2>
-      </div>
+        <CardTitle className="min-w-0 wrap-anywhere">
+          <h2>{title}</h2>
+        </CardTitle>
+      </CardHeader>
 
-      <div className="space-y-1 text-sm">{children}</div>
-    </section>
+      <CardContent className="flex min-w-0 flex-col gap-1 wrap-anywhere text-sm">
+        {children}
+      </CardContent>
+    </Card>
   );
 }
