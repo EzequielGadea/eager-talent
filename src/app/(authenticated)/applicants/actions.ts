@@ -3,5 +3,9 @@
 import { api } from "~/lib/trpc/server";
 
 export async function getApplicantsPage(currentPage: number) {
-  return api.applicant.fetchAll({ currentPage });
+  try {
+    return api.applicant.fetchAll({ currentPage });
+  } catch (e) {
+    throw e;
+  }
 }
