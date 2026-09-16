@@ -17,6 +17,8 @@ model User {
   updatedAt     DateTime   @updatedAt
   sessions      Session[]
   accounts      Account[]
+  members       Member[]
+  invitations   Invitation[]
   lastName      String     @default("") @map("last_name")
   role          UserRole   @default(HiringManager)
   status        UserStatus @default(Active)
@@ -30,8 +32,6 @@ model User {
   interviews          Interview[]     @relation("InterviewUsers")
   applicantNotes      ApplicantNote[]
   interviewNotes      InterviewNote[]
-  sentInvitations     Invitation[]    @relation("InvitationSender")
-  invitations         Invitation[]    @relation("InvitationRecipient")
   publicLinks         PublicLink[]
 
   @@unique([email])
@@ -49,6 +49,7 @@ model Session {
   userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   impersonatedBy String?
+  activeOrganizationId String?
 
   @@unique([token])
   @@index([userId])
@@ -343,19 +344,48 @@ model Activity {
   @@map("activity")
 }
 
-model Invitation {
-  id             String   @id @default(cuid())
-  token          String   @unique
-  sentDate       DateTime @default(now()) @map("sent_date")
-  expirationDate DateTime @map("expiration_date")
-  senderId       String   @map("sender_id")
-  recipientId    String   @map("recipient_id")
-  sender         User     @relation("InvitationSender", fields: [senderId], references: [id], onDelete: Restrict)
-  recipient      User     @relation("InvitationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+model Organization {
+  id          String       @id
+  name        String
+  slug        String
+  logo        String?
+  createdAt   DateTime
+  metadata    String?
+  members     Member[]
+  invitations Invitation[]
 
-  @@index([senderId])
-  @@index([recipientId])
-  @@index([expirationDate])
+  @@unique([slug])
+  @@map("organization")
+}
+
+model Member {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           String       @default("member")
+  createdAt      DateTime
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           String?
+  status         String       @default("pending")
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  inviterId      String
+  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
   @@map("invitation")
 }
 

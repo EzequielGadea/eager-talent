@@ -98,6 +98,16 @@ export type InterviewNote = Prisma.InterviewNoteModel
  */
 export type Activity = Prisma.ActivityModel
 /**
+ * Model Organization
+ * 
+ */
+export type Organization = Prisma.OrganizationModel
+/**
+ * Model Member
+ * 
+ */
+export type Member = Prisma.MemberModel
+/**
  * Model Invitation
  * 
  */
