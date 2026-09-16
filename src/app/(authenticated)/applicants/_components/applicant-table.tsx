@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState } from "react";
 
 import {
@@ -13,14 +13,15 @@ import {
 import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantInfo, transformApplicants } from "../types";
 import { ApplicantRow } from "./applicant-row";
-import { ITEMS_PER_PAGE} from "../types";
 import { getApplicantsPage } from "../actions";
 import { TableFallback } from "./fallbacks";
 
-export function ApplicantTable(props : {applicantsData : ApplicantInfo[], countApplicants : number}) {
-  const [applicantsData, setApplicants] = useState(props.applicantsData)
-    const [currentPage, setCurrentPage] = useState(1);
-    const paginatedApplicants = props.applicantsData?.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+export function ApplicantTable(props: {
+  applicantsData: ApplicantInfo[];
+  countApplicants: number;
+}) {
+  const [applicantsData, setApplicants] = useState(props.applicantsData);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,33 +39,43 @@ export function ApplicantTable(props : {applicantsData : ApplicantInfo[], countA
     }
   }
 
-    return (
-      <div className="flex min-h-screen flex-col">  
-        <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
-          <Table className="min-w-262.5 table-fixed">
-          <ApplicantTableHeader/>
-
-            <TableBody className="divide-y divide-dashboard-border">
-              { isLoading
-              ? <TableFallback/>
-              :applicantsData?.map((applicant) => (
+  return (
+    <div className="flex min-h-screen flex-col">
+      <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
+        <Table className="min-w-262.5 table-fixed">
+          <ApplicantTableHeader />
+          <TableBody className="divide-y divide-dashboard-border">
+            {isLoading ? (
+              <TableFallback />
+            ) : applicantsData?.length > 0 ? (
+              applicantsData.map((applicant) => (
                 <ApplicantRow key={applicant.id} applicant={applicant} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="mt-auto">
-          <ApplicantPagination
-            countApplicants={props.countApplicants}
-            currentPage={currentPage}
-            onPageChange={updateRow}
-          />
-        </div>
+              ))
+            ) : (
+              <TableRow className="border-b border-dashboard-border hover:bg-transparent">
+                <TableCell
+                  colSpan={10}
+                  className="h-20 px-3 py-4 text-center text-sm font-medium text-dashboard-text-muted"
+                >
+                  No se encontraron candidatos.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
-    )
+      <div className="mt-auto">
+        <ApplicantPagination
+          countApplicants={props.countApplicants}
+          currentPage={currentPage}
+          onPageChange={updateRow}
+        />
+      </div>
+    </div>
+  );
 }
 
-export function ApplicantTableHeader(){
+export function ApplicantTableHeader() {
   return (
     <TableHeader>
       <TableRow className="border-b border-dashboard-border hover:bg-transparent">
@@ -89,10 +100,10 @@ export function ApplicantTableHeader(){
         <TableHead className="w-20 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
           Source
         </TableHead>
-        <TableHead className="w-6 h-10 px-3 py-4 text-center text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+        <TableHead className="w-6 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
           CV
         </TableHead>
-        <TableHead className="w-15 h-10 px-3 py-4 text-center text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+        <TableHead className="w-15 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
           LinkedIn
         </TableHead>
         <TableHead className="w-30 h-10 px-3 py-4 pr-5 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
@@ -100,5 +111,5 @@ export function ApplicantTableHeader(){
         </TableHead>
       </TableRow>
     </TableHeader>
-  )
+  );
 }

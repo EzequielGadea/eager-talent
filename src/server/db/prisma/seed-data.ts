@@ -1154,10 +1154,25 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     roleNames.map((name) => prisma.role.create({ data: { name } })),
   );
 
+<<<<<<< HEAD
   const areaNames = ["Engineering", "Product", "Design", "Data", "Sales", "Marketing"];
   const areas = await Promise.all(
     areaNames.map((name) => prisma.area.create({ data: { name } })),
   );
+=======
+  const areaNames = [
+    "Engineering",
+    "Product",
+    "Design",
+    "Data",
+    "Sales",
+    "Marketing",
+  ];
+  const areas = [];
+  for (const name of areaNames) {
+    areas.push(await prisma.area.create({ data: { name } }));
+  }
+>>>>>>> 211f585 (Arreglos de prettier y eslint)
 
   const seniorityDefs = [
     { name: "Junior", order: 1, color: "#60A5FA" },
@@ -1174,6 +1189,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     "React", "Node.js", "TypeScript", "Python", "AWS",
     "Docker", "Kubernetes", "SQL", "GraphQL", "Figma",
   ];
+<<<<<<< HEAD
   const otherTagNames = ["Remote", "Urgente", "Referido", "Top Candidate", "Follow Up"];
   const tags = await Promise.all([
     ...skillTagNames.map((name) =>
@@ -1184,6 +1200,35 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     ...otherTagNames.map((name) =>
       prisma.tag.create({
         data: { name, isSkill: false, color: faker.color.rgb({ format: "hex" }) },
+=======
+  const otherTagNames = [
+    "Remote",
+    "Urgente",
+    "Referido",
+    "Top Candidate",
+    "Follow Up",
+  ];
+  const tags = [];
+  for (const name of skillTagNames) {
+    tags.push(
+      await prisma.tag.create({
+        data: {
+          name,
+          isSkill: true,
+          color: faker.color.rgb({ format: "hex" }),
+        },
+      }),
+    );
+  }
+  for (const name of otherTagNames) {
+    tags.push(
+      await prisma.tag.create({
+        data: {
+          name,
+          isSkill: false,
+          color: faker.color.rgb({ format: "hex" }),
+        },
+>>>>>>> 211f585 (Arreglos de prettier y eslint)
       }),
     ),
   ]);
@@ -1201,9 +1246,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         lastName,
         email: `${firstName}.${lastName}.${i}@example.com`.toLowerCase(),
         emailVerified: faker.datatype.boolean(),
-        role: faker.helpers.arrayElement<UserRole>(["Recruiter", "HiringManager"]),
+        role: faker.helpers.arrayElement<UserRole>([
+          "Recruiter",
+          "HiringManager",
+        ]),
         status: faker.helpers.arrayElement<UserStatus>([
-          "Active", "PendingInvitation", "Inactive",
+          "Active",
+          "PendingInvitation",
+          "Inactive",
         ]),
         lastAccess: faker.date.recent({ days: 30 }),
       },
@@ -1212,8 +1262,28 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   }
 
   // ---------- APPLICANTS ----------
+<<<<<<< HEAD
   const englishLevels: EnglishLevel[] = ["Basic", "Intermediate", "Advanced", "Native"];
   const sources: Source[] = ["LinkedIn", "Website", "Outbound", "Referral", "JobBoard"];
+=======
+  const englishLevels: EnglishLevel[] = [
+    "Basic",
+    "Intermediate",
+    "Advanced",
+    "Native",
+  ];
+  const sources: Source[] = ["Inbound", "Outbound", "Referral"];
+  const hearAboutUsOptions: HearAboutUs[] = [
+    "LinkedInPost",
+    "LinkedInJobs",
+    "JobBoard",
+    "Referral",
+    "AiRecommendation",
+    "InternetSearch",
+    "RecruiterContact",
+    "Other",
+  ];
+>>>>>>> 211f585 (Arreglos de prettier y eslint)
   const applicantsCount = 40;
   const applicants = [];
 
@@ -1234,7 +1304,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           ? `${firstName}.${lastName}.${i}@applicant-example.com`.toLowerCase()
           : null,
         phone: faker.phone.number(),
-        photo: faker.datatype.boolean({ probability: 0.5 }) ? faker.image.avatar() : null,
+        photo: faker.datatype.boolean({ probability: 0.5 })
+          ? faker.image.avatar()
+          : null,
         country: faker.location.country(),
         linkedin: faker.datatype.boolean({ probability: 0.7 })
           ? `https://linkedin.com/in/${firstName}-${lastName}-${i}`.toLowerCase()
@@ -1249,26 +1321,42 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           ? faker.number.int({ min: 2021, max: 2024 })
           : null,
         education: faker.lorem.sentence(),
-        resume: faker.internet.url(),
+        resume: faker.datatype.boolean({ probability: 0.8 })
+          ? faker.helpers.arrayElement([
+              "https://arxiv.org/pdf/2301.00001.pdf",
+              "https://www.orimi.com/pdf-test.pdf",
+              "https://www.africau.edu/images/default/sample.pdf",
+            ])
+          : null,
         roleId: role.id,
         areaId: area.id,
         seniorityId: seniority.id,
         tags: { connect: applicantTags.map((t) => ({ id: t.id })) },
-        hiringManagers: { connect: applicantHiringManagers.map((u) => ({ id: u.id })) },
+        hiringManagers: {
+          connect: applicantHiringManagers.map((u) => ({ id: u.id })),
+        },
       },
     });
     applicants.push(applicant);
   }
 
   // ---------- JOB OPENINGS ----------
-  const jobOpeningStatuses: JobOpeningStatus[] = ["Open", "Paused", "Closed", "Cancelled"];
+  const jobOpeningStatuses: JobOpeningStatus[] = [
+    "Open",
+    "Paused",
+    "Closed",
+    "Cancelled",
+  ];
   const jobOpeningsCount = 12;
   const jobOpenings = [];
 
   for (let i = 0; i < jobOpeningsCount; i++) {
     const area = faker.helpers.arrayElement(areas);
     const openingDate = faker.date.past({ years: 1 });
-    const targetClosingDate = faker.date.soon({ days: 60, refDate: openingDate });
+    const targetClosingDate = faker.date.soon({
+      days: 60,
+      refDate: openingDate,
+    });
     const status = faker.helpers.arrayElement(jobOpeningStatuses);
     const jobSeniorities = randomSubset(seniorities, 1, 3);
     const jobHiringManagers = randomSubset(users, 1, 3);
@@ -1277,7 +1365,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       data: {
         name: `${faker.person.jobTitle()} - ${area.name}`,
         status,
-        stages: [{ name: "Screening" }, { name: "Interview" }, { name: "Offer" }],
+        stages: [
+          { name: "Screening" },
+          { name: "Interview" },
+          { name: "Offer" },
+        ],
         location: `${faker.location.city()}, ${faker.location.country()}`,
         openingDate,
         targetClosingDate,
@@ -1287,19 +1379,32 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
             : null,
         areaId: area.id,
         seniorities: { connect: jobSeniorities.map((s) => ({ id: s.id })) },
-        hiringManagers: { connect: jobHiringManagers.map((u) => ({ id: u.id })) },
+        hiringManagers: {
+          connect: jobHiringManagers.map((u) => ({ id: u.id })),
+        },
       },
     });
     jobOpenings.push(jobOpening);
   }
 
   // ---------- APPLICATIONS ----------
-  const stagesPool = ["Screening", "Phone Interview", "Technical Interview", "Onsite", "Offer", "Hired"];
+  const stagesPool = [
+    "Screening",
+    "Phone Interview",
+    "Technical Interview",
+    "Onsite",
+    "Offer",
+    "Hired",
+  ];
   const applications = [];
 
   for (const applicant of applicants) {
     const numApplications = faker.number.int({ min: 0, max: 3 });
-    const chosenJobOpenings = randomSubset(jobOpenings, numApplications, numApplications);
+    const chosenJobOpenings = randomSubset(
+      jobOpenings,
+      numApplications,
+      numApplications,
+    );
 
     for (const jobOpening of chosenJobOpenings) {
       const active = faker.datatype.boolean({ probability: 0.7 });
@@ -1325,7 +1430,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           disqualificationReason: active ? null : faker.lorem.sentence(),
           desiredSalary: `$${faker.number.int({ min: 2000, max: 8000 })}`,
           availability: faker.helpers.arrayElement([
-            "Inmediata", "2 semanas de aviso", "1 mes de aviso",
+            "Inmediata",
+            "2 semanas de aviso",
+            "1 mes de aviso",
           ]),
         },
       });
@@ -1335,7 +1442,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // ---------- INTERVIEWS ----------
   const interviewTypes: InterviewType[] = ["VideoCall", "InPerson"];
-  const interviewStatuses: InterviewStatus[] = ["Completed", "Scheduled", "Pending"];
+  const interviewStatuses: InterviewStatus[] = [
+    "Completed",
+    "Scheduled",
+    "Pending",
+  ];
   const interviews = [];
 
   for (const application of applications) {
@@ -1347,7 +1458,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       const interview = await prisma.interview.create({
         data: {
           name: faker.helpers.arrayElement([
-            "Technical Screening", "Culture Fit", "System Design", "HR Interview",
+            "Technical Screening",
+            "Culture Fit",
+            "System Design",
+            "HR Interview",
           ]),
           duration: faker.helpers.arrayElement([30, 45, 60, 90]),
           modality: faker.helpers.arrayElement(interviewTypes),
@@ -1423,12 +1537,15 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   ];
 
   for (const applicant of applicants) {
-    const applicantApplications = applications.filter((a) => a.applicantId === applicant.id);
+    const applicantApplications = applications.filter(
+      (a) => a.applicantId === applicant.id,
+    );
     const numActivities = faker.number.int({ min: 1, max: 4 });
 
     for (let i = 0; i < numActivities; i++) {
       const linkedApplication =
-        applicantApplications.length > 0 && faker.datatype.boolean({ probability: 0.7 })
+        applicantApplications.length > 0 &&
+        faker.datatype.boolean({ probability: 0.7 })
           ? faker.helpers.arrayElement(applicantApplications)
           : null;
 
@@ -1437,7 +1554,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           description: faker.helpers.arrayElement(activityDescriptions),
           date: faker.date.recent({ days: 60 }),
           applicantId: applicant.id,
-          jobOpeningId: linkedApplication ? linkedApplication.jobOpeningId : null,
+          jobOpeningId: linkedApplication
+            ? linkedApplication.jobOpeningId
+            : null,
         },
       });
     }
@@ -1466,7 +1585,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // ---------- PUBLIC LINKS ----------
   const publicLinkTarget = Math.min(8, applications.length);
-  const applicationsForLinks = randomSubset(applications, publicLinkTarget, publicLinkTarget);
+  const applicationsForLinks = randomSubset(
+    applications,
+    publicLinkTarget,
+    publicLinkTarget,
+  );
 
   for (const application of applicationsForLinks) {
     const creator = faker.helpers.arrayElement(users);
