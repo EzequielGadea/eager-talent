@@ -1,6 +1,7 @@
 import 'server-only'
 
-import { ApplicantsPromise, getRandomColor, transformApplicants } from "../types";
+import { getRandomColor, transformApplicants } from "../utils";
+import { ApplicantsPromise } from '../types';
 import { ApplicantPagination } from './applicant-pagination';
 import { ApplicantTable } from './applicant-table';
 import { Header } from './header';
