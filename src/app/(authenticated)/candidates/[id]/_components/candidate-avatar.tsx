@@ -22,7 +22,7 @@ export function CandidateAvatar({
   const fullName = `${name} ${lastName}`;
 
   return (
-    <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-emerald-100 text-xl font-semibold text-emerald-700">
+    <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-xl font-semibold text-tag-green-fg">
       {photoUrl && photoUrl !== failedPhoto ? (
         <Image
           src={photoUrl}

@@ -1,91 +1,94 @@
 import { Link, Mail, MapPin, Phone } from "lucide-react";
-import type { EnglishLevel, Source } from "~/generated/prisma/enums";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "~/components/ui/card";
+import { Separator } from "~/components/ui/separator";
+import { getCandidate } from "../_lib/get-candidate";
 import { englishLevelLabels, sourceLabels } from "../_lib/candidate-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { CandidateAvatar } from "./candidate-avatar";
 
-type CandidateOverviewCardProps = {
-  name: string;
-  lastName: string;
-  photo: string | null;
-  email: string | null;
-  phone: string | null;
-  country: string | null;
-  linkedin: string | null;
-  title: string | null;
-  source: Source | null;
-  englishLevel: EnglishLevel | null;
+type CandidateOverviewCardProps = { candidateId: string };
 
-  role: {
-    name: string;
-  };
-  seniority: {
-    name: string;
-  } | null;
-};
-
-export function CandidateOverviewCard({
-  name,
-  lastName,
-  photo,
-  email,
-  phone,
-  country,
-  linkedin,
-  title,
-  source,
-  englishLevel,
-  role,
-  seniority,
+export async function CandidateOverviewCard({
+  candidateId,
 }: CandidateOverviewCardProps) {
+  const {
+    name,
+    lastName,
+    photo,
+    email,
+    phone,
+    country,
+    linkedin,
+    title,
+    source,
+    englishLevel,
+    role,
+    seniority,
+  } = await getCandidate(candidateId);
   const linkedinUrl = getSafeExternalUrl(linkedin);
 
   return (
-    <section className="rounded-xl border bg-white p-5">
-      <div className="flex gap-4">
-        <CandidateAvatar name={name} lastName={lastName} photo={photo} />
+    <Card className="min-w-0">
+      <CardHeader>
+        <div className="flex gap-4">
+          <CandidateAvatar name={name} lastName={lastName} photo={photo} />
 
-        <div className="min-w-0 flex-1">
-          <h1 className="text-xl font-semibold">
-            {name} {lastName}
-          </h1>
+          <div className="min-w-0 flex-1">
+            <CardTitle className="wrap-anywhere">
+              <h1>
+                {name} {lastName}
+              </h1>
+            </CardTitle>
 
-          <p className="mt-1 text-sm text-muted-foreground">
-            {title ?? "Sin título"}
-          </p>
+            <CardDescription className="mt-1 wrap-anywhere">
+              {title ?? "Sin título"}
+            </CardDescription>
 
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Mail className="h-4 w-4 shrink-0" />
-              {email ?? "Sin email"}
-            </span>
+            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+              <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                <Mail className="size-4 shrink-0" />
+                <span className="min-w-0 wrap-anywhere">
+                  {email ?? "Sin email"}
+                </span>
+              </span>
 
-            <span className="flex items-center gap-1.5">
-              <Phone className="h-4 w-4 shrink-0" />
-              {phone ?? "Sin teléfono"}
-            </span>
+              <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                <Phone className="size-4 shrink-0" />
+                <span className="min-w-0 wrap-anywhere">
+                  {phone ?? "Sin teléfono"}
+                </span>
+              </span>
 
-            <span className="flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 shrink-0" />
-              {country ?? "Sin país"}
-            </span>
+              <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                <MapPin className="size-4 shrink-0" />
+                <span className="min-w-0 wrap-anywhere">
+                  {country ?? "Sin país"}
+                </span>
+              </span>
 
-            {linkedinUrl && (
-              <a
-                href={linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 hover:underline"
-              >
-                <Link className="h-4 w-4 shrink-0" />
-                LinkedIn
-              </a>
-            )}
+              {linkedinUrl && (
+                <a
+                  href={linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 hover:underline"
+                >
+                  <Link className="size-4 shrink-0" />
+                  LinkedIn
+                </a>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="mt-5 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
+      </CardHeader>
+      <Separator />
+      <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <CandidateAttribute label="Rol" value={role.name} />
 
         <CandidateAttribute
@@ -104,8 +107,8 @@ export function CandidateOverviewCard({
           label="Fuente"
           value={source ? sourceLabels[source] : "Sin fuente"}
         />
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -116,7 +119,7 @@ type CandidateAttributeProps = {
 
 function CandidateAttribute({ label, value }: CandidateAttributeProps) {
   return (
-    <div>
+    <div className="min-w-0 wrap-anywhere">
       <p className="text-xs font-medium uppercase text-muted-foreground">
         {label}
       </p>

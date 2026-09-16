@@ -31,11 +31,18 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
       });
     }
 
-    const applications = await ctx.db.application.findMany({
-      where: { applicantId: input.candidateId },
-      select: { jobOpeningId: true, jobOpening: { select: { name: true } } },
-      orderBy: [{ jobOpening: { name: "asc" } }, { jobOpeningId: "asc" }],
-    });
+    const where = {
+      applicantId: input.candidateId,
+      ...(input.jobOpeningId ? { jobOpeningId: input.jobOpeningId } : {}),
+    };
+    const [applications, total] = await Promise.all([
+      ctx.db.application.findMany({
+        where: { applicantId: input.candidateId },
+        select: { jobOpeningId: true, jobOpening: { select: { name: true } } },
+        orderBy: [{ jobOpening: { name: "asc" } }, { jobOpeningId: "asc" }],
+      }),
+      ctx.db.activity.count({ where }),
+    ]);
 
     if (
       input.jobOpeningId &&
@@ -49,12 +56,7 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
       });
     }
 
-    const where = {
-      applicantId: input.candidateId,
-      ...(input.jobOpeningId ? { jobOpeningId: input.jobOpeningId } : {}),
-    };
     const pageSize = 6;
-    const total = await ctx.db.activity.count({ where });
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     const page = Math.min(input.page, totalPages);
     const activities = await ctx.db.activity.findMany({

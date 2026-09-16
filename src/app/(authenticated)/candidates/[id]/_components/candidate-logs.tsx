@@ -1,7 +1,21 @@
+import type { CSSProperties } from "react";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { TRPCError } from "@trpc/server";
 import Link from "next/link";
 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "~/components/ui/card";
+import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
+import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert";
+import { Separator } from "~/components/ui/separator";
+import { getCandidate } from "../_lib/get-candidate";
+import { Badge } from "~/components/ui/badge";
 import { buttonVariants } from "~/components/ui/button";
 import { api } from "~/lib/trpc/server";
 import { CandidateLogsFilter } from "./candidate-logs-filter";
@@ -16,6 +30,9 @@ export async function CandidateLogs({
   candidateId,
   searchParams,
 }: CandidateLogsProps) {
+  const candidate = await getCandidate(candidateId);
+  if (!candidate.permissions.canViewLogs) return null;
+
   const query = await searchParams;
   const requestedPage =
     typeof query.logsPage === "string" ? Number(query.logsPage) : 1;
@@ -63,12 +80,14 @@ export async function CandidateLogs({
 
   if (!result) {
     return (
-      <section className="space-y-3 rounded-xl border bg-white p-4">
-        <h2 className="font-semibold">Logs</h2>
-        <p role="alert" className="text-sm text-muted-foreground">
+      <Alert className="flex flex-col items-start gap-3">
+        <AlertTitle>
+          <h2>Logs</h2>
+        </AlertTitle>
+        <AlertDescription>
           La postulación seleccionada no está disponible. Volvé a consultar
           todas las postulaciones.
-        </p>
+        </AlertDescription>
         <Link
           href={pageHref(1, "")}
           scroll={false}
@@ -76,7 +95,7 @@ export async function CandidateLogs({
         >
           Todas las postulaciones
         </Link>
-      </section>
+      </Alert>
     );
   }
 
@@ -91,22 +110,24 @@ export async function CandidateLogs({
     .sort((a, b) => a - b);
 
   return (
-    <section className="min-w-0 rounded-xl border bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-            <Clock className="h-4 w-4 text-muted-foreground" />
+    <Card className="min-w-0">
+      <CardHeader className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+            <Clock className="size-4 text-muted-foreground" />
           </div>
 
-          <div>
-            <h2 className="font-semibold">Logs</h2>
+          <div className="min-w-0 wrap-anywhere">
+            <CardTitle>
+              <h2>Logs</h2>
+            </CardTitle>
 
-            <p className="text-xs text-muted-foreground">
+            <CardDescription>
               {total} registros —{" "}
               {selectedApplication
                 ? `actividad en ${selectedApplication.name}`
                 : "actividad del candidato"}
-            </p>
+            </CardDescription>
           </div>
         </div>
 
@@ -114,51 +135,81 @@ export async function CandidateLogs({
           applications={applications}
           jobOpeningId={jobOpeningId}
         />
-      </div>
+      </CardHeader>
+      <Separator />
 
       {activities.length === 0 ? (
-        <p className="p-4 text-sm text-muted-foreground">
-          {jobOpeningId
-            ? "No hay actividad registrada para esta postulación."
-            : "No hay actividad registrada para este candidato."}
-        </p>
+        <CardContent>
+          <Empty>
+            <EmptyHeader>
+              <EmptyDescription>
+                {jobOpeningId
+                  ? "No hay actividad registrada para esta postulación."
+                  : "No hay actividad registrada para este candidato."}
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        </CardContent>
       ) : (
         <>
-          <div
-            className="w-full min-w-0 overflow-x-auto"
+          <CardContent
+            className="w-full min-w-0 overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
             role="region"
             aria-label="Registros de actividad"
             tabIndex={0}
           >
-            <div className="min-w-[640px] px-5">
-              <div className="grid grid-cols-[170px_minmax(0,1fr)_230px] gap-3 border-b py-3 text-xs font-semibold uppercase text-muted-foreground">
-                <span>Fecha</span>
-                <span>Evento</span>
-                <span>Postulación</span>
-              </div>
-
-              {activities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="grid grid-cols-[170px_minmax(0,1fr)_230px] items-center gap-3 border-b py-3 text-sm last:border-b-0"
-                >
-                  <span className="whitespace-nowrap text-muted-foreground">
-                    {formatActivityDate(activity.date)}
-                  </span>
-
-                  <span className="min-w-0 break-words">
-                    {activity.description}
-                  </span>
-
-                  <ApplicationBadge
-                    applicationName={activity.application?.jobOpening.name}
-                  />
-                </div>
-              ))}
+            <div className="min-w-[640px]">
+              <table className="w-full table-fixed text-left">
+                <caption className="sr-only">
+                  Registros de actividad del candidato
+                </caption>
+                <colgroup>
+                  <col className="w-[170px]" />
+                  <col />
+                  <col className="w-[230px]" />
+                </colgroup>
+                <thead>
+                  <tr className="border-b text-xs font-semibold uppercase text-muted-foreground">
+                    <th scope="col" className="py-3 pr-3">
+                      Fecha
+                    </th>
+                    <th scope="col" className="py-3 pr-3">
+                      Evento
+                    </th>
+                    <th scope="col" className="py-3">
+                      Postulación
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activities.map((activity) => (
+                    <tr
+                      key={activity.id}
+                      className="border-b text-sm last:border-b-0"
+                    >
+                      <td className="py-3 pr-3 whitespace-nowrap text-muted-foreground">
+                        <time dateTime={activity.date.toISOString()}>
+                          {formatActivityDate(activity.date)}
+                        </time>
+                      </td>
+                      <td className="break-words py-3 pr-3">
+                        {activity.description}
+                      </td>
+                      <td className="break-words py-3">
+                        <ApplicationBadge
+                          applicationName={
+                            activity.application?.jobOpening.name
+                          }
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
+          </CardContent>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t px-5 py-3 text-xs text-muted-foreground">
+          <CardFooter className="flex flex-wrap items-center justify-between gap-3">
             <span>
               {firstRecord}–{firstRecord + activities.length - 1} de {total}{" "}
               registros
@@ -239,10 +290,10 @@ export async function CandidateLogs({
                 </Link>
               )}
             </nav>
-          </div>
+          </CardFooter>
         </>
       )}
-    </section>
+    </Card>
   );
 }
 
@@ -251,21 +302,25 @@ type ApplicationBadgeProps = {
 };
 
 function ApplicationBadge({ applicationName }: ApplicationBadgeProps) {
-  if (applicationName) {
-    return (
-      <div>
-        <span className="inline-flex max-w-full rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium leading-tight text-blue-700">
-          {applicationName}
-        </span>
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
-        Candidato
+    <Badge
+      variant="tag"
+      className="h-auto max-w-full whitespace-normal"
+      style={
+        {
+          "--badge-background": applicationName
+            ? "var(--tag-blue-bg)"
+            : "var(--tag-gray-bg)",
+          "--badge-foreground": applicationName
+            ? "var(--tag-blue-fg)"
+            : "var(--tag-gray-fg)",
+          "--badge-border": "transparent",
+        } as CSSProperties
+      }
+    >
+      <span className="min-w-0 break-words">
+        {applicationName || "Candidato"}
       </span>
-    </div>
+    </Badge>
   );
 }

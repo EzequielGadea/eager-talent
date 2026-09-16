@@ -24,7 +24,8 @@ export const candidateUserProcedure = protectedProcedure.use(
             : {},
         candidatePermissions: {
           canEditProfile: user.role === "Recruiter",
-          canViewLogs: user.role === "Recruiter",
+          canViewLogs:
+            user.role === "Recruiter" || user.role === "HiringManager",
           readOnly: user.role === "HiringManager",
         },
       },
