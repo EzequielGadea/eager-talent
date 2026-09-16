@@ -281,7 +281,7 @@ function LastModifiedText({ dateStr }: { dateStr: string | null }) {
     timeStyle: "short",
   });
   return (
-    <span>
+    <span suppressHydrationWarning>
       <TimeAgo
         date={date}
         formatter={spanishFormatter}
