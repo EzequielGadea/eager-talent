@@ -3,6 +3,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { applicantRouter } from "./routers/applicant";
 
 export const appRouter = createTRPCRouter({
+<<<<<<< HEAD
     applicant: applicantRouter,
 =======
 import { z } from "zod";
@@ -29,10 +30,14 @@ export const candidateRouter = createTRPCRouter({
 export const appRouter = createTRPCRouter({
     candidate: candidateRouter,
 >>>>>>> 33f27bc (prueba de agregar querie a DB y llamado trpc para consumir data)
+=======
+  applicant: applicantRouter,
+>>>>>>> 211f585 (Arreglos de prettier y eslint)
 });
 
 export type AppRouter = typeof appRouter;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 export const createCaller = createCallerFactory(appRouter);
 =======
@@ -40,3 +45,6 @@ export const createCaller = createCallerFactory(appRouter);
 export const createCallerCandidate = createCallerFactory(candidateRouter);
 
 >>>>>>> 33f27bc (prueba de agregar querie a DB y llamado trpc para consumir data)
+=======
+export const createCaller = createCallerFactory(appRouter);
+>>>>>>> 211f585 (Arreglos de prettier y eslint)

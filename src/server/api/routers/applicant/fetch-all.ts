@@ -1,21 +1,20 @@
 import { z } from "zod";
-
-import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
-
-import { protectedProcedure } from "~/server/api/trpc";
-import { Prisma } from "~/generated/prisma/client";
-import { TRPCError } from "@trpc/server";
+//import { recruiterProcedure } from "~/server/api/trpc";
+import{ protectedProcedure } from "~/server/api/trpc";
 
 export const fetchAll = protectedProcedure
-    .input(
-        z.object({ //TODO agregar parametros para filtros, todos opcionales
-            //<param1>: z.string().optional()
-            currentPage: z.number(),
-        }).optional()
-    )
-    .query(async ({ctx, input}) => {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        /*
+  .input(
+    z
+      .object({
+        //TODO agregar parametros para filtros, todos opcionales
+        //<param1>: z.string().optional()
+        currentPage: z.number(),
+      })
+      .optional(),
+  )
+  .query(async ({ ctx, input }) => {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    /*
         try {
             //dato de prueba basura
             const newApplicant = await ctx.db.applicant.create({
@@ -32,47 +31,46 @@ export const fetchAll = protectedProcedure
             });
         } catch (error) { console.log(error); }
         */
-        const result = await ctx.db.applicant.findMany({
-            skip: ((input?.currentPage ?? 1) - 1) * 8,
-            take: 8,
-            orderBy: {
-                id: "asc",
+    const result = await ctx.db.applicant.findMany({
+      skip: ((input?.currentPage ?? 1) - 1) * 8,
+      take: 8,
+      orderBy: {
+        id: "asc",
+      },
+      include: {
+        role: {
+          select: {
+            name: true,
+          },
+        },
+        tags: {
+          select: {
+            name: true,
+            color: true,
+          },
+        },
+        seniority: {
+          select: {
+            name: true,
+            color: true,
+          },
+        },
+        applications: {
+          include: {
+            jobOpening: {
+              select: {
+                name: true,
+              },
             },
-            include: { 
-                role: { 
-                    select: {
-                        name: true,
-                    }
-                },
-                tags: {
-                    select: {
-                        name: true,
-                        color: true,
-                    }
-                },
-                seniority: {
-                    select: {
-                        name: true,
-                        color: true,
-                    }
-                },
-                applications: {
-                    include: {
-                        jobOpening : {
-                            select: {
-                                name: true,
-                            }
-                        }
-                    }
-                },
-                area: {
-                    select: {
-                        name: true,
-                    }
-                },
-            },
-        //agregar filtros a la consulta
-    })
-        console.log("antes de ir a front");
-        return {applicants: result};
-    })
+          },
+        },
+        area: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      //agregar filtros a la consulta
+    });
+    return { applicants: result };
+  });

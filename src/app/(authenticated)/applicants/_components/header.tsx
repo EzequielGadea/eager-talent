@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import {
-    Download,
-    Plus,
-} from "lucide-react";
+import { Download, Plus } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/navigation";
 
-export function Header(props : {countApplicants : number, countOpenings : number}) {
-  const router = useRouter();  
+export function Header(props: {
+  countApplicants: number;
+  countOpenings: number;
+}) {
+  const router = useRouter();
   return (
     <>
       {/* Cabezal */}
@@ -17,9 +17,16 @@ export function Header(props : {countApplicants : number, countOpenings : number
           <h1 className="text-4xl font-bold tracking-tight text-dashboard-dark">
             Candidatos
           </h1>
-          <p className="mt-0.5 text-base font-medium text-dashboard-text-muted">
-            {props.countApplicants} candidatos activos en {props.countOpenings} vacantes
-          </p>
+          {props.countApplicants == 0 ? (
+            <p className="mt-0.5 text-base font-medium text-dashboard-text-muted">
+              No hay candidatos
+            </p>
+          ) : (
+            <p className="mt-0.5 text-base font-medium text-dashboard-text-muted">
+              {props.countApplicants} candidatos activos en{" "}
+              {props.countOpenings} vacantes
+            </p>
+          )}
         </div>
 
         {/* Botones */}
@@ -44,5 +51,5 @@ export function Header(props : {countApplicants : number, countOpenings : number
         </div>
       </header>
     </>
-    );
+  );
 }
