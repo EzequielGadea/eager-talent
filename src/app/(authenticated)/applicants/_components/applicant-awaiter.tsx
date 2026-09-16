@@ -5,6 +5,8 @@ import { ApplicantPagination } from './applicant-pagination';
 import { ApplicantTable } from './applicant-table';
 import { Header } from './header';
 import { Filters } from './filters';
+import { api } from '~/lib/trpc/server';
+
 
 async function awaitData(promise : ApplicantsPromise) {
     return transformApplicants(promise)
@@ -44,11 +46,27 @@ export async function ApplicantAwaiterPagination(props : { promiseData : Applica
    return
 }
 
-export async function ApplicantAwaiterFilters(props : { promiseData : ApplicantsPromise }) {
-    const { applicantsData, countApplicants, countOpenings } = await awaitData(props.promiseData);
-    return (
-      <>
-        <Filters applicants = { applicantsData }/>
-      </>
-    )
+export async function ApplicantAwaiterFilters(props: { promise: ApplicantsPromise }) {
+  const [
+    { applicantsData, countApplicants, countOpenings },
+    roleData,
+    seniorityData,
+    areaData,
+    jobOpeningData,
+    tagData,
+  ] = await Promise.all([
+    Await(props.promise),
+    api.role.getAllRoles({}),
+    api.seniority.getAllSeniorities({}),
+    api.area.getAllAreas({}),
+    api.jobOpening.getAllJobOpenings({}),
+    api.tag.getAllTags({}),
+  ]);
+
+  return (
+    <>
+      <Filters applicants={applicantsData} />
+    </>
+  )
+
 }
