@@ -1,71 +1,32 @@
 import 'server-only'
 
-import { ApplicantsPromise, getRandomColor } from "../types";
+import { ApplicantsPromise, getRandomColor, transformApplicants } from "../types";
 import { ApplicantPagination } from './applicant-pagination';
 import { ApplicantTable } from './applicant-table';
 import { Header } from './header';
 import { Filters } from './filters';
 
-async function Await(promise : ApplicantsPromise) {
-    const data = await promise;
-    const applicantsData = (data) ? data.applicants.map((applicant) => {
-
-      const jobOpenings = (applicant.applications) ? applicant.applications
-        .filter((application) =>  (application.active))
-        .map(
-          application => {
-            if (application.active) { return application.jobOpening.name }
-          },
-      ) : [];
-        return {
-          id: applicant.id,
-          initials: applicant.name[0] + applicant.lastName[0],
-          name: applicant.name + ' ' + applicant.lastName,
-          avatarBg: getRandomColor(),
-          tags: (applicant.tags) ? applicant.tags.map(
-            (tag) => ({
-              label: tag.name,
-              color: tag.color,
-            })
-          ) : [],
-
-          jobOpening: jobOpenings.length ? jobOpenings.join(", \r\n") : "-",
-
-          role: (applicant.role.name) ?? "-",
-          seniorityName: (applicant.seniority?.name) ?? "-",
-          seniorityColor: (applicant.seniority?.color) ?? "-",
-          area: (applicant.area?.name) ?? "-",
-          sourceText: (applicant.source)  ?? "-",
-          sourceIcon: "TODO",
-          hasCv: applicant.hasOwnProperty('resume'),
-          hasLinkedin: applicant.hasOwnProperty('linkedin'),
-          linkedinUrl: applicant.linkedin ?? "-",
-          email: applicant.email ?? "-",
-       }
-    }) : [];
-    
-    const countApplicants = applicantsData.length
-    const uniqueOpenings = new Set<String>();
-    for (const applicant of data.applicants) {
-      for (const open of applicant.applications) {
-        uniqueOpenings.add(open.jobOpening.name);
-      }
-    }
-    const countOpenings = (uniqueOpenings.has("—")) ? uniqueOpenings.size - 1 : uniqueOpenings.size
-    return { applicantsData, countApplicants, countOpenings };
+async function awaitData(promise : ApplicantsPromise) {
+    return transformApplicants(promise)
 }
 
-export async function ApplicantAwaiterTable(props : {promise: ApplicantsPromise }) {
-    const { applicantsData, countApplicants, countOpenings } = await Await(props.promise);
+async function awaitCount(promiseCount : Promise<number>) {
+  return await promiseCount
+} 
+
+export async function ApplicantAwaiterTable(props : {promiseData: ApplicantsPromise, promiseCount: Promise<number> }) {
+    const { applicantsData } = await awaitData(props.promiseData);
+    const countApplicants = await awaitCount(props.promiseCount)
     return (
       <>
-        <ApplicantTable applicantsData = { applicantsData }/>
+        <ApplicantTable applicantsData = { applicantsData } countApplicants = { countApplicants }/>
       </>
     )
 }
 
-export async function ApplicantAwaiterHeader(props : { promise : ApplicantsPromise }) {
-    const { applicantsData, countApplicants, countOpenings } = await Await(props.promise);
+export async function ApplicantAwaiterHeader(props : { promiseData : ApplicantsPromise, promiseCount : Promise<number> }) {
+    const { countOpenings } = await awaitData(props.promiseData);
+    const countApplicants = await awaitCount(props.promiseCount)
     return (
       <>  
         <Header 
@@ -75,16 +36,16 @@ export async function ApplicantAwaiterHeader(props : { promise : ApplicantsPromi
     )
 }
 
-export async function ApplicantAwaiterPagination(props : { promise : ApplicantsPromise }) {
-    const { applicantsData, countApplicants, countOpenings } = await Await(props.promise);
+export async function ApplicantAwaiterPagination(props : { promiseData : ApplicantsPromise }) {
+    const { applicantsData, countApplicants, countOpenings } = await awaitData(props.promiseData);
     /*return (
       <ApplicantPagination countApplicants = { countApplicants }/>
     )*/
    return
 }
 
-export async function ApplicantAwaiterFilters(props : { promise : ApplicantsPromise }) {
-    const { applicantsData, countApplicants, countOpenings } = await Await(props.promise);
+export async function ApplicantAwaiterFilters(props : { promiseData : ApplicantsPromise }) {
+    const { applicantsData, countApplicants, countOpenings } = await awaitData(props.promiseData);
     return (
       <>
         <Filters applicants = { applicantsData }/>
