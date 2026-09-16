@@ -1,6 +1,8 @@
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { z } from "zod";
 //import { recruiterProcedure } from "~/server/api/trpc";
-import{ protectedProcedure } from "~/server/api/trpc";
+import { protectedProcedure } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 export const fetchAll = protectedProcedure
   .input(
@@ -31,46 +33,56 @@ export const fetchAll = protectedProcedure
             });
         } catch (error) { console.log(error); }
         */
-    const result = await ctx.db.applicant.findMany({
-      skip: ((input?.currentPage ?? 1) - 1) * 8,
-      take: 8,
-      orderBy: {
-        id: "asc",
-      },
-      include: {
-        role: {
-          select: {
-            name: true,
-          },
+    try {
+      const result = await ctx.db.applicant.findMany({
+        skip: ((input?.currentPage ?? 1) - 1) * 8,
+        take: 8,
+        orderBy: {
+          id: "asc",
         },
-        tags: {
-          select: {
-            name: true,
-            color: true,
+        include: {
+          role: {
+            select: {
+              name: true,
+            },
           },
-        },
-        seniority: {
-          select: {
-            name: true,
-            color: true,
+          tags: {
+            select: {
+              name: true,
+              color: true,
+            },
           },
-        },
-        applications: {
-          include: {
-            jobOpening: {
-              select: {
-                name: true,
+          seniority: {
+            select: {
+              name: true,
+              color: true,
+            },
+          },
+          applications: {
+            include: {
+              jobOpening: {
+                select: {
+                  name: true,
+                },
               },
             },
           },
-        },
-        area: {
-          select: {
-            name: true,
+          area: {
+            select: {
+              name: true,
+            },
           },
         },
-      },
-      //agregar filtros a la consulta
-    });
-    return { applicants: result };
+        //agregar filtros a la consulta
+      });
+      return { applicants: result };
+    } catch (e) {
+      if (e instanceof PrismaClientKnownRequestError) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unexpected prisma error",
+        });
+      }
+      throw e;
+    }
   });

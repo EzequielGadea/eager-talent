@@ -13,7 +13,7 @@ import { ITEMS_PER_PAGE } from "../types";
 export function ApplicantPagination(props: {
   countApplicants: number;
   currentPage: number;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
 }) {
   const totalPages = Math.max(
     1,
@@ -22,7 +22,7 @@ export function ApplicantPagination(props: {
   const currentPage = props.currentPage;
   const goToPage = (page: number) => {
     if (page < 1 || page > totalPages) return;
-    props.onPageChange(page);
+    props.onPageChange?.(page);
   };
   const startItem =
     props.countApplicants === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
