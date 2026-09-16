@@ -14,7 +14,11 @@ export default function ApplicantTableError({ reset }: { reset?: () => void }) {
       <Button
         variant="outline"
         onClick={() => {
-          window.location.reload();
+          if (reset) {
+            reset();
+          } else {
+            window.location.reload();
+          }
         }}
       >
         Reintentar

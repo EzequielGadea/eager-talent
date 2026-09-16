@@ -8,7 +8,18 @@ import { ApplicantPagination } from "./applicant-pagination";
 import ApplicantTableError from "../error";
 
 async function awaitData(promise: ApplicantsPromise) {
-  return transformApplicants(promise);
+  try {
+    const { applicantsData, countApplicants, countOpenings } =
+      await transformApplicants(promise);
+    return { applicantsData, countApplicants, countOpenings, error: null };
+  } catch (e) {
+    return {
+      applicantsData: [],
+      countApplicants: 0,
+      countOpenings: 0,
+      error: e,
+    };
+  }
 }
 
 async function awaitCount(promiseCount: Promise<number>) {
@@ -19,9 +30,9 @@ export async function ApplicantAwaiterTable(props: {
   promiseData: ApplicantsPromise;
   promiseCount: Promise<number>;
 }) {
-  try {
-    const { applicantsData } = await awaitData(props.promiseData);
-    const countApplicants = await awaitCount(props.promiseCount);
+  const { applicantsData, error } = await awaitData(props.promiseData);
+  const countApplicants = await awaitCount(props.promiseCount);
+  if (error == null) {
     return (
       <>
         <ApplicantTable
@@ -30,18 +41,17 @@ export async function ApplicantAwaiterTable(props: {
         />
       </>
     );
-  } catch (e) {
-    return <ApplicantTableError />;
   }
+  return <ApplicantTableError />;
 }
 
 export async function ApplicantAwaiterHeader(props: {
   promiseData: ApplicantsPromise;
   promiseCount: Promise<number>;
 }) {
-  try {
-    const { countOpenings } = await awaitData(props.promiseData);
-    const countApplicants = await awaitCount(props.promiseCount);
+  const { countOpenings, error } = await awaitData(props.promiseData);
+  const countApplicants = await awaitCount(props.promiseCount);
+  if (error == null) {
     return (
       <>
         <Header
@@ -50,35 +60,33 @@ export async function ApplicantAwaiterHeader(props: {
         />
       </>
     );
-  } catch (e) {}
+  }
 }
 
 export async function ApplicantAwaiterPagination(props: {
   promiseCount: Promise<number>;
   currentPage: number;
 }) {
-  try {
-    const countApplicants = await awaitCount(props.promiseCount);
-    return (
-      <>
-        <ApplicantPagination
-          countApplicants={countApplicants}
-          currentPage={props.currentPage}
-        />
-      </>
-    );
-  } catch (e) {}
+  const countApplicants = await awaitCount(props.promiseCount);
+  return (
+    <>
+      <ApplicantPagination
+        countApplicants={countApplicants}
+        currentPage={props.currentPage}
+      />
+    </>
+  );
 }
 
 export async function ApplicantAwaiterFilters(props: {
   promiseData: ApplicantsPromise;
 }) {
-  try {
-    const { applicantsData } = await awaitData(props.promiseData);
+  const { applicantsData, error } = await awaitData(props.promiseData);
+  if (error == null) {
     return (
       <>
         <Filters applicants={applicantsData} />
       </>
     );
-  } catch (e) {}
+  }
 }
