@@ -1,11 +1,12 @@
 import "server-only";
 
-import { ApplicantsPromise, transformApplicants } from "../types";
+import { ApplicantsPromise } from "../types";
 import { ApplicantTable } from "./applicant-table";
 import { Header } from "./header";
 import { Filters } from "./filters";
 import { ApplicantPagination } from "./applicant-pagination";
 import ApplicantTableError from "../error";
+import { transformApplicants } from "../utils";
 
 async function awaitData(promise: ApplicantsPromise) {
   try {

@@ -1,13 +1,6 @@
 import "server-only";
-//import { FaLinkedin } from "react-icons/fa";
-//sourceIcon: <Send size={14} className="text-dashboard-text-muted" />,
-//sourceIcon: <Globe size={14} className="text-dashboard-text-muted" />,
-//sourceIcon: <Users size={14} className="text-dashboard-text-muted" />,
-//sourceIcon: <Briefcase size={14} className="text-dashboard-text-muted" />,
-//sourceIcon: <>{/*<FaLinkedin size={14} className="text-[#0a66c2]" />*/}</>,
 
 import { Table, TableBody } from "~/components/ui/table";
-import { getApplicantsPage } from "./actions";
 import { api } from "~/lib/trpc/server";
 import { Suspense } from "react";
 import {
@@ -23,6 +16,21 @@ import {
   PaginationFallback,
 } from "./_components/fallbacks";
 import { ApplicantTableHeader } from "./_components/applicant-table";
+import { Globe, Send, Users, X } from "lucide-react";
+import { getApplicantsPage } from "./utils";
+
+export function getSourceIcon(sourceText: string) {
+  switch (sourceText) {
+    case "Inbound":
+      return <Globe size={14} className="text-dashboard-text-muted" />;
+    case "Outbound":
+      return <Send size={14} className="text-dashboard-text-muted" />;
+    case "Referral":
+      return <Users size={14} className="text-dashboard-text-muted" />;
+    default:
+      return <X size={14} className="text-dashboard-text-muted" />;
+  }
+}
 
 export default async function ApplicantsPage() {
   // llamado a obtener los candidatos
