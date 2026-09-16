@@ -10,11 +10,11 @@ export const fetchAll = protectedProcedure
     .input(
         z.object({ //TODO agregar parametros para filtros, todos opcionales
             //<param1>: z.string().optional()
-            //<param2>: z.number()
+            currentPage: z.number(),
         }).optional()
     )
     .query(async ({ctx, input}) => {
-        //await new Promise((resolve) => setTimeout(resolve, 3000));
+        await new Promise((resolve) => setTimeout(resolve, 3000));
         /*
         try {
             //dato de prueba basura
@@ -33,39 +33,44 @@ export const fetchAll = protectedProcedure
         } catch (error) { console.log(error); }
         */
         const result = await ctx.db.applicant.findMany({
-        include: { 
-            role: { 
-                select: {
-                    name: true,
-                }
+            skip: ((input?.currentPage ?? 1) - 1) * 8,
+            take: 8,
+            orderBy: {
+                id: "asc",
             },
-            tags: {
-                select: {
-                    name: true,
-                    color: true,
-                }
-            },
-            seniority: {
-                select: {
-                    name: true,
-                    color: true,
-                }
-            },
-            applications: {
-                include: {
-                    jobOpening : {
-                        select: {
-                            name: true,
+            include: { 
+                role: { 
+                    select: {
+                        name: true,
+                    }
+                },
+                tags: {
+                    select: {
+                        name: true,
+                        color: true,
+                    }
+                },
+                seniority: {
+                    select: {
+                        name: true,
+                        color: true,
+                    }
+                },
+                applications: {
+                    include: {
+                        jobOpening : {
+                            select: {
+                                name: true,
+                            }
                         }
                     }
-                }
+                },
+                area: {
+                    select: {
+                        name: true,
+                    }
+                },
             },
-            area: {
-                select: {
-                    name: true,
-                }
-            },
-        },
         //agregar filtros a la consulta
     })
         console.log("antes de ir a front");
