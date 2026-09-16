@@ -58,9 +58,16 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       <TableCell className="px-3 py-4">
         <div
           className="max-w-44 truncate text-sm font-semibold text-dashboard-text-muted whitespace-normal wrap-break-word text-center"
-          title={props.applicant.jobOpening}
+          title={
+            props.applicant.jobOpening.length <= 1
+              ? ""
+              : props.applicant.jobOpening.join(", \n")
+          }
         >
-          {props.applicant.jobOpening}
+          {props.applicant.jobOpening[props.applicant.jobOpening.length - 1]}{" "}
+          {props.applicant.jobOpening.length - 1 <= 0
+            ? ""
+            : `+${props.applicant.jobOpening.length - 1}`}
         </div>
       </TableCell>
 

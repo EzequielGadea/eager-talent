@@ -12,7 +12,7 @@ export interface ApplicantInfo {
   name: string;
   avatarBg: string;
   tags: Tag[];
-  jobOpening: string;
+  jobOpening: string[];
   role: string;
   seniorityName: string | undefined; //"Senior" | "Mid-Senior" | "Mid";
   seniorityColor: string;
@@ -80,7 +80,7 @@ export async function transformApplicants(promise: ApplicantsPromise) {
               }))
             : [],
 
-          jobOpening: jobOpenings.length ? jobOpenings.join(", \r\n") : "-",
+          jobOpening: jobOpenings.length > 0 ? jobOpenings : ["-"],
 
           role: applicant.role.name ?? "-",
           seniorityName: applicant.seniority?.name ?? "-",
