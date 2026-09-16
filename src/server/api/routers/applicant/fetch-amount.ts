@@ -5,7 +5,8 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 export const fetchAmount = protectedProcedure.query(async ({ ctx }) => {
   try {
     const result = await ctx.db.applicant.count();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    //delay para probar fallbacks
+    //await new Promise((resolve) => setTimeout(resolve, 1000));
     return result;
   } catch (e) {
     if (e instanceof PrismaClientKnownRequestError) {

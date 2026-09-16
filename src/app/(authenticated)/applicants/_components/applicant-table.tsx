@@ -14,7 +14,8 @@ import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantInfo } from "../types";
 import { ApplicantRow } from "./applicant-row";
 import { TableFallback } from "./fallbacks";
-import { getApplicantsPage, transformApplicants } from "../utils";
+import { transformApplicants } from "../utils";
+import { getApplicantsPage } from "../actions";
 
 export function ApplicantTable(props: {
   applicantsData: ApplicantInfo[];
