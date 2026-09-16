@@ -2,6 +2,7 @@ import type { api } from "~/lib/trpc/server";
 
 import { CandidateOverviewCard } from "./candidate-overview-card";
 import { CandidateInfoCards } from "./candidate-info-cards";
+import { CandidateApplications } from "./candidate-applications";
 
 export type Candidate = Awaited<ReturnType<typeof api.candidate.getById>>;
 
@@ -40,7 +41,7 @@ export async function CandidateDetails({
         resume={candidate.resume}
       />
 
-      {/* Applications will be integrated here in a separate task. */}
-    </>
+      <CandidateApplications candidatePromise={candidatePromise} />
+      </>
   );
 }
