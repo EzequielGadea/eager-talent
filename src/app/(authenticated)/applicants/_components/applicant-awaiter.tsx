@@ -55,7 +55,7 @@ export async function ApplicantAwaiterFilters(props: { promise: ApplicantsPromis
     jobOpeningData,
     tagData,
   ] = await Promise.all([
-    Await(props.promise),
+    awaitData(props.promise),
     api.role.getAllRoles({}),
     api.seniority.getAllSeniorities({}),
     api.area.getAllAreas({}),
@@ -65,7 +65,7 @@ export async function ApplicantAwaiterFilters(props: { promise: ApplicantsPromis
 
   return (
     <>
-      <Filters applicants={applicantsData} />
+      <Filters applicants={[]} />
     </>
   )
 
