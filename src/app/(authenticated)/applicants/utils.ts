@@ -56,7 +56,7 @@ export async function transformApplicants(promise : ApplicantsPromise){
     return { applicantsData, countApplicants, countOpenings };
 }
 
-export function getRandomColor() {
+export async function getRandomColor() {
   const index = Math.floor(Math.random() * avatarPalette.length);
   return avatarPalette[index]
 }
