@@ -1,7 +1,7 @@
 'use client'
 
 import { FileText } from "lucide-react";
-
+import { FaLinkedin } from "react-icons/fa";
 import {
   TableCell,
   TableRow,
@@ -126,7 +126,7 @@ export function ApplicantRow(props : {applicant : ApplicantInfo}) {
                       title="Ver perfil de LinkedIn"
                       className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#0a66c2] transition-colors hover:bg-dashboard-track hover:text-[#004182]"
                     >
-                      {/*<FaLinkedin size={15} />*/}
+                      {<FaLinkedin size={15} />}
                     </a>
                   ) : null}
                 </TableCell>
