@@ -8,7 +8,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
-import { ITEMS_PER_PAGE } from "../types";
+import { ITEMS_PER_PAGE } from "../constants";
 
 export function ApplicantPagination(props: {
   countApplicants: number;

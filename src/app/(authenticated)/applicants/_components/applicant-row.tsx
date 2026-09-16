@@ -7,6 +7,7 @@ import { TableCell, TableRow } from "~/components/ui/table";
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
+import { getSourceIcon } from "../page";
 
 export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   const router = useRouter();
@@ -98,7 +99,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Source */}
       <TableCell className="px-3 py-4">
         <div className="flex items-center gap-1.5 text-sm font-semibold text-dashboard-text-muted text-center">
-          <span className="shrink-0">{props.applicant.sourceIcon}</span>
+          <span className="shrink-0">
+            {getSourceIcon(props.applicant.sourceText)}
+          </span>
           <span className="truncate">{props.applicant.sourceText}</span>
         </div>
       </TableCell>

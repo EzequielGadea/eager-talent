@@ -11,10 +11,10 @@ import {
 } from "~/components/ui/table";
 
 import { ApplicantPagination } from "./applicant-pagination";
-import { ApplicantInfo, transformApplicants } from "../types";
+import { ApplicantInfo } from "../types";
 import { ApplicantRow } from "./applicant-row";
-import { getApplicantsPage } from "../actions";
 import { TableFallback } from "./fallbacks";
+import { getApplicantsPage, transformApplicants } from "../utils";
 
 export function ApplicantTable(props: {
   applicantsData: ApplicantInfo[];
