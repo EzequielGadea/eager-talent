@@ -16,9 +16,7 @@ import {
   PaginationFallback,
 } from "./_components/fallbacks";
 import { ApplicantTableHeader } from "./_components/applicant-table";
-import { Globe, Send, Users, X } from "lucide-react";
 import { getApplicantsPage } from "./actions";
-
 
 export default async function ApplicantsPage() {
   // llamado a obtener los candidatos
