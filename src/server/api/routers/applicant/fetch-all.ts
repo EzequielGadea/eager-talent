@@ -18,14 +18,14 @@ export const fetchAll = protectedProcedure
         /*
         try {
             //dato de prueba basura
-            const newApplicant = await prisma.applicant.create({
+            const newApplicant = await ctx.db.applicant.create({
                 data: {
                     id: '1',
                     name: 'martin',
                     lastName: "fossatti",
                     role: {
                         connect: {
-                            id: "cmtroqosn0000l5y6ppaym3pq",
+                            id: "cmu1l7twf0000d9y61l89qj85",
                         }
                     }
                 }
