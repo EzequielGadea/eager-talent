@@ -59,7 +59,6 @@ export async function transformApplicants(promise: ApplicantsPromise) {
   const data = await promise;
   const applicantsData = data
     ? data.applicants.map((applicant) => {
-        console.log(applicant.name, applicant.linkedin);
         const jobOpenings = applicant.applications
           ? applicant.applications
               .filter((application) => application.active)
