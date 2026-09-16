@@ -6,6 +6,7 @@ import Loading from "~/components/ui/loading";
 import { api } from "~/lib/trpc/server";
 import { CandidateDetails } from "./_components/candidate-details";
 import { CandidateLogsSection } from "./_components/candidate-logs-section";
+import { CandidateNotes } from "./_components/candidate-notes";
 import { CandidateTagsSection } from "./_components/candidate-tags-section";
 
 type CandidatePageProps = {
@@ -56,7 +57,10 @@ async function CandidatePageContent({
       </div>
 
       <aside className="min-w-0 space-y-4">
-        {/* Candidate notes will be integrated here in a separate task. */}
+        <Suspense fallback={<Loading />}>
+          <CandidateNotes candidatePromise={candidatePromise} />
+        </Suspense>
+
         <Suspense fallback={<Loading />}>
           <CandidateTagsSection candidatePromise={candidatePromise} />
         </Suspense>

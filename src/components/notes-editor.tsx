@@ -10,7 +10,7 @@ import {
 import TimeAgo from "react-timeago";
 import spanishStrings from "react-timeago/lib/language-strings/es";
 import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import type { Editor } from "@tiptap/core";
@@ -117,6 +117,7 @@ export function NotesEditor({
 }: NotesEditorProps) {
   const [status, setStatus] = useState<keyof typeof STATUS_UI>("idle");
   const [lastModified, setLastModified] = useState(initialLastModified);
+  const statusRef = useRef(status);
 
   const debouncedSave = useDebouncedCallback(async (jsonContent: JSONContent) => {
     setStatus("saving");
@@ -130,6 +131,10 @@ export function NotesEditor({
     }
   }, AUTOSAVE_DELAY_MS);
 
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
+
   const editor = useEditor({
     immediatelyRender: false,
     content: (content as JSONContent | string | null) ?? "",
@@ -138,31 +143,35 @@ export function NotesEditor({
       attributes: {
         "aria-label": editorAriaLabel,
         class:
-          "h-130 overflow-y-auto text-base leading-relaxed text-text-primary caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-slate-200 outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2",      },
+          "h-130 overflow-y-auto text-base leading-relaxed text-text-primary caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-slate-200 outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2",
+      },
     },
     onUpdate: ({ editor }) => {
       setStatus("dirty");
-      debouncedSave(structuredClone(editor.getJSON()));
+      
+      const latestJson = structuredClone(editor.getJSON());
+      
+      debouncedSave(latestJson);
     },
   });
 
-    useEffect(() => {
+  // Flush on unmount. Prompt the user if there is unsaved content.
+  useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (statusRef.current !== "dirty") return;
 
-        if (status === "dirty" || status === "saving") {
-        // Immediately trigger the background save request while prompt displays
-        debouncedSave.flush();
-
-        event.preventDefault();
-        event.returnValue = "";
-        }
+      debouncedSave.flush();
+      event.preventDefault();
+      event.returnValue = "";
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
+
     return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      debouncedSave.flush();
     };
-    }, [status, debouncedSave]);
+  }, [debouncedSave]);
 
   const active = useEditorState({
     editor,
