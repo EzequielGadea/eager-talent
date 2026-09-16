@@ -1,5 +1,5 @@
 import { api } from "~/lib/trpc/server";
-import { Globe, Send, Users } from "lucide-react"
+import { Globe, Send, Users, X } from "lucide-react"
 interface Tag {
   label: string;
   color: string;
@@ -45,13 +45,14 @@ function getSourceIcon(sourceText : string) {
     case "Inbound": return (<Globe size={14} className="text-dashboard-text-muted" />);
     case "Outbound": return (<Send size={14} className="text-dashboard-text-muted" />);
     case "Referral": return (<Users size={14} className="text-dashboard-text-muted"/>);
+    default: return (<X size={14} className="text-dashboard-text-muted"/>)
   }
 }
 
 export async function transformApplicants(promise : ApplicantsPromise){
   const data = await promise;
     const applicantsData = (data) ? data.applicants.map((applicant) => {
-
+      console.log(applicant.name, applicant.linkedin)
       const jobOpenings = (applicant.applications) ? applicant.applications
         .filter((application) =>  (application.active))
         .map(
@@ -77,10 +78,10 @@ export async function transformApplicants(promise : ApplicantsPromise){
           seniorityName: (applicant.seniority?.name) ?? "-",
           seniorityColor: (applicant.seniority?.color) ?? "-",
           area: (applicant.area?.name) ?? "-",
-          sourceText: (applicant.source)  ?? "-",
+          sourceText: (applicant.source)  ?? "Not found",
           sourceIcon: getSourceIcon(applicant.source ?? "null"),
-          hasCv: applicant.hasOwnProperty('resume'),
-          hasLinkedin: applicant.hasOwnProperty('linkedin'),
+          hasCv: applicant.resume != null,
+          hasLinkedin: applicant.linkedin != null,
           linkedinUrl: applicant.linkedin ?? "-",
           email: applicant.email ?? "-",
        }

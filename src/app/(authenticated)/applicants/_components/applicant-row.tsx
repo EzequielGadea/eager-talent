@@ -102,7 +102,7 @@ export function ApplicantRow(props : {applicant : ApplicantInfo}) {
 
                 {/* CV */}
                 <TableCell className="px-3 py-4 text-center">
-                  {props.applicant.hasCv && (
+                  {props.applicant.hasCv ? (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -112,7 +112,7 @@ export function ApplicantRow(props : {applicant : ApplicantInfo}) {
                     >
                       <FileText size={15} />
                     </Button>
-                  )}
+                  ): null}
                 </TableCell>
 
                 {/* LinkedIn */}
