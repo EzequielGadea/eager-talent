@@ -1029,8 +1029,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       modality: "VideoCall" as InterviewType,
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
       status: "Completed" as InterviewStatus,
-      summary:
-        "Excelente solvencia en arquitectura de software, ActiveRecord, diseño de APIs y fit cultural.",
+      summary: "https://app.read.ai/meeting/abc123/summary",
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
       interviewers: { connect: [{ id: hm1.id }] },
