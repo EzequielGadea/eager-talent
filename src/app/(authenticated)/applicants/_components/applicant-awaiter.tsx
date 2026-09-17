@@ -1,51 +1,51 @@
-import 'server-only'
+import 'server-only';
 
-import { getRandomColor, transformApplicants } from "../utils";
+import { transformApplicants } from '../utils';
 import { ApplicantsPromise } from '../types';
-import { ApplicantPagination } from './applicant-pagination';
 import { ApplicantTable } from './applicant-table';
 import { Header } from './header';
 import { Filters } from './filters';
 import { api } from '~/lib/trpc/server';
-import { promises } from 'dns';
-
 
 async function awaitData(promise: ApplicantsPromise) {
-  return transformApplicants(promise)
+  return transformApplicants(promise);
 }
 
 async function awaitCount(promiseCount: Promise<number>) {
-  return await promiseCount
+  return promiseCount;
 }
 
-export async function ApplicantAwaiterTable(props: { promiseData: ApplicantsPromise, promiseCount: Promise<number> }) {
+export async function ApplicantAwaiterTable(props: {
+  promiseData: ApplicantsPromise;
+  promiseCount: Promise<number>;
+  currentPage: Promise<number>;
+}) {
   const { applicantsData } = await awaitData(props.promiseData);
-  const countApplicants = await awaitCount(props.promiseCount)
+  const countApplicants = await awaitCount(props.promiseCount);
+  const currentPage = await props.currentPage;
+
   return (
-    <>
-      <ApplicantTable applicantsData={applicantsData} countApplicants={countApplicants} />
-    </>
-  )
+    <ApplicantTable
+      applicantsData={applicantsData}
+      countApplicants={countApplicants}
+      currentPage={currentPage}
+    />
+  );
 }
 
-export async function ApplicantAwaiterHeader(props: { promiseData: ApplicantsPromise, promiseCount: Promise<number> }) {
+export async function ApplicantAwaiterHeader(props: {
+  promiseData: ApplicantsPromise;
+  promiseCount: Promise<number>;
+}) {
   const { countOpenings } = await awaitData(props.promiseData);
-  const countApplicants = await awaitCount(props.promiseCount)
-  return (
-    <>
-      <Header
-        countApplicants={countApplicants}
-        countOpenings={countOpenings} />
-    </>
-  )
-}
+  const countApplicants = await awaitCount(props.promiseCount);
 
-export async function ApplicantAwaiterPagination(props: { promiseData: ApplicantsPromise }) {
-  const { applicantsData, countApplicants, countOpenings } = await awaitData(props.promiseData);
-  /*return (
-    <ApplicantPagination countApplicants = { countApplicants }/>
-  )*/
-  return
+  return (
+    <Header
+      countApplicants={countApplicants}
+      countOpenings={countOpenings}
+    />
+  );
 }
 
 export async function ApplicantAwaiterFilters({
@@ -53,33 +53,29 @@ export async function ApplicantAwaiterFilters({
   promiseSeniorityData,
   promiseAreaData,
   promiseJobOpeningData,
-  PromiseTagData,
+  promiseTagData,
+}: {
+  promiseRoleData: ReturnType<typeof api.role.getAllRoles>;
+  promiseSeniorityData: ReturnType<typeof api.seniority.getAllSeniorities>;
+  promiseAreaData: ReturnType<typeof api.area.getAllAreas>;
+  promiseJobOpeningData: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
+  promiseTagData: ReturnType<typeof api.tag.getAllTags>;
 }) {
-  const [
-    roleData,
-    seniorityData,
-    areaData,
-    jobOpeningData,
-    tagData,
-  ] = await Promise.all(
-    [
-      promiseRoleData,
-      promiseSeniorityData,
-      promiseAreaData,
-      promiseJobOpeningData,
-      PromiseTagData,
-    ]);
+  const [roleData, seniorityData, areaData, jobOpeningData, tagData] = await Promise.all([
+    promiseRoleData,
+    promiseSeniorityData,
+    promiseAreaData,
+    promiseJobOpeningData,
+    promiseTagData,
+  ]);
 
   return (
-    <>
-      <Filters
-        roleData={roleData}
-        senioritData = {seniorityData}
-        areaData = {areaData}
-        jobOpeningData = {jobOpeningData}
-        tagData = {tagData}
-      />
-    </>
-  )
-
+    <Filters
+      roleData={roleData}
+      seniorityData={seniorityData}
+      areaData={areaData}
+      jobOpeningData={jobOpeningData}
+      tagData={tagData}
+    />
+  );
 }
