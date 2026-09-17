@@ -1,5 +1,3 @@
-"use server";
-
 import { api } from "~/lib/trpc/server";
 import { ApplicantsPromise } from "./types";
 import { avatarPalette } from "./constants";
@@ -56,7 +54,7 @@ export async function transformApplicants(promise: ApplicantsPromise) {
   return { applicantsData, countApplicants, countOpenings };
 }
 
-export async function getRandomColor() {
+export function getRandomColor() {
   const index = Math.floor(Math.random() * avatarPalette.length);
   return avatarPalette[index]
 }
