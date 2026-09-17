@@ -56,7 +56,7 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Applicant: 'Applicant',
-  Role: 'Role',
+  JobRole: 'JobRole',
   Area: 'Area',
   Seniority: 'Seniority',
   Tag: 'Tag',
@@ -98,7 +98,6 @@ export const UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   lastName: 'lastName',
-  role: 'role',
   status: 'status',
   lastAccess: 'lastAccess',
   banned: 'banned',
@@ -183,13 +182,13 @@ export const ApplicantScalarFieldEnum = {
 export type ApplicantScalarFieldEnum = (typeof ApplicantScalarFieldEnum)[keyof typeof ApplicantScalarFieldEnum]
 
 
-export const RoleScalarFieldEnum = {
+export const JobRoleScalarFieldEnum = {
   id: 'id',
   name: 'name',
   deletedAt: 'deletedAt'
 } as const
 
-export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
+export type JobRoleScalarFieldEnum = (typeof JobRoleScalarFieldEnum)[keyof typeof JobRoleScalarFieldEnum]
 
 
 export const AreaScalarFieldEnum = {

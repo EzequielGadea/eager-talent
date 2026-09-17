@@ -20,7 +20,6 @@ model User {
   members       Member[]
   invitations   Invitation[]
   lastName      String     @default("") @map("last_name")
-  role          UserRole   @default(HiringManager)
   status        UserStatus @default(Active)
   lastAccess    DateTime?  @map("last_access")
   banned        Boolean    @default(false)
@@ -88,11 +87,6 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
-}
-
-enum UserRole {
-  Recruiter
-  HiringManager
 }
 
 enum UserStatus {
@@ -165,7 +159,7 @@ model Applicant {
   areaId              String?       @map("area_id")
   seniorityId         String?       @map("seniority_id")
 
-  role           Role           @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  role           JobRole        @relation(fields: [roleId], references: [id], onDelete: Restrict)
   area           Area?          @relation(fields: [areaId], references: [id], onDelete: Restrict)
   seniority      Seniority?     @relation(fields: [seniorityId], references: [id], onDelete: Restrict)
   tags           Tag[]
@@ -182,7 +176,7 @@ model Applicant {
   @@map("applicant")
 }
 
-model Role {
+model JobRole {
   id         String      @id @default(cuid())
   name       String
   deletedAt  DateTime?   @map("deleted_at")
@@ -367,6 +361,7 @@ model Member {
   role           String       @default("member")
   createdAt      DateTime
 
+  @@unique([organizationId, userId])
   @@index([organizationId])
   @@index([userId])
   @@map("member")

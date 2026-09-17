@@ -43,10 +43,10 @@ export type Verification = Prisma.VerificationModel
  */
 export type Applicant = Prisma.ApplicantModel
 /**
- * Model Role
+ * Model JobRole
  * 
  */
-export type Role = Prisma.RoleModel
+export type JobRole = Prisma.JobRoleModel
 /**
  * Model Area
  * 

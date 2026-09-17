@@ -340,7 +340,7 @@ export type ApplicantWhereInput = {
   roleId?: Prisma.StringFilter<"Applicant"> | string
   areaId?: Prisma.StringNullableFilter<"Applicant"> | string | null
   seniorityId?: Prisma.StringNullableFilter<"Applicant"> | string | null
-  role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
+  role?: Prisma.XOR<Prisma.JobRoleScalarRelationFilter, Prisma.JobRoleWhereInput>
   area?: Prisma.XOR<Prisma.AreaNullableScalarRelationFilter, Prisma.AreaWhereInput> | null
   seniority?: Prisma.XOR<Prisma.SeniorityNullableScalarRelationFilter, Prisma.SeniorityWhereInput> | null
   tags?: Prisma.TagListRelationFilter
@@ -372,7 +372,7 @@ export type ApplicantOrderByWithRelationInput = {
   roleId?: Prisma.SortOrder
   areaId?: Prisma.SortOrderInput | Prisma.SortOrder
   seniorityId?: Prisma.SortOrderInput | Prisma.SortOrder
-  role?: Prisma.RoleOrderByWithRelationInput
+  role?: Prisma.JobRoleOrderByWithRelationInput
   area?: Prisma.AreaOrderByWithRelationInput
   seniority?: Prisma.SeniorityOrderByWithRelationInput
   tags?: Prisma.TagOrderByRelationAggregateInput
@@ -407,7 +407,7 @@ export type ApplicantWhereUniqueInput = Prisma.AtLeast<{
   roleId?: Prisma.StringFilter<"Applicant"> | string
   areaId?: Prisma.StringNullableFilter<"Applicant"> | string | null
   seniorityId?: Prisma.StringNullableFilter<"Applicant"> | string | null
-  role?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
+  role?: Prisma.XOR<Prisma.JobRoleScalarRelationFilter, Prisma.JobRoleWhereInput>
   area?: Prisma.XOR<Prisma.AreaNullableScalarRelationFilter, Prisma.AreaWhereInput> | null
   seniority?: Prisma.XOR<Prisma.SeniorityNullableScalarRelationFilter, Prisma.SeniorityWhereInput> | null
   tags?: Prisma.TagListRelationFilter
@@ -490,7 +490,7 @@ export type ApplicantCreateInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
@@ -548,7 +548,7 @@ export type ApplicantUpdateInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
@@ -1044,7 +1044,7 @@ export type ApplicantCreateWithoutHiringManagersInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
@@ -1229,7 +1229,7 @@ export type ApplicantCreateWithoutAreaInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
   hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
@@ -1311,7 +1311,7 @@ export type ApplicantCreateWithoutSeniorityInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
   hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
@@ -1393,7 +1393,7 @@ export type ApplicantCreateWithoutTagsInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   hiringManagers?: Prisma.UserCreateNestedManyWithoutSharedApplicantsInput
@@ -1470,7 +1470,7 @@ export type ApplicantCreateWithoutApplicationsInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
@@ -1542,7 +1542,7 @@ export type ApplicantUpdateWithoutApplicationsInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
@@ -1598,7 +1598,7 @@ export type ApplicantCreateWithoutInterviewsInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
@@ -1670,7 +1670,7 @@ export type ApplicantUpdateWithoutInterviewsInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
@@ -1726,7 +1726,7 @@ export type ApplicantCreateWithoutNoteInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
@@ -1798,7 +1798,7 @@ export type ApplicantUpdateWithoutNoteInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
@@ -1854,7 +1854,7 @@ export type ApplicantCreateWithoutActivitiesInput = {
   careerEndYear?: number | null
   education?: string | null
   resume?: string | null
-  role: Prisma.RoleCreateNestedOneWithoutApplicantsInput
+  role: Prisma.JobRoleCreateNestedOneWithoutApplicantsInput
   area?: Prisma.AreaCreateNestedOneWithoutApplicantsInput
   seniority?: Prisma.SeniorityCreateNestedOneWithoutApplicantsInput
   tags?: Prisma.TagCreateNestedManyWithoutApplicantsInput
@@ -1926,7 +1926,7 @@ export type ApplicantUpdateWithoutActivitiesInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
@@ -1982,7 +1982,7 @@ export type ApplicantUpdateWithoutHiringManagersInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
@@ -2183,7 +2183,7 @@ export type ApplicantUpdateWithoutAreaInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
   hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
@@ -2283,7 +2283,7 @@ export type ApplicantUpdateWithoutSeniorityInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   tags?: Prisma.TagUpdateManyWithoutApplicantsNestedInput
   hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
@@ -2361,7 +2361,7 @@ export type ApplicantUpdateWithoutTagsInput = {
   careerEndYear?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   education?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resume?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.RoleUpdateOneRequiredWithoutApplicantsNestedInput
+  role?: Prisma.JobRoleUpdateOneRequiredWithoutApplicantsNestedInput
   area?: Prisma.AreaUpdateOneWithoutApplicantsNestedInput
   seniority?: Prisma.SeniorityUpdateOneWithoutApplicantsNestedInput
   hiringManagers?: Prisma.UserUpdateManyWithoutSharedApplicantsNestedInput
@@ -2510,7 +2510,7 @@ export type ApplicantSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   roleId?: boolean
   areaId?: boolean
   seniorityId?: boolean
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  role?: boolean | Prisma.JobRoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
   tags?: boolean | Prisma.Applicant$tagsArgs<ExtArgs>
@@ -2543,7 +2543,7 @@ export type ApplicantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roleId?: boolean
   areaId?: boolean
   seniorityId?: boolean
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  role?: boolean | Prisma.JobRoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }, ExtArgs["result"]["applicant"]>
@@ -2569,7 +2569,7 @@ export type ApplicantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   roleId?: boolean
   areaId?: boolean
   seniorityId?: boolean
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  role?: boolean | Prisma.JobRoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }, ExtArgs["result"]["applicant"]>
@@ -2599,7 +2599,7 @@ export type ApplicantSelectScalar = {
 
 export type ApplicantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lastName" | "email" | "phone" | "photo" | "country" | "linkedin" | "englishLevel" | "source" | "hearAboutUs" | "title" | "academicInstitution" | "careerStartYear" | "careerEndYear" | "education" | "resume" | "roleId" | "areaId" | "seniorityId", ExtArgs["result"]["applicant"]>
 export type ApplicantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  role?: boolean | Prisma.JobRoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
   tags?: boolean | Prisma.Applicant$tagsArgs<ExtArgs>
@@ -2611,12 +2611,12 @@ export type ApplicantInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   _count?: boolean | Prisma.ApplicantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ApplicantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  role?: boolean | Prisma.JobRoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }
 export type ApplicantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  role?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
+  role?: boolean | Prisma.JobRoleDefaultArgs<ExtArgs>
   area?: boolean | Prisma.Applicant$areaArgs<ExtArgs>
   seniority?: boolean | Prisma.Applicant$seniorityArgs<ExtArgs>
 }
@@ -2624,7 +2624,7 @@ export type ApplicantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
 export type $ApplicantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Applicant"
   objects: {
-    role: Prisma.$RolePayload<ExtArgs>
+    role: Prisma.$JobRolePayload<ExtArgs>
     area: Prisma.$AreaPayload<ExtArgs> | null
     seniority: Prisma.$SeniorityPayload<ExtArgs> | null
     tags: Prisma.$TagPayload<ExtArgs>[]
@@ -3049,7 +3049,7 @@ readonly fields: ApplicantFieldRefs;
  */
 export interface Prisma__ApplicantClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  role<T extends Prisma.RoleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RoleDefaultArgs<ExtArgs>>): Prisma.Prisma__RoleClient<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  role<T extends Prisma.JobRoleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.JobRoleDefaultArgs<ExtArgs>>): Prisma.Prisma__JobRoleClient<runtime.Types.Result.GetResult<Prisma.$JobRolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   area<T extends Prisma.Applicant$areaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$areaArgs<ExtArgs>>): Prisma.Prisma__AreaClient<runtime.Types.Result.GetResult<Prisma.$AreaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   seniority<T extends Prisma.Applicant$seniorityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$seniorityArgs<ExtArgs>>): Prisma.Prisma__SeniorityClient<runtime.Types.Result.GetResult<Prisma.$SeniorityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tags<T extends Prisma.Applicant$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Applicant$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TagPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
