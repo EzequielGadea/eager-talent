@@ -17,13 +17,14 @@ export async function CandidateApplications({
 
   const applicationsWithInterviews = applications.map((application) => ({
     ...application,
-    interviews: interviews
-      .filter(
-        (interview) =>
-          interview.applicantId === application.applicantId &&
-          interview.jobOpeningId === application.jobOpeningId,
-      ),
+    interviews: interviews.filter(
+      (interview) =>
+        interview.applicantId === application.applicantId &&
+        interview.jobOpeningId === application.jobOpeningId,
+    ),
   }));
 
-  return <CandidateApplicationsCard applications={applicationsWithInterviews} />;
+  return (
+    <CandidateApplicationsCard applications={applicationsWithInterviews} />
+  );
 }
