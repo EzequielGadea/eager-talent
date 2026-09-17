@@ -26,11 +26,11 @@ export interface ApplicantInfo {
 export type ApplicantsPromise = ReturnType<typeof api.applicant.fetchAll>;
 
 export interface FiltersProps {
-  roleData: ReturnType<typeof api.role.getAllRoles>;
-  seniorityData: ReturnType<typeof api.seniority.getAllSeniorities>;
-  areaData: ReturnType<typeof api.area.getAllAreas>;
-  jobOpeningData: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
-  tagData: ReturnType<typeof api.tag.getAllTags>;
+  roleData: Awaited<ReturnType<typeof api.role.getAllRoles>>;
+  seniorityData: Awaited<ReturnType<typeof api.seniority.getAllSeniorities>>;
+  areaData: Awaited<ReturnType<typeof api.area.getAllAreas>>;
+  jobOpeningData: Awaited<ReturnType<typeof api.jobOpening.getAllJobOpenings>>;
+  tagData: Awaited<ReturnType<typeof api.tag.getAllTags>>;
 }
 
 

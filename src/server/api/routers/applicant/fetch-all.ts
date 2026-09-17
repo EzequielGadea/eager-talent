@@ -1,10 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
-
-import { protectedProcedure } from "~/server/api/trpc";
-import { Prisma } from "~/generated/prisma/client";
-import { TRPCError } from "@trpc/server";
+import { Prisma } from '~/generated/prisma/client';
+import { protectedProcedure } from '~/server/api/trpc';
 
 export const fetchAll = protectedProcedure
     .input(
@@ -13,32 +10,29 @@ export const fetchAll = protectedProcedure
             areaId: z.array(z.string()).default([]),
             jobOpeningId: z.array(z.string()).default([]),
             roleId: z.array(z.string()).default([]),
+            tagId: z.array(z.string()).default([]),
             search: z.string().optional(),
-            currentPage: z.number().default(1),
-        })
+            page: z.number().int().min(1).default(1),
+        }),
     )
     .query(async ({ ctx, input }) => {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
         const where: Prisma.ApplicantWhereInput = {
-            ...(input?.roleId && input.roleId.length > 0 && {
+            ...(input.roleId.length > 0 && {
                 roleId: {
                     in: input.roleId,
                 },
             }),
-
-            ...(input?.seniorityId && input.seniorityId.length > 0 && {
+            ...(input.seniorityId.length > 0 && {
                 seniorityId: {
                     in: input.seniorityId,
                 },
             }),
-
-            ...(input?.areaId && input.areaId.length > 0 && {
+            ...(input.areaId.length > 0 && {
                 areaId: {
                     in: input.areaId,
                 },
             }),
-
-            ...(input?.jobOpeningId && input.jobOpeningId.length > 0 && {
+            ...(input.jobOpeningId.length > 0 && {
                 applications: {
                     some: {
                         jobOpeningId: {
@@ -47,25 +41,33 @@ export const fetchAll = protectedProcedure
                     },
                 },
             }),
-
-            ...(input?.search && {
+            ...(input.tagId.length > 0 && {
+                tags: {
+                    some: {
+                        id: {
+                            in: input.tagId,
+                        },
+                    },
+                },
+            }),
+            ...(input.search && {
                 OR: [
                     {
                         name: {
                             contains: input.search,
-                            mode: "insensitive",
+                            mode: 'insensitive',
                         },
                     },
                     {
                         lastName: {
                             contains: input.search,
-                            mode: "insensitive",
+                            mode: 'insensitive',
                         },
                     },
                     {
                         email: {
                             contains: input.search,
-                            mode: "insensitive",
+                            mode: 'insensitive',
                         },
                     },
                 ],
@@ -74,46 +76,33 @@ export const fetchAll = protectedProcedure
 
         const result = await ctx.db.applicant.findMany({
             where,
-            skip: ((input?.currentPage ?? 1) - 1) * 8,
+            skip: (input.page - 1) * 8,
             take: 8,
             orderBy: {
-                id: "asc",
+                id: 'asc',
             },
             include: {
                 role: {
-                    select: {
-                        name: true,
-                    }
+                    select: { name: true },
                 },
                 tags: {
-                    select: {
-                        name: true,
-                        color: true,
-                    }
+                    select: { name: true, color: true },
                 },
                 seniority: {
-                    select: {
-                        name: true,
-                        color: true,
-                    }
+                    select: { name: true, color: true },
                 },
                 applications: {
                     include: {
                         jobOpening: {
-                            select: {
-                                name: true,
-                            }
-                        }
-                    }
+                            select: { name: true },
+                        },
+                    },
                 },
                 area: {
-                    select: {
-                        name: true,
-                    }
+                    select: { name: true },
                 },
             },
+        });
 
-        })
-        console.log("antes de ir a front");
         return { applicants: result };
-    })
+    });
