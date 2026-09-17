@@ -17,7 +17,7 @@ import NewCandidateButton from "./new-applicant-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SourceAndTags from "./source-and-tags";
-import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/browser";
+import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 
 import { useUploadThing } from "~/components/ui/uploadthing";
 
@@ -25,16 +25,32 @@ export const applicantFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
   email: z.string().min(1, "El correo es obligatorio").email("Correo inválido"),
-  phone: z.string(),
+  phone: z
+    .string()
+    .regex(
+      /^\+[1-9]\d{1,14}$/,
+      "El teléfono debe tener formato E.164 (ej. +59899000000)",
+    )
+    .optional()
+    .or(z.literal("")),
   country: z.string(),
-  photo: z.custom<FileList>().optional(),
-  linkedin: z.string(),
+  photo: z.custom<FileList>()
+          .refine((files) => !files || files.length === 0 || files[0].type === "image/png" || files[0].type === "image/jpeg" || files[0].type === "image/jpg", "El archivo debe ser una imagen PNG, JPEG o JPG")
+          .optional(),
+
+  linkedin: z.string().url("Debe ingresar una URL válida").
+            refine((url) => url.includes("linkedin.com"), "Debe ingresar una URL de LinkedIn válida").
+            optional().
+            or(z.literal("")),
 
   role: z.string().min(1, "El rol es obligatorio"),
   jobOpening: z.string(),
   seniority: z.string(),
   area: z.string(),
-  desiredSalary: z.string(),
+  
+  desiredSalary: z.number().positive().optional().or(z.literal("")),
+  currency : z.string().optional(),
+
   availability: z.string(),
   englishLevel: z.union([z.enum(EnglishLevel), z.literal("")]),
 
@@ -43,14 +59,37 @@ export const applicantFormSchema = z.object({
   howDidYouHear: z.union([z.enum(HearAboutUs), z.literal("")]),
 
   tags: z.array(z.string()),
-  resume: z.custom<FileList>().optional(),
+
+  resume: z.custom<FileList>()
+          .refine((files) => !files || files.length === 0 || files[0].type === "application/pdf", "Debe subir un archivo PDF").optional(),
+
+  education: z.custom<FileList>()
+          .refine((files) => !files || files.length === 0 || files[0].type === "application/pdf", "Debe subir un archivo PDF")
+          .optional(),
+
   academicInstitution: z.string(),
-  education: z.custom<FileList>().optional(),
+
 
   title: z.string(),
   careerStartYear: z.number().optional(),
   careerEndYear: z.number().optional(),
-});
+}).superRefine((data, ctx) => {
+    if (data.desiredSalary !== undefined && !data.currency) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["currency"],
+        message: "Debe seleccionar una moneda",
+      });
+    }
+
+    if (data.currency && data.desiredSalary === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["desiredSalary"],
+        message: "Debe ingresar el salario deseado",
+      });
+    }
+  });;
 
 export type ApplicantFormValues = z.infer<typeof applicantFormSchema>;
 
@@ -74,7 +113,8 @@ export default function NewApplicantForm() {
       jobOpening: "",
       seniority: "",
       area: "",
-      desiredSalary: "",
+      desiredSalary: undefined,
+      currency: undefined,
       availability: "",
       englishLevel: "",
 
@@ -95,7 +135,7 @@ export default function NewApplicantForm() {
     onSuccess: () => {
       methods.reset();
       setPhotoPreview(undefined);
-      router.push("/candidates");
+      router.push("/applicants");
     },
     onError: (error) => {
       if (error.data?.code === "CONFLICT") {
@@ -151,7 +191,7 @@ export default function NewApplicantForm() {
       tagIds: data.tags,
 
       jobOpeningId: data.jobOpening || undefined,
-      desiredSalary: data.desiredSalary || undefined,
+      desiredSalary:  data.desiredSalary ? String(data.desiredSalary) : undefined,
       availability: data.availability,
     });
   }
@@ -159,7 +199,7 @@ export default function NewApplicantForm() {
   function handleCancel() {
     methods.reset();
     setPhotoPreview(undefined);
-    router.push("/candidates");
+    router.push("/applicants");
   }
   return (
     <FormProvider {...methods}>
