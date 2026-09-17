@@ -1,5 +1,17 @@
 import { api } from "~/lib/trpc/server";
 
+export type FilterKey = 'role' | 'seniority' | 'area' | 'jobOpening' | 'tag';
+
+export type ApplicantsSearchParams = {
+  search?: string | string[];
+  page?: string;
+  role?: string | string[];
+  jobOpening?: string | string[];
+  seniority?: string | string[];
+  tag?: string | string[];
+  area?: string | string[];
+};
+
 export interface Tag {
   label: string;
   color: string;
