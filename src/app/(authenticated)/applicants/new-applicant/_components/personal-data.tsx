@@ -96,6 +96,7 @@ export default function PersonalData({
                 setPhotoPreview(URL.createObjectURL(file));
               }}
             />
+                  
 
             <Attachment
               orientation="vertical"
@@ -135,6 +136,9 @@ export default function PersonalData({
             </Attachment>
 
             <span className="mt-1 text-xs text-text-secondary">Foto</span>
+            {errors.photo && (
+                <p className="text-danger">{errors.photo.message}</p>
+              )}        
           </div>
 
           <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
@@ -189,9 +193,12 @@ export default function PersonalData({
 
               <Input
                 id="phone"
-                placeholder="+598 99 000 000"
+                placeholder="+59899000000"
                 {...register("phone")}
               />
+              {errors.phone && (
+                <p className="text-danger">{errors.phone.message}</p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -208,7 +215,7 @@ export default function PersonalData({
 
                     <SelectContent>
                       {countries.map((country) => (
-                        <SelectItem key={country.codigo} value={country.codigo}>
+                        <SelectItem key={country.codigo} value={country.nombre}>
                           {country.nombre}
                         </SelectItem>
                       ))}
@@ -223,9 +230,12 @@ export default function PersonalData({
 
               <Input
                 id="linkedin"
-                placeholder="linkedin.com/in/..."
+                placeholder="https://linkedin.com/in/..."
                 {...register("linkedin")}
               />
+              {errors.linkedin && (
+                <p className="text-danger">{errors.linkedin.message}</p>
+              )}
             </div>
           </div>
         </div>
