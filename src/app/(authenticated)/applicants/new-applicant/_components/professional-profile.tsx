@@ -227,13 +227,47 @@ export default function ProfessionalProfile() {
           {jobOpening && (
             <>
               <div className="space-y-1">
-                <Label htmlFor="desiredSalary">Salario deseado</Label>
+                <Label htmlFor="currency">Salario deseado</Label>
+                <div className="flex items-center gap-2">
+                  <div className="w-17 shrink-0">
+                    <Controller
+                      name="currency"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Moneda" />
+                          </SelectTrigger>
 
-                <Input
-                  id="desiredSalary"
-                  placeholder="Ej. USD 3.000 - 3.500"
-                  {...register("desiredSalary")}
-                />
+                          <SelectContent>
+                            <SelectItem value="USD">USD</SelectItem>
+                            <SelectItem value="UYU">UYU</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Input
+                      id="desiredSalary"
+                      type="number"
+                      placeholder="Ej. 3.500"
+                        {...register("desiredSalary", {
+                          setValueAs: (value) =>
+                            value === "" ? undefined : Number(value),
+                        })}
+                    />
+                  </div>
+                </div>
+                {errors.currency && (
+                  <p className="text-danger">{errors.currency.message}</p>
+                  )}
+                {errors.desiredSalary && (
+                  <p className="text-danger">{errors.desiredSalary.message}</p>
+                )}
               </div>
 
               <div className="space-y-1">

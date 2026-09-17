@@ -51,7 +51,7 @@ export default function SourceAndTags() {
       <CardContent>
         <div className="grid grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
           <div className="space-y-1">
-            <Label>Source</Label>
+            <Label>Fuente</Label>
 
             <Controller
               name="source"

@@ -32,7 +32,9 @@ export const createApplicant = protectedProcedure
       areaId: z.string().optional(),
       seniorityId: z.string().optional(),
       jobOpeningId: z.string().optional(),
+      // desiredSalary: z.number().positive().optional().or(z.literal("")),
       desiredSalary: z.string().optional(),
+      currency: z.string().optional(),
       availability: z.string().optional(),
       tagIds: z.array(z.string()).default([]),
     }),
@@ -132,7 +134,9 @@ export const createApplicant = protectedProcedure
               applicantId: applicant.id,
               jobOpeningId: input.jobOpeningId,
               currentStage: firstStage,
+              //Cambiar cuando cambie la base
               desiredSalary: input.desiredSalary,
+              // Agregar cuando cambie la base : currency: input.currency,
               availability: input.availability,
             },
           });
