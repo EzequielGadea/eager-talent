@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import type { Prisma } from "~/generated/prisma/client";
 import { z } from "zod";
+import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const saveCandidateNoteProcedure = protectedProcedure
@@ -13,11 +14,30 @@ export const saveCandidateNoteProcedure = protectedProcedure
   .mutation(async ({ input, ctx }) => {
     const candidate = await ctx.db.applicant.findUnique({
       where: { id: input.candidateId },
-      select: { id: true },
+      select: { id: true, note: { select: { id: true } } },
     });
 
     if (!candidate) {
-      throw new TRPCError({ code: "NOT_FOUND" });
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Candidato no encontrado",
+      });
+    }
+
+    const permission = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: {
+        permissions: {
+          applicantNote: [candidate.note ? "update" : "create"],
+        },
+      },
+    });
+
+    if (!permission.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para modificar las notas del candidato",
+      });
     }
 
     const data = {
@@ -29,6 +49,11 @@ export const saveCandidateNoteProcedure = protectedProcedure
       where: { applicantId: input.candidateId },
       create: { applicantId: input.candidateId, ...data },
       update: data,
-      select: { lastModified: true },
+      select: {
+        lastModified: true,
+        lastModifiedBy: {
+          select: { name: true, lastName: true },
+        },
+      },
     });
   });

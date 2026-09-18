@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Bold,
-  ChevronDown,
-  Italic,
-  List,
-  Underline,
-} from "lucide-react";
+import { Bold, ChevronDown, Italic, List, Lock, Underline } from "lucide-react";
 import TimeAgo from "react-timeago";
 import spanishStrings from "react-timeago/lib/language-strings/es";
 import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
@@ -43,13 +37,22 @@ import {
 } from "~/components/ui/dropdown-menu";
 import Loading from "~/components/ui/loading";
 
-const STATUS_UI: Record<string, { label: string; dot: string; text: string }> = {
-  idle: { label: "Listo para editar", dot: "bg-success", text: "text-tag-green-fg" },
-  dirty: { label: "Editando", dot: "bg-success", text: "text-tag-green-fg" },
-  saving: { label: "Guardando...", dot: "bg-warning", text: "text-warning" },
-  saved: { label: "Guardado", dot: "bg-success", text: "text-tag-green-fg" },
-  error: { label: "No se pudo guardar", dot: "bg-danger", text: "text-danger" },
-};
+const STATUS_UI: Record<string, { label: string; dot: string; text: string }> =
+  {
+    idle: {
+      label: "Listo para editar",
+      dot: "bg-success",
+      text: "text-tag-green-fg",
+    },
+    dirty: { label: "Editando", dot: "bg-success", text: "text-tag-green-fg" },
+    saving: { label: "Guardando...", dot: "bg-warning", text: "text-warning" },
+    saved: { label: "Guardado", dot: "bg-success", text: "text-tag-green-fg" },
+    error: {
+      label: "No se pudo guardar",
+      dot: "bg-danger",
+      text: "text-danger",
+    },
+  };
 
 const BTN_CLASS =
   "aria-pressed:bg-tag-green-bg aria-pressed:text-tag-green-fg aria-expanded:bg-tag-green-bg aria-expanded:text-tag-green-fg";
@@ -61,10 +64,30 @@ const HEADINGS = [
 ] as const;
 
 const FORMATS = [
-  { key: "bold", label: "Negrita", icon: Bold, action: (e: Editor) => e.chain().focus().toggleBold().run() },
-  { key: "italic", label: "Cursiva", icon: Italic, action: (e: Editor) => e.chain().focus().toggleItalic().run() },
-  { key: "underline", label: "Subrayado", icon: Underline, action: (e: Editor) => e.chain().focus().toggleUnderline().run() },
-  { key: "bulletList", label: "Lista", icon: List, action: (e: Editor) => e.chain().focus().toggleBulletList().run() },
+  {
+    key: "bold",
+    label: "Negrita",
+    icon: Bold,
+    action: (e: Editor) => e.chain().focus().toggleBold().run(),
+  },
+  {
+    key: "italic",
+    label: "Cursiva",
+    icon: Italic,
+    action: (e: Editor) => e.chain().focus().toggleItalic().run(),
+  },
+  {
+    key: "underline",
+    label: "Subrayado",
+    icon: Underline,
+    action: (e: Editor) => e.chain().focus().toggleUnderline().run(),
+  },
+  {
+    key: "bulletList",
+    label: "Lista",
+    icon: List,
+    action: (e: Editor) => e.chain().focus().toggleBulletList().run(),
+  },
 ] as const;
 
 const EXTENSIONS = [
@@ -92,44 +115,63 @@ const spanishFormatter: typeof baseSpanishFormatter = (
   suffix,
   epochMilliseconds,
   nextFormatter,
-  now
+  now,
 ) => {
   if (unit === "second") return "ahora mismo";
-  return baseSpanishFormatter(value, unit, suffix === "from now" ? "ago" : suffix, epochMilliseconds, nextFormatter, now);
+  return baseSpanishFormatter(
+    value,
+    unit,
+    suffix === "from now" ? "ago" : suffix,
+    epochMilliseconds,
+    nextFormatter,
+    now,
+  );
 };
 
 export type NotesEditorProps = {
-  id: string;
   content: unknown;
   lastModifiedAt: string | null;
+  lastModifiedBy: { name: string; lastName: string } | null;
+  canEditNotes: boolean;
   title?: string;
   editorAriaLabel?: string;
-  onSave: (content: JSONContent) => Promise<{ lastModified: string }>;
+  onSave: (content: JSONContent) => Promise<{
+    lastModified: string;
+    lastModifiedBy: { name: string; lastName: string };
+  }>;
 };
 
 export function NotesEditor({
-  id,
   content,
   lastModifiedAt: initialLastModified,
+  lastModifiedBy: initialLastModifiedBy,
+  canEditNotes,
   title = "Notas / Comentarios",
   editorAriaLabel = "Notas",
   onSave,
 }: NotesEditorProps) {
   const [status, setStatus] = useState<keyof typeof STATUS_UI>("idle");
   const [lastModified, setLastModified] = useState(initialLastModified);
+  const [lastModifiedBy, setLastModifiedBy] = useState(initialLastModifiedBy);
   const statusRef = useRef(status);
 
-  const debouncedSave = useDebouncedCallback(async (jsonContent: JSONContent) => {
-    setStatus("saving");
-    try {
-      const result = await onSave(jsonContent);
-      setLastModified(result.lastModified);
-      await new Promise((resolve) => setTimeout(resolve, SAVED_STATUS_DELAY_MS));
-      setStatus("saved");
-    } catch {
-      setStatus("error");
-    }
-  }, AUTOSAVE_DELAY_MS);
+  const debouncedSave = useDebouncedCallback(
+    async (jsonContent: JSONContent) => {
+      setStatus("saving");
+      try {
+        const result = await onSave(jsonContent);
+        setLastModified(result.lastModified);
+        setLastModifiedBy(result.lastModifiedBy);
+        await new Promise((resolve) =>
+          setTimeout(resolve, SAVED_STATUS_DELAY_MS),
+        );
+        setStatus("saved");
+      } catch {
+        setStatus("error");
+      }
+    },
+    AUTOSAVE_DELAY_MS,
+  );
 
   useEffect(() => {
     statusRef.current = status;
@@ -137,20 +179,22 @@ export function NotesEditor({
 
   const editor = useEditor({
     immediatelyRender: false,
+    editable: canEditNotes,
     content: (content as JSONContent | string | null) ?? "",
     extensions: EXTENSIONS,
     editorProps: {
       attributes: {
         "aria-label": editorAriaLabel,
-        class:
-          "h-130 overflow-y-auto text-base leading-relaxed text-text-primary caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-slate-200 outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2",
+        class: `h-130 overflow-y-auto text-base leading-relaxed ${canEditNotes ? "text-text-primary" : "text-text-tertiary"} caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-slate-200 outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2`,
       },
     },
     onUpdate: ({ editor }) => {
+      if (!canEditNotes) return;
+
       setStatus("dirty");
-      
+
       const latestJson = structuredClone(editor.getJSON());
-      
+
       debouncedSave(latestJson);
     },
   });
@@ -180,97 +224,129 @@ export function NotesEditor({
       italic: e?.isActive("italic") ?? false,
       underline: e?.isActive("underline") ?? false,
       bulletList: e?.isActive("bulletList") ?? false,
-      headingLevel: HEADINGS.find((h) => e?.isActive("heading", { level: h.level }))?.level ?? 0,
+      headingLevel:
+        HEADINGS.find((h) => e?.isActive("heading", { level: h.level }))
+          ?.level ?? 0,
     }),
   });
 
   return (
-    <section
-      id={id}
-      className="overflow-hidden rounded-xl border border-border-default bg-card shadow-sm"
-    >
-      <header
-        className="flex items-center justify-between border-b border-border-default px-4 py-3.5"
-      >
+    <section className="overflow-hidden rounded-xl border border-border-default bg-card shadow-sm">
+      <header className="flex items-center justify-between border-b border-border-default px-4 py-3.5">
         <h2 className="text-sm font-semibold text-text-primary">{title}</h2>
-        <span className={`inline-flex items-center gap-2 text-xs font-medium ${STATUS_UI[status].text}`}>
-          <span className={`size-1.5 rounded-full ${STATUS_UI[status].dot}`} />
-          {STATUS_UI[status].label}
-        </span>
+        {canEditNotes ? (
+          <span
+            className={`inline-flex items-center gap-2 text-xs font-medium ${STATUS_UI[status].text}`}
+          >
+            <span
+              className={`size-1.5 rounded-full ${STATUS_UI[status].dot}`}
+            />
+            {STATUS_UI[status].label}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-text-tertiary">
+            <Lock className="size-3.5" aria-hidden="true" />
+            No editable
+          </span>
+        )}
       </header>
 
-      <div
-        data-editor-toolbar
-        onMouseDown={(event) => event.preventDefault()}
-        className="flex flex-wrap items-center gap-1 border-b border-border-default px-3 py-2 text-text-secondary"
-      >
-        <DropdownMenu
-          onOpenChange={(open) => {
-            if (!open) editor?.commands.focus();
-          }}
+      {canEditNotes && (
+        <div
+          data-editor-toolbar
+          onMouseDown={(event) => event.preventDefault()}
+          className="flex flex-wrap items-center gap-1 border-b border-border-default px-3 py-2 text-text-secondary"
         >
-          <DropdownMenuTrigger render={
+          <DropdownMenu
+            onOpenChange={(open) => {
+              if (!open) editor?.commands.focus();
+            }}
+          >
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  title="Formato de texto"
+                  className={`w-32 justify-between rounded-md px-2 text-sm font-medium hover:bg-muted hover:text-text-primary ${BTN_CLASS}`}
+                >
+                  {HEADINGS.find((h) => h.level === active?.headingLevel)
+                    ?.label ?? "Normal"}
+                  <ChevronDown className="size-3.5" aria-hidden="true" />
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="start" className="min-w-28">
+              {HEADINGS.map(({ label, level }) => (
+                <DropdownMenuItem
+                  key={level}
+                  onClick={() =>
+                    level === 0
+                      ? editor?.chain().focus().setParagraph().run()
+                      : editor
+                          ?.chain()
+                          .focus()
+                          .setHeading({ level: level as Level })
+                          .run()
+                  }
+                >
+                  {label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <span
+            className="mx-1 h-4 w-px bg-border-default"
+            aria-hidden="true"
+          />
+
+          {FORMATS.map(({ key, label, icon: Icon, action }) => (
             <Button
+              key={key}
               variant="ghost"
-              size="xs"
-              title="Formato de texto"
-              className={`w-32 justify-between rounded-md px-2 text-sm font-medium hover:bg-muted hover:text-text-primary ${BTN_CLASS}`}
+              size="icon-xs"
+              onClick={() => editor && action(editor)}
+              aria-pressed={active?.[key as keyof typeof active] as boolean}
+              aria-label={label}
+              title={label}
+              className={`rounded-md hover:bg-muted hover:text-text-primary ${BTN_CLASS}`}
             >
-              {HEADINGS.find((h) => h.level === active?.headingLevel)?.label ?? "Normal"}
-              <ChevronDown className="size-3.5" aria-hidden="true" />
+              <Icon className="size-3.5" />
             </Button>
-          } />
-          <DropdownMenuContent
-            align="start"
-            className="min-w-28"
-          >
-            {HEADINGS.map(({ label, level }) => (
-              <DropdownMenuItem
-                key={level}
-                onClick={() =>
-                  level === 0 ? editor?.chain().focus().setParagraph().run() : editor?.chain().focus().setHeading({ level: level as Level }).run()
-                }
-              >
-                {label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          ))}
 
-        <span className="mx-1 h-4 w-px bg-border-default" aria-hidden="true" />
+          <span
+            className="mx-1 h-4 w-px bg-border-default"
+            aria-hidden="true"
+          />
 
-        {FORMATS.map(({ key, label, icon: Icon, action }) => (
-          <Button
-            key={key}
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => editor && action(editor)}
-            aria-pressed={active?.[key as keyof typeof active] as boolean}
-            aria-label={label}
-            title={label}
-            className={`rounded-md hover:bg-muted hover:text-text-primary ${BTN_CLASS}`}
-          >
-            <Icon className="size-3.5" />
-          </Button>
-        ))}
-
-        <span className="mx-1 h-4 w-px bg-border-default" aria-hidden="true" />
-
-        <LinkPopover editor={editor} />
-      </div>
+          <LinkPopover editor={editor} />
+        </div>
+      )}
 
       <div className="relative px-4 py-4">
         {editor ? <EditorContent editor={editor} /> : <Loading />}
       </div>
 
       <footer className="border-t border-border-default px-4 py-3 text-[11px] text-text-tertiary">
-        Última edición: <LastModifiedText dateStr={lastModified} />
+        Última edición:{" "}
+        <LastModifiedText
+          dateStr={lastModified}
+          lastModifiedBy={lastModifiedBy}
+        />
       </footer>
     </section>
   );
 }
 
-function LastModifiedText({ dateStr }: { dateStr: string | null }) {
+function LastModifiedText({
+  dateStr,
+  lastModifiedBy,
+}: {
+  dateStr: string | null;
+  lastModifiedBy: { name: string; lastName: string } | null;
+}) {
   if (!dateStr) return <span>--:--</span>;
 
   const date = new Date(dateStr);
@@ -282,6 +358,11 @@ function LastModifiedText({ dateStr }: { dateStr: string | null }) {
   });
   return (
     <span suppressHydrationWarning>
+      {lastModifiedBy && (
+        <>
+          {lastModifiedBy.name} {lastModifiedBy.lastName} ·{" "}
+        </>
+      )}
       <TimeAgo
         date={date}
         formatter={spanishFormatter}
