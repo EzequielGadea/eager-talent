@@ -1,17 +1,42 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-import { candidateUserProcedure } from "~/server/api/procedures/candidate-user";
+import { auth } from "~/lib/auth";
+import { isHiringManagerAssignedToCandidate } from "~/server/api/procedures/is-hiring-manager-assigned-to-candidate";
+import { protectedProcedure } from "~/server/api/trpc";
 
-export const getCandidateByIdProcedure = candidateUserProcedure
+export const getCandidateByIdProcedure = protectedProcedure
   .input(
     z.object({
       id: z.string().min(1),
     }),
   )
   .query(async ({ input, ctx }) => {
+    const [canReadAllResult, canReadAssignedResult] = await Promise.all([
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { applicant: ["read"] } },
+      }),
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { applicant: ["readAssigned"] } },
+      }),
+    ]);
+
+    if (!canReadAllResult.success && !canReadAssignedResult.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para consultar candidatos",
+      });
+    }
+
     const candidate = await ctx.db.applicant.findFirst({
-      where: { id: input.id, ...ctx.candidateAccessWhere },
+      where: {
+        id: input.id,
+        ...(canReadAllResult.success
+          ? {}
+          : isHiringManagerAssignedToCandidate(ctx.session.user.id)),
+      },
       select: {
         id: true,
         name: true,
@@ -43,5 +68,5 @@ export const getCandidateByIdProcedure = candidateUserProcedure
       });
     }
 
-    return { ...candidate, permissions: ctx.candidatePermissions };
+    return candidate;
   });

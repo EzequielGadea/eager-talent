@@ -48,12 +48,14 @@ async function CandidatePageContent({
           <CandidateDetails candidatePromise={candidatePromise} />
         </Suspense>
 
+        {/* Esto ahora mismo esta dando error. Se debe descomentar esto al mergear
+        
         <Suspense fallback={<Loading />}>
           <CandidateLogsSection
             candidatePromise={candidatePromise}
             searchParams={searchParams}
           />
-        </Suspense>
+        </Suspense>*/}
       </div>
 
       <aside className="min-w-0 space-y-4">

@@ -39,6 +39,9 @@ const outlineBtnClass =
   "rounded-full border-border-strong bg-background text-xs font-medium text-tag-gray-fg shadow-none hover:bg-tag-gray-bg";
 
 type CandidateApplicationsCardProps = {
+  canCreatePublicLink: boolean;
+  canUpdateApplication: boolean;
+  canCreateInterview: boolean;
   applications: {
     applicantId: string;
     jobOpeningId: string;
@@ -63,6 +66,9 @@ type CandidateApplicationsCardProps = {
 
 export function CandidateApplicationsCard({
   applications,
+  canCreatePublicLink,
+  canUpdateApplication,
+  canCreateInterview,
 }: CandidateApplicationsCardProps) {
   const [selectedId, setSelectedId] = useState(applications[0]?.jobOpeningId);
 
@@ -146,32 +152,33 @@ export function CandidateApplicationsCard({
             {active ? "En proceso" : "Cerrada"}
           </Badge>
 
-          <a
-            href="#"
-            className={linkClass}
-          >
+          <a href="#" className={linkClass}>
             Ver vacante <ArrowUpRight className={linkIconClass} />
           </a>
         </div>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          <Button
-            variant="outline"
-            size="sm"
-            className={cn(outlineBtnClass, "gap-2 px-4 text-text-primary")}
-          >
-            <Share2 className="h-3.5 w-3.5" /> Compartir
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
-          >
-            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
-              <X className="h-2.5 w-2.5" strokeWidth={2.5} />
-            </span>
-            Descalificar
-          </Button>
+          {canCreatePublicLink && (
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(outlineBtnClass, "gap-2 px-4 text-text-primary")}
+            >
+              <Share2 className="h-3.5 w-3.5" /> Compartir
+            </Button>
+          )}
+          {canUpdateApplication && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
+            >
+              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
+                <X className="h-2.5 w-2.5" strokeWidth={2.5} />
+              </span>
+              Descalificar
+            </Button>
+          )}
         </div>
       </div>
 
@@ -189,13 +196,16 @@ export function CandidateApplicationsCard({
           <h3 className="text-base font-bold text-text-primary">
             Historial de entrevistas
           </h3>
-          <Button
-            variant="outline"
-            size="sm"
-            className={cn(outlineBtnClass, "gap-1.5 px-4 text-text-primary")}
-          >
-            <Plus className="h-3.5 w-3.5 text-tag-gray-fg" /> Agregar entrevista
-          </Button>
+          {canCreateInterview && (
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(outlineBtnClass, "gap-1.5 px-4 text-text-primary")}
+            >
+              <Plus className="h-3.5 w-3.5 text-tag-gray-fg" /> Agregar
+              entrevista
+            </Button>
+          )}
         </div>
 
         {interviews.length === 0 ? (

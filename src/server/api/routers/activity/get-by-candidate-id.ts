@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-import { candidateUserProcedure } from "~/server/api/procedures/candidate-user";
+import { auth } from "~/lib/auth";
+import { protectedProcedure } from "~/server/api/trpc";
 
-export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
+export const getActivitiesByCandidateIdProcedure = protectedProcedure
   .input(
     z.object({
       candidateId: z.string().min(1),
@@ -12,8 +13,33 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
     }),
   )
   .query(async ({ input, ctx }) => {
+    const [canViewLogsResult, canReadAllResult] = await Promise.all([
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { activity: ["read"] } },
+      }),
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { applicant: ["read"] } },
+      }),
+    ]);
+
+    if (!canViewLogsResult.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para consultar los logs del candidato",
+      });
+    }
+
+    if (!canReadAllResult.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para consultar candidatos",
+      });
+    }
+
     const candidate = await ctx.db.applicant.findFirst({
-      where: { id: input.candidateId, ...ctx.candidateAccessWhere },
+      where: { id: input.candidateId },
       select: { id: true },
     });
 
@@ -21,31 +47,6 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Candidato no encontrado",
-      });
-    }
-
-    if (!ctx.candidatePermissions.canViewLogs) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "No tenés permiso para consultar los logs del candidato",
-      });
-    }
-
-    const applications = await ctx.db.application.findMany({
-      where: { applicantId: input.candidateId },
-      select: { jobOpeningId: true, jobOpening: { select: { name: true } } },
-      orderBy: [{ jobOpening: { name: "asc" } }, { jobOpeningId: "asc" }],
-    });
-
-    if (
-      input.jobOpeningId &&
-      !applications.some(
-        (application) => application.jobOpeningId === input.jobOpeningId,
-      )
-    ) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Postulación no encontrada",
       });
     }
 
@@ -64,7 +65,7 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
         description: true,
         date: true,
         application: {
-          select: { jobOpening: { select: { name: true } } },
+          select: { jobOpeningId: true },
         },
       },
       orderBy: [{ date: "desc" }, { id: "desc" }],
@@ -78,9 +79,5 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
       page,
       pageSize,
       totalPages,
-      applications: applications.map((application) => ({
-        jobOpeningId: application.jobOpeningId,
-        name: application.jobOpening.name,
-      })),
     };
   });
