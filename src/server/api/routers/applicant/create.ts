@@ -43,7 +43,7 @@ export const createApplicant = protectedProcedure
     try {
       let firstStage: string | undefined;
 
-      // Si se seleccionó una vacante, buscamos su primera stage
+      
       if (input.jobOpeningId) {
         const jobOpening = await ctx.db.jobOpening.findUnique({
           where: {
@@ -75,7 +75,7 @@ export const createApplicant = protectedProcedure
         console.log("PRIMERA STAGE:", firstStage);
       }
 
-      // Primero creamos el candidato
+      
       const applicant = await ctx.db.$transaction(async (tx) => {
         const applicant = await tx.applicant.create({
           data: {
