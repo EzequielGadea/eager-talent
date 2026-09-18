@@ -85,6 +85,32 @@ export function LoginForm() {
         return;
       }
 
+      // This sets the seeded eagerworks organization as the active organization for the user
+      const { data: organizations, error: organizationError } =
+        await authClient.organization.list();
+      const eagerWorks = organizations?.find(
+        (organization) => organization.slug === "eagerworks",
+      );
+
+      if (organizationError || !eagerWorks) {
+        setError("root", {
+          message: "No pudimos encontrar tu organización.",
+        });
+        return;
+      }
+
+      const { error: activeOrganizationError } =
+        await authClient.organization.setActive({
+          organizationId: eagerWorks.id,
+        });
+
+      if (activeOrganizationError) {
+        setError("root", {
+          message: "No pudimos seleccionar tu organización.",
+        });
+        return;
+      }
+
       router.replace("/dashboard");
       router.refresh();
     } catch {
