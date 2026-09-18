@@ -2,13 +2,13 @@ import type { CSSProperties } from "react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
-import { getCandidate } from "../_lib/get-candidate";
+import type { CandidatePromise } from "../types";
 import { Badge } from "~/components/ui/badge";
 
-type CandidateTagsProps = { candidateId: string };
+type CandidateTagsProps = { candidatePromise: CandidatePromise };
 
-export async function CandidateTags({ candidateId }: CandidateTagsProps) {
-  const { tags } = await getCandidate(candidateId);
+export async function CandidateTags({ candidatePromise }: CandidateTagsProps) {
+  const { tags } = await candidatePromise;
   return (
     <Card size="sm">
       <CardHeader>

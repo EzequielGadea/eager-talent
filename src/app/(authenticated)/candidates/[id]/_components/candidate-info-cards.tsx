@@ -1,69 +1,135 @@
-import { CircleHelp, FileText, GraduationCap } from "lucide-react";
+import { CircleHelp, Download, File, GraduationCap } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
-import { getCandidate } from "../_lib/get-candidate";
+import { Button, buttonVariants } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
+import type { CandidatePromise } from "../types";
 import { hearAboutUsLabels } from "../_lib/candidate-labels";
-import { getSafeExternalUrl } from "../_lib/external-url";
+import { getExternalFileName, getSafeExternalUrl } from "../_lib/external-url";
 
-type CandidateInfoCardsProps = { candidateId: string };
+type CandidateInfoCardsProps = { candidatePromise: CandidatePromise };
 
 export async function CandidateInfoCards({
-  candidateId,
+  candidatePromise,
 }: CandidateInfoCardsProps) {
   const {
+    title,
     education,
     academicInstitution,
     careerStartYear,
     careerEndYear,
     hearAboutUs,
     resume,
-  } = await getCandidate(candidateId);
-  const resumeUrl = getSafeExternalUrl(resume);
+  } = await candidatePromise;
   const careerYears =
     careerStartYear || careerEndYear
       ? `${careerStartYear ?? "?"}–${careerEndYear ?? "Actualidad"}`
       : null;
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <InfoCard
-        icon={<GraduationCap className="size-4 text-accent-purple" />}
-        title="Formación académica"
-      >
-        <p className="font-semibold">{education ?? "Sin información"}</p>
+    <div className="@container">
+      <div className="grid gap-3 @min-[360px]:grid-cols-2 @min-[640px]:grid-cols-4">
+        <InfoCard
+          icon={<GraduationCap className="size-3.5 text-accent-purple" />}
+          title="Formación académica"
+        >
+          <p className="font-semibold">{title?.trim() || "Sin información"}</p>
 
-        {academicInstitution && (
-          <p className="text-muted-foreground">{academicInstitution}</p>
-        )}
+          {(academicInstitution || careerYears) && (
+            <p className="text-xs text-muted-foreground">
+              {academicInstitution}
+              {academicInstitution && careerYears && " · "}
+              {careerYears}
+            </p>
+          )}
+        </InfoCard>
 
-        {careerYears && <p className="text-muted-foreground">{careerYears}</p>}
-      </InfoCard>
+        <InfoCard
+          icon={<CircleHelp className="size-3.5 text-accent-green" />}
+          title="¿Cómo escuchaste de nosotros?"
+        >
+          <p className="font-semibold">
+            {hearAboutUs ? hearAboutUsLabels[hearAboutUs] : "Sin información"}
+          </p>
+        </InfoCard>
 
-      <InfoCard
-        icon={<CircleHelp className="size-4 text-accent-green" />}
-        title="¿Cómo escuchaste de nosotros?"
-      >
-        <p className="font-semibold">
-          {hearAboutUs ? hearAboutUsLabels[hearAboutUs] : "Sin información"}
-        </p>
-      </InfoCard>
+        <DocumentCard title="CV" value={resume} emptyMessage="Sin CV cargado" />
+        <DocumentCard
+          title="Escolaridad"
+          value={education}
+          emptyMessage="Sin escolaridad cargada"
+          iconClassName="text-warning"
+        />
+      </div>
+    </div>
+  );
+}
 
-      <InfoCard icon={<FileText className="size-4 text-info" />} title="CV">
-        {resumeUrl ? (
+type DocumentCardProps = {
+  title: string;
+  value: string | null;
+  emptyMessage: string;
+  iconClassName?: string;
+};
+
+function DocumentCard({
+  title,
+  value,
+  emptyMessage,
+  iconClassName = "text-info",
+}: DocumentCardProps) {
+  const documentValue = value?.trim();
+  const documentUrl = getSafeExternalUrl(documentValue || null);
+  const fileName = documentUrl
+    ? getExternalFileName(documentUrl) || title
+    : null;
+
+  return (
+    <InfoCard
+      icon={<File className={`size-3.5 ${iconClassName}`} />}
+      title={title}
+    >
+      {documentUrl ? (
+        <>
+          <p className="truncate font-semibold" title={fileName || undefined}>
+            {fileName}
+          </p>
           <a
-            href={resumeUrl}
+            href={documentUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-text-link hover:underline"
+            download
+            aria-label={`Descargar ${title}`}
+            className={cn(
+              buttonVariants({
+                variant: "link",
+                size: "sm",
+                className:
+                  "h-auto w-fit max-w-full gap-1 rounded-sm p-0 text-sm font-normal text-text-link",
+              }),
+            )}
           >
-            Ver CV
+            Descargar
+            <Download className="size-3" aria-hidden="true" />
           </a>
-        ) : (
-          <p className="text-muted-foreground">Sin CV cargado</p>
-        )}
-      </InfoCard>
-
-      {/* The transcript card will be integrated when its document field is available. */}
-    </div>
+        </>
+      ) : documentValue ? (
+        <>
+          <p className="font-semibold text-text-primary">{documentValue}</p>
+          <Button
+            variant="link"
+            size="sm"
+            className="h-auto w-fit max-w-full gap-1 rounded-sm p-0 text-sm font-normal text-text-link"
+            aria-label={`Descargar ${title}`}
+            disabled
+          >
+            Descargar
+            <Download className="size-3" aria-hidden="true" />
+          </Button>
+        </>
+      ) : (
+        <p className="text-muted-foreground">{emptyMessage}</p>
+      )}
+    </InfoCard>
   );
 }
 
@@ -75,11 +141,11 @@ type InfoCardProps = {
 
 function InfoCard({ icon, title, children }: InfoCardProps) {
   return (
-    <Card size="sm" className="min-w-0">
+    <Card size="sm" className="min-w-0 shadow-sm">
       <CardHeader className="flex items-start gap-2">
         <span className="mt-0.5 shrink-0">{icon}</span>
 
-        <CardTitle className="min-w-0 wrap-anywhere">
+        <CardTitle className="min-w-0 wrap-anywhere text-xs font-semibold text-text-secondary group-data-[size=sm]/card:text-xs">
           <h2>{title}</h2>
         </CardTitle>
       </CardHeader>

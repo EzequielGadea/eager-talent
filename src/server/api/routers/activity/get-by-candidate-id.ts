@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-import { candidateUserProcedure } from "~/server/api/procedures/candidate-user";
+import { auth } from "~/lib/auth";
+import { isHiringManagerAssignedToCandidate } from "~/server/api/procedures/is-hiring-manager-assigned-to-candidate";
+import { protectedProcedure } from "~/server/api/trpc";
 
-export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
+export const getActivitiesByCandidateIdProcedure = protectedProcedure
   .input(
     z.object({
       candidateId: z.string().min(1),
@@ -12,8 +14,43 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
     }),
   )
   .query(async ({ input, ctx }) => {
+    const [canViewLogsResult, canReadAllResult, canReadAssignedResult] =
+      await Promise.all([
+        auth.api.hasPermission({
+          headers: ctx.headers,
+          body: { permissions: { activity: ["read"] } },
+        }),
+        auth.api.hasPermission({
+          headers: ctx.headers,
+          body: { permissions: { applicant: ["read"] } },
+        }),
+        auth.api.hasPermission({
+          headers: ctx.headers,
+          body: { permissions: { applicant: ["readAssigned"] } },
+        }),
+      ]);
+
+    if (!canViewLogsResult.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para consultar los logs del candidato",
+      });
+    }
+
+    if (!canReadAllResult.success && !canReadAssignedResult.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para consultar candidatos",
+      });
+    }
+
     const candidate = await ctx.db.applicant.findFirst({
-      where: { id: input.candidateId, ...ctx.candidateAccessWhere },
+      where: {
+        id: input.candidateId,
+        ...(canReadAllResult.success
+          ? {}
+          : isHiringManagerAssignedToCandidate(ctx.session.user.id)),
+      },
       select: { id: true },
     });
 
@@ -21,13 +58,6 @@ export const getActivitiesByCandidateIdProcedure = candidateUserProcedure
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Candidato no encontrado",
-      });
-    }
-
-    if (!ctx.candidatePermissions.canViewLogs) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "No tenés permiso para consultar los logs del candidato",
       });
     }
 

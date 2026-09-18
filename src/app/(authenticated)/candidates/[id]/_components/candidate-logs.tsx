@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { TRPCError } from "@trpc/server";
 import Link from "next/link";
+import { headers } from "next/headers";
 
 import {
   Card,
@@ -14,24 +15,31 @@ import {
 import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
 import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert";
 import { Separator } from "~/components/ui/separator";
-import { getCandidate } from "../_lib/get-candidate";
+import type { CandidatePromise } from "../types";
 import { Badge } from "~/components/ui/badge";
 import { buttonVariants } from "~/components/ui/button";
 import { api } from "~/lib/trpc/server";
+import { auth } from "~/lib/auth";
 import { CandidateLogsFilter } from "./candidate-logs-filter";
 import { formatActivityDate } from "../_lib/activity-date";
 
 type CandidateLogsProps = {
-  candidateId: string;
+  candidatePromise: CandidatePromise;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export async function CandidateLogs({
-  candidateId,
+  candidatePromise,
   searchParams,
 }: CandidateLogsProps) {
-  const candidate = await getCandidate(candidateId);
-  if (!candidate.permissions.canViewLogs) return null;
+  const candidate = await candidatePromise;
+  const requestHeaders = await headers();
+  const canViewLogsResult = await auth.api.hasPermission({
+    headers: requestHeaders,
+    body: { permissions: { activity: ["read"] } },
+  });
+  if (!canViewLogsResult.success) return null;
+  const candidateId = candidate.id;
 
   const query = await searchParams;
   const requestedPage =
