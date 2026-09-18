@@ -56,7 +56,7 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Applicant: 'Applicant',
-  Role: 'Role',
+  JobRole: 'JobRole',
   Area: 'Area',
   Seniority: 'Seniority',
   Tag: 'Tag',
@@ -67,6 +67,8 @@ export const ModelName = {
   ApplicantNote: 'ApplicantNote',
   InterviewNote: 'InterviewNote',
   Activity: 'Activity',
+  Organization: 'Organization',
+  Member: 'Member',
   Invitation: 'Invitation',
   PublicLink: 'PublicLink'
 } as const
@@ -96,7 +98,6 @@ export const UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   lastName: 'lastName',
-  role: 'role',
   status: 'status',
   lastAccess: 'lastAccess',
   banned: 'banned',
@@ -116,7 +117,8 @@ export const SessionScalarFieldEnum = {
   ipAddress: 'ipAddress',
   userAgent: 'userAgent',
   userId: 'userId',
-  impersonatedBy: 'impersonatedBy'
+  impersonatedBy: 'impersonatedBy',
+  activeOrganizationId: 'activeOrganizationId'
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
@@ -180,13 +182,13 @@ export const ApplicantScalarFieldEnum = {
 export type ApplicantScalarFieldEnum = (typeof ApplicantScalarFieldEnum)[keyof typeof ApplicantScalarFieldEnum]
 
 
-export const RoleScalarFieldEnum = {
+export const JobRoleScalarFieldEnum = {
   id: 'id',
   name: 'name',
   deletedAt: 'deletedAt'
 } as const
 
-export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
+export type JobRoleScalarFieldEnum = (typeof JobRoleScalarFieldEnum)[keyof typeof JobRoleScalarFieldEnum]
 
 
 export const AreaScalarFieldEnum = {
@@ -309,13 +311,38 @@ export const ActivityScalarFieldEnum = {
 export type ActivityScalarFieldEnum = (typeof ActivityScalarFieldEnum)[keyof typeof ActivityScalarFieldEnum]
 
 
+export const OrganizationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  logo: 'logo',
+  createdAt: 'createdAt',
+  metadata: 'metadata'
+} as const
+
+export type OrganizationScalarFieldEnum = (typeof OrganizationScalarFieldEnum)[keyof typeof OrganizationScalarFieldEnum]
+
+
+export const MemberScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  userId: 'userId',
+  role: 'role',
+  createdAt: 'createdAt'
+} as const
+
+export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
+
+
 export const InvitationScalarFieldEnum = {
   id: 'id',
-  token: 'token',
-  sentDate: 'sentDate',
-  expirationDate: 'expirationDate',
-  senderId: 'senderId',
-  recipientId: 'recipientId'
+  organizationId: 'organizationId',
+  email: 'email',
+  role: 'role',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  inviterId: 'inviterId'
 } as const
 
 export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
