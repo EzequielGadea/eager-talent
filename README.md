@@ -22,10 +22,16 @@ bun run db:seed
 
 El script de seed (`src/server/db/prisma/seed-data.ts`) es **idempotente**: se puede ejecutar N veces sin duplicar datos. Solo se permite ejecutar contra PostgreSQL local.
 
-- **Administrador principal (con credenciales de login):**
-   - **Rol:** `Recruiter`
-   - **Email:** `admin@example.com`
-   - **Contraseña:** `admin123`
+- **Usuarios iniciales (credenciales de login):**
+
+| Rol | Email | Contraseña |
+| :--- | :--- | :--- |
+| `Recruiter` | `admin@example.com` | `admin123` |
+| `Recruiter` | `admin2@example.com` | `admin123` |
+| `Recruiter` | `admin3@example.com` | `admin123` |
+| `Hiring Manager` | `hiring.manager@example.com` | `hiring.manager` |
+| `Hiring Manager` | `hiring.manager2@example.com` | `hiring.manager` |
+| `Hiring Manager` | `hiring.manager3@example.com` | `hiring.manager` |
 
 
 
@@ -173,7 +179,7 @@ Será necesario implementar adjunatar archivos a formularios. Como las bases de 
 con los BLOBs, usaremos UploadThing como bucket para archivos.
 
 UploadThing provee un paquete para facilitar el desarrollo, ya esta instalado en el proyecto. Durante el desarrollo DEBEN crearse
-una cuenta, crear un bucket y obtener un API TOKEN para poder probar sus funcionalidades. Los ambientes de PREVIEW y PRODUCTION ya tienen
+una cuenta, crear un bucket y obtener un API TOKEN para poder probar sus funcionalidades, el cual debe configurarse en `.env.local` (`UPLOADTHING_TOKEN=<tu_token>`). Los ambientes de PREVIEW y PRODUCTION ya tienen
 un API TOKEN configurado que proveen acceso a buckets de la cuenta del Responsable de SCM.
 
 Para más información consulten los [docs de UploadThing](https://docs.uploadthing.com/getting-started/appdir).
