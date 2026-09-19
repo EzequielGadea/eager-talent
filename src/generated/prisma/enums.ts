@@ -9,14 +9,6 @@
 * 🟢 You can import this file directly.
 */
 
-export const UserRole = {
-  Recruiter: 'Recruiter',
-  HiringManager: 'HiringManager'
-} as const
-
-export type UserRole = (typeof UserRole)[keyof typeof UserRole]
-
-
 export const UserStatus = {
   Active: 'Active',
   PendingInvitation: 'PendingInvitation',
@@ -37,14 +29,26 @@ export type EnglishLevel = (typeof EnglishLevel)[keyof typeof EnglishLevel]
 
 
 export const Source = {
-  LinkedIn: 'LinkedIn',
-  Website: 'Website',
+  Inbound: 'Inbound',
   Outbound: 'Outbound',
-  Referral: 'Referral',
-  JobBoard: 'JobBoard'
+  Referral: 'Referral'
 } as const
 
 export type Source = (typeof Source)[keyof typeof Source]
+
+
+export const HearAboutUs = {
+  LinkedInPost: 'LinkedInPost',
+  LinkedInJobs: 'LinkedInJobs',
+  JobBoard: 'JobBoard',
+  Referral: 'Referral',
+  AiRecommendation: 'AiRecommendation',
+  InternetSearch: 'InternetSearch',
+  RecruiterContact: 'RecruiterContact',
+  Other: 'Other'
+} as const
+
+export type HearAboutUs = (typeof HearAboutUs)[keyof typeof HearAboutUs]
 
 
 export const JobOpeningStatus = {
