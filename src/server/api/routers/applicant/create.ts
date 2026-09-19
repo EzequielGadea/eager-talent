@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
-
+import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -40,7 +40,22 @@ export const createApplicant = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
-    try {
+    const permission = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: {
+        permissions: {
+          applicant: ["create"],
+        },
+      },
+    });
+
+    if (!permission.success) {
+      throw new TRPCError ({
+        code: "FORBIDDEN",
+        message: "No tenes permisos para crear un candidato"
+      })
+    }
+    try { 
       let firstStage: string | undefined;
 
       // Si se seleccionó una vacante, buscamos su primera stage
