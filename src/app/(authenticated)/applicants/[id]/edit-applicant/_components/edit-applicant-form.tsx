@@ -1,15 +1,12 @@
 "use client";
 
-
 import { api } from "~/lib/trpc/react";
 import { useParams } from "next/navigation";
 
 import { z } from "zod";
 
 import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
-import ApplicantEditFormContent from "./edit-applicant-form-content"
-
-
+import ApplicantEditFormContent from "./edit-applicant-form-content";
 
 export const applicantFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -24,22 +21,34 @@ export const applicantFormSchema = z.object({
     .optional()
     .or(z.literal("")),
   country: z.string(),
-  photo: z.custom<FileList>()
-          .refine((files) => !files || files.length === 0 || files[0].type === "image/png" || files[0].type === "image/jpeg" || files[0].type === "image/jpg", "El archivo debe ser una imagen PNG, JPEG o JPG")
-          .optional(),
+  photo: z
+    .custom<FileList>()
+    .refine(
+      (files) =>
+        !files ||
+        files.length === 0 ||
+        files[0].type === "image/png" ||
+        files[0].type === "image/jpeg" ||
+        files[0].type === "image/jpg",
+      "El archivo debe ser una imagen PNG, JPEG o JPG",
+    )
+    .optional(),
 
-  linkedin: z.string().url("Debe ingresar una URL válida").
-            refine((url) => url.includes("linkedin.com"), "Debe ingresar una URL de LinkedIn válida").
-            optional().
-            or(z.literal("")),
+  linkedin: z
+    .string()
+    .url("Debe ingresar una URL válida")
+    .refine(
+      (url) => url.includes("linkedin.com"),
+      "Debe ingresar una URL de LinkedIn válida",
+    )
+    .optional()
+    .or(z.literal("")),
 
   role: z.string().min(1, "El rol es obligatorio"),
-  
+
   seniority: z.string(),
   area: z.string(),
-  
-  
-  
+
   englishLevel: z.union([z.enum(EnglishLevel), z.literal("")]),
 
   source: z.union([z.enum(Source), z.literal("")]),
@@ -48,15 +57,25 @@ export const applicantFormSchema = z.object({
 
   tags: z.array(z.string()),
 
-  resume: z.custom<FileList>()
-          .refine((files) => !files || files.length === 0 || files[0].type === "application/pdf", "Debe subir un archivo PDF").optional(),
+  resume: z
+    .custom<FileList>()
+    .refine(
+      (files) =>
+        !files || files.length === 0 || files[0].type === "application/pdf",
+      "Debe subir un archivo PDF",
+    )
+    .optional(),
 
-  education: z.custom<FileList>()
-          .refine((files) => !files || files.length === 0 || files[0].type === "application/pdf", "Debe subir un archivo PDF")
-          .optional(),
+  education: z
+    .custom<FileList>()
+    .refine(
+      (files) =>
+        !files || files.length === 0 || files[0].type === "application/pdf",
+      "Debe subir un archivo PDF",
+    )
+    .optional(),
 
   academicInstitution: z.string(),
-
 
   title: z.string(),
   careerStartYear: z.number().optional(),
@@ -65,16 +84,11 @@ export const applicantFormSchema = z.object({
 
 export type ApplicantFormValues = z.infer<typeof applicantFormSchema>;
 
-type FormProps = {
-  id: string;
-};
-
-
 export default function EditApplicantForm() {
   const params = useParams<{ id: string }>();
 
   const id = params.id;
-  
+
   const {
     data: applicant,
     isLoading,

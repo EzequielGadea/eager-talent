@@ -31,9 +31,7 @@ async function ProtectedEditApplicantPage() {
   return (
     <>
       <div className="mx-auto mb-0 flex w-full max-w-4xl flex-col gap-4 p-4">
-        <h1 className="mb-0 text-2xl --text-primary">
-          Editar candidato
-        </h1>
+        <h1 className="mb-0 text-2xl --text-primary">Editar candidato</h1>
       </div>
 
       <EditApplicantForm />

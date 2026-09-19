@@ -2,11 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
 
-import {
-  EnglishLevel,
-  Source,
-  HearAboutUs,
-} from "~/generated/prisma/enums";
+import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 
 import { Prisma } from "~/generated/prisma/client";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -45,7 +41,7 @@ export const updateApplicant = protectedProcedure
       tagIds: z.array(z.string()),
     }),
   )
-    .mutation(async ({ ctx, input }) => {
+  .mutation(async ({ ctx, input }) => {
     const permission = await auth.api.hasPermission({
       headers: ctx.headers,
       body: {

@@ -1,12 +1,11 @@
 "use client";
 
-import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 
 import { api } from "~/lib/trpc/react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
 import {
@@ -28,7 +27,6 @@ export default function ProfessionalProfile() {
   }));
 
   const {
-    register,
     control,
     formState: { errors },
   } = useFormContext<ApplicantFormValues>();
@@ -41,7 +39,6 @@ export default function ProfessionalProfile() {
 
   const { data: seniorities, isLoading: isLoadingSeniority } =
     api.seniority.getAllSeniorities.useQuery({});
-
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -99,8 +96,6 @@ export default function ProfessionalProfile() {
             )}
           </div>
 
-          
-
           <div className="space-y-1">
             <Label>Seniority</Label>
 
@@ -113,14 +108,18 @@ export default function ProfessionalProfile() {
                   onValueChange={field.onChange}
                   disabled={isLoadingSeniority}
                 >
-                   <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full">
                     {isLoadingSeniority ? (
                       <span className="text-text-secondary">
                         Cargando seniorities...
                       </span>
                     ) : (
                       <SelectValue placeholder="Seleccionar seniority">
-                        {seniorities?.find((seniority) => seniority.id === field.value)?.name}
+                        {
+                          seniorities?.find(
+                            (seniority) => seniority.id === field.value,
+                          )?.name
+                        }
                       </SelectValue>
                     )}
                   </SelectTrigger>
@@ -151,7 +150,7 @@ export default function ProfessionalProfile() {
                   onValueChange={field.onChange}
                   disabled={isLoadingArea}
                 >
-                   <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full">
                     {isLoadingArea ? (
                       <span className="text-text-secondary">
                         Cargando áreas...
@@ -175,8 +174,6 @@ export default function ProfessionalProfile() {
               )}
             />
           </div>
-
-          
 
           <div className="space-y-1">
             <Label>Nivel de inglés</Label>

@@ -96,7 +96,6 @@ export default function PersonalData({
                 setPhotoPreview(URL.createObjectURL(file));
               }}
             />
-                  
 
             <Attachment
               orientation="vertical"
@@ -137,8 +136,8 @@ export default function PersonalData({
 
             <span className="mt-1 text-xs text-text-secondary">Foto</span>
             {errors.photo && (
-                <p className="text-danger">{errors.photo.message}</p>
-              )}        
+              <p className="text-danger">{errors.photo.message}</p>
+            )}
           </div>
 
           <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">

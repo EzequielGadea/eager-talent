@@ -3,12 +3,7 @@
 import { Upload, X } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -62,9 +57,7 @@ export default function EducationAndFiles({
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="academicInstitution">
-              Formación académica
-            </Label>
+            <Label htmlFor="academicInstitution">Formación académica</Label>
 
             <Input
               id="academicInstitution"
@@ -176,19 +169,19 @@ export default function EducationAndFiles({
                 )}
               </div>
 
-                {removeResume && (
-                  <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <span>El CV será eliminado al guardar.</span>
+              {removeResume && (
+                <div className="flex items-center gap-2 text-sm text-text-secondary">
+                  <span>El CV será eliminado al guardar.</span>
 
-                    <button
-                      type="button"
-                      onClick={() => setRemoveResume(false)}
-                      className="font-medium text-primary hover:underline"
-                    >
-                      Deshacer
-                    </button>
-                  </div>
-                )}
+                  <button
+                    type="button"
+                    onClick={() => setRemoveResume(false)}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    Deshacer
+                  </button>
+                </div>
+              )}
 
               {errors.resume && (
                 <p className="text-danger">{errors.resume.message}</p>
@@ -206,75 +199,70 @@ export default function EducationAndFiles({
                 {...register("education")}
               />
 
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="education"
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-secondary hover:bg-surface-hover"
+                >
+                  <Upload className="h-4 w-4 shrink-0" />
 
-                <div className="flex items-center gap-2">
-                  <label
-                    htmlFor="education"
-                    className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-secondary hover:bg-surface-hover"
+                  <span className="truncate">
+                    {educationFile ? educationFile.name : "Subir escolaridad"}
+                  </span>
+                </label>
+
+                {educationFile ? (
+                  <button
+                    type="button"
+                    onClick={() => resetField("education")}
+                    aria-label="Eliminar escolaridad seleccionada"
+                    className="shrink-0 rounded-md p-2 text-text-secondary hover:bg-surface-hover hover:text-danger"
                   >
-                    <Upload className="h-4 w-4 shrink-0" />
+                    <X className="h-4 w-4" />
+                  </button>
+                ) : (
+                  currentEducation &&
+                  !removeEducation && (
+                    <>
+                      <a
+                        href={currentEducation}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 text-sm font-medium text-primary hover:underline"
+                      >
+                        Ver escolaridad
+                      </a>
 
-                    <span className="truncate">
-                      {educationFile
-                        ? educationFile.name
-                        : "Subir escolaridad"}
-                    </span>
-                  </label>
+                      <button
+                        type="button"
+                        onClick={() => setRemoveEducation(true)}
+                        aria-label="Eliminar escolaridad actual"
+                        className="shrink-0 rounded-md p-2 text-text-secondary hover:bg-surface-hover hover:text-danger"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </>
+                  )
+                )}
+              </div>
 
-                  {educationFile ? (
-                    <button
-                      type="button"
-                      onClick={() => resetField("education")}
-                      aria-label="Eliminar escolaridad seleccionada"
-                      className="shrink-0 rounded-md p-2 text-text-secondary hover:bg-surface-hover hover:text-danger"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  ) : (
-                    currentEducation &&
-                    !removeEducation && (
-                      <>
-                        <a
-                          href={currentEducation}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="shrink-0 text-sm font-medium text-primary hover:underline"
-                        >
-                          Ver escolaridad
-                        </a>
+              {removeEducation && (
+                <div className="flex items-center gap-2 text-sm text-text-secondary">
+                  <span>La escolaridad será eliminada al guardar.</span>
 
-                        <button
-                          type="button"
-                          onClick={() => setRemoveEducation(true)}
-                          aria-label="Eliminar escolaridad actual"
-                          className="shrink-0 rounded-md p-2 text-text-secondary hover:bg-surface-hover hover:text-danger"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </>
-                    )
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setRemoveEducation(false)}
+                    className="font-medium text-primary hover:underline"
+                  >
+                    Deshacer
+                  </button>
                 </div>
+              )}
 
-                {removeEducation && (
-                  <div className="flex items-center gap-2 text-sm text-text-secondary">
-                    <span>La escolaridad será eliminada al guardar.</span>
-
-                    <button
-                      type="button"
-                      onClick={() => setRemoveEducation(false)}
-                      className="font-medium text-primary hover:underline"
-                    >
-                      Deshacer
-                    </button>
-                  </div>
-                )}
-
-                {errors.education && (
-                  <p className="text-danger">{errors.education.message}</p>
-                )}
-              
-
+              {errors.education && (
+                <p className="text-danger">{errors.education.message}</p>
+              )}
             </div>
           </div>
         </div>

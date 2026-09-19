@@ -26,16 +26,13 @@ import EditApplicantButton from "./edit-applicant-button";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 
-type Applicant =
-  RouterOutputs["applicant"]["getApplicantById"];
+type Applicant = RouterOutputs["applicant"]["getApplicantById"];
 
 type Props = {
   applicant: Applicant;
 };
 
-export default function EditApplicantFormContent({
-  applicant,
-}: Props) {
+export default function EditApplicantFormContent({ applicant }: Props) {
   const { startUpload } = useUploadThing("applicantFiles");
 
   const router = useRouter();
@@ -78,91 +75,88 @@ export default function EditApplicantFormContent({
 
   const { isSubmitting } = methods.formState;
 
-  
   const updateApplicantMutation = api.applicant.updateApplicant.useMutation({
-  onSuccess: () => {
-    router.push(`/applicants/${applicant.id}`);
-    router.refresh();
-  },
-  onError: (error) => {
-    if (error.data?.code === "CONFLICT") {
-      methods.setError("email", {
-        type: "server",
-        message: "Ya existe un candidato con ese email",
-      });
+    onSuccess: () => {
+      router.push(`/applicants/${applicant.id}`);
+      router.refresh();
+    },
+    onError: (error) => {
+      if (error.data?.code === "CONFLICT") {
+        methods.setError("email", {
+          type: "server",
+          message: "Ya existe un candidato con ese email",
+        });
 
-      return;
-    }
+        return;
+      }
 
-    console.error("Error updating applicant:", error);
-  },
-});
-  
-  async function onSubmit(data: ApplicantFormValues) {
-    
-  const [resumeResult, educationResult, photoResult] = await Promise.all([
-    data.resume?.[0] ? startUpload([data.resume[0]]) : undefined,
-    data.education?.[0] ? startUpload([data.education[0]]) : undefined,
-    data.photo?.[0] ? startUpload([data.photo[0]]) : undefined,
-  ]);
-
-  const newResumeUrl = resumeResult?.[0]?.ufsUrl;
-  const newEducationUrl = educationResult?.[0]?.ufsUrl;
-  const newPhotoUrl = photoResult?.[0]?.ufsUrl;
-
-  const resumeUrl = newResumeUrl
-    ? newResumeUrl
-    : removeResume
-      ? null
-      : applicant.resume;
-
-  const educationUrl = newEducationUrl
-    ? newEducationUrl
-    : removeEducation
-      ? null
-      : applicant.education;
-
-  const photoUrl = newPhotoUrl ?? applicant.photo;
-
-  await updateApplicantMutation.mutateAsync({
-    id: applicant.id,
-
-    name: data.name,
-    lastname: data.lastname,
-    email: data.email,
-    phone: data.phone,
-    country: data.country,
-    linkedin: data.linkedin,
-
-    roleId: data.role,
-    areaId: data.area || null,
-    seniorityId: data.seniority || null,
-
-    englishLevel: data.englishLevel || undefined,
-    source: data.source || undefined,
-    hearAboutUs: data.howDidYouHear || undefined,
-
-    academicInstitution: data.academicInstitution,
-    title: data.title,
-    careerStartYear: data.careerStartYear,
-    careerEndYear: data.careerEndYear,
-
-    resume: resumeUrl,
-    education: educationUrl,
-    photo: photoUrl,
-
-    tagIds: data.tags,
+      console.error("Error updating applicant:", error);
+    },
   });
-}
-  
+
+  async function onSubmit(data: ApplicantFormValues) {
+    const [resumeResult, educationResult, photoResult] = await Promise.all([
+      data.resume?.[0] ? startUpload([data.resume[0]]) : undefined,
+      data.education?.[0] ? startUpload([data.education[0]]) : undefined,
+      data.photo?.[0] ? startUpload([data.photo[0]]) : undefined,
+    ]);
+
+    const newResumeUrl = resumeResult?.[0]?.ufsUrl;
+    const newEducationUrl = educationResult?.[0]?.ufsUrl;
+    const newPhotoUrl = photoResult?.[0]?.ufsUrl;
+
+    const resumeUrl = newResumeUrl
+      ? newResumeUrl
+      : removeResume
+        ? null
+        : applicant.resume;
+
+    const educationUrl = newEducationUrl
+      ? newEducationUrl
+      : removeEducation
+        ? null
+        : applicant.education;
+
+    const photoUrl = newPhotoUrl ?? applicant.photo;
+
+    await updateApplicantMutation.mutateAsync({
+      id: applicant.id,
+
+      name: data.name,
+      lastname: data.lastname,
+      email: data.email,
+      phone: data.phone,
+      country: data.country,
+      linkedin: data.linkedin,
+
+      roleId: data.role,
+      areaId: data.area || null,
+      seniorityId: data.seniority || null,
+
+      englishLevel: data.englishLevel || undefined,
+      source: data.source || undefined,
+      hearAboutUs: data.howDidYouHear || undefined,
+
+      academicInstitution: data.academicInstitution,
+      title: data.title,
+      careerStartYear: data.careerStartYear,
+      careerEndYear: data.careerEndYear,
+
+      resume: resumeUrl,
+      education: educationUrl,
+      photo: photoUrl,
+
+      tagIds: data.tags,
+    });
+  }
 
   function handleCancel() {
     methods.reset();
 
     router.push(`/applicants/${applicant.id}`);
   }
-const [removeResume, setRemoveResume] = useState(false);
-const [removeEducation, setRemoveEducation] = useState(false);
+  const [removeResume, setRemoveResume] = useState(false);
+  const [removeEducation, setRemoveEducation] = useState(false);
   return (
     <FormProvider {...methods}>
       <form
@@ -193,17 +187,11 @@ const [removeEducation, setRemoveEducation] = useState(false);
           </p>
 
           <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-            >
+            <Button type="button" variant="outline" onClick={handleCancel}>
               Cancelar
             </Button>
 
-            <EditApplicantButton disabled={isSubmitting}/>
-              
-            
+            <EditApplicantButton disabled={isSubmitting} />
           </div>
         </footer>
       </form>
