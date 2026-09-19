@@ -67,10 +67,10 @@ export type Verification = Prisma.VerificationModel
  */
 export type Applicant = Prisma.ApplicantModel
 /**
- * Model Role
+ * Model JobRole
  * 
  */
-export type Role = Prisma.RoleModel
+export type JobRole = Prisma.JobRoleModel
 /**
  * Model Area
  * 
@@ -121,6 +121,16 @@ export type InterviewNote = Prisma.InterviewNoteModel
  * 
  */
 export type Activity = Prisma.ActivityModel
+/**
+ * Model Organization
+ * 
+ */
+export type Organization = Prisma.OrganizationModel
+/**
+ * Model Member
+ * 
+ */
+export type Member = Prisma.MemberModel
 /**
  * Model Invitation
  * 

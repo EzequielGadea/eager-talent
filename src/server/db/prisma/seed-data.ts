@@ -1039,20 +1039,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   await prisma.applicantNote.create({
     data: {
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "Excelente perfil técnico, experiencia sólida en proyectos de escala y muy buen nivel de inglés.",
-              },
-            ],
-          },
-        ],
-      },
+      content:
+        "Excelente perfil técnico, experiencia sólida en proyectos de escala y muy buen nivel de inglés.",
       applicantId: federico.id,
       lastModifiedById: hm1.id,
     },
@@ -1060,20 +1048,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   await prisma.applicantNote.create({
     data: {
-      content: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: "Candidato referido con muy buenas referencias en testing automatizado y calidad de software.",
-              },
-            ],
-          },
-        ],
-      },
+      content:
+        "Candidato referido con muy buenas referencias en testing automatizado y calidad de software.",
       applicantId: darwin.id,
       lastModifiedById: admin1.id,
     },
