@@ -5,8 +5,9 @@ import { ApplicantTable } from "./applicant-table";
 import { Header } from "./header";
 import { Filters } from "./filters";
 import { ApplicantPagination } from "./applicant-pagination";
-import ApplicantTableError from "../error";
+import ApplicantTableError, { ApplicantErrorForbidden } from "../error";
 import { transformApplicants } from "../utils";
+import { TRPCError } from "@trpc/server";
 
 async function awaitData(promise: ApplicantsPromise) {
   try {
@@ -43,7 +44,11 @@ export async function ApplicantAwaiterTable(props: {
       </>
     );
   }
-  return <ApplicantTableError />;
+  if (error instanceof TRPCError && error.code == "FORBIDDEN") {
+    return <ApplicantErrorForbidden />;
+  } else {
+    return <ApplicantTableError />;
+  }
 }
 
 export async function ApplicantAwaiterHeader(props: {

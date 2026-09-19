@@ -1,16 +1,16 @@
 "use client";
- 
+
 import { FileText } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
 import { TableCell, TableRow } from "~/components/ui/table";
 import { useState } from "react";
 import Image from "next/image";
- 
+
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
 import { getSourceIcon } from "./source-icon";
- 
+
 function getSafeExternalUrl(value: string | null): string | null {
   if (!value) return null;
   try {
@@ -22,17 +22,16 @@ function getSafeExternalUrl(value: string | null): string | null {
     return null;
   }
 }
- 
+
 export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   const router = useRouter();
   const photoUrl = getSafeExternalUrl(props.applicant.photo);
   const [failedPhoto, setFailedPhoto] = useState<string | null>(null);
- 
- 
+
   const handleApplicantClick = (applicantId: string) => {
     router.push(`/candidatos/${applicantId}`);
   };
- 
+
   return (
     <TableRow
       key={props.applicant.id}
@@ -41,33 +40,33 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
     >
       {/* Candidato */}
       <TableCell className="px-5 py-4 pl-5 align-middle">
-        <div className="flex w-full items-center justify-center gap-3">
-           {photoUrl && photoUrl !== failedPhoto ? (
-             <Image
-               src={photoUrl}
-               alt={props.applicant.name || "-"}
-               width={36}
-               height={36}
-               unoptimized
-               onError={() => setFailedPhoto(photoUrl)}
-               className="size-9 shrink-0 rounded-lg object-cover"
-             />
-           ) : (
-             <div
-               className={`flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${props.applicant.avatarBg}`}
-             >
-               {props.applicant.initials || "-"}
-             </div>
-           )}
-           <span
-             className="min-w-0 max-w-22.5 flex-1 truncate text-sm font-bold text-dashboard-dark text-center sm:max-w-32.5 md:max-w-45"
-             title={props.applicant.name || "-"}
-           >
-             {props.applicant.name || "-"}
-           </span>
+        <div className="flex w-full items-center min-w-50 max-w-44 truncate text-sm font-semibold text-dashboard-text-muted whitespace-normal wrap-break-word text-centerjustify-center gap-3">
+          {photoUrl && photoUrl !== failedPhoto ? (
+            <Image
+              src={photoUrl}
+              alt={props.applicant.name || "-"}
+              width={36}
+              height={36}
+              unoptimized
+              onError={() => setFailedPhoto(photoUrl)}
+              className="size-9 shrink-0 rounded-lg object-cover"
+            />
+          ) : (
+            <div
+              className={`flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${props.applicant.avatarBg}`}
+            >
+              {props.applicant.initials || "-"}
+            </div>
+          )}
+          <span
+            className="min-w-0 max-w-22.5 flex-1 truncate text-sm font-bold text-dashboard-dark text-center sm:max-w-32.5 md:max-w-45"
+            title={props.applicant.name || "-"}
+          >
+            {props.applicant.name || "-"}
+          </span>
         </div>
       </TableCell>
- 
+
       {/* Etiquetas */}
       <TableCell className="px-3 py-4 align-middle">
         <div className="mx-auto flex w-full max-w-30 flex-wrap items-center justify-center gap-1.5 sm:max-w-40 md:max-w-55">
@@ -93,11 +92,11 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           )}
         </div>
       </TableCell>
- 
+
       {/* Vacante */}
       <TableCell className="px-3 py-4">
         <div
-          className="max-w-44 truncate text-sm font-semibold text-dashboard-text-muted whitespace-normal wrap-break-word text-center"
+          className="min-w-50 max-w-44 truncate text-sm font-semibold text-dashboard-text-muted whitespace-normal wrap-break-word text-center"
           title={
             props.applicant.jobOpening.length <= 1
               ? ""
@@ -114,17 +113,17 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           )}
         </div>
       </TableCell>
- 
+
       {/* Rol */}
       <TableCell className="px-3 py-4 align-middle text-center">
         <div
-          className="mx-auto max-w-22.5 truncate text-sm font-medium text-dashboard-text-muted sm:max-w-30 md:max-w-37.5"
+          className="mx-auto min-w-40 max-w-22.5 whitespace-normal wrap-break-word text-sm font-medium text-dashboard-text-muted sm:max-w-30 md:max-w-37.5"
           title={props.applicant.role || "-"}
         >
           {props.applicant.role || "-"}
         </div>
       </TableCell>
- 
+
       {/* Seniority */}
       <TableCell className="px-3 py-4 align-middle">
         <div className="flex w-full items-center justify-center">
@@ -147,17 +146,17 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           )}
         </div>
       </TableCell>
- 
+
       {/* Área */}
       <TableCell className="px-3 py-4 align-middle text-center">
         <div
-          className="mx-auto max-w-20 truncate text-sm font-medium text-dashboard-text-muted sm:max-w-27.5 md:max-w-35"
+          className="mx-auto min-w-40 max-w-22.5 whitespace-normal wrap-break-word text-sm font-medium text-dashboard-text-muted sm:max-w-30 md:max-w-37.5"
           title={props.applicant.area || "-"}
         >
           {props.applicant.area || "-"}
         </div>
       </TableCell>
- 
+
       {/* Source */}
       <TableCell className="px-3 py-4 align-middle">
         <div className="mx-auto flex w-full max-w-25 items-center justify-center gap-1.5 text-sm font-semibold text-dashboard-text-muted text-center sm:max-w-32.5">
@@ -177,7 +176,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           )}
         </div>
       </TableCell>
- 
+
       {/* CV */}
       <TableCell className="px-3 py-4 text-center align-middle">
         {props.applicant.hasCv && props.applicant.cvUrl ? (
@@ -197,7 +196,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           </span>
         )}
       </TableCell>
- 
+
       {/* LinkedIn */}
       <TableCell className="px-3 py-4 text-center align-middle">
         {props.applicant.hasLinkedin && props.applicant.linkedinUrl ? (
@@ -217,7 +216,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           </span>
         )}
       </TableCell>
- 
+
       {/* Email */}
       <TableCell className="px-3 py-4 pr-5 align-middle">
         <div

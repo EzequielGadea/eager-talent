@@ -18,8 +18,13 @@ export async function transformApplicants(promise: ApplicantsPromise) {
         return {
           id: applicant.id,
           initials:
-          applicant.name && applicant.lastName ? applicant.name[0] + applicant.lastName[0] : "-",
-          name:applicant.name || applicant.lastName ? `${applicant.name ?? ""} ${applicant.lastName ?? ""}`.trim(): "-",
+            applicant.name && applicant.lastName
+              ? applicant.name[0] + applicant.lastName[0]
+              : "-",
+          name:
+            applicant.name || applicant.lastName
+              ? `${applicant.name ?? ""} ${applicant.lastName ?? ""}`.trim()
+              : "-",
           avatarBg: getRandomColor(),
           photo: applicant.photo ?? null,
           tags: applicant.tags
