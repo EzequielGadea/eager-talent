@@ -6,7 +6,7 @@ import { protectedProcedure } from "~/server/api/trpc";
 export const getAllRoles = protectedProcedure
   .input(z.object({}))
   .query(async ({ ctx }) => {
-    const roles = await ctx.db.role.findMany({
+    const roles = await ctx.db.jobRole.findMany({
       where: { deletedAt: null },
 
       select: { id: true, name: true },

@@ -1,6 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { areaRouter } from "./routers/area";
-import { roleRouter } from "./routers/role";
+import { roleRouter } from "./routers/job-role";
 import { applicantRouter } from "./routers/applicant";
 import { seniorityRouter } from "./routers/seniority";
 import { jobOpeningRouter } from "./routers/job-opening";
