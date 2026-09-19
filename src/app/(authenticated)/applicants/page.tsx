@@ -46,7 +46,7 @@ async function ProtectedApplicantsPage() {
     redirect("/dashboard");
   }
 
-  // Recién después de validar permisos
+  // Recién después de validar permisos 
   const data = getApplicantsPage(1);
   const countApplicants = api.applicant.fetchAmount();
 
