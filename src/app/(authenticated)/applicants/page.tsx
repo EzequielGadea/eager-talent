@@ -3,40 +3,46 @@ import "server-only";
 import { Table, TableBody } from "~/components/ui/table";
 import { api } from "~/lib/trpc/server";
 import { Suspense } from "react";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "~/lib/auth";
+
 import {
   ApplicantAwaiterHeader,
   ApplicantAwaiterTable,
   ApplicantAwaiterFilters,
   ApplicantAwaiterPagination,
 } from "./_components/applicant-awaiter";
+
 import {
   FiltersFallback,
   HeaderFallback,
   TableFallback,
   PaginationFallback,
 } from "./_components/fallbacks";
+
 import { ApplicantTableHeader } from "./_components/applicant-table";
 import { getApplicantsPage } from "./actions";
 
 export default async function ApplicantsPage() {
-  // llamado a obtener los candidatos
   const data = getApplicantsPage(1);
   const countApplicants = api.applicant.fetchAmount();
 
   return (
     <div className="flex-1 min-w-0 w-full max-w-full p-0 font-sans text-dashboard-text-primary overflow-x-hidden">
-      {" "}
       <Suspense fallback={<HeaderFallback />}>
         <ApplicantAwaiterHeader
           promiseData={data}
           promiseCount={countApplicants}
         />
       </Suspense>
+
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Suspense fallback={<FiltersFallback />}>
           <ApplicantAwaiterFilters promiseData={data} />
         </Suspense>
       </div>
+
       <Suspense
         fallback={
           <>
@@ -48,6 +54,7 @@ export default async function ApplicantsPage() {
                 </TableBody>
               </Table>
             </div>
+
             <Suspense fallback={<PaginationFallback />}>
               <ApplicantAwaiterPagination
                 promiseCount={countApplicants}
@@ -57,11 +64,36 @@ export default async function ApplicantsPage() {
           </>
         }
       >
-        <ApplicantAwaiterTable
+        <ProtectedApplicantsPage
           promiseData={data}
           promiseCount={countApplicants}
         />
       </Suspense>
     </div>
+  );
+}
+
+async function ProtectedApplicantsPage(props: {
+  promiseData: ReturnType<typeof getApplicantsPage>;
+  promiseCount: Promise<number>;
+}) {
+  const permission = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        applicant: ["read"],
+      },
+    },
+  });
+
+  if (!permission.success) {
+    redirect("/dashboard");
+  }
+
+  return (
+    <ApplicantAwaiterTable
+      promiseData={props.promiseData}
+      promiseCount={props.promiseCount}
+    />
   );
 }
