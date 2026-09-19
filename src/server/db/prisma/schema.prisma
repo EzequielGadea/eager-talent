@@ -137,6 +137,11 @@ enum InterviewType {
   InPerson
 }
 
+enum SalaryCurrency {
+  USD
+  UYU @map("$")
+}
+
 model Applicant {
   id                  String        @id @default(cuid())
   name                String
@@ -263,7 +268,8 @@ model Application {
   stageEntryDate         DateTime     @default(now()) @map("stage_entry_date")
   disqualificationDate   DateTime?    @map("disqualification_date")
   disqualificationReason String?      @map("disqualification_reason")
-  desiredSalary          String?      @map("desired_salary")
+  desiredSalaryAmount    Decimal?      @map("desired_salary_amount")
+  desiredSalaryCurrency  SalaryCurrency? @map("desired_salary_currency")
   availability           String?
   applicant              Applicant    @relation(fields: [applicantId], references: [id], onDelete: Restrict)
   jobOpening             JobOpening   @relation(fields: [jobOpeningId], references: [id], onDelete: Restrict)
