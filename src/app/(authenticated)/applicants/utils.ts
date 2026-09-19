@@ -17,13 +17,15 @@ export async function transformApplicants(promise: ApplicantsPromise) {
           : [];
         return {
           id: applicant.id,
-          initials: applicant.name[0] + applicant.lastName[0],
-          name: applicant.name + " " + applicant.lastName,
+          initials:
+          applicant.name && applicant.lastName ? applicant.name[0] + applicant.lastName[0] : "-",
+          name:applicant.name || applicant.lastName ? `${applicant.name ?? ""} ${applicant.lastName ?? ""}`.trim(): "-",
           avatarBg: getRandomColor(),
+          photo: applicant.photo ?? null,
           tags: applicant.tags
             ? applicant.tags.map((tag) => ({
-                label: tag.name,
-                color: tag.color,
+                label: tag.name || "-",
+                color: tag.color || "-",
               }))
             : [],
 
@@ -34,11 +36,11 @@ export async function transformApplicants(promise: ApplicantsPromise) {
                 )
               : ["-"],
 
-          role: applicant.role.name ?? "-",
-          seniorityName: applicant.seniority?.name ?? "-",
-          seniorityColor: applicant.seniority?.color ?? "-",
-          area: applicant.area?.name ?? "-",
-          sourceText: applicant.source ?? "Not found",
+          role: applicant.role.name || "-",
+          seniorityName: applicant.seniority?.name || "-",
+          seniorityColor: applicant.seniority?.color || "-",
+          area: applicant.area?.name || "-",
+          sourceText: applicant.source || "-",
           sourceIcon: getSourceIcon(applicant.source ?? "null"),
           hasCv: applicant.resume != null,
           hasLinkedin: applicant.linkedin != null,

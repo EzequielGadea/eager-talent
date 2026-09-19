@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useRouter } from "next/navigation";
 
@@ -30,17 +30,8 @@ export function Header(props: {
         </div>
 
         {/* Botones */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-9 gap-1.5 rounded-full border-dashboard-border bg-white px-5 py-5 text-sm font-medium text-dashboard-text-muted shadow-xs hover:bg-dashboard-track hover:text-dashboard-text-muted"
-          >
-            <Download size={16} className="text-dashboard-text-muted" />
-            <span>Exportar</span>
-          </Button>
-
-          <Button
+          <div className="flex items-center gap-2">
+           <Button
             size="sm"
             onClick={() => router.push("/candidatos/alta")}
             className="h-9 gap-1.5 rounded-full bg-dashboard-dark px-5 py-5 text-sm font-medium text-white shadow-xs hover:bg-dashboard-dark-hover"

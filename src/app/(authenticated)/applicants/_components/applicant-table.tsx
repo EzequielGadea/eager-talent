@@ -43,7 +43,7 @@ export function ApplicantTable(props: {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
-        <Table className="min-w-262.5 table-fixed">
+        <Table className="min-w-282.5">
           <ApplicantTableHeader />
           <TableBody className="divide-y divide-dashboard-border">
             {isLoading ? (
@@ -99,7 +99,7 @@ export function ApplicantTableHeader() {
           Área
         </TableHead>
         <TableHead className="w-20 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
-          Source
+          Fuente
         </TableHead>
         <TableHead className="w-6 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
           CV
@@ -107,7 +107,7 @@ export function ApplicantTableHeader() {
         <TableHead className="w-15 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
           LinkedIn
         </TableHead>
-        <TableHead className="w-30 h-10 px-3 py-4 pr-5 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+        <TableHead className="w-50 h-10 px-3 py-4 pr-5 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
           Correo
         </TableHead>
       </TableRow>
