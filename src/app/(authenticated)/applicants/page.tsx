@@ -24,7 +24,29 @@ import {
 import { ApplicantTableHeader } from "./_components/applicant-table";
 import { getApplicantsPage } from "./actions";
 
-export default async function ApplicantsPage() {
+export default function ApplicantsPage() {
+  return (
+    <Suspense fallback={<div>Cargando candidatos...</div>}>
+      <ProtectedApplicantsPage />
+    </Suspense>
+  );
+}
+
+async function ProtectedApplicantsPage() {
+  const permission = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        applicant: ["read"],
+      },
+    },
+  });
+
+  if (!permission.success) {
+    redirect("/dashboard");
+  }
+
+  // Recién después de validar permisos
   const data = getApplicantsPage(1);
   const countApplicants = api.applicant.fetchAmount();
 
@@ -64,36 +86,11 @@ export default async function ApplicantsPage() {
           </>
         }
       >
-        <ProtectedApplicantsPage
+        <ApplicantAwaiterTable
           promiseData={data}
           promiseCount={countApplicants}
         />
       </Suspense>
     </div>
-  );
-}
-
-async function ProtectedApplicantsPage(props: {
-  promiseData: ReturnType<typeof getApplicantsPage>;
-  promiseCount: Promise<number>;
-}) {
-  const permission = await auth.api.hasPermission({
-    headers: await headers(),
-    body: {
-      permissions: {
-        applicant: ["read"],
-      },
-    },
-  });
-
-  if (!permission.success) {
-    redirect("/dashboard");
-  }
-
-  return (
-    <ApplicantAwaiterTable
-      promiseData={props.promiseData}
-      promiseCount={props.promiseCount}
-    />
   );
 }

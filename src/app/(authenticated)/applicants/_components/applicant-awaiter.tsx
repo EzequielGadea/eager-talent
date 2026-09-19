@@ -5,23 +5,13 @@ import { ApplicantTable } from "./applicant-table";
 import { Header } from "./header";
 import { Filters } from "./filters";
 import { ApplicantPagination } from "./applicant-pagination";
-import ApplicantTableError, { ApplicantErrorForbidden } from "../error";
 import { transformApplicants } from "../utils";
-import { TRPCError } from "@trpc/server";
 
 async function awaitData(promise: ApplicantsPromise) {
-  try {
-    const { applicantsData, countApplicants, countOpenings } =
-      await transformApplicants(promise);
-    return { applicantsData, countApplicants, countOpenings, error: null };
-  } catch (e) {
-    return {
-      applicantsData: [],
-      countApplicants: 0,
-      countOpenings: 0,
-      error: e,
-    };
-  }
+  const { applicantsData, countApplicants, countOpenings } =
+    await transformApplicants(promise);
+
+  return { applicantsData, countApplicants, countOpenings };
 }
 
 async function awaitCount(promiseCount: Promise<number>) {
@@ -32,41 +22,30 @@ export async function ApplicantAwaiterTable(props: {
   promiseData: ApplicantsPromise;
   promiseCount: Promise<number>;
 }) {
-  const { applicantsData, error } = await awaitData(props.promiseData);
+  const { applicantsData } = await awaitData(props.promiseData);
   const countApplicants = await awaitCount(props.promiseCount);
-  if (error == null) {
-    return (
-      <>
-        <ApplicantTable
-          applicantsData={applicantsData}
-          countApplicants={countApplicants}
-        />
-      </>
-    );
-  }
-  if (error instanceof TRPCError && error.code == "FORBIDDEN") {
-    return <ApplicantErrorForbidden />;
-  } else {
-    return <ApplicantTableError />;
-  }
+
+  return (
+    <ApplicantTable
+      applicantsData={applicantsData}
+      countApplicants={countApplicants}
+    />
+  );
 }
 
 export async function ApplicantAwaiterHeader(props: {
   promiseData: ApplicantsPromise;
   promiseCount: Promise<number>;
 }) {
-  const { countOpenings, error } = await awaitData(props.promiseData);
+  const { countOpenings } = await awaitData(props.promiseData);
   const countApplicants = await awaitCount(props.promiseCount);
-  if (error == null) {
-    return (
-      <>
-        <Header
-          countApplicants={countApplicants}
-          countOpenings={countOpenings}
-        />
-      </>
-    );
-  }
+
+  return (
+    <Header
+      countApplicants={countApplicants}
+      countOpenings={countOpenings}
+    />
+  );
 }
 
 export async function ApplicantAwaiterPagination(props: {
@@ -87,12 +66,7 @@ export async function ApplicantAwaiterPagination(props: {
 export async function ApplicantAwaiterFilters(props: {
   promiseData: ApplicantsPromise;
 }) {
-  const { applicantsData, error } = await awaitData(props.promiseData);
-  if (error == null) {
-    return (
-      <>
-        <Filters applicants={applicantsData} />
-      </>
-    );
-  }
+  const { applicantsData } = await awaitData(props.promiseData);
+
+  return <Filters applicants={applicantsData} />;
 }
