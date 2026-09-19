@@ -11,6 +11,7 @@ export interface ApplicantInfo {
   initials: string;
   name: string;
   avatarBg: string;
+  photo: string | null;
   tags: Tag[];
   jobOpening: string[];
   role: string;
