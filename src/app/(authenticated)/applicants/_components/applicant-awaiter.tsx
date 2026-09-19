@@ -41,10 +41,7 @@ export async function ApplicantAwaiterHeader(props: {
   const countApplicants = await awaitCount(props.promiseCount);
 
   return (
-    <Header
-      countApplicants={countApplicants}
-      countOpenings={countOpenings}
-    />
+    <Header countApplicants={countApplicants} countOpenings={countOpenings} />
   );
 }
 
