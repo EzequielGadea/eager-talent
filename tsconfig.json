@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "~logic/*": ["./src/server/logic/*"],
+      "~prisma/*": ["./src/generated/prisma/*"]
     }
   },
   "include": [
