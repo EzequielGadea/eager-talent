@@ -4,7 +4,7 @@ import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import type { CandidatePromise } from "../types";
 import { hearAboutUsLabels } from "../_lib/candidate-labels";
-import { getExternalFileName, getSafeExternalUrl } from "../_lib/external-url";
+import { getSafeExternalUrl } from "../_lib/external-url";
 
 type CandidateInfoCardsProps = { candidatePromise: CandidatePromise };
 
@@ -79,9 +79,6 @@ function DocumentCard({
 }: DocumentCardProps) {
   const documentValue = value?.trim();
   const documentUrl = getSafeExternalUrl(documentValue || null);
-  const fileName = documentUrl
-    ? getExternalFileName(documentUrl) || title
-    : null;
 
   return (
     <InfoCard
@@ -89,32 +86,26 @@ function DocumentCard({
       title={title}
     >
       {documentUrl ? (
+        <a
+          href={documentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Descargar ${title}`}
+          className={cn(
+            buttonVariants({
+              variant: "link",
+              size: "sm",
+              className:
+                "h-auto w-fit max-w-full gap-1 rounded-sm p-0 text-sm font-normal text-text-link",
+            }),
+          )}
+        >
+          Descargar
+          <Download className="size-3" aria-hidden="true" />
+        </a>
+      ) : (
         <>
-          <p className="truncate font-semibold" title={fileName || undefined}>
-            {fileName}
-          </p>
-          <a
-            href={documentUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            aria-label={`Descargar ${title}`}
-            className={cn(
-              buttonVariants({
-                variant: "link",
-                size: "sm",
-                className:
-                  "h-auto w-fit max-w-full gap-1 rounded-sm p-0 text-sm font-normal text-text-link",
-              }),
-            )}
-          >
-            Descargar
-            <Download className="size-3" aria-hidden="true" />
-          </a>
-        </>
-      ) : documentValue ? (
-        <>
-          <p className="font-semibold text-text-primary">{documentValue}</p>
+          <p className="text-muted-foreground">{emptyMessage}</p>
           <Button
             variant="link"
             size="sm"
@@ -126,8 +117,6 @@ function DocumentCard({
             <Download className="size-3" aria-hidden="true" />
           </Button>
         </>
-      ) : (
-        <p className="text-muted-foreground">{emptyMessage}</p>
       )}
     </InfoCard>
   );

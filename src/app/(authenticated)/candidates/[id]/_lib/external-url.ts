@@ -11,14 +11,3 @@ export function getSafeExternalUrl(value: string | null): string | null {
     return null;
   }
 }
-
-export function getExternalFileName(url: string): string | null {
-  const fileName = new URL(url).pathname.split("/").pop();
-  if (!fileName) return null;
-
-  try {
-    return decodeURIComponent(fileName);
-  } catch {
-    return fileName;
-  }
-}
