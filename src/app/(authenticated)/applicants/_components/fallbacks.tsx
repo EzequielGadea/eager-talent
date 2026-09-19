@@ -36,15 +36,16 @@ export function HeaderFallback() {
         </div>
 
         {/* Botones */}
-          <div className="flex items-center gap-2">
-+          <Button 
-              size="sm"
-              //onClick={() => redirect("/candidatos/alta")} TODO no usable onclick por ser server, mostrar bloqueado de alguna forma, lo mismo con export
-              className="h-9 gap-1.5 rounded-full bg-dashboard-dark px-5 py-5 text-sm font-medium text-white shadow-xs hover:bg-dashboard-dark-hover"
-            >
-              <Plus size={16} strokeWidth={2.5} />
-              <span>Añadir</span>
-            </Button>
+        <div className="flex items-center gap-2">
+          +{" "}
+          <Button
+            size="sm"
+            //onClick={() => redirect("/candidatos/alta")} TODO no usable onclick por ser server, mostrar bloqueado de alguna forma, lo mismo con export
+            className="h-9 gap-1.5 rounded-full bg-dashboard-dark px-5 py-5 text-sm font-medium text-white shadow-xs hover:bg-dashboard-dark-hover"
+          >
+            <Plus size={16} strokeWidth={2.5} />
+            <span>Añadir</span>
+          </Button>
         </div>
       </header>
     </>
@@ -121,7 +122,7 @@ export function FiltersFallback() {
     id: FilterId;
     label: string;
   };
-  
+
   const filterConfigs: FilterConfig[] = [
     {
       id: "Vacantes",

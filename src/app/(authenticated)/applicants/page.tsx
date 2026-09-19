@@ -24,14 +24,14 @@ export default async function ApplicantsPage() {
   const countApplicants = api.applicant.fetchAmount();
 
   return (
-    <div className="flex-1 min-w-0 w-full max-w-full p-8 font-sans text-dashboard-text-primary overflow-x-hidden">
+    <div className="flex-1 min-w-0 w-full max-w-full p-0 font-sans text-dashboard-text-primary overflow-x-hidden">
+      {" "}
       <Suspense fallback={<HeaderFallback />}>
         <ApplicantAwaiterHeader
           promiseData={data}
           promiseCount={countApplicants}
         />
       </Suspense>
-
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Suspense fallback={<FiltersFallback />}>
           <ApplicantAwaiterFilters promiseData={data} />

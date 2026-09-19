@@ -14,11 +14,7 @@ Abrir [http://localhost:3000](http://localhost:3000).
 
 `setup:local` inicia la base local, aplica las migraciones y genera Prisma Client. Una base nueva queda sin datos de aplicación hasta ejecutar el seed.
 
-<<<<<<< HEAD
-### Seed (cargar o reiniciar datos iniciales)
-=======
 ### Seed (cargar datos iniciales)
->>>>>>> f0b1168 (Prisma tables)
 
 ```bash
 bun run db:seed
@@ -28,24 +24,26 @@ bun run db:seed
 El script de seed (`src/server/db/prisma/seed-data.ts`) es **idempotente**: se puede ejecutar N veces sin duplicar datos. Solo se permite ejecutar contra PostgreSQL local.
 
 <<<<<<< HEAD
+
 - **Usuarios iniciales (credenciales de login):**
 
-| Rol | Email | Contraseña |
-| :--- | :--- | :--- |
-| `Recruiter` | `admin@example.com` | `admin123` |
-| `Recruiter` | `admin2@example.com` | `admin123` |
-| `Recruiter` | `admin3@example.com` | `admin123` |
-| `Hiring Manager` | `hiring.manager@example.com` | `hiring.manager` |
+| Rol              | Email                         | Contraseña       |
+| :--------------- | :---------------------------- | :--------------- |
+| `Recruiter`      | `admin@example.com`           | `admin123`       |
+| `Recruiter`      | `admin2@example.com`          | `admin123`       |
+| `Recruiter`      | `admin3@example.com`          | `admin123`       |
+| `Hiring Manager` | `hiring.manager@example.com`  | `hiring.manager` |
 | `Hiring Manager` | `hiring.manager2@example.com` | `hiring.manager` |
 | `Hiring Manager` | `hiring.manager3@example.com` | `hiring.manager` |
 
-
 =======
+
 - **Administrador principal (con credenciales de login):**
   - **Rol:** `Recruiter`
   - **Email:** `admin@example.com`
   - **Contraseña:** `admin123`
->>>>>>> 6b97476 (feature: manejo de errores en consulta y pagina de error)
+
+> > > > > > > 6b97476 (feature: manejo de errores en consulta y pagina de error)
 
 #### Reiniciar la base de datos local desde cero
 
@@ -56,16 +54,16 @@ bun run db:local:remove
 bun run setup:local
 bun run db:seed
 ```
+
 =======
 El seed (en este momento) crea un único administrador de prueba (rol `Recruiter`):
 
 - Email: `admin@example.com`
 - Contraseña: `admin123`
 
-
 `src/server/db/prisma/seed-data.ts` queda como plantilla para futuros datos de prueba (solo permite PostgreSQL local!!). No se ejecuta durante la instalación, el build, `setup:local` ni la aplicación de migraciones.
 
->>>>>>> f0b1168 (Prisma tables)
+> > > > > > > f0b1168 (Prisma tables)
 
 ### Consultar la DB local
 
@@ -97,7 +95,7 @@ bun run db:studio --port 5555
 
 3. Pulsar **Test Connection**, descargar el driver si lo solicita y pulsar **Finish**.
 4. Abrir **Schemas → public → Tables**, elegir una tabla y abrir **Data**.
-<<<<<<< HEAD
+   <<<<<<< HEAD
 
 ## Worfklow de implementación de una funcionalidad
 
@@ -210,4 +208,5 @@ un API TOKEN configurado que proveen acceso a buckets de la cuenta del Responsab
 
 Para más información consulten los [docs de UploadThing](https://docs.uploadthing.com/getting-started/appdir).
 =======
->>>>>>> f0b1168 (Prisma tables)
+
+> > > > > > > f0b1168 (Prisma tables)

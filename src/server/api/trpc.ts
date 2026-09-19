@@ -58,8 +58,6 @@ export const protectedProcedure = t.procedure
     });
   });
 
-
-
 /*export const recruiterProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.session.user.role !== "RECLUTADOR") {
     throw new TRPCError({

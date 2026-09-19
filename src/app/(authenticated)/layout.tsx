@@ -28,7 +28,7 @@ export default function AuthenticatedLayout({
           href="/applicants"
           className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-foreground/10"
         >
-        Candidates
+          Candidates
         </Link>
       </aside>
 

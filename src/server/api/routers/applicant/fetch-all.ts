@@ -1,39 +1,31 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { z } from "zod";
-//import { recruiterProcedure } from "~/server/api/trpc";
-import { protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+
+import { auth } from "~/lib/auth";
+import { protectedProcedure } from "~/server/api/trpc";
 
 export const fetchAll = protectedProcedure
   .input(
     z
       .object({
-        //TODO agregar parametros para filtros, todos opcionales
-        //<param1>: z.string().optional()
         currentPage: z.number(),
       })
       .optional(),
   )
   .query(async ({ ctx, input }) => {
-    //delay para probar fallbacks, dejar
-    //await new Promise((resolve) => setTimeout(resolve, 3000));
-    /*
-        try {
-            //dato de prueba con muchos atributos faltantes
-            const newApplicant = await ctx.db.applicant.create({
-                data: {
-                    id: '1',
-                    name: 'martin',
-                    lastName: "fossatti",
-                    role: {
-                        connect: {
-                            id: "cmu1l7twf0000d9y61l89qj85",
-                        }
-                    }
-                }
-            });
-        } catch (error) { console.log(error); }
-        */
+    const canListApplicantsResult = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { applicant: ["read"] } },
+    });
+
+    if (!canListApplicantsResult.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Solo los reclutadores pueden consultar candidatos",
+      });
+    }
+
     try {
       const result = await ctx.db.applicant.findMany({
         skip: ((input?.currentPage ?? 1) - 1) * 8,
@@ -74,8 +66,8 @@ export const fetchAll = protectedProcedure
             },
           },
         },
-        //agregar filtros a la consulta
       });
+
       return { applicants: result };
     } catch (e) {
       if (e instanceof PrismaClientKnownRequestError) {
@@ -84,6 +76,7 @@ export const fetchAll = protectedProcedure
           message: "Unexpected prisma error",
         });
       }
+
       throw e;
     }
   });
