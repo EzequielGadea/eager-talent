@@ -1,7 +1,7 @@
 "use client";
 
 import { Upload, X } from "lucide-react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 import Image from "next/image";
 import type { Dispatch, SetStateAction } from "react";
@@ -28,27 +28,40 @@ import {
 
 import { paises as countries } from "~/lib/countries";
 
-import type { ApplicantFormValues } from "./new-applicant-form";
+import type { ApplicantFormValues } from "./edit-applicant-form";
 
 type PersonalDataProps = {
+  currentPhoto?: string | null;
   photoPreview?: string;
   setPhotoPreview: Dispatch<SetStateAction<string | undefined>>;
+  removePhoto: boolean;
+  setRemovePhoto: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function PersonalData({
+  currentPhoto,
   photoPreview,
   setPhotoPreview,
+  removePhoto,
+  setRemovePhoto,
 }: PersonalDataProps) {
   const {
     register,
     control,
-    setValue,
+    resetField,
     formState: { errors },
   } = useFormContext<ApplicantFormValues>();
 
+  const photoWatch = useWatch({
+    control,
+    name: "photo",
+  });
+
+  const photoFile = photoWatch?.[0];
+
   useEffect(() => {
     return () => {
-      if (photoPreview) {
+      if (photoPreview?.startsWith("blob:")) {
         URL.revokeObjectURL(photoPreview);
       }
     };
@@ -57,12 +70,21 @@ export default function PersonalData({
   const photoField = register("photo");
 
   function handleRemovePhoto() {
-    setValue("photo", undefined, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
+    if (photoFile) {
+      resetField("photo");
+      setPhotoPreview(removePhoto ? undefined : (currentPhoto ?? undefined));
+      return;
+    }
 
-    setPhotoPreview(undefined);
+    if (currentPhoto) {
+      setRemovePhoto(true);
+      setPhotoPreview(undefined);
+    }
+  }
+
+  function handleUndoRemovePhoto() {
+    setRemovePhoto(false);
+    setPhotoPreview(currentPhoto ?? undefined);
   }
 
   return (
@@ -89,7 +111,6 @@ export default function PersonalData({
                 const file = event.target.files?.[0];
 
                 if (!file) {
-                  setPhotoPreview(undefined);
                   return;
                 }
 
@@ -122,10 +143,14 @@ export default function PersonalData({
                 </label>
               </AttachmentMedia>
 
-              {photoPreview && (
+              {(photoFile || (currentPhoto && !removePhoto)) && (
                 <AttachmentAction
                   type="button"
-                  aria-label="Quitar foto"
+                  aria-label={
+                    photoFile
+                      ? "Descartar foto seleccionada"
+                      : "Eliminar foto actual"
+                  }
                   onClick={handleRemovePhoto}
                   className="absolute right-1 top-1 !h-6 !w-6 rounded-full bg-surface-card p-0 text-danger"
                 >
@@ -135,6 +160,17 @@ export default function PersonalData({
             </Attachment>
 
             <span className="mt-1 text-xs text-text-secondary">Foto</span>
+
+            {removePhoto && !photoFile && (
+              <button
+                type="button"
+                onClick={handleUndoRemovePhoto}
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                Deshacer
+              </button>
+            )}
+
             {errors.photo && (
               <p className="text-danger">{errors.photo.message}</p>
             )}

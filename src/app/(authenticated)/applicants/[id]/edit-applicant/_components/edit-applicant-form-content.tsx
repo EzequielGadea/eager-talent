@@ -32,6 +32,36 @@ type Props = {
   applicant: Applicant;
 };
 
+function getApplicantDefaultValues(applicant: Applicant): ApplicantFormValues {
+  return {
+    name: applicant.name,
+    lastname: applicant.lastName,
+    email: applicant.email ?? "",
+    phone: applicant.phone ?? "",
+    country: applicant.country ?? "",
+    linkedin: applicant.linkedin ?? "",
+
+    role: applicant.role.id,
+    area: applicant.area?.id ?? "",
+    seniority: applicant.seniority?.id ?? "",
+
+    englishLevel: applicant.englishLevel ?? "",
+    source: applicant.source ?? "",
+    howDidYouHear: applicant.hearAboutUs ?? "",
+
+    tags: applicant.tags.map((tag) => tag.id),
+
+    academicInstitution: applicant.academicInstitution ?? "",
+    title: applicant.title ?? "",
+    careerStartYear: applicant.careerStartYear ?? undefined,
+    careerEndYear: applicant.careerEndYear ?? undefined,
+
+    photo: undefined,
+    resume: undefined,
+    education: undefined,
+  };
+}
+
 export default function EditApplicantFormContent({ applicant }: Props) {
   const { startUpload } = useUploadThing("applicantFiles");
 
@@ -40,37 +70,12 @@ export default function EditApplicantFormContent({ applicant }: Props) {
   const [photoPreview, setPhotoPreview] = useState<string | undefined>(
     applicant.photo ?? undefined,
   );
+  const [removePhoto, setRemovePhoto] = useState(false);
 
   const methods = useForm<ApplicantFormValues>({
     resolver: zodResolver(applicantFormSchema),
 
-    defaultValues: {
-      name: applicant.name,
-      lastname: applicant.lastName,
-      email: applicant.email ?? "",
-      phone: applicant.phone ?? "",
-      country: applicant.country ?? "",
-      linkedin: applicant.linkedin ?? "",
-
-      role: applicant.role.id,
-      area: applicant.area?.id ?? "",
-      seniority: applicant.seniority?.id ?? "",
-
-      englishLevel: applicant.englishLevel ?? "",
-      source: applicant.source ?? "",
-      howDidYouHear: applicant.hearAboutUs ?? "",
-
-      tags: applicant.tags.map((tag) => tag.id),
-
-      academicInstitution: applicant.academicInstitution ?? "",
-      title: applicant.title ?? "",
-      careerStartYear: applicant.careerStartYear ?? undefined,
-      careerEndYear: applicant.careerEndYear ?? undefined,
-
-      photo: undefined,
-      resume: undefined,
-      education: undefined,
-    },
+    defaultValues: getApplicantDefaultValues(applicant),
   });
 
   const { isSubmitting } = methods.formState;
@@ -117,7 +122,11 @@ export default function EditApplicantFormContent({ applicant }: Props) {
         ? null
         : applicant.education;
 
-    const photoUrl = newPhotoUrl ?? applicant.photo;
+    const photoUrl = newPhotoUrl
+      ? newPhotoUrl
+      : removePhoto
+        ? null
+        : applicant.photo;
 
     await updateApplicantMutation.mutateAsync({
       id: applicant.id,
@@ -151,7 +160,12 @@ export default function EditApplicantFormContent({ applicant }: Props) {
   }
 
   function handleCancel() {
-    methods.reset();
+    methods.reset(getApplicantDefaultValues(applicant));
+
+    setPhotoPreview(applicant.photo ?? undefined);
+    setRemovePhoto(false);
+    setRemoveResume(false);
+    setRemoveEducation(false);
 
     router.push(`/applicants/${applicant.id}`);
   }
@@ -164,8 +178,11 @@ export default function EditApplicantFormContent({ applicant }: Props) {
         className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4"
       >
         <PersonalData
+          currentPhoto={applicant.photo}
           photoPreview={photoPreview}
           setPhotoPreview={setPhotoPreview}
+          removePhoto={removePhoto}
+          setRemovePhoto={setRemovePhoto}
         />
 
         <ProfessionalProfile />
