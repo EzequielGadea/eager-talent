@@ -449,7 +449,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Técnica",
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4500 USD",
+      desiredSalaryAmount: 4500,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -462,7 +463,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4200 USD",
+      desiredSalaryAmount: 4200,
+      desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
     },
   });
@@ -597,7 +599,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3200 USD",
+      desiredSalaryAmount: 3200,
+      desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
     },
   });
@@ -683,7 +686,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Técnica",
       stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3800 USD",
+      desiredSalaryAmount: 3800,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -743,7 +747,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3500 USD",
+      desiredSalaryAmount: 3500,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -805,7 +810,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Cultural",
       stageEntryDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$6000 USD",
+      desiredSalaryAmount: 6000,
+      desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
     },
   });
@@ -866,7 +872,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3400 USD",
+      desiredSalaryAmount: 3400,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -915,7 +922,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Técnica",
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4300 USD",
+      desiredSalaryAmount: 4300,
+      desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
     },
   });
@@ -964,7 +972,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4800 USD",
+      desiredSalaryAmount: 4800,
+      desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
     },
   });
@@ -1014,7 +1023,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3600 USD",
+      desiredSalaryAmount: 3600,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });

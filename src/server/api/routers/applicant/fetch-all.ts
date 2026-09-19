@@ -52,7 +52,16 @@ export const fetchAll = protectedProcedure
             },
           },
           applications: {
-            include: {
+            select: {
+              applicantId: true,
+              jobOpeningId: true,
+              applicationDate: true,
+              active: true,
+              currentStage: true,
+              stageEntryDate: true,
+              disqualificationDate: true,
+              disqualificationReason: true,
+              availability: true,
               jobOpening: {
                 select: {
                   name: true,
