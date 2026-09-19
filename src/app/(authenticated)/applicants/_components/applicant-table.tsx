@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 
 import {
@@ -23,7 +24,6 @@ export function ApplicantTable(props: {
 }) {
   const [applicantsData, setApplicants] = useState(props.applicantsData);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [isLoading, setIsLoading] = useState(false);
 
   async function updateRow(page: number) {
@@ -31,7 +31,8 @@ export function ApplicantTable(props: {
 
     try {
       const raw = getApplicantsPage(page);
-      const { applicantsData: newApplicants } = await transformApplicants(raw);
+      const { applicantsData: newApplicants } =
+        await transformApplicants(raw);
 
       setCurrentPage(page);
       setApplicants(newApplicants);
@@ -41,37 +42,39 @@ export function ApplicantTable(props: {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
-        <Table className="min-w-282.5">
-          <ApplicantTableHeader />
-          <TableBody className="divide-y divide-dashboard-border">
-            {isLoading ? (
-              <TableFallback />
-            ) : applicantsData?.length > 0 ? (
-              applicantsData.map((applicant) => (
-                <ApplicantRow key={applicant.id} applicant={applicant} />
-              ))
-            ) : (
-              <TableRow className="border-b border-dashboard-border hover:bg-transparent">
-                <TableCell
-                  colSpan={10}
-                  className="h-20 px-3 py-4 text-center text-sm font-medium text-dashboard-text-muted"
-                >
-                  No se encontraron candidatos.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+    <div className="flex flex-col">
+      <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+        <Table className="w-full table-auto">
+  <ApplicantTableHeader />
+
+  <TableBody className="divide-y divide-dashboard-border">
+    {isLoading ? (
+      <TableFallback />
+    ) : applicantsData?.length > 0 ? (
+      applicantsData.map((applicant) => (
+        <ApplicantRow key={applicant.id} applicant={applicant} />
+      ))
+    ) : (
+      <TableRow className="border-b border-dashboard-border hover:bg-transparent">
+        <TableCell
+          colSpan={10}
+          className="h-20 px-3 py-4 text-center text-sm font-medium text-dashboard-text-muted"
+        >
+          No se encontraron candidatos.
+        </TableCell>
+      </TableRow>
+    )}
+  </TableBody>
+</Table>
       </div>
-      <div className="mt-auto">
-        <ApplicantPagination
-          countApplicants={props.countApplicants}
-          currentPage={currentPage}
-          onPageChange={updateRow}
-        />
-      </div>
+
+      <div className="mt-4">
+  <ApplicantPagination
+    countApplicants={props.countApplicants}
+    currentPage={currentPage}
+    onPageChange={updateRow}
+  />
+</div>
     </div>
   );
 }
@@ -80,34 +83,43 @@ export function ApplicantTableHeader() {
   return (
     <TableHeader>
       <TableRow className="border-b border-dashboard-border hover:bg-transparent">
-        <TableHead className="w-35 h-10 px-3 py-4 pl-5 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Candidato
         </TableHead>
-        <TableHead className="w-20 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Etiquetas
         </TableHead>
-        <TableHead className="w-30 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Vacante
         </TableHead>
-        <TableHead className="w-20 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Rol
         </TableHead>
-        <TableHead className="w-14 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Seniority
         </TableHead>
-        <TableHead className="w-20 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Área
         </TableHead>
-        <TableHead className="w-20 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Fuente
         </TableHead>
-        <TableHead className="w-6 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
-          CV
-        </TableHead>
-        <TableHead className="w-15 h-10 px-3 py-4 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
-          LinkedIn
-        </TableHead>
-        <TableHead className="w-50 h-10 px-3 py-4 pr-5 text-sm font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+
+       <TableHead className="w-px whitespace-nowrap px-2 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+  CV
+</TableHead>
+
+        <TableHead className="w-px whitespace-nowrap px-2 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+in
+</TableHead>
+
+        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
           Correo
         </TableHead>
       </TableRow>

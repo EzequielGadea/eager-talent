@@ -33,11 +33,11 @@ export function Header(props: {
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            onClick={() => router.push("/candidatos/alta")}
+            onClick={() => router.push("/applicants/new-applicant")}
             className="h-9 gap-1.5 rounded-full bg-dashboard-dark px-5 py-5 text-sm font-medium text-white shadow-xs hover:bg-dashboard-dark-hover"
           >
             <Plus size={16} strokeWidth={2.5} />
-            <span>Añadir</span>
+            <span>Nuevo candidato</span>
           </Button>
         </div>
       </header>
