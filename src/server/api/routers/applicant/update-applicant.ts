@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { auth } from "~/lib/auth";
 
 import {
   EnglishLevel,
@@ -44,7 +45,22 @@ export const updateApplicant = protectedProcedure
       tagIds: z.array(z.string()),
     }),
   )
-  .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+    const permission = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: {
+        permissions: {
+          applicant: ["update"],
+        },
+      },
+    });
+
+    if (!permission.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permisos para editar candidatos",
+      });
+    }
     try {
       const applicant = await ctx.db.applicant.update({
         where: {
