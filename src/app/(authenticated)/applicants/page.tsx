@@ -39,12 +39,26 @@ function normalizeArrayParam<T extends string>(
   return Array.isArray(value) ? value : [value];
 }
 
-export default async function ApplicantsPage(props: {
+export default function ApplicantsPage(props: {
+  searchParams?: Promise<ApplicantsSearchParams>;
+}) {
+  return (
+    <Suspense fallback={<div>Cargando candidatos...</div>}>
+      <ProtectedApplicantsPage searchParams={props.searchParams} />
+    </Suspense>
+  );
+}
+
+async function ProtectedApplicantsPage(props: {
   searchParams?: Promise<ApplicantsSearchParams>;
 }) {
   const permission = await auth.api.hasPermission({
     headers: await headers(),
-    body: { permissions: { applicant: ["read"] } },
+    body: {
+      permissions: {
+        applicant: ["read"],
+      },
+    },
   });
 
   if (!permission.success) {
