@@ -16,7 +16,7 @@ import {
 } from "~/components/ui/select";
 import { Source } from "~/generated/prisma/enums";
 import { HearAboutUs } from "~/generated/prisma/enums";
-import type { ApplicantFormValues } from "./new-applicant-form";
+import type { ApplicantFormValues } from "./edit-applicant-form";
 
 export default function SourceAndTags() {
   const { control } = useFormContext<ApplicantFormValues>();
