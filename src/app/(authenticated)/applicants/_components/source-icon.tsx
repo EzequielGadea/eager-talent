@@ -1,4 +1,4 @@
-import { Globe, Send, Users, X } from "lucide-react";
+import { Globe, Send, Users } from "lucide-react";
 
 export function getSourceIcon(sourceText: string) {
   switch (sourceText) {
@@ -9,6 +9,6 @@ export function getSourceIcon(sourceText: string) {
     case "Referral":
       return <Users size={14} className="text-dashboard-text-muted" />;
     default:
-      return <X size={14} className="text-dashboard-text-muted" />;
+      return null;
   }
 }
