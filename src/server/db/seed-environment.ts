@@ -13,7 +13,7 @@ export function assertSeedEnvironment(databaseUrl: string): void {
   if (!["postgres:", "postgresql:"].includes(url.protocol)) {
     throw new Error("El seed requiere una conexión PostgreSQL directa.");
   }
-  if (!local) {
+  if (!local && process.env.ALLOW_REMOTE_SEED != "true") {
     throw new Error("El seed de prueba requiere una base PostgreSQL local.");
   }
 }

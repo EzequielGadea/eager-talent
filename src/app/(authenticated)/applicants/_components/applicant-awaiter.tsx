@@ -4,8 +4,8 @@ import { ApplicantsPromise } from "../types";
 import { ApplicantTable } from "./applicant-table";
 import { Header } from "./header";
 import { Filters } from "./filters";
-import { ApplicantPagination } from "./applicant-pagination";
 import { transformApplicants } from "../utils";
+import { api } from "~/lib/trpc/server";
 
 async function awaitData(promise: ApplicantsPromise) {
   const { applicantsData, countApplicants, countOpenings } =
@@ -21,14 +21,17 @@ async function awaitCount(promiseCount: Promise<number>) {
 export async function ApplicantAwaiterTable(props: {
   promiseData: ApplicantsPromise;
   promiseCount: Promise<number>;
+  currentPage: Promise<number>;
 }) {
   const { applicantsData } = await awaitData(props.promiseData);
   const countApplicants = await awaitCount(props.promiseCount);
+  const currentPage = await props.currentPage;
 
   return (
     <ApplicantTable
       applicantsData={applicantsData}
       countApplicants={countApplicants}
+      currentPage={currentPage}
     />
   );
 }
@@ -45,25 +48,35 @@ export async function ApplicantAwaiterHeader(props: {
   );
 }
 
-export async function ApplicantAwaiterPagination(props: {
-  promiseCount: Promise<number>;
-  currentPage: number;
+export async function ApplicantAwaiterFilters({
+  promiseRoleData,
+  promiseSeniorityData,
+  promiseAreaData,
+  promiseJobOpeningData,
+  promiseTagData,
+}: {
+  promiseRoleData: ReturnType<typeof api.role.getAllRoles>;
+  promiseSeniorityData: ReturnType<typeof api.seniority.getAllSeniorities>;
+  promiseAreaData: ReturnType<typeof api.area.getAllAreas>;
+  promiseJobOpeningData: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
+  promiseTagData: ReturnType<typeof api.tag.getAllTags>;
 }) {
-  const countApplicants = await awaitCount(props.promiseCount);
+  const [roleData, seniorityData, areaData, jobOpeningData, tagData] =
+    await Promise.all([
+      promiseRoleData,
+      promiseSeniorityData,
+      promiseAreaData,
+      promiseJobOpeningData,
+      promiseTagData,
+    ]);
+
   return (
-    <>
-      <ApplicantPagination
-        countApplicants={countApplicants}
-        currentPage={props.currentPage}
-      />
-    </>
+    <Filters
+      roleData={roleData}
+      seniorityData={seniorityData}
+      areaData={areaData}
+      jobOpeningData={jobOpeningData}
+      tagData={tagData}
+    />
   );
-}
-
-export async function ApplicantAwaiterFilters(props: {
-  promiseData: ApplicantsPromise;
-}) {
-  const { applicantsData } = await awaitData(props.promiseData);
-
-  return <Filters applicants={applicantsData} />;
 }

@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import type { Prisma } from "~/generated/prisma/client";
 import { z } from "zod";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -41,7 +40,7 @@ export const saveApplicantNoteProcedure = protectedProcedure
     }
 
     const data = {
-      content: input.content as Prisma.InputJsonValue,
+      content: input.content,
       lastModifiedById: ctx.session.user.id,
     };
 

@@ -1,6 +1,6 @@
 "use client";
-
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import {
   Table,
@@ -14,66 +14,63 @@ import {
 import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantInfo } from "../types";
 import { ApplicantRow } from "./applicant-row";
-import { TableFallback } from "./fallbacks";
-import { transformApplicants } from "../utils";
-import { getApplicantsPage } from "../actions";
 
 export function ApplicantTable(props: {
   applicantsData: ApplicantInfo[];
   countApplicants: number;
+  currentPage: number;
 }) {
-  const [applicantsData, setApplicants] = useState(props.applicantsData);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  async function updateRow(page: number) {
-    setIsLoading(true);
-
-    try {
-      const raw = getApplicantsPage(page);
-      const { applicantsData: newApplicants } = await transformApplicants(raw);
-
-      setCurrentPage(page);
-      setApplicants(newApplicants);
-    } finally {
-      setIsLoading(false);
-    }
+  function updatePage(page: number) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(page));
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
+  const hasActiveFilters = [
+    "search",
+    "role",
+    "jobOpening",
+    "seniority",
+    "area",
+    "tag",
+    "source",
+  ].some((key) => searchParams.has(key));
+
   return (
-    <div className="flex flex-col">
-      <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-        <Table className="w-full table-auto">
+    <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+      <div className="w-full overflow-x-auto">
+        <Table className="min-w-262.5 table-fixed">
           <ApplicantTableHeader />
 
           <TableBody className="divide-y divide-dashboard-border">
-            {isLoading ? (
-              <TableFallback />
-            ) : applicantsData?.length > 0 ? (
-              applicantsData.map((applicant) => (
-                <ApplicantRow key={applicant.id} applicant={applicant} />
-              ))
-            ) : (
-              <TableRow className="border-b border-dashboard-border hover:bg-transparent">
+            {props.applicantsData.length === 0 ? (
+              <TableRow>
                 <TableCell
                   colSpan={10}
-                  className="h-20 px-3 py-4 text-center text-sm font-medium text-dashboard-text-muted"
+                  className="h-24 text-center text-dashboard-text-muted"
                 >
-                  No se encontraron candidatos.
+                  {hasActiveFilters
+                    ? "No se encontraron candidatos con los filtros aplicados."
+                    : "Todavía no hay candidatos registrados."}
                 </TableCell>
               </TableRow>
+            ) : (
+              props.applicantsData.map((applicant) => (
+                <ApplicantRow key={applicant.id} applicant={applicant} />
+              ))
             )}
           </TableBody>
         </Table>
       </div>
-
-      <div className="mt-4">
-        <ApplicantPagination
-          countApplicants={props.countApplicants}
-          currentPage={currentPage}
-          onPageChange={updateRow}
-        />
-      </div>
+      <ApplicantPagination
+        countApplicants={props.countApplicants}
+        currentPage={props.currentPage}
+        onPageChange={updatePage}
+      />
     </div>
   );
 }
@@ -81,44 +78,35 @@ export function ApplicantTable(props: {
 export function ApplicantTableHeader() {
   return (
     <TableHeader>
-      <TableRow className="border-b border-dashboard-border hover:bg-transparent">
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+      <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+        <TableHead className="h-9.75 w-35 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
           Candidato
         </TableHead>
-
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+        <TableHead className="w-32 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
           Etiquetas
         </TableHead>
-
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+        <TableHead className="w-30 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
           Vacante
         </TableHead>
-
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+        <TableHead className="w-28 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
           Rol
         </TableHead>
-
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+        <TableHead className="w-20 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
           Seniority
         </TableHead>
-
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+        <TableHead className="w-24 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
           Área
         </TableHead>
-
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
-          Fuente
+        <TableHead className="w-24 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+          Source
         </TableHead>
-
-        <TableHead className="w-px whitespace-nowrap px-2 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+        <TableHead className="w-8 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
           CV
         </TableHead>
-
-        <TableHead className="w-px whitespace-nowrap px-2 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
-          in
+        <TableHead className="w-15 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+          LinkedIn
         </TableHead>
-
-        <TableHead className="px-3 py-2 text-center text-xs font-bold uppercase tracking-[0.04em] text-dashboard-text-light">
+        <TableHead className="w-36 h-9.75 px-3 py-0 pr-4 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
           Correo
         </TableHead>
       </TableRow>

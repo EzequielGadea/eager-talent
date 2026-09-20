@@ -1,50 +1,42 @@
-import { Plus, Loader2 } from "lucide-react";
-
+import { ChevronDown, Download, Loader2, Plus, Search } from "lucide-react";
 import { Button } from "~/components/ui/button";
-
 import { TableCell, TableRow } from "~/components/ui/table";
-
-import { Search, ChevronDown } from "lucide-react";
-
 import { Input } from "~/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
-
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
-} from "~/components/ui/pagination";
 
 export function HeaderFallback() {
   return (
     <>
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-4.5 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-dashboard-dark">
+          <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
             Candidatos
           </h1>
-          <p className="mt-0.5 text-base font-medium text-dashboard-text-muted">
+          <p className="mt-1 text-sm font-normal leading-normal text-dashboard-text-muted">
             Esperando datos de candidatos...
           </p>
         </div>
 
         {/* Botones */}
         <div className="flex items-center gap-2">
-          +{" "}
           <Button
+            aria-disabled="true"
+            tabIndex={-1}
+            variant="outline"
             size="sm"
-            //onClick={() => redirect("/candidatos/alta")} TODO no usable onclick por ser server, mostrar bloqueado de alguna forma, lo mismo con export
-            className="h-9 gap-1.5 rounded-full bg-dashboard-dark px-5 py-5 text-sm font-medium text-white shadow-xs hover:bg-dashboard-dark-hover"
+            className="pointer-events-none h-8.5 gap-2 rounded-full border-dashboard-border bg-white px-4 text-[13px] font-semibold text-dashboard-text-muted shadow-xs hover:bg-dashboard-track hover:text-dashboard-text-muted"
+          >
+            <Download size={16} className="text-dashboard-text-muted" />
+            <span>Exportar</span>
+          </Button>
+
+          <Button
+            aria-disabled="true"
+            tabIndex={-1}
+            size="sm"
+            className="pointer-events-none h-8.5 gap-2 rounded-full bg-dashboard-dark px-4 text-[13px] font-semibold leading-none text-white shadow-none hover:bg-dashboard-dark-hover"
           >
             <Plus size={16} strokeWidth={2.5} />
-            <span>Añadir</span>
+            <span>Nuevo candidato</span>
           </Button>
         </div>
       </header>
@@ -54,61 +46,9 @@ export function HeaderFallback() {
 
 export function TableFallback() {
   return (
-    <TableRow>
-      <TableCell className="px-5 py-4 pl-5">
-        <div className="flex items-center gap-3">
-          <div
-            className={`flex size-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold`}
-          ></div>
-          <span className="max-w-36 truncate text-sm font-bold text-dashboard-dark whitespace-normal text-center"></span>
-        </div>
-      </TableCell>
-
-      <TableCell className="px-3 py-4">
-        <div className="flex flex-wrap items-center gap-1.5"></div>
-      </TableCell>
-
-      {/* Vacante */}
-      <TableCell className="px-3 py-4">
-        <div
-          className="max-w-44 truncate text-sm font-semibold text-dashboard-text-muted"
-          title="BBBBBBBBBBBBBB"
-        ></div>
-      </TableCell>
-
-      {/* Rol */}
-      <TableCell className="px-3 py-4 text-sm font-medium text-dashboard-text-muted"></TableCell>
-
-      {/* Seniority */}
-      <TableCell className="px-3 py-4">
-        <Loader2 className="animate-spin" />
-      </TableCell>
-
-      {/* Área */}
-      <TableCell className="px-3 py-4 text-sm font-medium text-dashboard-text-muted"></TableCell>
-
-      {/* Source */}
-      <TableCell className="px-3 py-4">
-        <div className="flex items-center gap-1.5 text-sm font-semibold text-dashboard-text-muted">
-          <span className="shrink-0"></span>
-          <span className="truncate"></span>
-        </div>
-      </TableCell>
-
-      {/* CV */}
-      <TableCell className="px-3 py-4 text-center"></TableCell>
-
-      {/* LinkedIn */}
-      <TableCell className="px-3 py-4 text-center"></TableCell>
-
-      {/* Email */}
-      <TableCell className="px-3 py-4 pr-5">
-        <div
-          className="max-w-48 truncate text-sm font-medium text-dashboard-text-muted"
-          title="AAAAAAAAAAAAAAAAA"
-        >
-          {}
-        </div>
+    <TableRow className="h-17.5 hover:bg-transparent">
+      <TableCell colSpan={10} className="px-4 py-3 text-center">
+        <Loader2 className="mx-auto size-5 animate-spin text-dashboard-text-muted" />
       </TableCell>
     </TableRow>
   );
@@ -138,7 +78,7 @@ export function FiltersFallback() {
     },
     {
       id: "Area",
-      label: "Area",
+      label: "Área",
     },
     {
       id: "Source",
@@ -150,15 +90,6 @@ export function FiltersFallback() {
     },
   ];
 
-  const selections: Record<FilterId, string[]> = {
-    Vacantes: [],
-    Roles: [],
-    Seniority: [],
-    Area: [],
-    Source: [],
-    Etiquetas: [],
-  };
-
   return (
     <>
       <div className="relative w-56 shrink-0">
@@ -168,82 +99,25 @@ export function FiltersFallback() {
         />
         <Input
           type="text"
+          readOnly
+          tabIndex={-1}
           placeholder="Buscar por nombre..."
-          className="h-8 rounded-lg border-dashboard-border bg-white pl-9 text-sm shadow-sm"
+          className="h-8.5 rounded-lg border-dashboard-border bg-white pl-9 text-[13px] font-normal shadow-none"
         />
       </div>
 
       {filterConfigs.map((config) => {
-        const count = selections[config.id]?.length || 0;
-        const buttonText = count > 0 ? `${config.id} · ${count}` : config.label;
-
         return (
-          <Popover key={config.id}>
-            <PopoverTrigger className="flex h-8 items-center gap-1.5 rounded-lg border border-dashboard-border bg-white px-4 text-sm font-medium text-dashboard-text-muted shadow-sm transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text">
-              <span>{buttonText}</span>
-              <ChevronDown size={14} className="text-dashboard-text-muted" />
-            </PopoverTrigger>
-
-            <PopoverContent align="start" className="w-56 rounded-xl p-3">
-              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-dashboard-text-light">
-                Filtrar por {config.id.toLowerCase()}
-              </p>
-
-              <Input
-                type="text"
-                placeholder={`Buscar ${config.id.toLowerCase()}...`}
-                className="mb-3 h-8 rounded-md border-dashboard-border bg-dashboard-track/40 text-sm"
-              />
-
-              <Button
-                variant="ghost"
-                size="sm"
-                //onClick={() => clearSelection(config.id)}
-                className="h-auto p-0 text-xs font-bold text-dashboard-text-muted hover:bg-transparent hover:text-dashboard-success-text"
-              >
-                Limpiar
-              </Button>
-            </PopoverContent>
-          </Popover>
+          <div
+            key={config.id}
+            aria-disabled="true"
+            className="pointer-events-none flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none"
+          >
+            <span>{config.label}</span>
+            <ChevronDown size={14} className="text-dashboard-text-muted" />
+          </div>
         );
       })}
     </>
-  );
-}
-
-export function PaginationFallback() {
-  return (
-    <div className="mt-4 flex items-center justify-between pb-6">
-      <p className="text-sm font-medium text-dashboard-text-muted">
-        Esperando candidatos...
-      </p>
-
-      <Pagination className="mx-0 w-auto">
-        <PaginationContent className="gap-1">
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              className="h-7 w-7 rounded-md p-0 text-dashboard-text-muted hover:bg-dashboard-track [&>span]:hidden"
-            />
-          </PaginationItem>
-
-          <PaginationItem>
-            <PaginationLink
-              href="#"
-              isActive
-              className="h-7 w-7 rounded-md bg-dashboard-dark text-sm font-bold text-white shadow-sm hover:bg-dashboard-dark-hover hover:text-white"
-            >
-              1
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              className="h-7 w-7 rounded-md p-0 text-dashboard-text-muted hover:bg-dashboard-track [&>span]:hidden"
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </div>
   );
 }

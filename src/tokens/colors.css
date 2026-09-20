@@ -94,4 +94,5 @@
   --tag-red-fg: var(--red-600);
   --tag-gray-bg: var(--slate-100);
   --tag-gray-fg: var(--slate-600);
+  --tag-default-color: var(--slate-400);
 }
