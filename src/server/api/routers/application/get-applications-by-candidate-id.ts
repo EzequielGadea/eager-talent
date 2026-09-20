@@ -11,16 +11,14 @@ export const getApplicationsByCandidateIdProcedure = protectedProcedure
     }),
   )
   .query(async ({ input, ctx }) => {
-    const [canReadAllResult, canReadAssignedResult] = await Promise.all([
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { application: ["read"] } },
-      }),
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { application: ["readAssigned"] } },
-      }),
-    ]);
+    const canReadAllResult = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { application: ["read"] } },
+    });
+    const canReadAssignedResult = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { application: ["readAssigned"] } },
+    });
 
     if (!canReadAllResult.success && !canReadAssignedResult.success) {
       throw new TRPCError({
@@ -29,7 +27,7 @@ export const getApplicationsByCandidateIdProcedure = protectedProcedure
       });
     }
 
-    return ctx.db.application.findMany({
+    const applications = await ctx.db.application.findMany({
       where: {
         applicantId: input.candidateId,
         ...(canReadAllResult.success
@@ -43,7 +41,15 @@ export const getApplicationsByCandidateIdProcedure = protectedProcedure
       orderBy: {
         applicationDate: "desc",
       },
-      include: {
+      select: {
+        applicantId: true,
+        jobOpeningId: true,
+        applicationDate: true,
+        active: true,
+        currentStage: true,
+        desiredSalaryAmount: true,
+        desiredSalaryCurrency: true,
+        availability: true,
         jobOpening: {
           select: {
             id: true,
@@ -52,4 +58,9 @@ export const getApplicationsByCandidateIdProcedure = protectedProcedure
         },
       },
     });
+
+    return applications.map((application) => ({
+      ...application,
+      desiredSalaryAmount: application.desiredSalaryAmount?.toString() ?? null,
+    }));
   });

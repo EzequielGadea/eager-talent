@@ -14,40 +14,57 @@ export const getActivitiesByCandidateIdProcedure = protectedProcedure
     }),
   )
   .query(async ({ input, ctx }) => {
-    const [canViewLogsResult, canReadAllResult, canReadAssignedResult] =
-      await Promise.all([
-        auth.api.hasPermission({
-          headers: ctx.headers,
-          body: { permissions: { activity: ["read"] } },
-        }),
-        auth.api.hasPermission({
-          headers: ctx.headers,
-          body: { permissions: { applicant: ["read"] } },
-        }),
-        auth.api.hasPermission({
-          headers: ctx.headers,
-          body: { permissions: { applicant: ["readAssigned"] } },
-        }),
-      ]);
+    const [
+      canReadAllActivitiesResult,
+      canReadAssignedActivitiesResult,
+      canReadAllCandidatesResult,
+      canReadAssignedCandidatesResult,
+    ] = await Promise.all([
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { activity: ["read"] } },
+      }),
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { activity: ["readAssigned"] } },
+      }),
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { applicant: ["read"] } },
+      }),
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { applicant: ["readAssigned"] } },
+      }),
+    ]);
 
-    if (!canViewLogsResult.success) {
+    if (
+      !canReadAllActivitiesResult.success &&
+      !canReadAssignedActivitiesResult.success
+    ) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "No tenés permiso para consultar los logs del candidato",
       });
     }
 
-    if (!canReadAllResult.success && !canReadAssignedResult.success) {
+    if (
+      !canReadAllCandidatesResult.success &&
+      !canReadAssignedCandidatesResult.success
+    ) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "No tenés permiso para consultar candidatos",
       });
     }
 
+    const canReadCandidateWithoutAssignment =
+      canReadAllActivitiesResult.success && canReadAllCandidatesResult.success;
+
     const candidate = await ctx.db.applicant.findFirst({
       where: {
         id: input.candidateId,
-        ...(canReadAllResult.success
+        ...(canReadCandidateWithoutAssignment
           ? {}
           : isHiringManagerAssignedToCandidate(ctx.session.user.id)),
       },
