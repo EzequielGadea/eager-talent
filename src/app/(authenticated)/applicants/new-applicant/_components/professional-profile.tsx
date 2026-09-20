@@ -229,7 +229,7 @@ export default function ProfessionalProfile() {
               <div className="space-y-1">
                 <Label htmlFor="currency">Salario deseado</Label>
                 <div className="flex items-center gap-2">
-                  <div className="w-17 shrink-0">
+                  <div className="w-24 shrink-0">
                     <Controller
                       name="currency"
                       control={control}
@@ -243,6 +243,7 @@ export default function ProfessionalProfile() {
                           </SelectTrigger>
 
                           <SelectContent>
+                            <SelectItem value="">Sin seleccionar</SelectItem>
                             <SelectItem value="USD">USD</SelectItem>
                             <SelectItem value="UYU">UYU</SelectItem>
                           </SelectContent>
