@@ -10,11 +10,7 @@ type NavigationItemProps = {
   href?: string;
 };
 
-export function NavigationItem({
-  icon,
-  label,
-  href,
-}: NavigationItemProps) {
+export function NavigationItem({ icon, label, href }: NavigationItemProps) {
   const pathname = usePathname();
   const active = href ? pathname === href : false;
 

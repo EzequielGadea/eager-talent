@@ -1,15 +1,12 @@
 import { ChevronUp, FileText, House, Users } from "lucide-react";
+import { Suspense } from "react";
 import { MetricsIcon, SettingsIcon, VacanciesIcon } from "./app-icons";
 import { NavigationItem } from "./navigation-item";
 
 function EagerTalentBrand() {
   return (
     <div className="flex items-center gap-2.5 px-5 pt-5 pb-4">
-      <svg
-        viewBox="0 0 40 40"
-        className="size-7.5 shrink-0"
-        aria-hidden="true"
-      >
+      <svg viewBox="0 0 40 40" className="size-7.5 shrink-0" aria-hidden="true">
         <defs>
           <linearGradient
             id="sidebar-logo-gradient"
@@ -66,60 +63,62 @@ export function AppSidebar() {
     <aside className="flex min-h-screen w-60 shrink-0 flex-col border-r border-border-default bg-white">
       <EagerTalentBrand />
 
-      <nav
-        aria-label="Navegación principal"
-        className="flex flex-1 flex-col px-3"
-      >
-        <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-          PRINCIPAL
-        </p>
+      <Suspense fallback={null}>
+        <nav
+          aria-label="Navegación principal"
+          className="flex flex-1 flex-col px-3"
+        >
+          <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+            PRINCIPAL
+          </p>
 
-        <NavigationItem
-          icon={<House className="size-4.5" aria-hidden="true" />}
-          label="Dashboard"
-          href="/dashboard"
-        />
+          <NavigationItem
+            icon={<House className="size-4.5" aria-hidden="true" />}
+            label="Dashboard"
+            href="/dashboard"
+          />
 
-        <NavigationItem
-          icon={<Users className="size-4.5" aria-hidden="true" />}
-          label="Candidatos"
-          href="/applicants"
-        />
+          <NavigationItem
+            icon={<Users className="size-4.5" aria-hidden="true" />}
+            label="Candidatos"
+            href="/applicants"
+          />
 
-        <NavigationItem
-          icon={<VacanciesIcon className="size-4.5" aria-hidden="true" />}
-          label="Vacantes"
-        />
+          <NavigationItem
+            icon={<VacanciesIcon className="size-4.5" aria-hidden="true" />}
+            label="Vacantes"
+          />
 
-        <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-          ANÁLISIS
-        </p>
+          <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+            ANÁLISIS
+          </p>
 
-        <NavigationItem
-          icon={<MetricsIcon className="size-4.5" aria-hidden="true" />}
-          label="Métricas"
-        />
+          <NavigationItem
+            icon={<MetricsIcon className="size-4.5" aria-hidden="true" />}
+            label="Métricas"
+          />
 
-        <NavigationItem
-          icon={<FileText className="size-4.5" aria-hidden="true" />}
-          label="Reportes"
-        />
+          <NavigationItem
+            icon={<FileText className="size-4.5" aria-hidden="true" />}
+            label="Reportes"
+          />
 
-        <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-          EMPRESA
-        </p>
+          <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+            EMPRESA
+          </p>
 
-        <NavigationItem
-          icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
-          label="Configuración"
-        />
+          <NavigationItem
+            icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
+            label="Configuración"
+          />
 
-        <NavigationItem
-          icon={<Users className="size-4.5" aria-hidden="true" />}
-          label="Perfil"
-          href="/profile"
-        />
-      </nav>
+          <NavigationItem
+            icon={<Users className="size-4.5" aria-hidden="true" />}
+            label="Perfil"
+            href="/profile"
+          />
+        </nav>
+      </Suspense>
 
       <SidebarUserPlaceholder />
     </aside>
