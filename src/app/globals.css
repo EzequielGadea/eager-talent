@@ -143,8 +143,6 @@
   --color-tag-red-fg: var(--tag-red-fg);
   --color-tag-gray-bg: var(--tag-gray-bg);
   --color-tag-gray-fg: var(--tag-gray-fg);
-<<<<<<< HEAD
-=======
 
   /*maybe*/
   --color-dashboard-purple-avatar: var(--dashboard-purple-avatar);
@@ -166,7 +164,6 @@
   --color-dashboard-dark-hover: var(--dashboard-dark-hover);
   --color-dashboard-text-light: var(--dashboard-text-light);
   --color-dashboard-success-light: var(--dashboard-success-light);
->>>>>>> origin/dev
   --color-tag-default-color: var(--tag-default-color);
 }
 
