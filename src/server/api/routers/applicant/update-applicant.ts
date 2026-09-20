@@ -22,14 +22,14 @@ export const updateApplicant = protectedProcedure
       country: z.string().optional(),
       linkedin: z.string().optional(),
 
-      englishLevel: z.enum(EnglishLevel).optional(),
-      source: z.enum(Source).optional(),
-      hearAboutUs: z.enum(HearAboutUs).optional(),
+      englishLevel: z.enum(EnglishLevel).nullable().optional(),
+      source: z.enum(Source).nullable().optional(),
+      hearAboutUs: z.enum(HearAboutUs).nullable().optional(),
 
       title: z.string().optional(),
       academicInstitution: z.string().optional(),
-      careerStartYear: z.number().optional(),
-      careerEndYear: z.number().optional(),
+      careerStartYear: z.number().nullable().optional(),
+      careerEndYear: z.number().nullable().optional(),
 
       education: z.string().nullable().optional(),
       resume: z.string().nullable().optional(),

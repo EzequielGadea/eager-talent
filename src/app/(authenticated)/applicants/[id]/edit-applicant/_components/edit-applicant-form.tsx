@@ -8,6 +8,8 @@ import { z } from "zod";
 import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 import ApplicantEditFormContent from "./edit-applicant-form-content";
 
+const MAX_PHOTO_SIZE = 4 * 1024 * 1024;
+
 export const applicantFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
@@ -31,6 +33,11 @@ export const applicantFormSchema = z.object({
         files[0].type === "image/jpeg" ||
         files[0].type === "image/jpg",
       "El archivo debe ser una imagen PNG, JPEG o JPG",
+    )
+    .refine(
+      (files) =>
+        !files || files.length === 0 || files[0].size <= MAX_PHOTO_SIZE,
+      "La foto no puede superar los 4 MB",
     )
     .optional(),
 
@@ -78,8 +85,8 @@ export const applicantFormSchema = z.object({
   academicInstitution: z.string(),
 
   title: z.string(),
-  careerStartYear: z.number().optional(),
-  careerEndYear: z.number().optional(),
+  careerStartYear: z.number().int().min(1900).max(2100).nullable().optional(),
+  careerEndYear: z.number().int().min(1900).max(2100).nullable().optional(),
 });
 
 export type ApplicantFormValues = z.infer<typeof applicantFormSchema>;
