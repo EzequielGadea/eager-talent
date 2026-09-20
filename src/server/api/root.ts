@@ -1,12 +1,16 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { activityRouter } from "./routers/activity";
-import { applicantRouter } from "./routers/applicant";
 import { candidateRouter } from "./routers/candidate";
+import { activityRouter } from "./routers/activity";
+import { candidateNoteRouter } from "./routers/candidate-note";
+import { applicationRouter } from "./routers/application";
+import { interviewsRouter } from "./routers/interviews";
 
 export const appRouter = createTRPCRouter({
-  applicant: applicantRouter,
   candidate: candidateRouter,
   activity: activityRouter,
+  candidateNote: candidateNoteRouter,
+  application: applicationRouter,
+  interview: interviewsRouter,
 });
 
 export type AppRouter = typeof appRouter;
