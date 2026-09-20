@@ -4,12 +4,12 @@ import { notFound } from "next/navigation";
 
 import Loading from "~/components/ui/loading";
 import { api } from "~/lib/trpc/server";
-import { ApplicantOverviewCard } from "./_components/applicant-overview-card";
 import { ApplicantInfoCards } from "./_components/applicant-info-cards";
 import { ApplicantApplications } from "./_components/applicant-applications";
 import { ApplicantLogsSection } from "./_components/applicant-logs-section";
 import { ApplicantNotes } from "./_components/applicant-notes";
 import { ApplicantTags } from "./_components/applicant-tags";
+import { ApplicantOverview } from "./_components/applicant-overview";
 
 type ApplicantPageProps = {
   params: Promise<{
@@ -40,7 +40,7 @@ async function ApplicantPageContent({ params }: ApplicantPageProps) {
     <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] selection:bg-tag-green-bg selection:text-tag-green-fg">
       <div className="flex min-w-0 flex-col gap-4">
         <Suspense fallback={<Loading />}>
-          <ApplicantOverviewCard applicantPromise={applicantPromise} />
+          <ApplicantOverview applicantPromise={applicantPromise} />
         </Suspense>
 
         <Suspense fallback={<Loading />}>

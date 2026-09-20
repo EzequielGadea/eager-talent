@@ -31,13 +31,20 @@ import { englishLevelLabels, sourceLabels } from "../_lib/applicant-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
 
-type ApplicantPromise = Promise<
-  Awaited<ReturnType<typeof api.applicant.getById>>
->;
-type ApplicantOverviewCardProps = { applicantPromise: ApplicantPromise };
+type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
-export async function ApplicantOverviewCard({
-  applicantPromise,
+type ApplicantOverviewCardProps = {
+  applicant: Applicant;
+  canShareWithHiringManager: boolean;
+  canUpdateApplicant: boolean;
+  canDeleteApplicant: boolean;
+};
+
+export function ApplicantOverviewCard({
+  applicant,
+  canShareWithHiringManager,
+  canUpdateApplicant,
+  canDeleteApplicant,
 }: ApplicantOverviewCardProps) {
   const {
     name,
@@ -51,7 +58,9 @@ export async function ApplicantOverviewCard({
     englishLevel,
     role,
     seniority,
-  } = await applicantPromise;
+  } = applicant;
+
+  const canShowActions = canUpdateApplicant || canDeleteApplicant;
   const linkedinUrl = getSafeExternalUrl(linkedin);
   const linkedinLabel = linkedinUrl
     ?.replace(/^https?:\/\//, "")
@@ -108,46 +117,58 @@ export async function ApplicantOverviewCard({
           </div>
 
           <div className="flex shrink-0 items-center gap-2.5">
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
-            >
-              <UserRound className="h-3.5 w-3.5" /> Compartir con un HM
-            </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    className="h-8 w-8 rounded-lg hover:bg-muted"
-                  />
-                }
+            {canShareWithHiringManager && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
               >
-                <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-64">
-                <DropdownMenuItem className="gap-2">
-                  <Pencil className="h-4 w-4" />
-                  <span>Editar datos del candidato</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="gap-2">
-                  <Briefcase className="h-4 w-4" />
-                  <span>Postular a una vacante</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className={cn(
-                    "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
-                  )}
+                <UserRound className="h-3.5 w-3.5" /> Compartir con un HM
+              </Button>
+            )}
+
+            {canShowActions && (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="h-8 w-8 rounded-lg hover:bg-muted"
+                    />
+                  }
                 >
-                  <Trash2 className="h-4 w-4" />
-                  <span>Eliminar candidato</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64">
+                  {canUpdateApplicant && (
+                    <>
+                      <DropdownMenuItem className="gap-2">
+                        <Pencil className="h-4 w-4" />
+                        <span>Editar datos del candidato</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="gap-2">
+                        <Briefcase className="h-4 w-4" />
+                        <span>Postular a una vacante</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {canUpdateApplicant && canDeleteApplicant && (
+                    <DropdownMenuSeparator />
+                  )}
+                  {canDeleteApplicant && (
+                    <DropdownMenuItem
+                      className={cn(
+                        "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
+                      )}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span>Eliminar candidato</span>
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -187,7 +208,6 @@ function ApplicantAttribute({ label, value }: ApplicantAttributeProps) {
       <p className="text-xs font-semibold uppercase text-text-tertiary">
         {label}
       </p>
-
       <p className="mt-1 text-sm font-medium">{value}</p>
     </div>
   );
