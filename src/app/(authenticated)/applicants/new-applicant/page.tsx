@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import NewApplicantForm from "./_components/new-applicant-form";
-import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 
