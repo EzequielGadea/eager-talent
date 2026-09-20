@@ -2,10 +2,13 @@ import { CircleHelp, Download, File, GraduationCap } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
-import type { CandidatePromise } from "../types";
+import type { api } from "~/lib/trpc/server";
 import { hearAboutUsLabels } from "../_lib/candidate-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
 
+type CandidatePromise = Promise<
+  Awaited<ReturnType<typeof api.candidate.getById>>
+>;
 type CandidateInfoCardsProps = { candidatePromise: CandidatePromise };
 
 export async function CandidateInfoCards({

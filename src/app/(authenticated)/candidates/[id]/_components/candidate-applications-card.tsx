@@ -31,13 +31,6 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-const linkClass =
-  "group inline-flex h-auto p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2";
-const linkIconClass =
-  "h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5";
-const outlineBtnClass =
-  "rounded-full border-border-strong bg-background text-xs font-medium text-tag-gray-fg shadow-none hover:bg-tag-gray-bg";
-
 type CandidateApplicationsCardProps = {
   canCreatePublicLink: boolean;
   canUpdateApplication: boolean;
@@ -48,7 +41,8 @@ type CandidateApplicationsCardProps = {
     applicationDate: Date | string;
     currentStage: string;
     active: boolean;
-    desiredSalary?: string | null;
+    desiredSalaryAmount?: string | null;
+    desiredSalaryCurrency?: string | null;
     availability?: string | null;
     jobOpening: { id: string; name: string };
     interviews: {
@@ -77,35 +71,39 @@ export function CandidateApplicationsCard({
 
   if (!app) {
     return (
-      <section className="rounded-xl border border-border-default bg-background p-6 text-sm text-text-tertiary">
+      <section className="rounded-xl border border-border-default bg-card p-6 text-sm text-text-tertiary">
         No hay postulaciones registradas para este candidato.
       </section>
     );
   }
 
   const { interviews = [], jobOpening, active } = app;
+  const desiredSalary = [app.desiredSalaryCurrency, app.desiredSalaryAmount]
+    .filter(Boolean)
+    .join(" ");
+
   const details = [
-    ["Etapa actual", app.currentStage],
-    [
-      "Postuló",
-      app.applicationDate
+    { label: "Etapa actual", value: app.currentStage },
+    {
+      label: "Postuló",
+      value: app.applicationDate
         ? format(new Date(app.applicationDate), "d MMM yyyy", { locale: es })
         : "—",
-    ],
-    ["Salario pretendido", app.desiredSalary || "—"],
-    ["Disponibilidad", app.availability || "Inmediata"],
+    },
+    { label: "Salario pretendido", value: desiredSalary || "—" },
+    { label: "Disponibilidad", value: app.availability || "Inmediata" },
   ];
 
   return (
-    <Card className="flex flex-col divide-y divide-border-default overflow-hidden bg-background">
-      <div className="flex flex-col justify-between gap-4 p-6 sm:flex-row sm:items-center">
+    <Card className="flex flex-col divide-y divide-border-default overflow-hidden bg-card">
+      <div className="flex flex-col items-center justify-between gap-4 px-6 py-4 sm:flex-row">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
           <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
             Postulación
           </span>
 
           <DropdownMenu>
-            <DropdownMenuTrigger className="relative flex h-auto min-h-9 max-w-full items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-[state=open]:ring-2 data-[state=open]:ring-tag-gray-bg">
+            <DropdownMenuTrigger className="relative flex h-auto min-h-9 w-96 max-w-[calc(100vw-2rem)] items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-[state=open]:ring-2 data-[state=open]:ring-tag-gray-bg">
               <Briefcase className="h-4 w-4 shrink-0 text-text-secondary" />
               <span className="min-w-0 max-w-80 truncate">
                 {jobOpening.name}
@@ -115,14 +113,14 @@ export function CandidateApplicationsCard({
 
             <DropdownMenuContent
               align="start"
-              className="max-h-60 w-full min-w-70 overflow-y-auto rounded-xl border border-border-strong p-1.5 shadow-lg"
+              className="max-h-60 w-96 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-xl border border-border-strong p-1.5 shadow-lg"
             >
               {applications.map((a) => (
                 <DropdownMenuItem
                   key={a.jobOpeningId}
                   onClick={() => setSelectedId(a.jobOpeningId)}
                   className={cn(
-                    "flex w-full cursor-pointer items-center rounded-lg px-3 py-2.5 text-sm transition-colors data-[highlighted]:bg-tag-gray-bg data-[highlighted]:text-text-primary",
+                    "flex w-full cursor-pointer items-center rounded-lg px-3 py-2.5 text-sm transition-colors data-highlighted:bg-tag-gray-bg data-highlighted:text-text-primary",
                     selectedId === a.jobOpeningId
                       ? "bg-tag-gray-bg font-semibold text-text-primary"
                       : "font-medium text-tag-gray-fg hover:bg-tag-gray-bg hover:text-text-primary",
@@ -152,8 +150,12 @@ export function CandidateApplicationsCard({
             {active ? "En proceso" : "Cerrada"}
           </Badge>
 
-          <a href="#" className={linkClass}>
-            Ver vacante <ArrowUpRight className={linkIconClass} />
+          <a
+            href="#"
+            className="group inline-flex h-auto p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
+          >
+            Ver vacante{" "}
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </a>
         </div>
 
@@ -162,7 +164,7 @@ export function CandidateApplicationsCard({
             <Button
               variant="outline"
               size="sm"
-              className={cn(outlineBtnClass, "gap-2 px-4 text-text-primary")}
+              className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
             >
               <Share2 className="h-3.5 w-3.5" /> Compartir
             </Button>
@@ -182,8 +184,8 @@ export function CandidateApplicationsCard({
         </div>
       </div>
 
-      <dl className="flex flex-wrap gap-x-6 gap-y-2 p-6 text-sm text-text-secondary">
-        {details.map(([label, value]) => (
+      <dl className="flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 text-sm text-text-secondary">
+        {details.map(({ label, value }) => (
           <div key={label}>
             <dt className="inline">{label}: </dt>
             <dd className="inline font-bold text-text-primary">{value}</dd>
@@ -200,7 +202,7 @@ export function CandidateApplicationsCard({
             <Button
               variant="outline"
               size="sm"
-              className={cn(outlineBtnClass, "gap-1.5 px-4 text-text-primary")}
+              className="gap-1.5 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
             >
               <Plus className="h-3.5 w-3.5 text-tag-gray-fg" /> Agregar
               entrevista
@@ -216,16 +218,16 @@ export function CandidateApplicationsCard({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Instancia</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Entrevistador/es</TableHead>
-                <TableHead>Resumen</TableHead>
+                <TableHead className="w-1/3 pb-4">Instancia</TableHead>
+                <TableHead className="w-1/5 pb-4">Fecha</TableHead>
+                <TableHead className="w-1/4 pb-4">Entrevistador/es</TableHead>
+                <TableHead className="w-1/6 pb-4">Resumen</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {interviews.map((interview) => (
                 <TableRow key={interview.id}>
-                  <TableCell className="min-w-50">
+                  <TableCell className="w-1/3 py-4">
                     <p className="font-bold text-text-primary">
                       {interview.name}
                     </p>
@@ -238,7 +240,7 @@ export function CandidateApplicationsCard({
                     </p>
                   </TableCell>
 
-                  <TableCell className="whitespace-nowrap text-text-secondary">
+                  <TableCell className="w-1/5 whitespace-nowrap py-4 text-text-secondary">
                     {interview.date
                       ? format(new Date(interview.date), "d MMM yyyy", {
                           locale: es,
@@ -246,7 +248,7 @@ export function CandidateApplicationsCard({
                       : "—"}
                   </TableCell>
 
-                  <TableCell className="min-w-50 text-text-secondary">
+                  <TableCell className="w-1/4 py-4 text-text-secondary">
                     {interview.interviewers.length > 0 ? (
                       <span className="block truncate">
                         {interview.interviewers
@@ -258,15 +260,16 @@ export function CandidateApplicationsCard({
                     )}
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell className="py-4">
                     {interview.summary ? (
                       <a
                         href={interview.summary}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={linkClass}
+                        className="group inline-flex h-auto p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
                       >
-                        Ver resumen <ArrowUpRight className={linkIconClass} />
+                        Ver resumen{" "}
+                        <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                       </a>
                     ) : (
                       <span className="text-text-tertiary">—</span>

@@ -6,31 +6,26 @@ import Loading from "~/components/ui/loading";
 import { api } from "~/lib/trpc/server";
 import { CandidateOverviewCard } from "./_components/candidate-overview-card";
 import { CandidateInfoCards } from "./_components/candidate-info-cards";
-import { CandidateLogs } from "./_components/candidate-logs";
+import { CandidateApplications } from "./_components/candidate-applications";
+import { CandidateLogsSection } from "./_components/candidate-logs-section";
+import { CandidateNotes } from "./_components/candidate-notes";
 import { CandidateTags } from "./_components/candidate-tags";
 
 type CandidatePageProps = {
   params: Promise<{
     id: string;
   }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default function CandidatePage({
-  params,
-  searchParams,
-}: CandidatePageProps) {
+export default function CandidatePage({ params }: CandidatePageProps) {
   return (
     <Suspense fallback={<Loading />}>
-      <CandidatePageContent params={params} searchParams={searchParams} />
+      <CandidatePageContent params={params} />
     </Suspense>
   );
 }
 
-async function CandidatePageContent({
-  params,
-  searchParams,
-}: CandidatePageProps) {
+async function CandidatePageContent({ params }: CandidatePageProps) {
   const { id } = await params;
   const candidatePromise = api.candidate
     .getById({ id })
@@ -42,7 +37,7 @@ async function CandidatePageContent({
     });
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)]">
+    <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] selection:bg-tag-green-bg selection:text-tag-green-fg">
       <div className="flex min-w-0 flex-col gap-4">
         <Suspense fallback={<Loading />}>
           <CandidateOverviewCard candidatePromise={candidatePromise} />
@@ -53,15 +48,19 @@ async function CandidatePageContent({
         </Suspense>
 
         <Suspense fallback={<Loading />}>
-          <CandidateLogs
-            candidatePromise={candidatePromise}
-            searchParams={searchParams}
-          />
+          <CandidateApplications candidatePromise={candidatePromise} />
+        </Suspense>
+
+        <Suspense fallback={<Loading />}>
+          <CandidateLogsSection candidatePromise={candidatePromise} />
         </Suspense>
       </div>
 
       <aside className="flex min-w-0 flex-col gap-4">
-        {/* Candidate notes will be integrated here in a separate task. */}
+        <Suspense fallback={<Loading />}>
+          <CandidateNotes candidatePromise={candidatePromise} />
+        </Suspense>
+
         <Suspense fallback={<Loading />}>
           <CandidateTags candidatePromise={candidatePromise} />
         </Suspense>

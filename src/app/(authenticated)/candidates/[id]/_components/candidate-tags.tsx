@@ -2,9 +2,12 @@ import type { CSSProperties } from "react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
-import type { CandidatePromise } from "../types";
+import type { api } from "~/lib/trpc/server";
 import { Badge } from "~/components/ui/badge";
 
+type CandidatePromise = Promise<
+  Awaited<ReturnType<typeof api.candidate.getById>>
+>;
 type CandidateTagsProps = { candidatePromise: CandidatePromise };
 
 export async function CandidateTags({ candidatePromise }: CandidateTagsProps) {
@@ -42,7 +45,7 @@ export async function CandidateTags({ candidatePromise }: CandidateTagsProps) {
                 } as CSSProperties
               }
             >
-              <span className="min-w-0 break-words">{tag.name}</span>
+              <span className="min-w-0 wrap-break-word">{tag.name}</span>
             </Badge>
           );
         })}

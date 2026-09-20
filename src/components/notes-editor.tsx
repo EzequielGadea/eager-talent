@@ -357,7 +357,7 @@ function LastModifiedText({
     timeStyle: "short",
   });
   return (
-    <span suppressHydrationWarning>
+    <span>
       {lastModifiedBy && (
         <>
           {lastModifiedBy.name} {lastModifiedBy.lastName} ·{" "}
@@ -368,6 +368,7 @@ function LastModifiedText({
         formatter={spanishFormatter}
         title={fullDateLabel}
         minPeriod={10}
+        component={(props) => <time {...props} suppressHydrationWarning />}
       />
     </span>
   );

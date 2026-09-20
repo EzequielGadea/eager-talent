@@ -15,14 +15,14 @@ export async function CandidateApplications({
   const requestHeaders = await headers();
   const [canCreatePublicLink, canUpdateApplication, canCreateInterview] =
     await Promise.all([
-    auth.api.hasPermission({
-      headers: requestHeaders,
-      body: { permissions: { publicLink: ["create"] } },
-    }),
-    auth.api.hasPermission({
-      headers: requestHeaders,
-      body: { permissions: { application: ["update"] } },
-    }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { publicLink: ["create"] } },
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { application: ["update"] } },
+      }),
       auth.api.hasPermission({
         headers: requestHeaders,
         body: { permissions: { interview: ["create"] } },

@@ -22,14 +22,14 @@ export function CandidateAvatar({
   const fullName = `${name} ${lastName}`;
 
   return (
-    <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-xl font-semibold text-tag-green-fg">
+    <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-xl font-semibold text-tag-green-fg">
       {photoUrl && photoUrl !== failedPhoto ? (
         <Image
           src={photoUrl}
           alt={fullName}
-          width={64}
-          height={64}
-          className="size-16 object-cover"
+          width={80}
+          height={80}
+          className="size-20 object-cover"
           unoptimized
           onError={() => setFailedPhoto(photoUrl)}
         />

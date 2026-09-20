@@ -8,7 +8,5 @@ type CandidateTagsSectionProps = {
 export async function CandidateTagsSection({
   candidatePromise,
 }: CandidateTagsSectionProps) {
-  const candidate = await candidatePromise;
-
-  return <CandidateTags tags={candidate.tags} />;
+  return <CandidateTags candidatePromise={candidatePromise} />;
 }
