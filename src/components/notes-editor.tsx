@@ -227,6 +227,7 @@ export function NotesEditor({
       headingLevel:
         HEADINGS.find((h) => e?.isActive("heading", { level: h.level }))
           ?.level ?? 0,
+      link: e?.isActive("link") ?? false,
     }),
   });
 
@@ -321,7 +322,7 @@ export function NotesEditor({
             aria-hidden="true"
           />
 
-          <LinkPopover editor={editor} />
+          <LinkPopover editor={editor} isActive={active?.link ?? false} />
         </div>
       )}
 

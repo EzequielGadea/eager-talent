@@ -31,12 +31,16 @@ const linkSchema = z
 const BTN_CLASS =
   "aria-pressed:bg-tag-green-bg aria-pressed:text-tag-green-fg aria-expanded:bg-tag-green-bg aria-expanded:text-tag-green-fg";
 
-export function LinkPopover({ editor }: { editor: Editor | null }) {
+export function LinkPopover({
+  editor,
+  isActive,
+}: {
+  editor: Editor | null;
+  isActive: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
-
-  const activeLink = editor?.isActive("link") ?? false;
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
@@ -86,12 +90,7 @@ export function LinkPopover({ editor }: { editor: Editor | null }) {
   const removeLink = () => {
     if (!editor) return;
 
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange("link")
-      .unsetLink()
-      .run();
+    editor.chain().focus().extendMarkRange("link").unsetLink().run();
 
     setLinkUrl("");
     setError(null);
@@ -102,7 +101,7 @@ export function LinkPopover({ editor }: { editor: Editor | null }) {
     <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         onMouseDown={(event) => event.preventDefault()}
-        aria-pressed={activeLink || open}
+        aria-pressed={isActive || open}
         aria-label="Insertar enlace"
         title="Insertar enlace"
         className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-xs font-medium transition-colors hover:bg-muted hover:text-text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 cursor-pointer ${BTN_CLASS}`}
@@ -141,7 +140,7 @@ export function LinkPopover({ editor }: { editor: Editor | null }) {
               size="icon-xs"
               title="Aplicar enlace"
               aria-label="Aplicar enlace"
-              disabled={!linkUrl && !activeLink}
+              disabled={!linkUrl && !isActive}
             >
               <CornerDownLeft className="size-3.5" />
             </Button>
@@ -162,7 +161,10 @@ export function LinkPopover({ editor }: { editor: Editor | null }) {
           </div>
 
           {error && (
-            <p className="px-1 text-xs text-destructive font-medium" role="alert">
+            <p
+              className="px-1 text-xs text-destructive font-medium"
+              role="alert"
+            >
               {error}
             </p>
           )}
