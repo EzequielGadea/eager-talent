@@ -55,8 +55,9 @@ export const getApplicantByIdProcedure = protectedProcedure
         careerEndYear: true,
         education: true,
         resume: true,
-        role: { select: { name: true } },
-        seniority: { select: { name: true } },
+        role: { select: { id: true, name: true } },
+        area: { select: { id: true, name: true } },
+        seniority: { select: { id: true, name: true } },
         tags: { select: { id: true, name: true, color: true } },
       },
     });

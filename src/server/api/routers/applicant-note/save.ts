@@ -7,7 +7,7 @@ export const saveApplicantNoteProcedure = protectedProcedure
   .input(
     z.object({
       applicantId: z.string().min(1),
-      content: z.json(),
+      content: z.json().refine((value) => value !== null),
     }),
   )
   .mutation(async ({ input, ctx }) => {

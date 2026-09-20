@@ -1,7 +1,7 @@
 import type { api } from "~/lib/trpc/server";
 
-import { ApplicantOverviewCard } from "./applicant-overview-card";
 import { ApplicantInfoCards } from "./applicant-info-cards";
+import { ApplicantOverview } from "./applicant-overview";
 
 export type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
@@ -14,7 +14,7 @@ export async function ApplicantDetails({
 }: ApplicantDetailsProps) {
   return (
     <>
-      <ApplicantOverviewCard applicantPromise={applicantPromise} />
+      <ApplicantOverview applicantPromise={applicantPromise} />
 
       <ApplicantInfoCards applicantPromise={applicantPromise} />
     </>
