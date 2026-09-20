@@ -82,7 +82,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
 
   const updateApplicantMutation = api.applicant.updateApplicant.useMutation({
     onSuccess: () => {
-      router.push(`/applicants/${applicant.id}`);
+      router.push(`/candidates/${applicant.id}`);
       router.refresh();
     },
     onError: (error) => {
@@ -142,9 +142,9 @@ export default function EditApplicantFormContent({ applicant }: Props) {
       areaId: data.area || null,
       seniorityId: data.seniority || null,
 
-      englishLevel: data.englishLevel || undefined,
-      source: data.source || undefined,
-      hearAboutUs: data.howDidYouHear || undefined,
+      englishLevel: data.englishLevel === "" ? null : data.englishLevel,
+      source: data.source === "" ? null : data.source,
+      hearAboutUs: data.howDidYouHear === "" ? null : data.howDidYouHear,
 
       academicInstitution: data.academicInstitution,
       title: data.title,
@@ -167,7 +167,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
     setRemoveResume(false);
     setRemoveEducation(false);
 
-    router.push(`/applicants/${applicant.id}`);
+    router.push(`/candidates/${applicant.id}`);
   }
   const [removeResume, setRemoveResume] = useState(false);
   const [removeEducation, setRemoveEducation] = useState(false);

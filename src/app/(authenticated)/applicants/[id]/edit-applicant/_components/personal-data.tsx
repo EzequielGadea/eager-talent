@@ -30,6 +30,8 @@ import { paises as countries } from "~/lib/countries";
 
 import type { ApplicantFormValues } from "./edit-applicant-form";
 
+const MAX_PHOTO_SIZE = 4 * 1024 * 1024;
+
 type PersonalDataProps = {
   currentPhoto?: string | null;
   photoPreview?: string;
@@ -49,6 +51,8 @@ export default function PersonalData({
     register,
     control,
     resetField,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useFormContext<ApplicantFormValues>();
 
@@ -106,14 +110,28 @@ export default function PersonalData({
               className="hidden"
               {...photoField}
               onChange={(event) => {
-                photoField.onChange(event);
-
                 const file = event.target.files?.[0];
 
                 if (!file) {
+                  photoField.onChange(event);
                   return;
                 }
 
+                if (file.size > MAX_PHOTO_SIZE) {
+                  event.target.value = "";
+                  photoField.onChange(event);
+                  setPhotoPreview(
+                    removePhoto ? undefined : (currentPhoto ?? undefined),
+                  );
+                  setError("photo", {
+                    type: "manual",
+                    message: "La foto no puede superar los 4 MB",
+                  });
+                  return;
+                }
+
+                clearErrors("photo");
+                photoField.onChange(event);
                 setPhotoPreview(URL.createObjectURL(file));
               }}
             />
