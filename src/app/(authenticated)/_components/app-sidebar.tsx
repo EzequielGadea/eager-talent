@@ -1,34 +1,15 @@
-import type { ReactNode } from "react";
 import { ChevronUp, FileText, House, Users } from "lucide-react";
 import { MetricsIcon, SettingsIcon, VacanciesIcon } from "./app-icons";
-
-type NavigationItemProps = {
-  icon: ReactNode;
-  label: string;
-  active?: boolean;
-};
-
-function NavigationItem({ icon, label, active = false }: NavigationItemProps) {
-  return (
-    <button
-      type="button"
-      aria-current={active ? "page" : undefined}
-      className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm ${
-        active
-          ? "bg-success-bg font-semibold text-tag-green-fg"
-          : "font-medium text-text-secondary hover:bg-slate-50"
-      }`}
-    >
-      {icon}
-      <span>{label}</span>
-    </button>
-  );
-}
+import { NavigationItem } from "./navigation-item";
 
 function EagerTalentBrand() {
   return (
     <div className="flex items-center gap-2.5 px-5 pt-5 pb-4">
-      <svg viewBox="0 0 40 40" className="size-7.5 shrink-0" aria-hidden="true">
+      <svg
+        viewBox="0 0 40 40"
+        className="size-7.5 shrink-0"
+        aria-hidden="true"
+      >
         <defs>
           <linearGradient
             id="sidebar-logo-gradient"
@@ -96,12 +77,13 @@ export function AppSidebar() {
         <NavigationItem
           icon={<House className="size-4.5" aria-hidden="true" />}
           label="Dashboard"
-          active
+          href="/dashboard"
         />
 
         <NavigationItem
           icon={<Users className="size-4.5" aria-hidden="true" />}
           label="Candidatos"
+          href="/applicants"
         />
 
         <NavigationItem
@@ -130,6 +112,12 @@ export function AppSidebar() {
         <NavigationItem
           icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
           label="Configuración"
+        />
+
+        <NavigationItem
+          icon={<Users className="size-4.5" aria-hidden="true" />}
+          label="Perfil"
+          href="/profile"
         />
       </nav>
 
