@@ -3,6 +3,7 @@
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -13,16 +14,18 @@ import { ITEMS_PER_PAGE } from "../constants";
 export function ApplicantPagination(props: {
   countApplicants: number;
   currentPage: number;
-  onPageChange?: (page: number) => void;
+  onPageChange: (page: number) => void;
 }) {
   const totalPages = Math.max(
     1,
     Math.ceil(props.countApplicants / ITEMS_PER_PAGE),
   );
   const currentPage = props.currentPage;
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === totalPages;
   const goToPage = (page: number) => {
     if (page < 1 || page > totalPages) return;
-    props.onPageChange?.(page);
+    props.onPageChange(page);
   };
   const startItem =
     props.countApplicants === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
@@ -34,8 +37,8 @@ export function ApplicantPagination(props: {
   ];
 
   return (
-    <div className="mt-4 flex items-center justify-between pb-6">
-      <p className="text-sm font-medium text-dashboard-text-muted">
+    <div className="flex items-center justify-between border-t border-dashboard-border px-4 py-3">
+      <p className="text-[13px] font-normal leading-5 text-dashboard-text-muted">
         Mostrando {startItem} - {endItem} de {props.countApplicants} candidatos
       </p>
 
@@ -43,14 +46,16 @@ export function ApplicantPagination(props: {
         <PaginationContent className="gap-1">
           <PaginationItem>
             <PaginationPrevious
+              aria-disabled={isFirstPage}
+              tabIndex={isFirstPage ? -1 : undefined}
               href="#"
               onClick={(e) => {
                 e.preventDefault();
                 goToPage(currentPage - 1);
               }}
-              className={
-                "h-7 w-7 rounded-md p-0 text-dashboard-text-muted hover:bg-dashboard-track [&>span]:hidden"
-              }
+              className={`h-7.5 w-7.5 rounded-lg border border-dashboard-border bg-white p-0 pl-0! text-dashboard-text-muted shadow-none hover:bg-dashboard-track [&>span]:hidden [&_svg]:size-4 ${
+                isFirstPage ? "pointer-events-none" : ""
+              }`}
             />
           </PaginationItem>
           <FirstPage currentPage={currentPage} gotoPage={goToPage} />
@@ -64,10 +69,10 @@ export function ApplicantPagination(props: {
                   e.preventDefault();
                   goToPage(page);
                 }}
-                className={`h-7 w-7 rounded-md text-sm font-bold shadow-sm ${
+                className={`h-7.5 w-7.5 rounded-lg border p-0 text-[13px] shadow-none ${
                   page === currentPage
-                    ? "bg-dashboard-dark text-white"
-                    : "text-dashboard-text-muted"
+                    ? "border-dashboard-dark bg-dashboard-dark font-semibold text-white hover:bg-dashboard-dark"
+                    : "border-dashboard-border bg-white font-normal text-dashboard-text-muted hover:bg-dashboard-track"
                 }`}
               >
                 {page}
@@ -82,12 +87,16 @@ export function ApplicantPagination(props: {
 
           <PaginationItem>
             <PaginationNext
+              aria-disabled={isLastPage}
+              tabIndex={isLastPage ? -1 : undefined}
               href="#"
               onClick={(e) => {
                 e.preventDefault();
                 goToPage(currentPage + 1);
               }}
-              className="h-7 w-7 rounded-md p-0 text-dashboard-text-muted hover:bg-dashboard-track [&>span]:hidden"
+              className={`h-7.5 w-7.5 rounded-lg border border-dashboard-border bg-white p-0 pr-0! text-dashboard-text-muted shadow-none hover:bg-dashboard-track [&>span]:hidden [&_svg]:size-4 ${
+                isLastPage ? "pointer-events-none" : ""
+              }`}
             />
           </PaginationItem>
         </PaginationContent>
@@ -111,12 +120,12 @@ function FirstPage(props: {
               e.preventDefault();
               props.gotoPage(1);
             }}
-            className={`h-7 w-7 rounded-md text-sm font-bold shadow-sm text-dashboard-text-muted`}
+            className="h-7.5 w-7.5 rounded-lg border border-dashboard-border bg-white p-0 text-[13px] font-normal text-dashboard-text-muted shadow-none hover:bg-dashboard-track"
           >
             1
           </PaginationLink>
         </PaginationItem>
-        <span>...</span>
+        <PaginationEllipsis className="h-7.5 w-7.5 text-dashboard-text-muted" />
       </>
     );
   }
@@ -131,7 +140,7 @@ function LastPage(props: {
   if (props.currentPage <= props.totalPages - 3) {
     return (
       <>
-        <span>...</span>
+        <PaginationEllipsis className="h-7.5 w-7.5 text-dashboard-text-muted" />
         <PaginationItem>
           <PaginationLink
             href="#"
@@ -140,7 +149,7 @@ function LastPage(props: {
               e.preventDefault();
               props.gotoPage(props.totalPages);
             }}
-            className={`h-7 w-7 rounded-md text-sm font-bold shadow-sm text-dashboard-text-muted`}
+            className="h-7.5 w-7.5 rounded-lg border border-dashboard-border bg-white p-0 text-[13px] font-normal text-dashboard-text-muted shadow-none hover:bg-dashboard-track"
           >
             {props.totalPages}
           </PaginationLink>
