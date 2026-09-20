@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
-
+import { EnglishLevel, Source, HearAboutUs, SalaryCurrency } from "~/generated/prisma/enums";
+import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -34,16 +34,31 @@ export const createApplicant = protectedProcedure
       jobOpeningId: z.string().optional(),
       // desiredSalary: z.number().positive().optional().or(z.literal("")),
       desiredSalary: z.string().optional(),
-      currency: z.string().optional(),
+      currency: z.enum(SalaryCurrency).optional(),
       availability: z.string().optional(),
       tagIds: z.array(z.string()).default([]),
     }),
   )
   .mutation(async ({ ctx, input }) => {
-    try {
+    const permission = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: {
+        permissions: {
+          applicant: ["create"],
+        },
+      },
+    });
+
+    if (!permission.success) {
+      throw new TRPCError ({
+        code: "FORBIDDEN",
+        message: "No tenes permisos para crear un candidato"
+      })
+    }
+    try { 
       let firstStage: string | undefined;
 
-      
+      // Si se seleccionó una vacante, buscamos su primera stage
       if (input.jobOpeningId) {
         const jobOpening = await ctx.db.jobOpening.findUnique({
           where: {
@@ -75,7 +90,7 @@ export const createApplicant = protectedProcedure
         console.log("PRIMERA STAGE:", firstStage);
       }
 
-      
+      // Primero creamos el candidato
       const applicant = await ctx.db.$transaction(async (tx) => {
         const applicant = await tx.applicant.create({
           data: {
@@ -135,7 +150,8 @@ export const createApplicant = protectedProcedure
               jobOpeningId: input.jobOpeningId,
               currentStage: firstStage,
               //Cambiar cuando cambie la base
-              desiredSalary: input.desiredSalary,
+              desiredSalaryAmount: input.desiredSalary,
+              desiredSalaryCurrency: input.currency,
               // Agregar cuando cambie la base : currency: input.currency,
               availability: input.availability,
             },

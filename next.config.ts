@@ -5,6 +5,15 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   cacheComponents: true,
   partialPrefetching: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "img.a.transfermarkt.technology",
+        pathname: "/portrait/**",
+      },
+    ],
+  },
   experimental: {
     staleTimes: {
       dynamic: 30,

@@ -1,9 +1,96 @@
-import  ButtonRedirect  from "./_components/buttonRedirect";
+import "server-only";
 
+import { Table, TableBody } from "~/components/ui/table";
+import { api } from "~/lib/trpc/server";
+import { Suspense } from "react";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "~/lib/auth";
 
-export default async function DashboardPage() {
+import {
+  ApplicantAwaiterHeader,
+  ApplicantAwaiterTable,
+  ApplicantAwaiterFilters,
+  ApplicantAwaiterPagination,
+} from "./_components/applicant-awaiter";
+
+import {
+  FiltersFallback,
+  HeaderFallback,
+  TableFallback,
+  PaginationFallback,
+} from "./_components/fallbacks";
+
+import { ApplicantTableHeader } from "./_components/applicant-table";
+import { getApplicantsPage } from "./actions";
+
+export default function ApplicantsPage() {
   return (
-    <div> <ButtonRedirect /> </div>
-    
+    <Suspense fallback={<div>Cargando candidatos...</div>}>
+      <ProtectedApplicantsPage />
+    </Suspense>
+  );
+}
+
+async function ProtectedApplicantsPage() {
+  const permission = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        applicant: ["read"],
+      },
+    },
+  });
+
+  if (!permission.success) {
+    redirect("/dashboard");
+  }
+
+  // Recién después de validar permisos
+  const data = getApplicantsPage(1);
+  const countApplicants = api.applicant.fetchAmount();
+
+  return (
+    <div className="flex-1 min-w-0 w-full max-w-full p-0 font-sans text-dashboard-text-primary overflow-x-hidden">
+      <Suspense fallback={<HeaderFallback />}>
+        <ApplicantAwaiterHeader
+          promiseData={data}
+          promiseCount={countApplicants}
+        />
+      </Suspense>
+
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <Suspense fallback={<FiltersFallback />}>
+          <ApplicantAwaiterFilters promiseData={data} />
+        </Suspense>
+      </div>
+
+      <Suspense
+        fallback={
+          <>
+            <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
+              <Table className="min-w-262.5 table-fixed">
+                <ApplicantTableHeader />
+                <TableBody className="divide-y divide-dashboard-border">
+                  <TableFallback />
+                </TableBody>
+              </Table>
+            </div>
+
+            <Suspense fallback={<PaginationFallback />}>
+              <ApplicantAwaiterPagination
+                promiseCount={countApplicants}
+                currentPage={1}
+              />
+            </Suspense>
+          </>
+        }
+      >
+        <ApplicantAwaiterTable
+          promiseData={data}
+          promiseCount={countApplicants}
+        />
+      </Suspense>
+    </div>
   );
 }

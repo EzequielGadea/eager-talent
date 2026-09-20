@@ -110,7 +110,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           emailVerified: true,
         },
       });
-      console.log(`Usuario creado: ${userDef.email} (${userDef.name} ${userDef.lastName})`);
+      console.log(
+        `Usuario creado: ${userDef.email} (${userDef.name} ${userDef.lastName})`,
+      );
     } else {
       await prisma.user.update({
         where: { email: userDef.email },
@@ -121,7 +123,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           emailVerified: true,
         },
       });
-      console.log(`Usuario conservado/actualizado: ${userDef.email} (${userDef.name} ${userDef.lastName})`);
+      console.log(
+        `Usuario conservado/actualizado: ${userDef.email} (${userDef.name} ${userDef.lastName})`,
+      );
     }
   }
 
@@ -222,7 +226,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   // ==========================================================================
   // TABLAS MAESTRAS (CONTEXTO REAL EAGERWORKS MONTEVIDEO)
   // ==========================================================================
-  
+
   // ÁREAS DE EAGERWORKS
   const areaDefs = [
     "Ingeniería Web & Mobile",
@@ -405,7 +409,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Valverde",
       email: "federico.valverde@eagerworks.uy",
       phone: "+598 99 150 815",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/369081-1731018042.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/369081-1731018042.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/federico-valverde-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -415,8 +420,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad de la República (FING)",
       careerStartYear: 2016,
       careerEndYear: 2021,
-      education: "https://utfs.io/f/hR8lYSLGKWIm8zTkVAHLwUYeOQ6Wv9AgquNjF75tzrZyiHn2",
-      resume: "https://utfs.io/f/hR8lYSLGKWImSKkk47JEcMHrwDYklgLhf8q64zJvpFdxWQbK",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWIm8zTkVAHLwUYeOQ6Wv9AgquNjF75tzrZyiHn2",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImSKkk47JEcMHrwDYklgLhf8q64zJvpFdxWQbK",
       roleId: roles["Full Stack Developer (Ruby on Rails & React)"].id,
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorityId: seniorities["Senior"].id,
@@ -442,7 +449,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Técnica",
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4500 USD",
+      desiredSalaryAmount: 4500,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -455,27 +463,84 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4200 USD",
+      desiredSalaryAmount: 4200,
+      desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
     },
   });
 
   // 14 Actividades para Valverde (permite verificar páginas 1, 2 y 3 con 6 ítems por página - CP-008)
   const fedeActivities = [
-    { desc: "Propuesta formal presentada y compartida con el Hiring Manager", daysAgo: 1, jobOp: jobOpening1.id },
-    { desc: "Revisión de referencias laborales con CTO de empresa previa en EE.UU.", daysAgo: 2, jobOp: null },
-    { desc: "Segunda postulación asociada al proceso de Backend Ruby on Rails", daysAgo: 4, jobOp: jobOpening2.id },
-    { desc: "Evaluación de competencias blandas y fit cultural con People Ops", daysAgo: 7, jobOp: jobOpening1.id },
-    { desc: "Live coding de arquitectura de microservicios y consultas PostgreSQL completado", daysAgo: 9, jobOp: jobOpening1.id },
-    { desc: "Entrevista técnica de diseño de APIs en Ruby on Rails completada con nota sobresaliente", daysAgo: 11, jobOp: jobOpening1.id },
-    { desc: "Screening inicial de habilidades y disponibilidad con Recruiter", daysAgo: 13, jobOp: jobOpening1.id },
-    { desc: "Certificado de escolaridad de FING validado por el equipo de selección", daysAgo: 15, jobOp: null },
-    { desc: "Test técnico automatizado de algoritmos enviado al candidato", daysAgo: 17, jobOp: jobOpening1.id },
-    { desc: "Resolución del challenge técnico recibido en repositorio Git", daysAgo: 19, jobOp: jobOpening1.id },
-    { desc: "CV recibido y verificado por reclutamiento técnico", daysAgo: 21, jobOp: null },
-    { desc: "Contacto inicial establecido a través de LinkedIn Jobs", daysAgo: 23, jobOp: jobOpening1.id },
-    { desc: "Perfil preseleccionado para el partner tecnológico de Eagerworks", daysAgo: 25, jobOp: jobOpening1.id },
-    { desc: "Postulación recibida en el portal de carreras de Eagerworks", daysAgo: 28, jobOp: jobOpening1.id },
+    {
+      desc: "Propuesta formal presentada y compartida con el Hiring Manager",
+      daysAgo: 1,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Revisión de referencias laborales con CTO de empresa previa en EE.UU.",
+      daysAgo: 2,
+      jobOp: null,
+    },
+    {
+      desc: "Segunda postulación asociada al proceso de Backend Ruby on Rails",
+      daysAgo: 4,
+      jobOp: jobOpening2.id,
+    },
+    {
+      desc: "Evaluación de competencias blandas y fit cultural con People Ops",
+      daysAgo: 7,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Live coding de arquitectura de microservicios y consultas PostgreSQL completado",
+      daysAgo: 9,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Entrevista técnica de diseño de APIs en Ruby on Rails completada con nota sobresaliente",
+      daysAgo: 11,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Screening inicial de habilidades y disponibilidad con Recruiter",
+      daysAgo: 13,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Certificado de escolaridad de FING validado por el equipo de selección",
+      daysAgo: 15,
+      jobOp: null,
+    },
+    {
+      desc: "Test técnico automatizado de algoritmos enviado al candidato",
+      daysAgo: 17,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Resolución del challenge técnico recibido en repositorio Git",
+      daysAgo: 19,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "CV recibido y verificado por reclutamiento técnico",
+      daysAgo: 21,
+      jobOp: null,
+    },
+    {
+      desc: "Contacto inicial establecido a través de LinkedIn Jobs",
+      daysAgo: 23,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Perfil preseleccionado para el partner tecnológico de Eagerworks",
+      daysAgo: 25,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "Postulación recibida en el portal de carreras de Eagerworks",
+      daysAgo: 28,
+      jobOp: jobOpening1.id,
+    },
   ];
 
   for (const act of fedeActivities) {
@@ -497,7 +562,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Núñez",
       email: "darwin.nunez@eagerworks.uy",
       phone: "+598 98 210 999",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/546543-1681827179.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/546543-1681827179.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/darwin-nunez-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -507,8 +573,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad ORT Uruguay",
       careerStartYear: 2018,
       careerEndYear: 2023,
-      education: "https://utfs.io/f/hR8lYSLGKWImOFI5Tl9NtM6Bb8fsFr1wTAvQYueHk5ic7EDn",
-      resume: "https://utfs.io/f/hR8lYSLGKWImJyWLuAduWENHGaTLgeYFv7r2dZABOCXKpxQ3",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWImOFI5Tl9NtM6Bb8fsFr1wTAvQYueHk5ic7EDn",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImJyWLuAduWENHGaTLgeYFv7r2dZABOCXKpxQ3",
       roleId: roles["QA Automation Engineer"].id,
       areaId: areas["Quality Assurance & Testing"].id,
       seniorityId: seniorities["Semi Senior"].id,
@@ -531,7 +599,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3200 USD",
+      desiredSalaryAmount: 3200,
+      desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
     },
   });
@@ -544,7 +613,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Rochet",
       email: "sergio.rochet@eagerworks.uy",
       phone: "+598 91 330 001",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/264014-1668501221.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/264014-1668501221.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/sergio-rochet-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -554,8 +624,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "UTU - DGETP / FING",
       careerStartYear: 2012,
       careerEndYear: 2016,
-      education: "https://utfs.io/f/hR8lYSLGKWImEe9aoRrHBKiVRmq5Sol8GYveAQhsOF39PgJa",
-      resume: "https://utfs.io/f/hR8lYSLGKWImkFphp7omRUN0f2qnh8rKHBCkgIXzYsuEpjDS",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWImEe9aoRrHBKiVRmq5Sol8GYveAQhsOF39PgJa",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImkFphp7omRUN0f2qnh8rKHBCkgIXzYsuEpjDS",
       roleId: roles["DevOps & Cloud Engineer (AWS)"].id,
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorityId: seniorities["Senior"].id,
@@ -577,7 +649,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Araújo",
       email: "ronald.araujo@eagerworks.uy",
       phone: "+598 99 444 333",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/480267-1736431980.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/480267-1736431980.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/ronald-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -587,8 +660,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad ORT Uruguay",
       careerStartYear: 2017,
       careerEndYear: 2021,
-      education: "https://utfs.io/f/hR8lYSLGKWImQvL7lKShjHLUiJaSAu37prKRqVDtfBbxPIg9",
-      resume: "https://utfs.io/f/hR8lYSLGKWImWIaP5xzRPm3IZJpdylh1iKuwMtTzkrcN5Axv",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWImQvL7lKShjHLUiJaSAu37prKRqVDtfBbxPIg9",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImWIaP5xzRPm3IZJpdylh1iKuwMtTzkrcN5Axv",
       roleId: roles["Backend Developer (Ruby on Rails)"].id,
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorityId: seniorities["Semi Senior"].id,
@@ -611,7 +686,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Técnica",
       stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3800 USD",
+      desiredSalaryAmount: 3800,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -620,7 +696,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: ronald.id,
       jobOpeningId: jobOpening2.id,
-      description: "Entrevista técnica de arquitectura y RSpec completada con buen desempeño",
+      description:
+        "Entrevista técnica de arquitectura y RSpec completada con buen desempeño",
       date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
     },
   });
@@ -633,7 +710,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Ugarte",
       email: "manuel.ugarte@eagerworks.uy",
       phone: "+598 94 555 123",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/476701-1715107512.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/476701-1715107512.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/manuel-ugarte-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -643,8 +721,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad Católica del Uruguay (UCU)",
       careerStartYear: 2019,
       careerEndYear: 2023,
-      education: "https://utfs.io/f/hR8lYSLGKWIm9bHNWVgyuagNQHpOEf7RZeL4IAjFtmoU6vK1",
-      resume: "https://utfs.io/f/hR8lYSLGKWImfwGqhISfu8Kth6YjTSgR72dGzlyXbwqoIaPe",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWIm9bHNWVgyuagNQHpOEf7RZeL4IAjFtmoU6vK1",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImfwGqhISfu8Kth6YjTSgR72dGzlyXbwqoIaPe",
       roleId: roles["Backend Developer (Ruby on Rails)"].id,
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorityId: seniorities["Semi Senior"].id,
@@ -667,7 +747,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3500 USD",
+      desiredSalaryAmount: 3500,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -676,7 +757,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: ugarte.id,
       jobOpeningId: jobOpening2.id,
-      description: "Postulación recibida y screening preliminar realizado por Diego Alonso",
+      description:
+        "Postulación recibida y screening preliminar realizado por Diego Alonso",
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
     },
   });
@@ -688,7 +770,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Bentancur",
       email: "rodrigo.bentancur@eagerworks.uy",
       phone: "+598 99 777 888",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/354362-1740605779.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/354362-1740605779.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/rodrigo-bentancur-uy/",
       englishLevel: "Native" as EnglishLevel,
@@ -698,8 +781,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad de Montevideo (UM)",
       careerStartYear: 2014,
       careerEndYear: 2019,
-      education: "https://utfs.io/f/hR8lYSLGKWIm85pX47HLwUYeOQ6Wv9AgquNjF75tzrZyiHn2",
-      resume: "https://utfs.io/f/hR8lYSLGKWIm9SSoj7NgyuagNQHpOEf7RZeL4IAjFtmoU6vK",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWIm85pX47HLwUYeOQ6Wv9AgquNjF75tzrZyiHn2",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWIm9SSoj7NgyuagNQHpOEf7RZeL4IAjFtmoU6vK",
       roleId: roles["Tech Lead / Solutions Architect"].id,
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorityId: seniorities["Staff / Lead"].id,
@@ -725,7 +810,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Cultural",
       stageEntryDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$6000 USD",
+      desiredSalaryAmount: 6000,
+      desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
     },
   });
@@ -747,7 +833,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Pellistri",
       email: "facundo.pellistri@eagerworks.uy",
       phone: "+598 92 444 333",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/676318-1785512941.png",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/676318-1785512941.png",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/facundo-pellistri-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -757,8 +844,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad Tecnológica del Uruguay (UTEC)",
       careerStartYear: 2019,
       careerEndYear: 2023,
-      education: "https://utfs.io/f/hR8lYSLGKWImzc21Z0iBm4FATwCEZPelHW5gDXhqv6SLNbR0",
-      resume: "https://utfs.io/f/hR8lYSLGKWImIzraN4bpXfrbtxsdoSUny6CElHeq083cIZAM",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWImzc21Z0iBm4FATwCEZPelHW5gDXhqv6SLNbR0",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImIzraN4bpXfrbtxsdoSUny6CElHeq083cIZAM",
       roleId: roles["Frontend Developer (React / Next.js)"].id,
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorityId: seniorities["Semi Senior"].id,
@@ -783,7 +872,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3400 USD",
+      desiredSalaryAmount: 3400,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -795,7 +885,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "De La Cruz",
       email: "nicolas.delacruz@eagerworks.uy",
       phone: "+598 98 111 222",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/397458-1719565799.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/397458-1719565799.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/nicolas-delacruz-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -805,8 +896,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad ORT Uruguay",
       careerStartYear: 2017,
       careerEndYear: 2020,
-      education: "https://utfs.io/f/hR8lYSLGKWImCv1ruTxkAHnNfe7dxwumv3OEPpKIY41cXlJz",
-      resume: "https://utfs.io/f/hR8lYSLGKWImIKJ2jUbpXfrbtxsdoSUny6CElHeq083cIZAM",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWImCv1ruTxkAHnNfe7dxwumv3OEPpKIY41cXlJz",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImIKJ2jUbpXfrbtxsdoSUny6CElHeq083cIZAM",
       roleId: roles["Full Stack Developer (Ruby on Rails & React)"].id,
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorityId: seniorities["Senior"].id,
@@ -829,7 +922,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Entrevista Técnica",
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4300 USD",
+      desiredSalaryAmount: 4300,
+      desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
     },
   });
@@ -841,7 +935,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Olivera",
       email: "mathias.olivera@eagerworks.uy",
       phone: "+598 99 666 555",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/376514-1681910576.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/376514-1681910576.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/mathias-olivera-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -851,8 +946,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "Universidad Católica del Uruguay (UCU)",
       careerStartYear: 2015,
       careerEndYear: 2020,
-      education: "https://utfs.io/f/hR8lYSLGKWImjWthrNZ6I7B2qH4DTo0CAaezXrkYntOJN8ux",
-      resume: "https://utfs.io/f/hR8lYSLGKWIm135PqAjFocWOCMilxSKvI6ygLh3w5ubHNEZa",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWImjWthrNZ6I7B2qH4DTo0CAaezXrkYntOJN8ux",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWIm135PqAjFocWOCMilxSKvI6ygLh3w5ubHNEZa",
       roleId: roles["DevOps & Cloud Engineer (AWS)"].id,
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorityId: seniorities["Senior"].id,
@@ -875,7 +972,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$4800 USD",
+      desiredSalaryAmount: 4800,
+      desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
     },
   });
@@ -887,7 +985,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       lastName: "Araújo",
       email: "maxi.araujo@eagerworks.uy",
       phone: "+598 91 888 999",
-      photo: "https://img.a.transfermarkt.technology/portrait/header/572675-1773786535.jpg",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/572675-1773786535.jpg",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/maxi-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -897,8 +996,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       academicInstitution: "UTU - DGETP / FING",
       careerStartYear: 2018,
       careerEndYear: 2022,
-      education: "https://utfs.io/f/hR8lYSLGKWImA0evDbVdlcznVbQr9gGEW3hHLN5X7KtkPqfM",
-      resume: "https://utfs.io/f/hR8lYSLGKWImsvkHz46aXmYEGTqbd4oJ73A05Z1WuRpPOnhw",
+      education:
+        "https://utfs.io/f/hR8lYSLGKWImA0evDbVdlcznVbQr9gGEW3hHLN5X7KtkPqfM",
+      resume:
+        "https://utfs.io/f/hR8lYSLGKWImsvkHz46aXmYEGTqbd4oJ73A05Z1WuRpPOnhw",
       roleId: roles["Mobile Developer (React Native)"].id,
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorityId: seniorities["Semi Senior"].id,
@@ -922,7 +1023,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       active: true,
       currentStage: "Revisión Inicial",
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      desiredSalary: "$3600 USD",
+      desiredSalaryAmount: 3600,
+      desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
   });
@@ -937,7 +1039,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       modality: "VideoCall" as InterviewType,
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
       status: "Completed" as InterviewStatus,
-      summary: "Excelente solvencia en arquitectura de software, ActiveRecord, diseño de APIs y fit cultural.",
+      summary:
+        "Excelente solvencia en arquitectura de software, ActiveRecord, diseño de APIs y fit cultural.",
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
       interviewers: { connect: [{ id: hm1.id }] },
@@ -946,7 +1049,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   await prisma.applicantNote.create({
     data: {
-      content: "Excelente perfil técnico, experiencia sólida en proyectos de escala y muy buen nivel de inglés.",
+      content:
+        "Excelente perfil técnico, experiencia sólida en proyectos de escala y muy buen nivel de inglés.",
       applicantId: federico.id,
       lastModifiedById: hm1.id,
     },
@@ -954,13 +1058,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   await prisma.applicantNote.create({
     data: {
-      content: "Candidato referido con muy buenas referencias en testing automatizado y calidad de software.",
+      content:
+        "Candidato referido con muy buenas referencias en testing automatizado y calidad de software.",
       applicantId: darwin.id,
       lastModifiedById: admin1.id,
     },
   });
 
   console.log(
-    "Seed completado exitosamente: 6 usuarios (3 Recruiters, 3 Hiring Managers), 9 roles IT Eagerworks, 5 áreas, 4 seniorities, 20 tags, 5 vacantes, 10 candidatos uruguayos con fotos de Transfermarkt y PDFs reales de CV/Escolaridad en UploadThing."
+    "Seed completado exitosamente: 6 usuarios (3 Recruiters, 3 Hiring Managers), 9 roles IT Eagerworks, 5 áreas, 4 seniorities, 20 tags, 5 vacantes, 10 candidatos uruguayos con fotos de Transfermarkt y PDFs reales de CV/Escolaridad en UploadThing.",
   );
 }

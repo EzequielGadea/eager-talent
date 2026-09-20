@@ -43,6 +43,7 @@ export const recruiter = ac.newRole({
 
 export const hiringManager = ac.newRole({
   ...memberAc.statements,
+  activity: ["read"],
   applicant: ["readAssigned"],
   application: ["readAssigned"],
   jobOpening: ["readAssigned"],

@@ -17,7 +17,7 @@ import NewCandidateButton from "./new-applicant-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SourceAndTags from "./source-and-tags";
-import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
+import { EnglishLevel, Source, HearAboutUs, SalaryCurrency } from "~/generated/prisma/enums";
 
 import { useUploadThing } from "~/components/ui/uploadthing";
 
@@ -49,7 +49,7 @@ export const applicantFormSchema = z.object({
   area: z.string(),
   
   desiredSalary: z.number().positive().optional().or(z.literal("")),
-  currency : z.string().optional(),
+  currency: z.union([z.enum(SalaryCurrency), z.literal("")]),
 
   availability: z.string(),
   englishLevel: z.union([z.enum(EnglishLevel), z.literal("")]),
@@ -114,7 +114,7 @@ export default function NewApplicantForm() {
       seniority: "",
       area: "",
       desiredSalary: undefined,
-      currency: undefined,
+      currency: "",
       availability: "",
       englishLevel: "",
 
@@ -192,6 +192,7 @@ export default function NewApplicantForm() {
 
       jobOpeningId: data.jobOpening || undefined,
       desiredSalary:  data.desiredSalary ? String(data.desiredSalary) : undefined,
+      currency: data.currency || undefined,
       availability: data.availability,
     });
   }
