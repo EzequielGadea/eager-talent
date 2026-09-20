@@ -256,7 +256,8 @@ export const ApplicationScalarFieldEnum = {
   stageEntryDate: 'stageEntryDate',
   disqualificationDate: 'disqualificationDate',
   disqualificationReason: 'disqualificationReason',
-  desiredSalary: 'desiredSalary',
+  desiredSalaryAmount: 'desiredSalaryAmount',
+  desiredSalaryCurrency: 'desiredSalaryCurrency',
   availability: 'availability'
 } as const
 

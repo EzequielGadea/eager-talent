@@ -20,8 +20,18 @@ export type ApplicationModel = runtime.Types.Result.DefaultSelection<Prisma.$App
 
 export type AggregateApplication = {
   _count: ApplicationCountAggregateOutputType | null
+  _avg: ApplicationAvgAggregateOutputType | null
+  _sum: ApplicationSumAggregateOutputType | null
   _min: ApplicationMinAggregateOutputType | null
   _max: ApplicationMaxAggregateOutputType | null
+}
+
+export type ApplicationAvgAggregateOutputType = {
+  desiredSalaryAmount: runtime.Decimal | null
+}
+
+export type ApplicationSumAggregateOutputType = {
+  desiredSalaryAmount: runtime.Decimal | null
 }
 
 export type ApplicationMinAggregateOutputType = {
@@ -33,7 +43,8 @@ export type ApplicationMinAggregateOutputType = {
   stageEntryDate: Date | null
   disqualificationDate: Date | null
   disqualificationReason: string | null
-  desiredSalary: string | null
+  desiredSalaryAmount: runtime.Decimal | null
+  desiredSalaryCurrency: $Enums.SalaryCurrency | null
   availability: string | null
 }
 
@@ -46,7 +57,8 @@ export type ApplicationMaxAggregateOutputType = {
   stageEntryDate: Date | null
   disqualificationDate: Date | null
   disqualificationReason: string | null
-  desiredSalary: string | null
+  desiredSalaryAmount: runtime.Decimal | null
+  desiredSalaryCurrency: $Enums.SalaryCurrency | null
   availability: string | null
 }
 
@@ -59,11 +71,20 @@ export type ApplicationCountAggregateOutputType = {
   stageEntryDate: number
   disqualificationDate: number
   disqualificationReason: number
-  desiredSalary: number
+  desiredSalaryAmount: number
+  desiredSalaryCurrency: number
   availability: number
   _all: number
 }
 
+
+export type ApplicationAvgAggregateInputType = {
+  desiredSalaryAmount?: true
+}
+
+export type ApplicationSumAggregateInputType = {
+  desiredSalaryAmount?: true
+}
 
 export type ApplicationMinAggregateInputType = {
   applicantId?: true
@@ -74,7 +95,8 @@ export type ApplicationMinAggregateInputType = {
   stageEntryDate?: true
   disqualificationDate?: true
   disqualificationReason?: true
-  desiredSalary?: true
+  desiredSalaryAmount?: true
+  desiredSalaryCurrency?: true
   availability?: true
 }
 
@@ -87,7 +109,8 @@ export type ApplicationMaxAggregateInputType = {
   stageEntryDate?: true
   disqualificationDate?: true
   disqualificationReason?: true
-  desiredSalary?: true
+  desiredSalaryAmount?: true
+  desiredSalaryCurrency?: true
   availability?: true
 }
 
@@ -100,7 +123,8 @@ export type ApplicationCountAggregateInputType = {
   stageEntryDate?: true
   disqualificationDate?: true
   disqualificationReason?: true
-  desiredSalary?: true
+  desiredSalaryAmount?: true
+  desiredSalaryCurrency?: true
   availability?: true
   _all?: true
 }
@@ -143,6 +167,18 @@ export type ApplicationAggregateArgs<ExtArgs extends runtime.Types.Extensions.In
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ApplicationAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ApplicationSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ApplicationMinAggregateInputType
@@ -173,6 +209,8 @@ export type ApplicationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   _count?: ApplicationCountAggregateInputType | true
+  _avg?: ApplicationAvgAggregateInputType
+  _sum?: ApplicationSumAggregateInputType
   _min?: ApplicationMinAggregateInputType
   _max?: ApplicationMaxAggregateInputType
 }
@@ -186,9 +224,12 @@ export type ApplicationGroupByOutputType = {
   stageEntryDate: Date
   disqualificationDate: Date | null
   disqualificationReason: string | null
-  desiredSalary: string | null
+  desiredSalaryAmount: runtime.Decimal | null
+  desiredSalaryCurrency: $Enums.SalaryCurrency | null
   availability: string | null
   _count: ApplicationCountAggregateOutputType | null
+  _avg: ApplicationAvgAggregateOutputType | null
+  _sum: ApplicationSumAggregateOutputType | null
   _min: ApplicationMinAggregateOutputType | null
   _max: ApplicationMaxAggregateOutputType | null
 }
@@ -220,7 +261,8 @@ export type ApplicationWhereInput = {
   stageEntryDate?: Prisma.DateTimeFilter<"Application"> | Date | string
   disqualificationDate?: Prisma.DateTimeNullableFilter<"Application"> | Date | string | null
   disqualificationReason?: Prisma.StringNullableFilter<"Application"> | string | null
-  desiredSalary?: Prisma.StringNullableFilter<"Application"> | string | null
+  desiredSalaryAmount?: Prisma.DecimalNullableFilter<"Application"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.EnumSalaryCurrencyNullableFilter<"Application"> | $Enums.SalaryCurrency | null
   availability?: Prisma.StringNullableFilter<"Application"> | string | null
   applicant?: Prisma.XOR<Prisma.ApplicantScalarRelationFilter, Prisma.ApplicantWhereInput>
   jobOpening?: Prisma.XOR<Prisma.JobOpeningScalarRelationFilter, Prisma.JobOpeningWhereInput>
@@ -238,7 +280,8 @@ export type ApplicationOrderByWithRelationInput = {
   stageEntryDate?: Prisma.SortOrder
   disqualificationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   disqualificationReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  desiredSalary?: Prisma.SortOrderInput | Prisma.SortOrder
+  desiredSalaryAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  desiredSalaryCurrency?: Prisma.SortOrderInput | Prisma.SortOrder
   availability?: Prisma.SortOrderInput | Prisma.SortOrder
   applicant?: Prisma.ApplicantOrderByWithRelationInput
   jobOpening?: Prisma.JobOpeningOrderByWithRelationInput
@@ -260,7 +303,8 @@ export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
   stageEntryDate?: Prisma.DateTimeFilter<"Application"> | Date | string
   disqualificationDate?: Prisma.DateTimeNullableFilter<"Application"> | Date | string | null
   disqualificationReason?: Prisma.StringNullableFilter<"Application"> | string | null
-  desiredSalary?: Prisma.StringNullableFilter<"Application"> | string | null
+  desiredSalaryAmount?: Prisma.DecimalNullableFilter<"Application"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.EnumSalaryCurrencyNullableFilter<"Application"> | $Enums.SalaryCurrency | null
   availability?: Prisma.StringNullableFilter<"Application"> | string | null
   applicant?: Prisma.XOR<Prisma.ApplicantScalarRelationFilter, Prisma.ApplicantWhereInput>
   jobOpening?: Prisma.XOR<Prisma.JobOpeningScalarRelationFilter, Prisma.JobOpeningWhereInput>
@@ -278,11 +322,14 @@ export type ApplicationOrderByWithAggregationInput = {
   stageEntryDate?: Prisma.SortOrder
   disqualificationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   disqualificationReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  desiredSalary?: Prisma.SortOrderInput | Prisma.SortOrder
+  desiredSalaryAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  desiredSalaryCurrency?: Prisma.SortOrderInput | Prisma.SortOrder
   availability?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ApplicationCountOrderByAggregateInput
+  _avg?: Prisma.ApplicationAvgOrderByAggregateInput
   _max?: Prisma.ApplicationMaxOrderByAggregateInput
   _min?: Prisma.ApplicationMinOrderByAggregateInput
+  _sum?: Prisma.ApplicationSumOrderByAggregateInput
 }
 
 export type ApplicationScalarWhereWithAggregatesInput = {
@@ -297,7 +344,8 @@ export type ApplicationScalarWhereWithAggregatesInput = {
   stageEntryDate?: Prisma.DateTimeWithAggregatesFilter<"Application"> | Date | string
   disqualificationDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
   disqualificationReason?: Prisma.StringNullableWithAggregatesFilter<"Application"> | string | null
-  desiredSalary?: Prisma.StringNullableWithAggregatesFilter<"Application"> | string | null
+  desiredSalaryAmount?: Prisma.DecimalNullableWithAggregatesFilter<"Application"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.EnumSalaryCurrencyNullableWithAggregatesFilter<"Application"> | $Enums.SalaryCurrency | null
   availability?: Prisma.StringNullableWithAggregatesFilter<"Application"> | string | null
 }
 
@@ -308,7 +356,8 @@ export type ApplicationCreateInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
@@ -326,7 +375,8 @@ export type ApplicationUncheckedCreateInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
@@ -340,7 +390,8 @@ export type ApplicationUpdateInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
@@ -358,7 +409,8 @@ export type ApplicationUncheckedUpdateInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
@@ -374,7 +426,8 @@ export type ApplicationCreateManyInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
 }
 
@@ -385,7 +438,8 @@ export type ApplicationUpdateManyMutationInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -398,7 +452,8 @@ export type ApplicationUncheckedUpdateManyInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -426,8 +481,13 @@ export type ApplicationCountOrderByAggregateInput = {
   stageEntryDate?: Prisma.SortOrder
   disqualificationDate?: Prisma.SortOrder
   disqualificationReason?: Prisma.SortOrder
-  desiredSalary?: Prisma.SortOrder
+  desiredSalaryAmount?: Prisma.SortOrder
+  desiredSalaryCurrency?: Prisma.SortOrder
   availability?: Prisma.SortOrder
+}
+
+export type ApplicationAvgOrderByAggregateInput = {
+  desiredSalaryAmount?: Prisma.SortOrder
 }
 
 export type ApplicationMaxOrderByAggregateInput = {
@@ -439,7 +499,8 @@ export type ApplicationMaxOrderByAggregateInput = {
   stageEntryDate?: Prisma.SortOrder
   disqualificationDate?: Prisma.SortOrder
   disqualificationReason?: Prisma.SortOrder
-  desiredSalary?: Prisma.SortOrder
+  desiredSalaryAmount?: Prisma.SortOrder
+  desiredSalaryCurrency?: Prisma.SortOrder
   availability?: Prisma.SortOrder
 }
 
@@ -452,8 +513,13 @@ export type ApplicationMinOrderByAggregateInput = {
   stageEntryDate?: Prisma.SortOrder
   disqualificationDate?: Prisma.SortOrder
   disqualificationReason?: Prisma.SortOrder
-  desiredSalary?: Prisma.SortOrder
+  desiredSalaryAmount?: Prisma.SortOrder
+  desiredSalaryCurrency?: Prisma.SortOrder
   availability?: Prisma.SortOrder
+}
+
+export type ApplicationSumOrderByAggregateInput = {
+  desiredSalaryAmount?: Prisma.SortOrder
 }
 
 export type ApplicationNullableScalarRelationFilter = {
@@ -550,6 +616,18 @@ export type ApplicationUncheckedUpdateManyWithoutJobOpeningNestedInput = {
   deleteMany?: Prisma.ApplicationScalarWhereInput | Prisma.ApplicationScalarWhereInput[]
 }
 
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableEnumSalaryCurrencyFieldUpdateOperationsInput = {
+  set?: $Enums.SalaryCurrency | null
+}
+
 export type ApplicationCreateNestedOneWithoutInterviewsInput = {
   create?: Prisma.XOR<Prisma.ApplicationCreateWithoutInterviewsInput, Prisma.ApplicationUncheckedCreateWithoutInterviewsInput>
   connectOrCreate?: Prisma.ApplicationCreateOrConnectWithoutInterviewsInput
@@ -603,7 +681,8 @@ export type ApplicationCreateWithoutApplicantInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicationInput
@@ -619,7 +698,8 @@ export type ApplicationUncheckedCreateWithoutApplicantInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
@@ -664,7 +744,8 @@ export type ApplicationScalarWhereInput = {
   stageEntryDate?: Prisma.DateTimeFilter<"Application"> | Date | string
   disqualificationDate?: Prisma.DateTimeNullableFilter<"Application"> | Date | string | null
   disqualificationReason?: Prisma.StringNullableFilter<"Application"> | string | null
-  desiredSalary?: Prisma.StringNullableFilter<"Application"> | string | null
+  desiredSalaryAmount?: Prisma.DecimalNullableFilter<"Application"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.EnumSalaryCurrencyNullableFilter<"Application"> | $Enums.SalaryCurrency | null
   availability?: Prisma.StringNullableFilter<"Application"> | string | null
 }
 
@@ -675,7 +756,8 @@ export type ApplicationCreateWithoutJobOpeningInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   interviews?: Prisma.InterviewCreateNestedManyWithoutApplicationInput
@@ -691,7 +773,8 @@ export type ApplicationUncheckedCreateWithoutJobOpeningInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
@@ -731,7 +814,8 @@ export type ApplicationCreateWithoutInterviewsInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
@@ -748,7 +832,8 @@ export type ApplicationUncheckedCreateWithoutInterviewsInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutApplicationInput
@@ -777,7 +862,8 @@ export type ApplicationUpdateWithoutInterviewsInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
@@ -794,7 +880,8 @@ export type ApplicationUncheckedUpdateWithoutInterviewsInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutApplicationNestedInput
@@ -807,7 +894,8 @@ export type ApplicationCreateWithoutActivitiesInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
@@ -824,7 +912,8 @@ export type ApplicationUncheckedCreateWithoutActivitiesInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   publicLinks?: Prisma.PublicLinkUncheckedCreateNestedManyWithoutApplicationInput
@@ -853,7 +942,8 @@ export type ApplicationUpdateWithoutActivitiesInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
@@ -870,7 +960,8 @@ export type ApplicationUncheckedUpdateWithoutActivitiesInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   publicLinks?: Prisma.PublicLinkUncheckedUpdateManyWithoutApplicationNestedInput
@@ -883,7 +974,8 @@ export type ApplicationCreateWithoutPublicLinksInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   applicant: Prisma.ApplicantCreateNestedOneWithoutApplicationsInput
   jobOpening: Prisma.JobOpeningCreateNestedOneWithoutApplicationsInput
@@ -900,7 +992,8 @@ export type ApplicationUncheckedCreateWithoutPublicLinksInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
   interviews?: Prisma.InterviewUncheckedCreateNestedManyWithoutApplicationInput
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutApplicationInput
@@ -929,7 +1022,8 @@ export type ApplicationUpdateWithoutPublicLinksInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
@@ -946,7 +1040,8 @@ export type ApplicationUncheckedUpdateWithoutPublicLinksInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
@@ -960,7 +1055,8 @@ export type ApplicationCreateManyApplicantInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
 }
 
@@ -971,7 +1067,8 @@ export type ApplicationUpdateWithoutApplicantInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   jobOpening?: Prisma.JobOpeningUpdateOneRequiredWithoutApplicationsNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicationNestedInput
@@ -987,7 +1084,8 @@ export type ApplicationUncheckedUpdateWithoutApplicantInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
@@ -1002,7 +1100,8 @@ export type ApplicationUncheckedUpdateManyWithoutApplicantInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -1014,7 +1113,8 @@ export type ApplicationCreateManyJobOpeningInput = {
   stageEntryDate?: Date | string
   disqualificationDate?: Date | string | null
   disqualificationReason?: string | null
-  desiredSalary?: string | null
+  desiredSalaryAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: $Enums.SalaryCurrency | null
   availability?: string | null
 }
 
@@ -1025,7 +1125,8 @@ export type ApplicationUpdateWithoutJobOpeningInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   applicant?: Prisma.ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
   interviews?: Prisma.InterviewUpdateManyWithoutApplicationNestedInput
@@ -1041,7 +1142,8 @@ export type ApplicationUncheckedUpdateWithoutJobOpeningInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   interviews?: Prisma.InterviewUncheckedUpdateManyWithoutApplicationNestedInput
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutApplicationNestedInput
@@ -1056,7 +1158,8 @@ export type ApplicationUncheckedUpdateManyWithoutJobOpeningInput = {
   stageEntryDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disqualificationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   disqualificationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  desiredSalary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  desiredSalaryAmount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  desiredSalaryCurrency?: Prisma.NullableEnumSalaryCurrencyFieldUpdateOperationsInput | $Enums.SalaryCurrency | null
   availability?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
@@ -1118,7 +1221,8 @@ export type ApplicationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   stageEntryDate?: boolean
   disqualificationDate?: boolean
   disqualificationReason?: boolean
-  desiredSalary?: boolean
+  desiredSalaryAmount?: boolean
+  desiredSalaryCurrency?: boolean
   availability?: boolean
   applicant?: boolean | Prisma.ApplicantDefaultArgs<ExtArgs>
   jobOpening?: boolean | Prisma.JobOpeningDefaultArgs<ExtArgs>
@@ -1137,7 +1241,8 @@ export type ApplicationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   stageEntryDate?: boolean
   disqualificationDate?: boolean
   disqualificationReason?: boolean
-  desiredSalary?: boolean
+  desiredSalaryAmount?: boolean
+  desiredSalaryCurrency?: boolean
   availability?: boolean
   applicant?: boolean | Prisma.ApplicantDefaultArgs<ExtArgs>
   jobOpening?: boolean | Prisma.JobOpeningDefaultArgs<ExtArgs>
@@ -1152,7 +1257,8 @@ export type ApplicationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   stageEntryDate?: boolean
   disqualificationDate?: boolean
   disqualificationReason?: boolean
-  desiredSalary?: boolean
+  desiredSalaryAmount?: boolean
+  desiredSalaryCurrency?: boolean
   availability?: boolean
   applicant?: boolean | Prisma.ApplicantDefaultArgs<ExtArgs>
   jobOpening?: boolean | Prisma.JobOpeningDefaultArgs<ExtArgs>
@@ -1167,11 +1273,12 @@ export type ApplicationSelectScalar = {
   stageEntryDate?: boolean
   disqualificationDate?: boolean
   disqualificationReason?: boolean
-  desiredSalary?: boolean
+  desiredSalaryAmount?: boolean
+  desiredSalaryCurrency?: boolean
   availability?: boolean
 }
 
-export type ApplicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"applicantId" | "jobOpeningId" | "applicationDate" | "active" | "currentStage" | "stageEntryDate" | "disqualificationDate" | "disqualificationReason" | "desiredSalary" | "availability", ExtArgs["result"]["application"]>
+export type ApplicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"applicantId" | "jobOpeningId" | "applicationDate" | "active" | "currentStage" | "stageEntryDate" | "disqualificationDate" | "disqualificationReason" | "desiredSalaryAmount" | "desiredSalaryCurrency" | "availability", ExtArgs["result"]["application"]>
 export type ApplicationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   applicant?: boolean | Prisma.ApplicantDefaultArgs<ExtArgs>
   jobOpening?: boolean | Prisma.JobOpeningDefaultArgs<ExtArgs>
@@ -1207,7 +1314,8 @@ export type $ApplicationPayload<ExtArgs extends runtime.Types.Extensions.Interna
     stageEntryDate: Date
     disqualificationDate: Date | null
     disqualificationReason: string | null
-    desiredSalary: string | null
+    desiredSalaryAmount: runtime.Decimal | null
+    desiredSalaryCurrency: $Enums.SalaryCurrency | null
     availability: string | null
   }, ExtArgs["result"]["application"]>
   composites: {}
@@ -1645,7 +1753,8 @@ export interface ApplicationFieldRefs {
   readonly stageEntryDate: Prisma.FieldRef<"Application", 'DateTime'>
   readonly disqualificationDate: Prisma.FieldRef<"Application", 'DateTime'>
   readonly disqualificationReason: Prisma.FieldRef<"Application", 'String'>
-  readonly desiredSalary: Prisma.FieldRef<"Application", 'String'>
+  readonly desiredSalaryAmount: Prisma.FieldRef<"Application", 'Decimal'>
+  readonly desiredSalaryCurrency: Prisma.FieldRef<"Application", 'SalaryCurrency'>
   readonly availability: Prisma.FieldRef<"Application", 'String'>
 }
     

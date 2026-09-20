@@ -1,0 +1,280 @@
+"use client";
+
+import { Upload, X } from "lucide-react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+
+import Image from "next/image";
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect } from "react";
+
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentMedia,
+} from "~/components/ui/attachment";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+
+import { paises as countries } from "~/lib/countries";
+
+import type { ApplicantFormValues } from "./edit-applicant-form";
+
+type PersonalDataProps = {
+  currentPhoto?: string | null;
+  photoPreview?: string;
+  setPhotoPreview: Dispatch<SetStateAction<string | undefined>>;
+  removePhoto: boolean;
+  setRemovePhoto: Dispatch<SetStateAction<boolean>>;
+};
+
+export default function PersonalData({
+  currentPhoto,
+  photoPreview,
+  setPhotoPreview,
+  removePhoto,
+  setRemovePhoto,
+}: PersonalDataProps) {
+  const {
+    register,
+    control,
+    resetField,
+    formState: { errors },
+  } = useFormContext<ApplicantFormValues>();
+
+  const photoWatch = useWatch({
+    control,
+    name: "photo",
+  });
+
+  const photoFile = photoWatch?.[0];
+
+  useEffect(() => {
+    return () => {
+      if (photoPreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(photoPreview);
+      }
+    };
+  }, [photoPreview]);
+
+  const photoField = register("photo");
+
+  function handleRemovePhoto() {
+    if (photoFile) {
+      resetField("photo");
+      setPhotoPreview(removePhoto ? undefined : (currentPhoto ?? undefined));
+      return;
+    }
+
+    if (currentPhoto) {
+      setRemovePhoto(true);
+      setPhotoPreview(undefined);
+    }
+  }
+
+  function handleUndoRemovePhoto() {
+    setRemovePhoto(false);
+    setPhotoPreview(currentPhoto ?? undefined);
+  }
+
+  return (
+    <Card className="w-full rounded-xl shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-semibold">
+          Datos personales
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <div className="flex flex-col gap-4 md:flex-row">
+          {/* Photo */}
+          <div className="flex shrink-0 flex-col items-center md:w-32 md:pt-6">
+            <input
+              id="photo"
+              type="file"
+              accept=".jpg,.jpeg,.png"
+              className="hidden"
+              {...photoField}
+              onChange={(event) => {
+                photoField.onChange(event);
+
+                const file = event.target.files?.[0];
+
+                if (!file) {
+                  return;
+                }
+
+                setPhotoPreview(URL.createObjectURL(file));
+              }}
+            />
+
+            <Attachment
+              orientation="vertical"
+              size="sm"
+              className="!h-32 !w-32 border-dashed"
+            >
+              <AttachmentMedia variant="image" className="!h-full !w-full p-0">
+                <label
+                  htmlFor="photo"
+                  className="flex h-full w-full cursor-pointer items-center justify-center"
+                >
+                  {photoPreview ? (
+                    <Image
+                      src={photoPreview}
+                      alt="Vista previa de la foto"
+                      width={128}
+                      height={128}
+                      unoptimized
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <Upload className="h-8 w-8" />
+                  )}
+                </label>
+              </AttachmentMedia>
+
+              {(photoFile || (currentPhoto && !removePhoto)) && (
+                <AttachmentAction
+                  type="button"
+                  aria-label={
+                    photoFile
+                      ? "Descartar foto seleccionada"
+                      : "Eliminar foto actual"
+                  }
+                  onClick={handleRemovePhoto}
+                  className="absolute right-1 top-1 !h-6 !w-6 rounded-full bg-surface-card p-0 text-danger"
+                >
+                  <X className="!h-3 !w-3" />
+                </AttachmentAction>
+              )}
+            </Attachment>
+
+            <span className="mt-1 text-xs text-text-secondary">Foto</span>
+
+            {removePhoto && !photoFile && (
+              <button
+                type="button"
+                onClick={handleUndoRemovePhoto}
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                Deshacer
+              </button>
+            )}
+
+            {errors.photo && (
+              <p className="text-danger">{errors.photo.message}</p>
+            )}
+          </div>
+
+          <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="name">
+                Nombre <span className="text-danger">*</span>
+              </Label>
+
+              <Input
+                id="name"
+                placeholder="Ej. Santiago"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-danger">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="lastname">
+                Apellido <span className="text-danger">*</span>
+              </Label>
+
+              <Input
+                id="lastname"
+                placeholder="Ej. González"
+                {...register("lastname")}
+              />
+              {errors.lastname && (
+                <p className="text-danger">{errors.lastname.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="email">
+                Correo electrónico <span className="text-danger">*</span>
+              </Label>
+
+              <Input
+                id="email"
+                type="email"
+                placeholder="nombre@mail.com"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-danger">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="phone">Teléfono</Label>
+
+              <Input
+                id="phone"
+                placeholder="+59899000000"
+                {...register("phone")}
+              />
+              {errors.phone && (
+                <p className="text-danger">{errors.phone.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="country">País</Label>
+
+              <Controller
+                name="country"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="country" className="w-full">
+                      <SelectValue placeholder="Seleccionar país" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {countries.map((country) => (
+                        <SelectItem key={country.codigo} value={country.nombre}>
+                          {country.nombre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <div className="space-y-1 md:col-span-2">
+              <Label htmlFor="linkedin">LinkedIn</Label>
+
+              <Input
+                id="linkedin"
+                placeholder="https://linkedin.com/in/..."
+                {...register("linkedin")}
+              />
+              {errors.linkedin && (
+                <p className="text-danger">{errors.linkedin.message}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

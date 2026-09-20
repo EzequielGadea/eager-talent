@@ -76,3 +76,11 @@ export const InterviewType = {
 } as const
 
 export type InterviewType = (typeof InterviewType)[keyof typeof InterviewType]
+
+
+export const SalaryCurrency = {
+  USD: 'USD',
+  UYU: 'UYU'
+} as const
+
+export type SalaryCurrency = (typeof SalaryCurrency)[keyof typeof SalaryCurrency]

@@ -338,6 +338,50 @@ export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
   _max?: Prisma.NestedJsonFilter<$PrismaModel>
 }
 
+export type DecimalNullableFilter<$PrismaModel = never> = {
+  equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
+  in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  notIn?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  lt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  lte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedDecimalNullableFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type EnumSalaryCurrencyNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SalaryCurrency | Prisma.EnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSalaryCurrencyNullableFilter<$PrismaModel> | $Enums.SalaryCurrency | null
+}
+
+export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
+  in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  notIn?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  lt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  lte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+}
+
+export type EnumSalaryCurrencyNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SalaryCurrency | Prisma.EnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSalaryCurrencyNullableWithAggregatesFilter<$PrismaModel> | $Enums.SalaryCurrency | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSalaryCurrencyNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSalaryCurrencyNullableFilter<$PrismaModel>
+}
+
 export type EnumInterviewTypeFilter<$PrismaModel = never> = {
   equals?: $Enums.InterviewType | Prisma.EnumInterviewTypeFieldRefInput<$PrismaModel>
   in?: $Enums.InterviewType[] | Prisma.ListEnumInterviewTypeFieldRefInput<$PrismaModel>
@@ -680,6 +724,50 @@ export type NestedJsonFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel>
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter
+}
+
+export type NestedDecimalNullableFilter<$PrismaModel = never> = {
+  equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
+  in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  notIn?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  lt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  lte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedDecimalNullableFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+}
+
+export type NestedEnumSalaryCurrencyNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SalaryCurrency | Prisma.EnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSalaryCurrencyNullableFilter<$PrismaModel> | $Enums.SalaryCurrency | null
+}
+
+export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
+  in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  notIn?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
+  lt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  lte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gt?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  gte?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedDecimalNullableWithAggregatesFilter<$PrismaModel> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumSalaryCurrencyNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SalaryCurrency | Prisma.EnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SalaryCurrency[] | Prisma.ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSalaryCurrencyNullableWithAggregatesFilter<$PrismaModel> | $Enums.SalaryCurrency | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSalaryCurrencyNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSalaryCurrencyNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumInterviewTypeFilter<$PrismaModel = never> = {

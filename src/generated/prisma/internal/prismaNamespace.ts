@@ -2122,7 +2122,8 @@ export const ApplicationScalarFieldEnum = {
   stageEntryDate: 'stageEntryDate',
   disqualificationDate: 'disqualificationDate',
   disqualificationReason: 'disqualificationReason',
-  desiredSalary: 'desiredSalary',
+  desiredSalaryAmount: 'desiredSalaryAmount',
+  desiredSalaryCurrency: 'desiredSalaryCurrency',
   availability: 'availability'
 } as const
 
@@ -2405,6 +2406,34 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SalaryCurrency'
+ */
+export type EnumSalaryCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SalaryCurrency'>
+    
+
+
+/**
+ * Reference to a field of type 'SalaryCurrency[]'
+ */
+export type ListEnumSalaryCurrencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SalaryCurrency[]'>
     
 
 
