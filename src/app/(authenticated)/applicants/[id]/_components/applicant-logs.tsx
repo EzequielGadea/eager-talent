@@ -39,7 +39,7 @@ import {
 import { Badge } from "~/components/ui/badge";
 import { Skeleton } from "~/components/ui/skeleton";
 import { api } from "~/lib/trpc/react";
-import { CandidateLogsFilter } from "./candidate-logs-filter";
+import { ApplicantLogsFilter } from "./applicant-logs-filter";
 
 function formatActivityDate(date: Date) {
   return format(new TZDate(date, "America/Montevideo"), "dd MMM yyyy HH:mm", {
@@ -47,13 +47,13 @@ function formatActivityDate(date: Date) {
   });
 }
 
-export function CandidateLogs({ candidateId }: { candidateId: string }) {
+export function ApplicantLogs({ applicantId }: { applicantId: string }) {
   const headerRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(1);
   const [jobOpeningId, setJobOpeningId] = useState<string | undefined>();
 
-  const { data, isLoading, error } = api.activity.getByCandidateId.useQuery({
-    candidateId,
+  const { data, isLoading, error } = api.activity.getByApplicantId.useQuery({
+    applicantId,
     jobOpeningId,
     page,
   });
@@ -125,7 +125,7 @@ export function CandidateLogs({ candidateId }: { candidateId: string }) {
         {!data ? (
           <Skeleton className="h-9 w-30" />
         ) : (
-          <CandidateLogsFilter
+          <ApplicantLogsFilter
             applications={applications}
             jobOpeningId={jobOpeningId}
             onFilterChange={(id) => {

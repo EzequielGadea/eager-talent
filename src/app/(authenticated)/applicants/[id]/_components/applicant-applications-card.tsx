@@ -31,7 +31,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-type CandidateApplicationsCardProps = {
+type ApplicantApplicationsCardProps = {
   canCreatePublicLink: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
@@ -58,12 +58,12 @@ type CandidateApplicationsCardProps = {
   }[];
 };
 
-export function CandidateApplicationsCard({
+export function ApplicantApplicationsCard({
   applications,
   canCreatePublicLink,
   canUpdateApplication,
   canCreateInterview,
-}: CandidateApplicationsCardProps) {
+}: ApplicantApplicationsCardProps) {
   const [selectedId, setSelectedId] = useState(applications[0]?.jobOpeningId);
 
   const app =

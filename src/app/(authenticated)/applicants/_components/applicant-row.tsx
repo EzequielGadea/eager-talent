@@ -31,7 +31,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   const [failedPhoto, setFailedPhoto] = useState<string | null>(null);
 
   const handleApplicantClick = (applicantId: string) => {
-    router.push(`/candidatos/${applicantId}`);
+    router.push(`/applicants/${applicantId}`);
   };
 
   return (

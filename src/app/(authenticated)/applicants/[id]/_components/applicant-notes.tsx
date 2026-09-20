@@ -4,20 +4,20 @@ import { headers } from "next/headers";
 import { NotesEditor } from "~/components/notes-editor";
 import { api } from "~/lib/trpc/server";
 import { auth } from "~/lib/auth";
-import type { Candidate } from "./candidate-details";
+import type { Applicant } from "./applicant-details";
 
-type CandidateNotesProps = {
-  candidatePromise: Promise<Candidate>;
+type ApplicantNotesProps = {
+  applicantPromise: Promise<Applicant>;
 };
 
-export async function saveCandidateNote(
-  candidateId: string,
+export async function saveApplicantNote(
+  applicantId: string,
   content: JSONContent,
 ) {
   "use server";
 
-  const result = await api.candidateNote.save({ candidateId, content });
-  revalidatePath(`/candidates/${candidateId}`);
+  const result = await api.applicantNote.save({ applicantId, content });
+  revalidatePath(`/applicants/${applicantId}`);
 
   return {
     lastModified: result.lastModified.toISOString(),
@@ -25,12 +25,12 @@ export async function saveCandidateNote(
   };
 }
 
-export async function CandidateNotes({
-  candidatePromise,
-}: CandidateNotesProps) {
-  const candidate = await candidatePromise;
-  const note = await api.candidateNote.getByCandidateId({
-    candidateId: candidate.id,
+export async function ApplicantNotes({
+  applicantPromise,
+}: ApplicantNotesProps) {
+  const applicant = await applicantPromise;
+  const note = await api.applicantNote.getByApplicantId({
+    applicantId: applicant.id,
   });
   const permission = await auth.api.hasPermission({
     headers: await headers(),
@@ -40,7 +40,7 @@ export async function CandidateNotes({
       },
     },
   });
-  const save = saveCandidateNote.bind(null, candidate.id);
+  const save = saveApplicantNote.bind(null, applicant.id);
 
   return (
     <NotesEditor

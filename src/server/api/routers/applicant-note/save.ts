@@ -4,20 +4,20 @@ import { z } from "zod";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const saveCandidateNoteProcedure = protectedProcedure
+export const saveApplicantNoteProcedure = protectedProcedure
   .input(
     z.object({
-      candidateId: z.string().min(1),
+      applicantId: z.string().min(1),
       content: z.json(),
     }),
   )
   .mutation(async ({ input, ctx }) => {
-    const candidate = await ctx.db.applicant.findUnique({
-      where: { id: input.candidateId },
+    const applicant = await ctx.db.applicant.findUnique({
+      where: { id: input.applicantId },
       select: { id: true, note: { select: { id: true } } },
     });
 
-    if (!candidate) {
+    if (!applicant) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Candidato no encontrado",
@@ -28,7 +28,7 @@ export const saveCandidateNoteProcedure = protectedProcedure
       headers: ctx.headers,
       body: {
         permissions: {
-          applicantNote: [candidate.note ? "update" : "create"],
+          applicantNote: [applicant.note ? "update" : "create"],
         },
       },
     });
@@ -46,8 +46,8 @@ export const saveCandidateNoteProcedure = protectedProcedure
     };
 
     return ctx.db.applicantNote.upsert({
-      where: { applicantId: input.candidateId },
-      create: { applicantId: input.candidateId, ...data },
+      where: { applicantId: input.applicantId },
+      create: { applicantId: input.applicantId, ...data },
       update: data,
       select: {
         lastModified: true,

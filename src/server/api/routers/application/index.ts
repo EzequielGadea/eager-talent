@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { getApplicationsByCandidateIdProcedure } from "./get-applications-by-candidate-id";
+import { getApplicationsByApplicantIdProcedure } from "./get-applications-by-applicant-id";
 
 export const applicationRouter = createTRPCRouter({
-  getAllByCandidateId: getApplicationsByCandidateIdProcedure,
+  getAllByApplicantId: getApplicationsByApplicantIdProcedure,
 });

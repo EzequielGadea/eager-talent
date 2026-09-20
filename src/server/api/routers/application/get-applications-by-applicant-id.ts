@@ -4,10 +4,10 @@ import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const getApplicationsByCandidateIdProcedure = protectedProcedure
+export const getApplicationsByApplicantIdProcedure = protectedProcedure
   .input(
     z.object({
-      candidateId: z.string().min(1),
+      applicantId: z.string().min(1),
     }),
   )
   .query(async ({ input, ctx }) => {
@@ -29,7 +29,7 @@ export const getApplicationsByCandidateIdProcedure = protectedProcedure
 
     const applications = await ctx.db.application.findMany({
       where: {
-        applicantId: input.candidateId,
+        applicantId: input.applicantId,
         ...(canReadAllResult.success
           ? {}
           : {

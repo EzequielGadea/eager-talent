@@ -3,7 +3,7 @@
 import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 
-export default function CandidateError({ reset }: { reset: () => void }) {
+export default function ApplicantError({ reset }: { reset: () => void }) {
   return (
     <Alert className="flex flex-col items-start gap-4">
       <AlertTitle>

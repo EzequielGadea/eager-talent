@@ -8,7 +8,7 @@ import {
 } from "~/components/ui/empty";
 import { buttonVariants } from "~/components/ui/button";
 
-export default function CandidateNotFound() {
+export default function ApplicantNotFound() {
   return (
     <Empty>
       <EmptyHeader>

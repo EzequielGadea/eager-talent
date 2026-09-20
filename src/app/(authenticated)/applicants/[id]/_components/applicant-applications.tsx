@@ -2,16 +2,16 @@ import { api } from "~/lib/trpc/server";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 
-import { CandidateApplicationsCard } from "./candidate-applications-card";
+import { ApplicantApplicationsCard } from "./applicant-applications-card";
 
-type CandidateApplicationsProps = {
-  candidatePromise: Promise<Awaited<ReturnType<typeof api.candidate.getById>>>;
+type ApplicantApplicationsProps = {
+  applicantPromise: Promise<Awaited<ReturnType<typeof api.applicant.getById>>>;
 };
 
-export async function CandidateApplications({
-  candidatePromise,
-}: CandidateApplicationsProps) {
-  const candidate = await candidatePromise;
+export async function ApplicantApplications({
+  applicantPromise,
+}: ApplicantApplicationsProps) {
+  const applicant = await applicantPromise;
   const requestHeaders = await headers();
   const [canCreatePublicLink, canUpdateApplication, canCreateInterview] =
     await Promise.all([
@@ -30,8 +30,8 @@ export async function CandidateApplications({
     ]);
 
   const [applications, interviews] = await Promise.all([
-    api.application.getAllByCandidateId({ candidateId: candidate.id }),
-    api.interview.getAllByCandidateId({ candidateId: candidate.id }),
+    api.application.getAllByApplicantId({ applicantId: applicant.id }),
+    api.interview.getAllByApplicantId({ applicantId: applicant.id }),
   ]);
 
   const applicationsWithInterviews = applications.map((application) => ({
@@ -44,7 +44,7 @@ export async function CandidateApplications({
   }));
 
   return (
-    <CandidateApplicationsCard
+    <ApplicantApplicationsCard
       applications={applicationsWithInterviews}
       canCreatePublicLink={canCreatePublicLink.success}
       canUpdateApplication={canUpdateApplication.success}

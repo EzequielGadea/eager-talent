@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { getInterviewsByCandidateIdProcedure } from "./get-interviews-by-candidate-id";
+import { getInterviewsByApplicantIdProcedure } from "./get-interviews-by-applicant-id";
 
 export const interviewsRouter = createTRPCRouter({
-  getAllByCandidateId: getInterviewsByCandidateIdProcedure,
+  getAllByApplicantId: getInterviewsByApplicantIdProcedure,
 });

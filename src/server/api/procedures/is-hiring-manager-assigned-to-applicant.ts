@@ -1,6 +1,6 @@
 import type { Prisma } from "~/generated/prisma/client";
 
-export function isHiringManagerAssignedToCandidate(
+export function isHiringManagerAssignedToApplicant(
   userId: string,
 ): Prisma.ApplicantWhereInput {
   return {

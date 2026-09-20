@@ -2,10 +2,10 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
-import { isHiringManagerAssignedToCandidate } from "~/server/api/procedures/is-hiring-manager-assigned-to-candidate";
+import { isHiringManagerAssignedToApplicant } from "~/server/api/procedures/is-hiring-manager-assigned-to-applicant";
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const getCandidateByIdProcedure = protectedProcedure
+export const getApplicantByIdProcedure = protectedProcedure
   .input(
     z.object({
       id: z.string().min(1),
@@ -30,12 +30,12 @@ export const getCandidateByIdProcedure = protectedProcedure
       });
     }
 
-    const candidate = await ctx.db.applicant.findFirst({
+    const applicant = await ctx.db.applicant.findFirst({
       where: {
         id: input.id,
         ...(canReadAllResult.success
           ? {}
-          : isHiringManagerAssignedToCandidate(ctx.session.user.id)),
+          : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
       },
       select: {
         id: true,
@@ -61,12 +61,12 @@ export const getCandidateByIdProcedure = protectedProcedure
       },
     });
 
-    if (!candidate) {
+    if (!applicant) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Candidato no encontrado",
       });
     }
 
-    return candidate;
+    return applicant;
   });

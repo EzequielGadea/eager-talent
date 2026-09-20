@@ -5,13 +5,13 @@ import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
 import type { api } from "~/lib/trpc/server";
 import { Badge } from "~/components/ui/badge";
 
-type CandidatePromise = Promise<
-  Awaited<ReturnType<typeof api.candidate.getById>>
+type ApplicantPromise = Promise<
+  Awaited<ReturnType<typeof api.applicant.getById>>
 >;
-type CandidateTagsProps = { candidatePromise: CandidatePromise };
+type ApplicantTagsProps = { applicantPromise: ApplicantPromise };
 
-export async function CandidateTags({ candidatePromise }: CandidateTagsProps) {
-  const { tags } = await candidatePromise;
+export async function ApplicantTags({ applicantPromise }: ApplicantTagsProps) {
+  const { tags } = await applicantPromise;
   return (
     <Card size="sm">
       <CardHeader>

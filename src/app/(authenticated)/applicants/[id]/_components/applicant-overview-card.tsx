@@ -27,18 +27,18 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
-import { englishLevelLabels, sourceLabels } from "../_lib/candidate-labels";
+import { englishLevelLabels, sourceLabels } from "../_lib/applicant-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
-import { CandidateAvatar } from "./candidate-avatar";
+import { ApplicantAvatar } from "./applicant-avatar";
 
-type CandidatePromise = Promise<
-  Awaited<ReturnType<typeof api.candidate.getById>>
+type ApplicantPromise = Promise<
+  Awaited<ReturnType<typeof api.applicant.getById>>
 >;
-type CandidateOverviewCardProps = { candidatePromise: CandidatePromise };
+type ApplicantOverviewCardProps = { applicantPromise: ApplicantPromise };
 
-export async function CandidateOverviewCard({
-  candidatePromise,
-}: CandidateOverviewCardProps) {
+export async function ApplicantOverviewCard({
+  applicantPromise,
+}: ApplicantOverviewCardProps) {
   const {
     name,
     lastName,
@@ -51,7 +51,7 @@ export async function CandidateOverviewCard({
     englishLevel,
     role,
     seniority,
-  } = await candidatePromise;
+  } = await applicantPromise;
   const linkedinUrl = getSafeExternalUrl(linkedin);
   const linkedinLabel = linkedinUrl
     ?.replace(/^https?:\/\//, "")
@@ -61,7 +61,7 @@ export async function CandidateOverviewCard({
     <Card className="min-w-0">
       <CardHeader>
         <div className="flex gap-4 items-start justify-between">
-          <CandidateAvatar name={name} lastName={lastName} photo={photo} />
+          <ApplicantAvatar name={name} lastName={lastName} photo={photo} />
 
           <div className="min-w-0 flex-1">
             <CardTitle className="wrap-anywhere text-xl font-bold tracking-tight">
@@ -153,21 +153,21 @@ export async function CandidateOverviewCard({
       </CardHeader>
       <Separator />
       <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <CandidateAttribute label="Rol" value={role.name} />
+        <ApplicantAttribute label="Rol" value={role.name} />
 
-        <CandidateAttribute
+        <ApplicantAttribute
           label="Seniority"
           value={seniority?.name ?? "Sin seniority"}
         />
 
-        <CandidateAttribute
+        <ApplicantAttribute
           label="Nivel de inglés"
           value={
             englishLevel ? englishLevelLabels[englishLevel] : "Sin información"
           }
         />
 
-        <CandidateAttribute
+        <ApplicantAttribute
           label="Fuente"
           value={source ? sourceLabels[source] : "Sin fuente"}
         />
@@ -176,12 +176,12 @@ export async function CandidateOverviewCard({
   );
 }
 
-type CandidateAttributeProps = {
+type ApplicantAttributeProps = {
   label: string;
   value: string;
 };
 
-function CandidateAttribute({ label, value }: CandidateAttributeProps) {
+function ApplicantAttribute({ label, value }: ApplicantAttributeProps) {
   return (
     <div className="min-w-0 wrap-anywhere">
       <p className="text-xs font-semibold uppercase text-text-tertiary">

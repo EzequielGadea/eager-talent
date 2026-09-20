@@ -3,17 +3,17 @@ import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
-import { hearAboutUsLabels } from "../_lib/candidate-labels";
+import { hearAboutUsLabels } from "../_lib/applicant-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
 
-type CandidatePromise = Promise<
-  Awaited<ReturnType<typeof api.candidate.getById>>
+type ApplicantPromise = Promise<
+  Awaited<ReturnType<typeof api.applicant.getById>>
 >;
-type CandidateInfoCardsProps = { candidatePromise: CandidatePromise };
+type ApplicantInfoCardsProps = { applicantPromise: ApplicantPromise };
 
-export async function CandidateInfoCards({
-  candidatePromise,
-}: CandidateInfoCardsProps) {
+export async function ApplicantInfoCards({
+  applicantPromise,
+}: ApplicantInfoCardsProps) {
   const {
     title,
     education,
@@ -22,7 +22,7 @@ export async function CandidateInfoCards({
     careerEndYear,
     hearAboutUs,
     resume,
-  } = await candidatePromise;
+  } = await applicantPromise;
   const careerYears =
     careerStartYear || careerEndYear
       ? `${careerStartYear ?? "?"}–${careerEndYear ?? "Actualidad"}`

@@ -2,13 +2,13 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
-import { isHiringManagerAssignedToCandidate } from "~/server/api/procedures/is-hiring-manager-assigned-to-candidate";
+import { isHiringManagerAssignedToApplicant } from "~/server/api/procedures/is-hiring-manager-assigned-to-applicant";
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const getActivitiesByCandidateIdProcedure = protectedProcedure
+export const getActivitiesByApplicantIdProcedure = protectedProcedure
   .input(
     z.object({
-      candidateId: z.string().min(1),
+      applicantId: z.string().min(1),
       page: z.number().int().positive().default(1),
       jobOpeningId: z.string().trim().min(1).optional(),
     }),
@@ -17,8 +17,8 @@ export const getActivitiesByCandidateIdProcedure = protectedProcedure
     const [
       canReadAllActivitiesResult,
       canReadAssignedActivitiesResult,
-      canReadAllCandidatesResult,
-      canReadAssignedCandidatesResult,
+      canReadAllApplicantsResult,
+      canReadAssignedApplicantsResult,
     ] = await Promise.all([
       auth.api.hasPermission({
         headers: ctx.headers,
@@ -49,8 +49,8 @@ export const getActivitiesByCandidateIdProcedure = protectedProcedure
     }
 
     if (
-      !canReadAllCandidatesResult.success &&
-      !canReadAssignedCandidatesResult.success
+      !canReadAllApplicantsResult.success &&
+      !canReadAssignedApplicantsResult.success
     ) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -58,20 +58,20 @@ export const getActivitiesByCandidateIdProcedure = protectedProcedure
       });
     }
 
-    const canReadCandidateWithoutAssignment =
-      canReadAllActivitiesResult.success && canReadAllCandidatesResult.success;
+    const canReadApplicantWithoutAssignment =
+      canReadAllActivitiesResult.success && canReadAllApplicantsResult.success;
 
-    const candidate = await ctx.db.applicant.findFirst({
+    const applicant = await ctx.db.applicant.findFirst({
       where: {
-        id: input.candidateId,
-        ...(canReadCandidateWithoutAssignment
+        id: input.applicantId,
+        ...(canReadApplicantWithoutAssignment
           ? {}
-          : isHiringManagerAssignedToCandidate(ctx.session.user.id)),
+          : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
       },
       select: { id: true },
     });
 
-    if (!candidate) {
+    if (!applicant) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Candidato no encontrado",
@@ -79,12 +79,12 @@ export const getActivitiesByCandidateIdProcedure = protectedProcedure
     }
 
     const where = {
-      applicantId: input.candidateId,
+      applicantId: input.applicantId,
       ...(input.jobOpeningId ? { jobOpeningId: input.jobOpeningId } : {}),
     };
     const [applications, total] = await Promise.all([
       ctx.db.application.findMany({
-        where: { applicantId: input.candidateId },
+        where: { applicantId: input.applicantId },
         select: { jobOpeningId: true, jobOpening: { select: { name: true } } },
         orderBy: [{ jobOpening: { name: "asc" } }, { jobOpeningId: "asc" }],
       }),

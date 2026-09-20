@@ -1,14 +1,14 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { candidateRouter } from "./routers/candidate";
+import { applicantRouter } from "./routers/applicant";
 import { activityRouter } from "./routers/activity";
-import { candidateNoteRouter } from "./routers/candidate-note";
+import { applicantNoteRouter } from "./routers/applicant-note";
 import { applicationRouter } from "./routers/application";
 import { interviewsRouter } from "./routers/interviews";
 
 export const appRouter = createTRPCRouter({
-  candidate: candidateRouter,
+  applicant: applicantRouter,
   activity: activityRouter,
-  candidateNote: candidateNoteRouter,
+  applicantNote: applicantNoteRouter,
   application: applicationRouter,
   interview: interviewsRouter,
 });

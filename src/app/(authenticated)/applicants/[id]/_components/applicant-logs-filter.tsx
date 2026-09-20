@@ -11,17 +11,17 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-type CandidateLogsFilterProps = {
+type ApplicantLogsFilterProps = {
   applications: { jobOpeningId: string; name: string }[];
   jobOpeningId?: string;
   onFilterChange: (jobOpeningId: string | undefined) => void;
 };
 
-export function CandidateLogsFilter({
+export function ApplicantLogsFilter({
   applications,
   jobOpeningId,
   onFilterChange,
-}: CandidateLogsFilterProps) {
+}: ApplicantLogsFilterProps) {
   const selectedApplication = applications.find(
     (application) => application.jobOpeningId === jobOpeningId,
   );

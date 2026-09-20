@@ -4,30 +4,30 @@ import { notFound } from "next/navigation";
 
 import Loading from "~/components/ui/loading";
 import { api } from "~/lib/trpc/server";
-import { CandidateOverviewCard } from "./_components/candidate-overview-card";
-import { CandidateInfoCards } from "./_components/candidate-info-cards";
-import { CandidateApplications } from "./_components/candidate-applications";
-import { CandidateLogsSection } from "./_components/candidate-logs-section";
-import { CandidateNotes } from "./_components/candidate-notes";
-import { CandidateTags } from "./_components/candidate-tags";
+import { ApplicantOverviewCard } from "./_components/applicant-overview-card";
+import { ApplicantInfoCards } from "./_components/applicant-info-cards";
+import { ApplicantApplications } from "./_components/applicant-applications";
+import { ApplicantLogsSection } from "./_components/applicant-logs-section";
+import { ApplicantNotes } from "./_components/applicant-notes";
+import { ApplicantTags } from "./_components/applicant-tags";
 
-type CandidatePageProps = {
+type ApplicantPageProps = {
   params: Promise<{
     id: string;
   }>;
 };
 
-export default function CandidatePage({ params }: CandidatePageProps) {
+export default function ApplicantPage({ params }: ApplicantPageProps) {
   return (
     <Suspense fallback={<Loading />}>
-      <CandidatePageContent params={params} />
+      <ApplicantPageContent params={params} />
     </Suspense>
   );
 }
 
-async function CandidatePageContent({ params }: CandidatePageProps) {
+async function ApplicantPageContent({ params }: ApplicantPageProps) {
   const { id } = await params;
-  const candidatePromise = api.candidate
+  const applicantPromise = api.applicant
     .getById({ id })
     .catch((error: unknown) => {
       if (error instanceof TRPCError && error.code === "NOT_FOUND") {
@@ -40,29 +40,29 @@ async function CandidatePageContent({ params }: CandidatePageProps) {
     <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] selection:bg-tag-green-bg selection:text-tag-green-fg">
       <div className="flex min-w-0 flex-col gap-4">
         <Suspense fallback={<Loading />}>
-          <CandidateOverviewCard candidatePromise={candidatePromise} />
+          <ApplicantOverviewCard applicantPromise={applicantPromise} />
         </Suspense>
 
         <Suspense fallback={<Loading />}>
-          <CandidateInfoCards candidatePromise={candidatePromise} />
+          <ApplicantInfoCards applicantPromise={applicantPromise} />
         </Suspense>
 
         <Suspense fallback={<Loading />}>
-          <CandidateApplications candidatePromise={candidatePromise} />
+          <ApplicantApplications applicantPromise={applicantPromise} />
         </Suspense>
 
         <Suspense fallback={<Loading />}>
-          <CandidateLogsSection candidatePromise={candidatePromise} />
+          <ApplicantLogsSection applicantPromise={applicantPromise} />
         </Suspense>
       </div>
 
       <aside className="flex min-w-0 flex-col gap-4">
         <Suspense fallback={<Loading />}>
-          <CandidateNotes candidatePromise={candidatePromise} />
+          <ApplicantNotes applicantPromise={applicantPromise} />
         </Suspense>
 
         <Suspense fallback={<Loading />}>
-          <CandidateTags candidatePromise={candidatePromise} />
+          <ApplicantTags applicantPromise={applicantPromise} />
         </Suspense>
       </aside>
     </div>
