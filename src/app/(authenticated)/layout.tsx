@@ -23,6 +23,13 @@ export default function AuthenticatedLayout({
         >
           My Profile
         </Link>
+
+        <Link
+          href="/applicants"
+          className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-foreground/10"
+        >
+          Candidates
+        </Link>
       </aside>
 
       <main className="min-w-0 flex-1 p-4">{children}</main>
