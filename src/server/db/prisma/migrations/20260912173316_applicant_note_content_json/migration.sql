@@ -1,9 +1,29 @@
-/*
-  Warnings:
+ALTER TABLE "applicant_note"
+ADD COLUMN "content_json" JSONB;
 
-  - Changed the type of `content` on the `applicant_note` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
+DO $$
+DECLARE
+  note RECORD;
+BEGIN
+  FOR note IN SELECT "id", "content" FROM "applicant_note" LOOP
+    BEGIN
+      UPDATE "applicant_note"
+      SET "content_json" = COALESCE(note."content"::JSONB, 'null'::JSONB)
+      WHERE "id" = note."id";
+    EXCEPTION
+      WHEN invalid_text_representation THEN
+        UPDATE "applicant_note"
+        SET "content_json" = COALESCE(to_jsonb(note."content"), 'null'::JSONB)
+        WHERE "id" = note."id";
+    END;
+  END LOOP;
+END $$;
 
-*/
--- AlterTable
-ALTER TABLE "applicant_note" DROP COLUMN "content",
-ADD COLUMN     "content" JSONB NOT NULL;
+ALTER TABLE "applicant_note"
+DROP COLUMN "content";
+
+ALTER TABLE "applicant_note"
+RENAME COLUMN "content_json" TO "content";
+
+ALTER TABLE "applicant_note"
+ALTER COLUMN "content" SET NOT NULL;

@@ -9,6 +9,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
+import Link from "next/link";
 import {
   Card,
   CardHeader,
@@ -143,7 +144,14 @@ export function ApplicantOverviewCard({
                 <DropdownMenuContent align="end" className="w-64">
                   {canUpdateApplicant && (
                     <>
-                      <DropdownMenuItem className="gap-2">
+                      <DropdownMenuItem
+                        render={
+                          <Link
+                            href={`/applicants/${applicant.id}/edit-applicant`}
+                          />
+                        }
+                        className="gap-2"
+                      >
                         <Pencil className="h-4 w-4" />
                         <span>Editar datos del candidato</span>
                       </DropdownMenuItem>
