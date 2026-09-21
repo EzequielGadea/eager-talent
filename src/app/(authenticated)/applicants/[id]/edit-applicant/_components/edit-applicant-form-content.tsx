@@ -82,7 +82,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
 
   const updateApplicantMutation = api.applicant.updateApplicant.useMutation({
     onSuccess: () => {
-      router.push(`/candidates/${applicant.id}`);
+      router.push(`/applicants/${applicant.id}`);
       router.refresh();
     },
     onError: (error) => {
@@ -167,7 +167,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
     setRemoveResume(false);
     setRemoveEducation(false);
 
-    router.push(`/candidates/${applicant.id}`);
+    router.push(`/applicants/${applicant.id}`);
   }
   const [removeResume, setRemoveResume] = useState(false);
   const [removeEducation, setRemoveEducation] = useState(false);

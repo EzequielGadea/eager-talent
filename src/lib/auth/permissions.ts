@@ -9,7 +9,6 @@ import {
 const CRUD = ["read", "create", "update", "delete"] as const;
 
 export const accessStatements = {
-  activity: CRUD,
   publicLink: CRUD,
   jobRole: CRUD,
   area: CRUD,
@@ -19,6 +18,7 @@ export const accessStatements = {
   user: CRUD,
 
   // Entities with assigned scoping
+  activity: [...CRUD, "readAssigned"],
   applicant: [...CRUD, "readAssigned"],
   application: [...CRUD, "readAssigned"],
   jobOpening: [...CRUD, "readAssigned"],
@@ -43,7 +43,9 @@ export const recruiter = ac.newRole({
 
 export const hiringManager = ac.newRole({
   ...memberAc.statements,
-  activity: ["read"],
+
+  // The permission x-Assigned, allows the hiring manager to access only the entities assigned to them.
+  activity: ["readAssigned"],
   applicant: ["readAssigned"],
   application: ["readAssigned"],
   jobOpening: ["readAssigned"],

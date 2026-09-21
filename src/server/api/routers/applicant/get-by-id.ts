@@ -1,18 +1,42 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { protectedProcedure } from "../../trpc";
 
+import { auth } from "~/lib/auth";
+import { isHiringManagerAssignedToApplicant } from "~/server/api/procedures/is-hiring-manager-assigned-to-applicant";
+import { protectedProcedure } from "~/server/api/trpc";
 
-
-export const getApplicantById = protectedProcedure
+export const getApplicantByIdProcedure = protectedProcedure
   .input(
     z.object({
       id: z.string().min(1),
     }),
   )
   .query(async ({ input, ctx }) => {
+    const [canReadAllResult, canReadAssignedResult] = await Promise.all([
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { applicant: ["read"] } },
+      }),
+      auth.api.hasPermission({
+        headers: ctx.headers,
+        body: { permissions: { applicant: ["readAssigned"] } },
+      }),
+    ]);
+
+    if (!canReadAllResult.success && !canReadAssignedResult.success) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para consultar candidatos",
+      });
+    }
+
     const applicant = await ctx.db.applicant.findFirst({
-      where: { id: input.id },
+      where: {
+        id: input.id,
+        ...(canReadAllResult.success
+          ? {}
+          : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
+      },
       select: {
         id: true,
         name: true,
@@ -31,35 +55,11 @@ export const getApplicantById = protectedProcedure
         careerEndYear: true,
         education: true,
         resume: true,
-        role: {
-            select: {
-            id: true,
-            name: true,
-            },
-        },
-
-        area: {
-            select: {
-            id: true,
-            name: true,
-            },
-        },
-
-        seniority: {
-            select: {
-            id: true,
-            name: true,
-            },
-        },
-
-        tags: {
-            select: {
-            id: true,
-            name: true,
-            color: true,
-            },
-        },
-    },
+        role: { select: { id: true, name: true } },
+        area: { select: { id: true, name: true } },
+        seniority: { select: { id: true, name: true } },
+        tags: { select: { id: true, name: true, color: true } },
+      },
     });
 
     if (!applicant) {
@@ -69,5 +69,5 @@ export const getApplicantById = protectedProcedure
       });
     }
 
-    return { ...applicant };
+    return applicant;
   });

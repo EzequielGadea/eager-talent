@@ -1039,8 +1039,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       modality: "VideoCall" as InterviewType,
       date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
       status: "Completed" as InterviewStatus,
-      summary:
-        "Excelente solvencia en arquitectura de software, ActiveRecord, diseño de APIs y fit cultural.",
+      summary: "https://app.read.ai/meeting/abc123/summary",
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
       interviewers: { connect: [{ id: hm1.id }] },
@@ -1049,8 +1048,20 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   await prisma.applicantNote.create({
     data: {
-      content:
-        "Excelente perfil técnico, experiencia sólida en proyectos de escala y muy buen nivel de inglés.",
+      content: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Excelente perfil técnico, experiencia sólida en proyectos de escala y muy buen nivel de inglés.",
+              },
+            ],
+          },
+        ],
+      },
       applicantId: federico.id,
       lastModifiedById: hm1.id,
     },
@@ -1058,8 +1069,20 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   await prisma.applicantNote.create({
     data: {
-      content:
-        "Candidato referido con muy buenas referencias en testing automatizado y calidad de software.",
+      content: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "Candidato referido con muy buenas referencias en testing automatizado y calidad de software.",
+              },
+            ],
+          },
+        ],
+      },
       applicantId: darwin.id,
       lastModifiedById: admin1.id,
     },
