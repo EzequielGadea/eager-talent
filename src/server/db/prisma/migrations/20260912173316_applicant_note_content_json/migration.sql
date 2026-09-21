@@ -20,7 +20,9 @@ BEGIN
 END $$;
 
 ALTER TABLE "applicant_note"
-DROP COLUMN "content",
+DROP COLUMN "content";
+
+ALTER TABLE "applicant_note"
 RENAME COLUMN "content_json" TO "content";
 
 ALTER TABLE "applicant_note"
