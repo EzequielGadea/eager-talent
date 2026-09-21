@@ -96,7 +96,7 @@ export function ApplicantApplicationsCard({
   ];
 
   return (
-    <Card className="flex flex-col divide-y divide-border-default overflow-hidden bg-card">
+    <Card className="flex flex-col overflow-hidden bg-card">
       <div className="flex flex-col items-center justify-between gap-4 px-6 py-4 sm:flex-row">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
           <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
@@ -177,6 +177,8 @@ export function ApplicantApplicationsCard({
         </div>
       </div>
 
+      <div className="w-full border-t border-border-default" />
+
       <dl className="flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 text-sm text-text-secondary">
         {details.map(({ label, value }) => (
           <div key={label}>
@@ -185,6 +187,8 @@ export function ApplicantApplicationsCard({
           </div>
         ))}
       </dl>
+
+      <div className="w-full border-t border-border-default" />
 
       <CardContent>
         <div className="mb-6 flex items-center justify-between gap-3">
@@ -255,9 +259,7 @@ export function ApplicantApplicationsCard({
 
                   <TableCell className="py-4">
                     {(() => {
-                      const summaryUrl = getSafeExternalUrl(
-                        interview.summary,
-                      );
+                      const summaryUrl = getSafeExternalUrl(interview.summary);
 
                       return summaryUrl ? (
                         <a
