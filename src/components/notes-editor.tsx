@@ -6,6 +6,8 @@ import spanishStrings from "react-timeago/lib/language-strings/es";
 import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
 import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 import type { Editor } from "@tiptap/core";
 import { Bold as BoldExtension } from "@tiptap/extension-bold";
@@ -154,21 +156,24 @@ export function NotesEditor({
   const [lastModified, setLastModified] = useState(initialLastModified);
   const [lastModifiedBy, setLastModifiedBy] = useState(initialLastModifiedBy);
   const statusRef = useRef(status);
+  const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   const debouncedSave = useDebouncedCallback(
-    async (jsonContent: JSONContent) => {
+    (jsonContent: JSONContent) => {
       setStatus("saving");
-      try {
-        const result = await onSave(jsonContent);
-        setLastModified(result.lastModified);
-        setLastModifiedBy(result.lastModifiedBy);
-        await new Promise((resolve) =>
-          setTimeout(resolve, SAVED_STATUS_DELAY_MS),
-        );
-        setStatus("saved");
-      } catch {
-        setStatus("error");
-      }
+      saveQueueRef.current = saveQueueRef.current.then(async () => {
+        try {
+          const result = await onSave(jsonContent);
+          setLastModified(result.lastModified);
+          setLastModifiedBy(result.lastModifiedBy);
+          await new Promise((resolve) =>
+            setTimeout(resolve, SAVED_STATUS_DELAY_MS),
+          );
+          setStatus("saved");
+        } catch {
+          setStatus("error");
+        }
+      });
     },
     AUTOSAVE_DELAY_MS,
   );
@@ -353,10 +358,7 @@ function LastModifiedText({
   const date = new Date(dateStr);
   if (Number.isNaN(date.getTime())) return <span>--:--</span>;
 
-  const fullDateLabel = date.toLocaleString("es", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const fullDateLabel = format(date, "d MMM yyyy, HH:mm", { locale: es });
   return (
     <span>
       {lastModifiedBy && (

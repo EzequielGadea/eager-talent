@@ -30,6 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { getSafeExternalUrl } from "../_lib/external-url";
 
 type ApplicantApplicationsCardProps = {
   canCreatePublicLink: boolean;
@@ -149,14 +150,6 @@ export function ApplicantApplicationsCard({
             />
             {active ? "En proceso" : "Cerrada"}
           </Badge>
-
-          <a
-            href="#"
-            className="group inline-flex h-auto p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
-          >
-            Ver vacante{" "}
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </a>
         </div>
 
         <div className="flex shrink-0 items-center gap-2.5">
@@ -261,19 +254,25 @@ export function ApplicantApplicationsCard({
                   </TableCell>
 
                   <TableCell className="py-4">
-                    {interview.summary ? (
-                      <a
-                        href={interview.summary}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group inline-flex h-auto p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
-                      >
-                        Ver resumen{" "}
-                        <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                      </a>
-                    ) : (
-                      <span className="text-text-tertiary">—</span>
-                    )}
+                    {(() => {
+                      const summaryUrl = getSafeExternalUrl(
+                        interview.summary,
+                      );
+
+                      return summaryUrl ? (
+                        <a
+                          href={summaryUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex h-auto p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
+                        >
+                          Ver resumen{" "}
+                          <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                        </a>
+                      ) : (
+                        <span className="text-text-tertiary">—</span>
+                      );
+                    })()}
                   </TableCell>
                 </TableRow>
               ))}
