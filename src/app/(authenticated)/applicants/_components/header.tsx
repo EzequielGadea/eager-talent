@@ -34,7 +34,7 @@ export function Header(props: {
           <Button
             size="sm"
             onClick={() => router.push("/applicants/new-applicant")}
-            className="pointer-events-none h-8.5 gap-2 rounded-full bg-dashboard-dark px-4 text-[13px] font-semibold leading-none text-white shadow-none hover:bg-dashboard-dark-hover"
+            className="h-8.5 gap-2 rounded-full bg-dashboard-dark px-4 text-[13px] font-semibold text-white shadow-none hover:bg-dashboard-dark-hover"
           >
             <Plus size={16} strokeWidth={2.5} />
             <span>Nuevo candidato</span>
