@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardAction,
   CardContent,
   CardFooter,
 } from "~/components/ui/card";
@@ -103,9 +104,9 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
     <Card className="min-w-0">
       <CardHeader
         ref={headerRef}
-        className="flex flex-wrap items-center justify-between gap-3"
+        className="flex flex-wrap items-center justify-between gap-4"
       >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="flex min-w-70 flex-1 items-center gap-3">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
             <Clock className="size-4 text-muted-foreground" />
           </div>
@@ -123,16 +124,20 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
           </div>
         </div>
         {!data ? (
-          <Skeleton className="h-9 w-30" />
+          <CardAction className="w-full sm:w-auto">
+            <Skeleton className="h-9 w-full sm:w-96" />
+          </CardAction>
         ) : (
-          <ApplicantLogsFilter
-            applications={applications}
-            jobOpeningId={jobOpeningId}
-            onFilterChange={(id) => {
-              setJobOpeningId(id);
-              setPageAndScroll(1);
-            }}
-          />
+          <CardAction className="w-full sm:w-auto">
+            <ApplicantLogsFilter
+              applications={applications}
+              jobOpeningId={jobOpeningId}
+              onFilterChange={(id) => {
+                setJobOpeningId(id);
+                setPageAndScroll(1);
+              }}
+            />
+          </CardAction>
         )}
       </CardHeader>
       <Separator />

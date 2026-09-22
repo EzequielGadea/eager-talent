@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   ArrowUpRight,
   Briefcase,
@@ -15,7 +16,7 @@ import { es } from "date-fns/locale";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { Separator } from "~/components/ui/separator";
 import { getSafeExternalUrl } from "../_lib/external-url";
 
 type ApplicantApplicationsCardProps = {
@@ -72,9 +74,9 @@ export function ApplicantApplicationsCard({
 
   if (!app) {
     return (
-      <section className="rounded-xl border border-border-default bg-card p-6 text-sm text-text-tertiary">
+      <Card className="border border-border-default bg-card p-6 text-sm text-text-tertiary">
         No hay postulaciones registradas para este candidato.
-      </section>
+      </Card>
     );
   }
 
@@ -96,25 +98,23 @@ export function ApplicantApplicationsCard({
   ];
 
   return (
-    <Card className="flex flex-col overflow-hidden bg-card">
-      <div className="flex flex-col items-center justify-between gap-4 px-6 py-4 sm:flex-row">
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
-          <span className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
+    <Card className="bg-card p-0">
+      <CardHeader className="flex flex-wrap items-center gap-x-3 gap-y-3 px-6 py-4">
+        <div className="flex min-w-0 flex-1 basis-full flex-wrap items-center gap-2.5 lg:basis-auto">
+          <CardTitle className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
             Postulación
-          </span>
+          </CardTitle>
 
           <DropdownMenu>
-            <DropdownMenuTrigger className="relative flex h-auto min-h-9 w-96 max-w-[calc(100vw-2rem)] items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-[state=open]:ring-2 data-[state=open]:ring-tag-gray-bg">
+            <DropdownMenuTrigger className="relative flex h-auto min-h-9 w-full max-w-full items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-[state=open]:ring-2 data-[state=open]:ring-tag-gray-bg sm:w-52 lg:w-60">
               <Briefcase className="h-4 w-4 shrink-0 text-text-secondary" />
-              <span className="min-w-0 max-w-80 truncate">
-                {jobOpening.name}
-              </span>
+              <span className="min-w-0 flex-1 truncate">{jobOpening.name}</span>
               <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 shrink-0 text-text-tertiary" />
             </DropdownMenuTrigger>
 
             <DropdownMenuContent
               align="start"
-              className="max-h-60 w-96 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-xl border border-border-strong p-1.5 shadow-lg"
+              className="max-h-60 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-border-strong p-1.5 shadow-lg"
             >
               {applications.map((a) => (
                 <DropdownMenuItem
@@ -136,11 +136,12 @@ export function ApplicantApplicationsCard({
           </DropdownMenu>
 
           <Badge
-            className={
+            className={cn(
+              "shrink-0",
               active
                 ? "border-transparent bg-info-bg text-info"
-                : "border-transparent bg-warning-bg text-warning"
-            }
+                : "border-transparent bg-warning-bg text-warning",
+            )}
           >
             <span
               className={cn(
@@ -152,7 +153,15 @@ export function ApplicantApplicationsCard({
           </Badge>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2.5">
+        <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2.5 lg:w-auto">
+          <Link
+            href={`/jobOpening/${encodeURIComponent(jobOpening.id)}`}
+            className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
+          >
+            Ver vacante{" "}
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
+
           {canCreatePublicLink && (
             <Button
               variant="outline"
@@ -175,34 +184,36 @@ export function ApplicantApplicationsCard({
             </Button>
           )}
         </div>
-      </div>
+      </CardHeader>
 
-      <div className="w-full border-t border-border-default" />
+      <Separator className="bg-border-default" />
 
-      <dl className="flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 text-sm text-text-secondary">
-        {details.map(({ label, value }) => (
-          <div key={label}>
-            <dt className="inline">{label}: </dt>
-            <dd className="inline font-bold text-text-primary">{value}</dd>
-          </div>
-        ))}
-      </dl>
+      <CardContent className="p-0">
+        <dl className="flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 text-sm text-text-secondary">
+          {details.map(({ label, value }) => (
+            <div key={label}>
+              <dt className="inline">{label}: </dt>
+              <dd className="inline font-bold text-text-primary">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      </CardContent>
 
-      <div className="w-full border-t border-border-default" />
+      <Separator className="bg-border-default" />
 
-      <CardContent>
-        <div className="mb-6 flex items-center justify-between gap-3">
-          <h3 className="text-base font-bold text-text-primary">
+      <CardContent className="p-0 px-6 pb-6 pt-4">
+        <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+          <h3 className="min-w-0 text-base font-bold text-text-primary">
             Historial de entrevistas
           </h3>
           {canCreateInterview && (
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
+              className="min-w-0 max-w-full gap-1.5 overflow-hidden rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg sm:w-auto"
             >
-              <Plus className="h-3.5 w-3.5 text-tag-gray-fg" /> Agregar
-              entrevista
+              <Plus className="h-3.5 w-3.5 shrink-0 text-tag-gray-fg" />
+              <span className="truncate">Agregar entrevista</span>
             </Button>
           )}
         </div>
@@ -262,7 +273,7 @@ export function ApplicantApplicationsCard({
                       const summaryUrl = getSafeExternalUrl(interview.summary);
 
                       return summaryUrl ? (
-                        <a
+                        <Link
                           href={summaryUrl}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -270,7 +281,7 @@ export function ApplicantApplicationsCard({
                         >
                           Ver resumen{" "}
                           <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                        </a>
+                        </Link>
                       ) : (
                         <span className="text-text-tertiary">—</span>
                       );
