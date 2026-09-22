@@ -14,6 +14,8 @@ import {
 import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantInfo } from "../types";
 import { ApplicantRow } from "./applicant-row";
+import { TableFallback } from "./fallbacks";
+import { useTransition } from "react";
 
 export function ApplicantTable(props: {
   applicantsData: ApplicantInfo[];
@@ -23,11 +25,13 @@ export function ApplicantTable(props: {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   function updatePage(page: number) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", String(page));
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    startTransition(() =>{
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });})
   }
 
   const hasActiveFilters = [
@@ -47,7 +51,10 @@ export function ApplicantTable(props: {
           <ApplicantTableHeader />
 
           <TableBody className="divide-y divide-dashboard-border">
-            {props.applicantsData.length === 0 ? (
+            {isPending ? (
+              <TableFallback/>
+            ) :
+            props.applicantsData.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={10}
