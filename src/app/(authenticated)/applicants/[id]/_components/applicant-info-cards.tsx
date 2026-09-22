@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
-import { hearAboutUsLabels } from "../_lib/applicant-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
 
 type ApplicantPromise = Promise<
@@ -50,9 +49,7 @@ export async function ApplicantInfoCards({
           icon={<CircleHelp className="size-3.5 text-accent-green" />}
           title="¿Cómo escuchaste de nosotros?"
         >
-          <p className="font-semibold">
-            {hearAboutUs ? hearAboutUsLabels[hearAboutUs] : "Sin información"}
-          </p>
+          <p className="font-semibold">{hearAboutUs ?? "Sin información"}</p>
         </InfoCard>
 
         <DocumentCard title="CV" value={resume} emptyMessage="Sin CV cargado" />
