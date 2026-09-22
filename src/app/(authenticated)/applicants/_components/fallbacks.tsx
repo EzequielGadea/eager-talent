@@ -21,17 +21,6 @@ export function HeaderFallback() {
           <Button
             aria-disabled="true"
             tabIndex={-1}
-            variant="outline"
-            size="sm"
-            className="pointer-events-none h-8.5 gap-2 rounded-full border-dashboard-border bg-white px-4 text-[13px] font-semibold text-dashboard-text-muted shadow-xs hover:bg-dashboard-track hover:text-dashboard-text-muted"
-          >
-            <Download size={16} className="text-dashboard-text-muted" />
-            <span>Exportar</span>
-          </Button>
-
-          <Button
-            aria-disabled="true"
-            tabIndex={-1}
             size="sm"
             className="pointer-events-none h-8.5 gap-2 rounded-full bg-dashboard-dark px-4 text-[13px] font-semibold leading-none text-white shadow-none hover:bg-dashboard-dark-hover"
           >
