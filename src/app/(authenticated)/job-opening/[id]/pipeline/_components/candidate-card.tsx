@@ -27,6 +27,8 @@ type CandidateCardProps = {
   jobOpeningId: string;
   currentStage: string;
   onAdvanced: (applicantId: string) => void;
+  canUpdateApplication: boolean;
+  canCreateInterview: boolean;
 };
 
 export function CandidateCard({
@@ -34,6 +36,8 @@ export function CandidateCard({
   jobOpeningId,
   currentStage,
   onAdvanced,
+  canUpdateApplication,
+  canCreateInterview,
 }: CandidateCardProps) {
   const router = useRouter();
 
@@ -50,6 +54,10 @@ export function CandidateCard({
   };
 
   const handleAdvanceStage = () => {
+    if (!canUpdateApplication) {
+      return;
+    }
+
     advanceApplicationStageMutation.mutate({
       applicantId: candidate.applicantId,
       jobOpeningId,
@@ -119,25 +127,33 @@ export function CandidateCard({
               <span>Ver perfil</span>
             </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={handleAdvanceStage}
-              disabled={advanceApplicationStageMutation.isPending}
-            >
-              <ArrowRight className="size-4" />
-              <span>Avanzar etapa</span>
-            </DropdownMenuItem>
+            {canUpdateApplication && (
+              <DropdownMenuItem
+                onClick={handleAdvanceStage}
+                disabled={advanceApplicationStageMutation.isPending}
+              >
+                <ArrowRight className="size-4" />
+                <span>Avanzar etapa</span>
+              </DropdownMenuItem>
+            )}
 
-            <DropdownMenuItem>
-              <CalendarDays className="size-4" />
-              <span>Agregar entrevista</span>
-            </DropdownMenuItem>
+            {canCreateInterview && (
+              <DropdownMenuItem>
+                <CalendarDays className="size-4" />
+                <span>Agregar entrevista</span>
+              </DropdownMenuItem>
+            )}
 
-            <DropdownMenuSeparator />
+            {canUpdateApplication && (
+              <>
+                <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
-              <CircleX className="size-4" />
-              <span>Descalificar candidato</span>
-            </DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <CircleX className="size-4" />
+                  <span>Descalificar candidato</span>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

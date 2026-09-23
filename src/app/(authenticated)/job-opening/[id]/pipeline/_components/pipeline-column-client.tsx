@@ -13,6 +13,8 @@ type PipelineColumnClientProps = {
   stageName: string;
   initialCandidates: PipelineCandidate[];
   total: number;
+  canUpdateApplication: boolean;
+  canCreateInterview: boolean;
 };
 
 export function PipelineColumnClient({
@@ -20,6 +22,8 @@ export function PipelineColumnClient({
   stageName,
   initialCandidates,
   total,
+  canUpdateApplication,
+  canCreateInterview,
 }: PipelineColumnClientProps) {
   const [loadedCandidates, setLoadedCandidates] =
     useState<PipelineCandidate[]>(initialCandidates);
@@ -93,7 +97,9 @@ export function PipelineColumnClient({
 
   function handleCandidateAdvanced(applicantId: string) {
     setLoadedCandidates((current) =>
-      current.filter((candidate) => candidate.applicantId !== applicantId),
+      current.filter(
+        (candidate) => candidate.applicantId !== applicantId,
+      ),
     );
 
     setOptimisticallyRemovedIds((current) => {
@@ -112,6 +118,8 @@ export function PipelineColumnClient({
           jobOpeningId={jobOpeningId}
           currentStage={stageName}
           onAdvanced={handleCandidateAdvanced}
+          canUpdateApplication={canUpdateApplication}
+          canCreateInterview={canCreateInterview}
         />
       ))}
 

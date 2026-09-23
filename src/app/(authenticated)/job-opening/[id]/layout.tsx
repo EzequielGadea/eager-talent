@@ -1,6 +1,8 @@
+import { headers } from "next/headers";
 import { Suspense } from "react";
 
 import { api } from "~/lib/trpc/server";
+import { auth } from "~/lib/auth";
 
 import { JobOpeningHeader } from "./_components/job-opening-header";
 import { JobOpeningLayoutSkeleton } from "./_components/job-opening-layout-skeleton";
@@ -29,8 +31,28 @@ async function JobOpeningLayoutContent({
   params,
 }: JobOpeningLayoutProps) {
   const { id } = await params;
+  const requestHeaders = await headers();
 
-  const jobOpening = await api.jobOpening.fetchById({ id });
+  const [jobOpening, canCreateApplication, canUpdateJobOpening] =
+    await Promise.all([
+      api.jobOpening.fetchById({ id }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            application: ["create"],
+          },
+        },
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            jobOpening: ["update"],
+          },
+        },
+      }),
+    ]);
 
   return (
     <main className="flex min-h-0 flex-1 flex-col gap-6 p-6">
@@ -40,6 +62,8 @@ async function JobOpeningLayoutContent({
         status={jobOpening.status}
         areaName={jobOpening.area.name}
         openingDate={jobOpening.openingDate}
+        canCreateApplication={canCreateApplication.success}
+        canUpdateJobOpening={canUpdateJobOpening.success}
       />
 
       <JobOpeningTabs jobOpeningId={jobOpening.id} />

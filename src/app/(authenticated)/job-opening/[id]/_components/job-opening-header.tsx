@@ -13,6 +13,8 @@ type JobOpeningHeaderProps = {
   status: JobOpeningStatus;
   areaName: string;
   openingDate: Date;
+  canCreateApplication: boolean;
+  canUpdateJobOpening: boolean;
 };
 
 function getDaysSince(date: Date) {
@@ -42,6 +44,8 @@ export function JobOpeningHeader({
   status,
   areaName,
   openingDate,
+  canCreateApplication,
+  canUpdateJobOpening,
 }: JobOpeningHeaderProps) {
   return (
     <header className="flex items-center justify-between gap-4">
@@ -63,6 +67,7 @@ export function JobOpeningHeader({
             <JobOpeningStatusDropdown
               jobOpeningId={jobOpeningId}
               status={status}
+              canUpdate={canUpdateJobOpening}
             />
           </div>
 
@@ -73,16 +78,19 @@ export function JobOpeningHeader({
       </div>
 
       <div className="flex shrink-0 items-center gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          className="h-10 gap-2 rounded-full px-5"
+      {canUpdateJobOpening && (
+        <Link
+          href={`/job-opening/${jobOpeningId}/edit`}
+          className="inline-flex h-10 shrink-0 flex-row items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
         >
-          <Pencil className="size-4" />
-          Editar
-        </Button>
+          <Pencil className="size-4 shrink-0" />
+          <span>Editar</span>
+        </Link>
+      )}
 
-        <AddApplicantDialog jobOpeningId={jobOpeningId} />
+        {canCreateApplication && (
+          <AddApplicantDialog jobOpeningId={jobOpeningId} />
+        )}
       </div>
     </header>
   );
