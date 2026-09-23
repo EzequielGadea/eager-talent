@@ -24,10 +24,5 @@ async function PipelineContent({ params }: PipelinePageProps) {
   const jobOpening = await api.jobOpening.fetchById({ id });
   const stages = jobOpening.stages as PipelineStage[];
 
-  return (
-    <Pipeline
-      jobOpeningId={jobOpening.id}
-      stages={stages}
-    />
-  );
+  return <Pipeline jobOpeningId={jobOpening.id} stages={stages} />;
 }

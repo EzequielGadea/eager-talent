@@ -24,8 +24,9 @@ export function PipelineColumnClient({
   const [loadedCandidates, setLoadedCandidates] =
     useState<PipelineCandidate[]>(initialCandidates);
 
-  const [optimisticallyRemovedIds, setOptimisticallyRemovedIds] =
-    useState<Set<string>>(new Set());
+  const [optimisticallyRemovedIds, setOptimisticallyRemovedIds] = useState<
+    Set<string>
+  >(new Set());
 
   const allCandidates = [
     ...initialCandidates,
@@ -33,8 +34,7 @@ export function PipelineColumnClient({
       (loadedCandidate) =>
         !initialCandidates.some(
           (initialCandidate) =>
-            initialCandidate.applicantId ===
-            loadedCandidate.applicantId,
+            initialCandidate.applicantId === loadedCandidate.applicantId,
         ),
     ),
   ];
@@ -44,40 +44,32 @@ export function PipelineColumnClient({
   );
 
   const visibleOptimisticRemovedIds = new Set(
-    [...optimisticallyRemovedIds].filter((id) =>
-      initialCandidateIds.has(id),
-    ),
+    [...optimisticallyRemovedIds].filter((id) => initialCandidateIds.has(id)),
   );
 
   const candidates = allCandidates.filter(
-    (candidate) =>
-      !visibleOptimisticRemovedIds.has(candidate.applicantId),
+    (candidate) => !visibleOptimisticRemovedIds.has(candidate.applicantId),
   );
 
   const loadedCount = allCandidates.length;
 
-  const effectiveTotal =
-    total - visibleOptimisticRemovedIds.size;
+  const effectiveTotal = total - visibleOptimisticRemovedIds.size;
 
-  const remaining = Math.max(
-    0,
-    effectiveTotal - candidates.length,
-  );
+  const remaining = Math.max(0, effectiveTotal - candidates.length);
 
   const hasMore = remaining > 0;
 
-  const fetchMore =
-    api.jobOpening.fetchPipelineCandidates.useQuery(
-      {
-        jobOpeningId,
-        stageName,
-        limit: 3,
-        offset: loadedCount,
-      },
-      {
-        enabled: false,
-      },
-    );
+  const fetchMore = api.jobOpening.fetchPipelineCandidates.useQuery(
+    {
+      jobOpeningId,
+      stageName,
+      limit: 3,
+      offset: loadedCount,
+    },
+    {
+      enabled: false,
+    },
+  );
 
   async function handleLoadMore() {
     const result = await fetchMore.refetch();
@@ -101,9 +93,7 @@ export function PipelineColumnClient({
 
   function handleCandidateAdvanced(applicantId: string) {
     setLoadedCandidates((current) =>
-      current.filter(
-        (candidate) => candidate.applicantId !== applicantId,
-      ),
+      current.filter((candidate) => candidate.applicantId !== applicantId),
     );
 
     setOptimisticallyRemovedIds((current) => {

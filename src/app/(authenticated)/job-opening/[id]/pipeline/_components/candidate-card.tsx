@@ -68,10 +68,9 @@ export function CandidateCard({
   ];
 
   function getAvatarColor(id: string) {
-    const hash = id.split("").reduce(
-      (total, character) => total + character.charCodeAt(0),
-      0,
-    );
+    const hash = id
+      .split("")
+      .reduce((total, character) => total + character.charCodeAt(0), 0);
 
     return avatarColors[hash % avatarColors.length];
   }
@@ -90,9 +89,7 @@ export function CandidateCard({
             alt={`${candidate.name} ${candidate.lastName}`}
           />
 
-          <AvatarFallback className={avatarColor}>
-            {initials}
-          </AvatarFallback>
+          <AvatarFallback className={avatarColor}>{initials}</AvatarFallback>
         </Avatar>
 
         <div className="min-w-0 flex-1">

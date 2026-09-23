@@ -14,14 +14,8 @@ export function Pipeline({ jobOpeningId, stages }: PipelineProps) {
     <ScrollArea className="w-full">
       <div className="flex min-w-max gap-4 pb-4">
         {stages.map((stage) => (
-          <Suspense
-            key={stage.name}
-            fallback={<PipelineColumnSkeleton />}
-          >
-            <PipelineColumn
-              jobOpeningId={jobOpeningId}
-              stage={stage}
-            />
+          <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
+            <PipelineColumn jobOpeningId={jobOpeningId} stage={stage} />
           </Suspense>
         ))}
       </div>

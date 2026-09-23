@@ -29,10 +29,7 @@ const addApplicantApplicationSchema = z.object({
     .optional()
     .or(z.literal("")),
 
-  currency: z.union([
-    z.enum(SalaryCurrency),
-    z.literal(""),
-  ]),
+  currency: z.union([z.enum(SalaryCurrency), z.literal("")]),
 
   availability: z.string(),
 });
@@ -86,8 +83,7 @@ export function AddApplicantApplicationForm({
         if (error.data?.code === "CONFLICT") {
           methods.setError("root", {
             type: "server",
-            message:
-              "Este candidato ya está aplicado a esta vacante.",
+            message: "Este candidato ya está aplicado a esta vacante.",
           });
 
           return;
@@ -100,30 +96,19 @@ export function AddApplicantApplicationForm({
       },
     });
 
-  async function onSubmit(
-    data: AddApplicantApplicationFormValues,
-  ) {
+  async function onSubmit(data: AddApplicantApplicationFormValues) {
     await createApplicationMutation.mutateAsync({
       applicantId: applicant.id,
       jobOpeningId,
       desiredSalaryAmount:
-        data.desiredSalary === ""
-          ? undefined
-          : data.desiredSalary,
-      desiredSalaryCurrency:
-        data.currency === ""
-          ? undefined
-          : data.currency,
-      availability:
-        data.availability.trim() || undefined,
+        data.desiredSalary === "" ? undefined : data.desiredSalary,
+      desiredSalaryCurrency: data.currency === "" ? undefined : data.currency,
+      availability: data.availability.trim() || undefined,
     });
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
       <div className="border-b border-border-default px-6 py-5">
         <div className="flex items-center gap-2">
           <Button
@@ -191,8 +176,7 @@ export function AddApplicantApplicationForm({
                 step="0.01"
                 placeholder="Ej. 85000"
                 {...register("desiredSalary", {
-                  setValueAs: (value) =>
-                    value === "" ? "" : Number(value),
+                  setValueAs: (value) => (value === "" ? "" : Number(value)),
                 })}
               />
 
@@ -209,9 +193,7 @@ export function AddApplicantApplicationForm({
               render={({ field }) => (
                 <Select
                   value={field.value}
-                  onValueChange={(value) =>
-                    field.onChange(value ?? "")
-                  }
+                  onValueChange={(value) => field.onChange(value ?? "")}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Moneda" />
@@ -243,9 +225,7 @@ export function AddApplicantApplicationForm({
         </div>
 
         {errors.root?.message && (
-          <p className="text-sm text-danger">
-            {errors.root.message}
-          </p>
+          <p className="text-sm text-danger">{errors.root.message}</p>
         )}
 
         <div className="flex justify-end gap-2 border-t border-border-default pt-4">
@@ -258,14 +238,8 @@ export function AddApplicantApplicationForm({
             Volver
           </Button>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting && (
-              <Loader2 className="size-4 animate-spin" />
-            )}
-
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
             Postular
           </Button>
         </div>

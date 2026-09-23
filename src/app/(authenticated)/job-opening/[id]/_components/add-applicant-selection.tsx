@@ -32,50 +32,41 @@ export function AddApplicantSelection({
 
   const utils = api.useUtils();
 
-  const applicantsQuery =
-    api.application.fetchAvailableApplicants.useQuery({
-      jobOpeningId,
-      search: deferredSearch || undefined,
-      limit: 10,
-      offset: 0,
-    });
+  const applicantsQuery = api.application.fetchAvailableApplicants.useQuery({
+    jobOpeningId,
+    search: deferredSearch || undefined,
+    limit: 10,
+    offset: 0,
+  });
 
   const isSearchUpdating = search.trim() !== deferredSearch;
 
   const applicants = isSearchUpdating
     ? []
-    : [
-        ...(applicantsQuery.data?.applicants ?? []),
-        ...additionalApplicants,
-      ];
+    : [...(applicantsQuery.data?.applicants ?? []), ...additionalApplicants];
 
   const hasMore = isSearchUpdating
     ? false
-    : loadedHasMore ?? applicantsQuery.data?.hasMore ?? false;
+    : (loadedHasMore ?? applicantsQuery.data?.hasMore ?? false);
 
   async function handleLoadMore() {
     if (loadingMore || !hasMore) {
       return;
     }
 
-    const offset =
-      loadedOffset ?? applicantsQuery.data?.nextOffset ?? 0;
+    const offset = loadedOffset ?? applicantsQuery.data?.nextOffset ?? 0;
 
     setLoadingMore(true);
 
     try {
-      const result =
-        await utils.application.fetchAvailableApplicants.fetch({
-          jobOpeningId,
-          search: deferredSearch || undefined,
-          limit: 10,
-          offset,
-        });
+      const result = await utils.application.fetchAvailableApplicants.fetch({
+        jobOpeningId,
+        search: deferredSearch || undefined,
+        limit: 10,
+        offset,
+      });
 
-      setAdditionalApplicants((current) => [
-        ...current,
-        ...result.applicants,
-      ]);
+      setAdditionalApplicants((current) => [...current, ...result.applicants]);
 
       setLoadedOffset(result.nextOffset);
       setLoadedHasMore(result.hasMore);
@@ -91,8 +82,7 @@ export function AddApplicantSelection({
     setLoadedHasMore(null);
   }
 
-  const initialLoading =
-    applicantsQuery.isLoading || isSearchUpdating;
+  const initialLoading = applicantsQuery.isLoading || isSearchUpdating;
 
   return (
     <div className="flex flex-col">
@@ -103,9 +93,7 @@ export function AddApplicantSelection({
           <Input
             type="text"
             value={search}
-            onChange={(event) =>
-              handleSearchChange(event.target.value)
-            }
+            onChange={(event) => handleSearchChange(event.target.value)}
             placeholder="Buscar por nombre o email"
             className="h-10 pl-9"
           />
@@ -117,9 +105,7 @@ export function AddApplicantSelection({
         onScroll={(event) => {
           const element = event.currentTarget;
           const distanceToBottom =
-            element.scrollHeight -
-            element.scrollTop -
-            element.clientHeight;
+            element.scrollHeight - element.scrollTop - element.clientHeight;
 
           if (distanceToBottom < 120) {
             void handleLoadMore();
