@@ -36,9 +36,18 @@ export const fetchById = protectedProcedure
       });
     }
 
-    const jobOpening = await ctx.db.jobOpening.findUnique({
+    const jobOpening = await ctx.db.jobOpening.findFirst({
       where: {
         id: input.id,
+        ...(canReadAll.success
+          ? {}
+          : {
+              hiringManagers: {
+                some: {
+                  id: ctx.session.user.id,
+                },
+              },
+            }),
       },
       select: {
         id: true,
@@ -51,11 +60,6 @@ export const fetchById = protectedProcedure
             name: true,
           },
         },
-        hiringManagers: {
-          select: {
-            id: true,
-          },
-        },
       },
     });
 
@@ -66,24 +70,5 @@ export const fetchById = protectedProcedure
       });
     }
 
-    if (
-      !canReadAll.success &&
-      !jobOpening.hiringManagers.some(
-        (hiringManager) => hiringManager.id === ctx.session.user.id,
-      )
-    ) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "No tienes permiso para consultar esta vacante",
-      });
-    }
-
-    return {
-      id: jobOpening.id,
-      name: jobOpening.name,
-      status: jobOpening.status,
-      stages: jobOpening.stages,
-      openingDate: jobOpening.openingDate,
-      area: jobOpening.area,
-    };
+    return jobOpening;
   });
