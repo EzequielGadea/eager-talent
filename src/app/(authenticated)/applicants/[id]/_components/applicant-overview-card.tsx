@@ -12,6 +12,7 @@ import { FaLinkedin } from "react-icons/fa";
 import Link from "next/link";
 import {
   Card,
+  CardAction,
   CardHeader,
   CardTitle,
   CardDescription,
@@ -28,7 +29,6 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
-import { englishLevelLabels, sourceLabels } from "../_lib/applicant-labels";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
 
@@ -69,9 +69,11 @@ export function ApplicantOverviewCard({
 
   return (
     <Card className="min-w-0">
-      <CardHeader>
-        <div className="flex gap-4 items-start justify-between">
-          <ApplicantAvatar name={name} lastName={lastName} photo={photo} />
+      <CardHeader className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex min-w-70 flex-1 items-start gap-4">
+          <div className="shrink-0">
+            <ApplicantAvatar name={name} lastName={lastName} photo={photo} />
+          </div>
 
           <div className="min-w-0 flex-1">
             <CardTitle className="wrap-anywhere text-xl font-bold tracking-tight">
@@ -84,13 +86,16 @@ export function ApplicantOverviewCard({
               {role.name}
             </CardDescription>
 
-            <div className="mt-3 flex flex-col gap-y-2 text-sm text-muted-foreground">
+            <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm text-muted-foreground">
               <span className="flex min-w-0 max-w-full items-center gap-1.5">
                 <Mail className="size-4 shrink-0" />
                 <span className="min-w-0 wrap-anywhere">
                   {email ?? "Sin email"}
                 </span>
-                <Phone className="ml-3 size-4 shrink-0" />
+              </span>
+
+              <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                <Phone className="size-4 shrink-0" />
                 <span className="min-w-0 wrap-anywhere">
                   {phone ?? "Sin teléfono"}
                 </span>
@@ -116,15 +121,17 @@ export function ApplicantOverviewCard({
               )}
             </div>
           </div>
+        </div>
 
-          <div className="flex shrink-0 items-center gap-2.5">
+        {(canShareWithHiringManager || canShowActions) && (
+          <CardAction className="flex flex-wrap items-center gap-2.5">
             {canShareWithHiringManager && (
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
+                className="max-w-full gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
               >
-                <UserRound className="h-3.5 w-3.5" /> Compartir con un HM
+                <UserRound className="size-3.5 shrink-0" /> Compartir con un HM
               </Button>
             )}
 
@@ -135,11 +142,11 @@ export function ApplicantOverviewCard({
                     <Button
                       variant="ghost"
                       size="icon-sm"
-                      className="h-8 w-8 rounded-lg hover:bg-muted"
+                      className="size-8 rounded-lg hover:bg-muted"
                     />
                   }
                 >
-                  <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
+                  <MoreHorizontal className="size-4 text-text-tertiary" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64">
                   {canUpdateApplicant && (
@@ -152,11 +159,11 @@ export function ApplicantOverviewCard({
                         }
                         className="gap-2"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="size-4" />
                         <span>Editar datos del candidato</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="gap-2">
-                        <Briefcase className="h-4 w-4" />
+                        <Briefcase className="size-4" />
                         <span>Postular a una vacante</span>
                       </DropdownMenuItem>
                     </>
@@ -170,15 +177,15 @@ export function ApplicantOverviewCard({
                         "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
                       )}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="size-4" />
                       <span>Eliminar candidato</span>
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-          </div>
-        </div>
+          </CardAction>
+        )}
       </CardHeader>
       <Separator />
       <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -191,15 +198,10 @@ export function ApplicantOverviewCard({
 
         <ApplicantAttribute
           label="Nivel de inglés"
-          value={
-            englishLevel ? englishLevelLabels[englishLevel] : "Sin información"
-          }
+          value={englishLevel ?? "Sin información"}
         />
 
-        <ApplicantAttribute
-          label="Fuente"
-          value={source ? sourceLabels[source] : "Sin fuente"}
-        />
+        <ApplicantAttribute label="Fuente" value={source ?? "Sin fuente"} />
       </CardContent>
     </Card>
   );
