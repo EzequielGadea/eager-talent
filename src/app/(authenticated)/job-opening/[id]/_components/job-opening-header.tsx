@@ -1,7 +1,6 @@
 import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 
-import { Button } from "~/components/ui/button";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 
 import { AddApplicantDialog } from "./add-applicant-dialog";
