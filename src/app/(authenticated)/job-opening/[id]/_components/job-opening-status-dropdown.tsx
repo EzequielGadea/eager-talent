@@ -60,14 +60,10 @@ export function JobOpeningStatusDropdown({
     },
   });
 
-  const statusStyle =
-    statusStyles[status] ?? fallbackStatusStyle;
+  const statusStyle = statusStyles[status] ?? fallbackStatusStyle;
 
   function handleStatusChange(nextStatus: JobOpeningStatus) {
-    if (
-      nextStatus === status ||
-      updateStatusMutation.isPending
-    ) {
+    if (nextStatus === status || updateStatusMutation.isPending) {
       return;
     }
 
@@ -103,13 +99,9 @@ export function JobOpeningStatusDropdown({
             key={jobOpeningStatus}
             onClick={() => handleStatusChange(jobOpeningStatus)}
           >
-            <span className="flex-1">
-              {jobOpeningStatus}
-            </span>
+            <span className="flex-1">{jobOpeningStatus}</span>
 
-            {jobOpeningStatus === status && (
-              <Check className="size-4" />
-            )}
+            {jobOpeningStatus === status && <Check className="size-4" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
