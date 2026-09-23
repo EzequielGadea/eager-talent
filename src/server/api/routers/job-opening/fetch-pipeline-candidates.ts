@@ -61,7 +61,7 @@ export const fetchPipelineCandidates = protectedProcedure
         where,
         orderBy: [
           {
-            stageEntryDate: "asc",
+            stageEntryDate: "desc",
           },
           {
             applicantId: "asc",

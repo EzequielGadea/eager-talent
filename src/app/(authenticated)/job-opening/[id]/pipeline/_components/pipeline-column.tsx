@@ -61,8 +61,6 @@ export async function PipelineColumn({
         stageName={stage.name}
         initialCandidates={data.candidates}
         total={data.total}
-        nextOffset={data.nextOffset}
-        hasMore={data.hasMore}
       />
     </section>
   );

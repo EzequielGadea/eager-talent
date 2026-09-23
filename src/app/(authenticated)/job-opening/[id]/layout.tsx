@@ -35,6 +35,7 @@ async function JobOpeningLayoutContent({
   return (
     <main className="flex min-h-0 flex-1 flex-col gap-6 p-6">
       <JobOpeningHeader
+        jobOpeningId={jobOpening.id}
         name={jobOpening.name}
         status={jobOpening.status}
         areaName={jobOpening.area.name}
