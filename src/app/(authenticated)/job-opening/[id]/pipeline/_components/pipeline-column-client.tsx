@@ -97,9 +97,7 @@ export function PipelineColumnClient({
 
   function handleCandidateAdvanced(applicantId: string) {
     setLoadedCandidates((current) =>
-      current.filter(
-        (candidate) => candidate.applicantId !== applicantId,
-      ),
+      current.filter((candidate) => candidate.applicantId !== applicantId),
     );
 
     setOptimisticallyRemovedIds((current) => {

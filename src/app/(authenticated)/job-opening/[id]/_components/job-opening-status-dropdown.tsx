@@ -81,9 +81,7 @@ export function JobOpeningStatusDropdown({
         variant="secondary"
         className={`rounded-full ${statusStyle.badgeClassName}`}
       >
-        <span
-          className={`size-1.5 rounded-full ${statusStyle.dotClassName}`}
-        />
+        <span className={`size-1.5 rounded-full ${statusStyle.dotClassName}`} />
         {status}
       </Badge>
     );
