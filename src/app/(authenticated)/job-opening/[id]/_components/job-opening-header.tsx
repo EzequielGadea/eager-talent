@@ -1,12 +1,11 @@
-import { ArrowLeft, ChevronDown, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 
 import { AddApplicantDialog } from "./add-applicant-dialog";
-
-type JobOpeningStatus = "Open" | "Paused" | "Closed" | "Cancelled";
+import { JobOpeningStatusDropdown } from "./job-opening-status-dropdown";
 
 type JobOpeningHeaderProps = {
   jobOpeningId: string;
@@ -14,36 +13,6 @@ type JobOpeningHeaderProps = {
   status: JobOpeningStatus;
   areaName: string;
   openingDate: Date;
-};
-
-const statusStyles: Record<
-  JobOpeningStatus,
-  {
-    label: string;
-    badgeClassName: string;
-    dotClassName: string;
-  }
-> = {
-  Open: {
-    label: "Abierta",
-    badgeClassName: "bg-success-bg text-success",
-    dotClassName: "bg-success",
-  },
-  Paused: {
-    label: "Pausada",
-    badgeClassName: "bg-warning-bg text-warning",
-    dotClassName: "bg-warning",
-  },
-  Closed: {
-    label: "Cerrada",
-    badgeClassName: "bg-muted text-muted-foreground",
-    dotClassName: "bg-muted-foreground",
-  },
-  Cancelled: {
-    label: "Cancelada",
-    badgeClassName: "bg-danger-bg text-danger",
-    dotClassName: "bg-danger",
-  },
 };
 
 function getDaysSince(date: Date) {
@@ -74,13 +43,11 @@ export function JobOpeningHeader({
   areaName,
   openingDate,
 }: JobOpeningHeaderProps) {
-  const statusStyle = statusStyles[status];
-
   return (
     <header className="flex items-center justify-between gap-4">
       <div className="flex min-w-0 items-center gap-3">
         <Link
-          href="/job-openings"
+          href="/job-opening"
           aria-label="Volver a vacantes"
           className="inline-flex size-8 shrink-0 items-center justify-center rounded-md hover:bg-accent"
         >
@@ -93,18 +60,10 @@ export function JobOpeningHeader({
               {name}
             </h1>
 
-            <Badge
-              variant="secondary"
-              className={`rounded-full ${statusStyle.badgeClassName}`}
-            >
-              <span
-                className={`size-1.5 rounded-full ${statusStyle.dotClassName}`}
-              />
-
-              {statusStyle.label}
-
-              <ChevronDown className="size-3.5" />
-            </Badge>
+            <JobOpeningStatusDropdown
+              jobOpeningId={jobOpeningId}
+              status={status}
+            />
           </div>
 
           <p className="text-sm text-text-secondary">
