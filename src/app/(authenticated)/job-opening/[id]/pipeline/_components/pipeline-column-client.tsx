@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { api } from "~/lib/trpc/react";
 
@@ -21,77 +21,43 @@ export function PipelineColumnClient({
   initialCandidates,
   total,
 }: PipelineColumnClientProps) {
-  const [candidates, setCandidates] =
+  const [loadedCandidates, setLoadedCandidates] =
     useState<PipelineCandidate[]>(initialCandidates);
 
-  const [optimisticRemovedCount, setOptimisticRemovedCount] =
-    useState(0);
+  const [optimisticallyRemovedIds, setOptimisticallyRemovedIds] =
+    useState<Set<string>>(new Set());
 
-  const previousTotalRef = useRef(total);
+  const allCandidates = [
+    ...initialCandidates,
+    ...loadedCandidates.filter(
+      (loadedCandidate) =>
+        !initialCandidates.some(
+          (initialCandidate) =>
+            initialCandidate.applicantId ===
+            loadedCandidate.applicantId,
+        ),
+    ),
+  ];
 
-  const fetchMore =
-    api.jobOpening.fetchPipelineCandidates.useQuery(
-      {
-        jobOpeningId,
-        stageName,
-        limit: 3,
-        offset: candidates.length,
-      },
-      {
-        enabled: false,
-      },
-    );
-
-  useEffect(() => {
-    setCandidates((current) => {
-      const currentIds = new Set(
-        current.map((candidate) => candidate.applicantId),
-      );
-
-      const newCandidates = initialCandidates.filter(
-        (candidate) => !currentIds.has(candidate.applicantId),
-      );
-
-      if (newCandidates.length === 0) {
-        return current;
-      }
-
-      return [...newCandidates, ...current];
-    });
-
-    if (total !== previousTotalRef.current) {
-      setOptimisticRemovedCount(0);
-      previousTotalRef.current = total;
-    }
-  }, [initialCandidates, total]);
-
-  const handleLoadMore = async () => {
-    const result = await fetchMore.refetch();
-
-    if (!result.data) {
-      return;
-    }
-
-    setCandidates((current) => [
-      ...current,
-      ...result.data.candidates,
-    ]);
-  };
-
-  const handleCandidateAdvanced = (applicantId: string) => {
-    setCandidates((current) =>
-      current.filter(
-        (candidate) => candidate.applicantId !== applicantId,
-      ),
-    );
-
-    setOptimisticRemovedCount((current) => current + 1);
-  };
-
-  const effectiveTotal = Math.max(
-    0,
-    total - optimisticRemovedCount,
+  const initialCandidateIds = new Set(
+    initialCandidates.map((candidate) => candidate.applicantId),
   );
+
+  const visibleOptimisticRemovedIds = new Set(
+    [...optimisticallyRemovedIds].filter((id) =>
+      initialCandidateIds.has(id),
+    ),
+  );
+
+  const candidates = allCandidates.filter(
+    (candidate) =>
+      !visibleOptimisticRemovedIds.has(candidate.applicantId),
+  );
+
+  const loadedCount = allCandidates.length;
+
+  const effectiveTotal =
+    total - visibleOptimisticRemovedIds.size;
 
   const remaining = Math.max(
     0,
@@ -99,6 +65,53 @@ export function PipelineColumnClient({
   );
 
   const hasMore = remaining > 0;
+
+  const fetchMore =
+    api.jobOpening.fetchPipelineCandidates.useQuery(
+      {
+        jobOpeningId,
+        stageName,
+        limit: 3,
+        offset: loadedCount,
+      },
+      {
+        enabled: false,
+      },
+    );
+
+  async function handleLoadMore() {
+    const result = await fetchMore.refetch();
+
+    if (!result.data) {
+      return;
+    }
+
+    setLoadedCandidates((current) => {
+      const currentIds = new Set(
+        current.map((candidate) => candidate.applicantId),
+      );
+
+      const newCandidates = result.data.candidates.filter(
+        (candidate) => !currentIds.has(candidate.applicantId),
+      );
+
+      return [...current, ...newCandidates];
+    });
+  }
+
+  function handleCandidateAdvanced(applicantId: string) {
+    setLoadedCandidates((current) =>
+      current.filter(
+        (candidate) => candidate.applicantId !== applicantId,
+      ),
+    );
+
+    setOptimisticallyRemovedIds((current) => {
+      const next = new Set(current);
+      next.add(applicantId);
+      return next;
+    });
+  }
 
   return (
     <div className="flex min-h-24 flex-col gap-2">
