@@ -32,8 +32,7 @@ export const fetchAvailableApplicants = protectedProcedure
       });
     }
 
-    const searchTerms =
-      input.search?.trim().split(/\s+/).filter(Boolean) ?? [];
+    const searchTerms = input.search?.trim().split(/\s+/).filter(Boolean) ?? [];
 
     const applicants = await ctx.db.applicant.findMany({
       where: {
