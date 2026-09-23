@@ -14,6 +14,8 @@ import { JobOpeningStatus } from "~/generated/prisma/enums";
 
 import OpeningData from "./opening-data";
 
+import OpeningDate from "./opening-date";
+
 export const jobOpeningFormSchema = z.object({
   name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
   area: z.string().min(1, "El area de la vacante es obligatoria"),
@@ -74,9 +76,10 @@ export default function NewJobOpeningForm() {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4"
+        className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4"
       >
         <OpeningData />
+        <OpeningDate />
       </form>
     </FormProvider>
   );
