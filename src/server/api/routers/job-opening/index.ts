@@ -23,5 +23,5 @@ export const jobOpeningRouter = createTRPCRouter({
   fetchById,
   fetchPipelineCandidates,
   updateStatus,
-  createJobOpening
+  createJobOpening,
 });
