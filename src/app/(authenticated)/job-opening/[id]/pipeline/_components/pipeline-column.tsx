@@ -14,10 +14,9 @@ const stageColors = [
 ];
 
 function getStageColor(stageName: string) {
-  const hash = stageName.split("").reduce(
-    (total, character) => total + character.charCodeAt(0),
-    0,
-  );
+  const hash = stageName
+    .split("")
+    .reduce((total, character) => total + character.charCodeAt(0), 0);
 
   return stageColors[hash % stageColors.length];
 }

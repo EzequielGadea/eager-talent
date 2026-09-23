@@ -85,9 +85,7 @@ export const advanceApplicationStage = protectedProcedure
       });
     }
 
-    const stages = Array.isArray(jobOpening.stages)
-      ? jobOpening.stages
-      : [];
+    const stages = Array.isArray(jobOpening.stages) ? jobOpening.stages : [];
 
     const stageIndex = stages.findIndex(
       (stage) =>

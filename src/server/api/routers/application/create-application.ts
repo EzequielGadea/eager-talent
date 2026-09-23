@@ -131,22 +131,22 @@ export const createApplication = protectedProcedure
     try {
       return await ctx.db.application.create({
         data: {
-            applicantId: input.applicantId,
-            jobOpeningId: input.jobOpeningId,
-            applicationDate: now,
-            currentStage: firstStage.name,
-            active: true,
-            stageEntryDate: now,
-            desiredSalaryAmount: input.desiredSalaryAmount,
-            desiredSalaryCurrency: input.desiredSalaryCurrency,
-            availability: input.availability,
+          applicantId: input.applicantId,
+          jobOpeningId: input.jobOpeningId,
+          applicationDate: now,
+          currentStage: firstStage.name,
+          active: true,
+          stageEntryDate: now,
+          desiredSalaryAmount: input.desiredSalaryAmount,
+          desiredSalaryCurrency: input.desiredSalaryCurrency,
+          availability: input.availability,
         },
         select: {
-            applicantId: true,
-            jobOpeningId: true,
-            currentStage: true,
+          applicantId: true,
+          jobOpeningId: true,
+          currentStage: true,
         },
-    });
+      });
     } catch (error) {
       if (
         typeof error === "object" &&

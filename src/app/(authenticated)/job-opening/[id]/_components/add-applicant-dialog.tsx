@@ -22,9 +22,7 @@ type AddApplicantDialogProps = {
 
 type Step = "select" | "application";
 
-export function AddApplicantDialog({
-  jobOpeningId,
-}: AddApplicantDialogProps) {
+export function AddApplicantDialog({ jobOpeningId }: AddApplicantDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("select");
   const [selectedApplicant, setSelectedApplicant] =

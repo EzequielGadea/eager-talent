@@ -9,13 +9,10 @@ type JobOpeningTabsProps = {
   jobOpeningId: string;
 };
 
-export function JobOpeningTabs({
-  jobOpeningId,
-}: JobOpeningTabsProps) {
+export function JobOpeningTabs({ jobOpeningId }: JobOpeningTabsProps) {
   const segment = useSelectedLayoutSegment();
 
-  const activeTab =
-    segment === "disqualified" ? "disqualified" : "pipeline";
+  const activeTab = segment === "disqualified" ? "disqualified" : "pipeline";
 
   return (
     <div className="border-b border-border-default">
@@ -31,7 +28,6 @@ export function JobOpeningTabs({
             }
           >
             Pipeline
-
             {activeTab === "pipeline" && (
               <span className="absolute inset-x-0 bottom-[-3px] h-0.5 bg-text-primary" />
             )}
@@ -39,9 +35,7 @@ export function JobOpeningTabs({
 
           <Link
             href={`/job-opening/${jobOpeningId}/disqualified`}
-            aria-current={
-              activeTab === "disqualified" ? "page" : undefined
-            }
+            aria-current={activeTab === "disqualified" ? "page" : undefined}
             className={
               activeTab === "disqualified"
                 ? "relative pb-3 text-sm font-semibold text-text-primary"
@@ -49,7 +43,6 @@ export function JobOpeningTabs({
             }
           >
             Descalificados
-
             {activeTab === "disqualified" && (
               <span className="absolute inset-x-0 bottom-[-3px] h-0.5 bg-text-primary" />
             )}
