@@ -106,6 +106,7 @@ export function Filters({
   tag: new Set(searchParams.getAll("tag")),
 }));
 
+
   const updateFilterValue = (
     key: FilterKey,
     value: string,
@@ -142,6 +143,13 @@ export function Filters({
   };
 
   const clearFilter = (key: FilterKey) => {
+    setSelectedFilters((prev) => {
+      const next = new Set();
+          return {
+      ...prev,
+      [key]: next,
+    };
+    })
     const params = new URLSearchParams(searchParams.toString());
     params.delete(key);
     params.set("page", "1");
