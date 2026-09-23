@@ -17,6 +17,8 @@ import { ApplicantRow } from "./applicant-row";
 import { TableFallback } from "./fallbacks";
 import { useTransition } from "react";
 
+import { columns } from "../constants";
+
 export function ApplicantTable(props: {
   applicantsData: ApplicantInfo[];
   countApplicants: number;
@@ -86,34 +88,34 @@ export function ApplicantTableHeader() {
   return (
     <TableHeader>
       <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-        <TableHead className="h-9.75 w-35 pl-10 pr-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`h-9.75 ${columns.applicant} py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Candidato
         </TableHead>
-        <TableHead className="w-32 h-9.75 pl-10 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`${columns.tags} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Etiquetas
         </TableHead>
-        <TableHead className="w-30 h-9.75 pl-8 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`${columns.vacancy} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Vacante
         </TableHead>
-        <TableHead className="w-28 h-9.75 pl-12 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`${columns.role} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Rol
         </TableHead>
-        <TableHead className="w-20 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`${columns.seniority} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Seniority
         </TableHead>
-        <TableHead className="w-24 h-9.75 pl-10 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`${columns.area} h-9.75 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Área
         </TableHead>
-        <TableHead className="w-24 h-9.75 pl-7 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`${columns.source} h-9.75 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Source
         </TableHead>
-        <TableHead className="w-8 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+        <TableHead className={`${columns.cv}h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center`}>
           CV
         </TableHead>
-        <TableHead className="w-15 h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center">
+        <TableHead className={`${columns.vacancy} h-9.75 px-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light text-center`}>
           LinkedIn
         </TableHead>
-        <TableHead className="w-36 h-9.75 px-3 py-0 pr-4 pl-10 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={`${columns.email} h-9.75 py-0 pr-4 pl-10 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light`}>
           Correo
         </TableHead>
       </TableRow>
