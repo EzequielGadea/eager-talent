@@ -108,6 +108,10 @@
   --color-text-tertiary: var(--text-tertiary);
   --color-text-on-dark: var(--text-on-dark);
   --color-text-link: var(--text-link);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-surface-card: var(--surface-card);
+  --color-surface-subtle: var(--surface-subtle);
 
   /* --- nueva capa: acentos --- */
   --color-accent-green: var(--accent-green);
