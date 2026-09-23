@@ -15,7 +15,7 @@ export const fetchById = protectedProcedure
       headers: ctx.headers,
       body: {
         permissions: {
-          application: ["read"],
+          jobOpening: ["read"],
         },
       },
     });
@@ -24,7 +24,7 @@ export const fetchById = protectedProcedure
       headers: ctx.headers,
       body: {
         permissions: {
-          application: ["readAssigned"],
+          jobOpening: ["readAssigned"],
         },
       },
     });
@@ -36,18 +36,9 @@ export const fetchById = protectedProcedure
       });
     }
 
-    const jobOpening = await ctx.db.jobOpening.findFirst({
+    const jobOpening = await ctx.db.jobOpening.findUnique({
       where: {
         id: input.id,
-        ...(canReadAll.success
-          ? {}
-          : {
-              hiringManagers: {
-                some: {
-                  id: ctx.session.user.id,
-                },
-              },
-            }),
       },
       select: {
         id: true,
@@ -60,6 +51,11 @@ export const fetchById = protectedProcedure
             name: true,
           },
         },
+        hiringManagers: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -70,5 +66,19 @@ export const fetchById = protectedProcedure
       });
     }
 
-    return jobOpening;
+    if (
+      !canReadAll.success &&
+      !jobOpening.hiringManagers.some(
+        (hiringManager) => hiringManager.id === ctx.session.user.id,
+      )
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tienes permiso para consultar esta vacante",
+      });
+    }
+
+    const { hiringManagers: _, ...jobOpeningData } = jobOpening;
+
+    return jobOpeningData;
   });

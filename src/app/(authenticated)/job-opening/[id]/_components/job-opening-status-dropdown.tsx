@@ -16,6 +16,7 @@ import { api } from "~/lib/trpc/react";
 type JobOpeningStatusDropdownProps = {
   jobOpeningId: string;
   status: JobOpeningStatus;
+  canUpdate: boolean;
 };
 
 const statusStyles: Record<
@@ -51,6 +52,7 @@ const fallbackStatusStyle = {
 export function JobOpeningStatusDropdown({
   jobOpeningId,
   status,
+  canUpdate,
 }: JobOpeningStatusDropdownProps) {
   const router = useRouter();
 
@@ -71,6 +73,20 @@ export function JobOpeningStatusDropdown({
       jobOpeningId,
       status: nextStatus,
     });
+  }
+
+  if (!canUpdate) {
+    return (
+      <Badge
+        variant="secondary"
+        className={`rounded-full ${statusStyle.badgeClassName}`}
+      >
+        <span
+          className={`size-1.5 rounded-full ${statusStyle.dotClassName}`}
+        />
+        {status}
+      </Badge>
+    );
   }
 
   return (

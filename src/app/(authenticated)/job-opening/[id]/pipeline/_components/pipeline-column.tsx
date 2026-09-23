@@ -24,11 +24,15 @@ function getStageColor(stageName: string) {
 type PipelineColumnProps = {
   jobOpeningId: string;
   stage: PipelineStage;
+  canUpdateApplication: boolean;
+  canCreateInterview: boolean;
 };
 
 export async function PipelineColumn({
   jobOpeningId,
   stage,
+  canUpdateApplication,
+  canCreateInterview,
 }: PipelineColumnProps) {
   const data = await api.jobOpening.fetchPipelineCandidates({
     jobOpeningId,
@@ -60,6 +64,8 @@ export async function PipelineColumn({
         stageName={stage.name}
         initialCandidates={data.candidates}
         total={data.total}
+        canUpdateApplication={canUpdateApplication}
+        canCreateInterview={canCreateInterview}
       />
     </section>
   );
