@@ -1,6 +1,12 @@
 "use client";
 
-import { ArrowRight, CalendarDays, CircleX, MoreHorizontal, UserRound } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  CircleX,
+  MoreHorizontal,
+  UserRound,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -12,18 +18,45 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { api } from "~/lib/trpc/react";
 
 import type { PipelineCandidate } from "./types";
 
 type CandidateCardProps = {
   candidate: PipelineCandidate;
+  jobOpeningId: string;
+  currentStage: string;
+  onAdvanced: (applicantId: string) => void;
 };
 
-export function CandidateCard({ candidate }: CandidateCardProps) {
+export function CandidateCard({
+  candidate,
+  jobOpeningId,
+  currentStage,
+  onAdvanced,
+}: CandidateCardProps) {
   const router = useRouter();
+
+  const advanceApplicationStageMutation =
+    api.application.advanceApplicationStage.useMutation({
+      onSuccess: () => {
+        onAdvanced(candidate.applicantId);
+        router.refresh();
+      },
+    });
+
   const handleViewProfile = () => {
     router.push(`/applicants/${candidate.applicantId}`);
   };
+
+  const handleAdvanceStage = () => {
+    advanceApplicationStageMutation.mutate({
+      applicantId: candidate.applicantId,
+      jobOpeningId,
+      currentStage,
+    });
+  };
+
   const avatarColors = [
     "bg-dashboard-orange-light text-dashboard-orange-text",
     "bg-dashboard-sky-avatar text-dashboard-sky-text",
@@ -42,7 +75,10 @@ export function CandidateCard({ candidate }: CandidateCardProps) {
 
     return avatarColors[hash % avatarColors.length];
   }
-  const initials = `${candidate.name.charAt(0)}${candidate.lastName.charAt(0)}`.toUpperCase();
+
+  const initials =
+    `${candidate.name.charAt(0)}${candidate.lastName.charAt(0)}`.toUpperCase();
+
   const avatarColor = getAvatarColor(candidate.applicantId);
 
   return (
@@ -53,6 +89,7 @@ export function CandidateCard({ candidate }: CandidateCardProps) {
             src={candidate.photo ?? undefined}
             alt={`${candidate.name} ${candidate.lastName}`}
           />
+
           <AvatarFallback className={avatarColor}>
             {initials}
           </AvatarFallback>
@@ -85,7 +122,10 @@ export function CandidateCard({ candidate }: CandidateCardProps) {
               <span>Ver perfil</span>
             </DropdownMenuItem>
 
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleAdvanceStage}
+              disabled={advanceApplicationStageMutation.isPending}
+            >
               <ArrowRight className="size-4" />
               <span>Avanzar etapa</span>
             </DropdownMenuItem>

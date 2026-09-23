@@ -4,9 +4,12 @@ import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 
+import { AddApplicantDialog } from "./add-applicant-dialog";
+
 type JobOpeningStatus = "Open" | "Paused" | "Closed" | "Cancelled";
 
 type JobOpeningHeaderProps = {
+  jobOpeningId: string;
   name: string;
   status: JobOpeningStatus;
   areaName: string;
@@ -65,6 +68,7 @@ function getOpeningLabel(openingDate: Date) {
 }
 
 export function JobOpeningHeader({
+  jobOpeningId,
   name,
   status,
   areaName,
@@ -96,6 +100,7 @@ export function JobOpeningHeader({
               <span
                 className={`size-1.5 rounded-full ${statusStyle.dotClassName}`}
               />
+
               {statusStyle.label}
 
               <ChevronDown className="size-3.5" />
@@ -118,14 +123,7 @@ export function JobOpeningHeader({
           Editar
         </Button>
 
-        <Button
-          type="button"
-          className="h-10 gap-2 rounded-full px-5"
-        >
-          <span className="text-lg leading-none">+</span>
-          Candidato
-          <ChevronDown className="size-4" />
-        </Button>
+        <AddApplicantDialog jobOpeningId={jobOpeningId} />
       </div>
     </header>
   );
