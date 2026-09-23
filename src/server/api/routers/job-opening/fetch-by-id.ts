@@ -78,7 +78,12 @@ export const fetchById = protectedProcedure
       });
     }
 
-    const { hiringManagers: _, ...jobOpeningData } = jobOpening;
-
-    return jobOpeningData;
+    return {
+      id: jobOpening.id,
+      name: jobOpening.name,
+      status: jobOpening.status,
+      stages: jobOpening.stages,
+      openingDate: jobOpening.openingDate,
+      area: jobOpening.area,
+    };
   });
