@@ -32,7 +32,8 @@ export const fetchAvailableApplicants = protectedProcedure
       });
     }
 
-    const search = input.search?.trim();
+    const searchTerms =
+      input.search?.trim().split(/\s+/).filter(Boolean) ?? [];
 
     const applicants = await ctx.db.applicant.findMany({
       where: {
@@ -41,28 +42,30 @@ export const fetchAvailableApplicants = protectedProcedure
             jobOpeningId: input.jobOpeningId,
           },
         },
-        ...(search
+        ...(searchTerms.length > 0
           ? {
-              OR: [
-                {
-                  name: {
-                    contains: search,
-                    mode: "insensitive",
+              AND: searchTerms.map((term) => ({
+                OR: [
+                  {
+                    name: {
+                      contains: term,
+                      mode: "insensitive",
+                    },
                   },
-                },
-                {
-                  lastName: {
-                    contains: search,
-                    mode: "insensitive",
+                  {
+                    lastName: {
+                      contains: term,
+                      mode: "insensitive",
+                    },
                   },
-                },
-                {
-                  email: {
-                    contains: search,
-                    mode: "insensitive",
+                  {
+                    email: {
+                      contains: term,
+                      mode: "insensitive",
+                    },
                   },
-                },
-              ],
+                ],
+              })),
             }
           : {}),
       },
