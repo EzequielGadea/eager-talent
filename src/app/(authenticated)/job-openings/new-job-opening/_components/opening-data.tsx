@@ -9,6 +9,8 @@ import { useEffect } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
+import { Check, Circle, CircleDot } from "lucide-react";
+
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
@@ -41,6 +43,9 @@ export default function OpeningData() {
   const { data: areas, isLoading: isLoadingArea } =
     api.area.getAllAreas.useQuery({});
 
+  const { data: seniorities, isLoading: isLoadingSeniority } =
+    api.seniority.getAllSeniorities.useQuery({});
+
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
@@ -50,7 +55,7 @@ export default function OpeningData() {
       </CardHeader>
       <CardContent>
         <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
-          <div className="space-y-1 md:col-span-2">
+          <div className="space-y-2 md:col-span-2">
             <Label
               htmlFor="name"
               className="body text-[13px] text-slate-600 --text-primary"
@@ -63,11 +68,8 @@ export default function OpeningData() {
               placeholder="Ej. Sr. Node js Developer"
               className="w-full"
             />
-            {/*errors.name && (
-                            <p className="text-danger">{errors.name.message}</p>
-                        )*/}
           </div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Label htmlFor="area">
               Area <span className="text-danger">*</span>
             </Label>
@@ -103,7 +105,7 @@ export default function OpeningData() {
             />
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Label htmlFor="status">Estado</Label>
             <Controller
               name="status"
@@ -148,6 +150,108 @@ export default function OpeningData() {
                     className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
                     Cancelada
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              )}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label
+              htmlFor="seniority"
+              className="text-[13px] font-medium text-text-primary"
+            >
+              Seniority
+              <span className="text-text-tertiary"> (uno o varios) </span>
+            </Label>
+            <Controller
+              name="seniorityIds"
+              control={control}
+              render={({ field }) => (
+                <ToggleGroup
+                  multiple
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  disabled={isLoadingSeniority}
+                  spacing={1}
+                  aria-label="Seniorities de la vacante"
+                  className="flex flex-wrap justify-start gap-2"
+                >
+                  {seniorities?.map((seniority) => {
+                    const isSelected = field.value.includes(seniority.id);
+
+                    return (
+                      <ToggleGroupItem
+                        key={seniority.id}
+                        value={seniority.id}
+                        className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                      >
+                        {isSelected && <Check className="mr-1.5 h-3.5 w-3.5" />}
+                        {seniority.name}
+                      </ToggleGroupItem>
+                    );
+                  })}
+                </ToggleGroup>
+              )}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label
+              htmlFor="location"
+              className="text-[13px] font-medium text-text-primary"
+            >
+              Ubicación
+            </Label>
+            <Controller
+              name="location"
+              control={control}
+              render={({ field }) => (
+                <ToggleGroup
+                  value={field.value ? [field.value] : []}
+                  onValueChange={(values) => {
+                    const value = values[0];
+
+                    if (value) {
+                      field.onChange(value);
+                    }
+                  }}
+                  spacing={1}
+                  aria-label="Opciones del campo"
+                  className="flex flex-wrap justify-start gap-2"
+                >
+                  <ToggleGroupItem
+                    value="Uruguay"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                  >
+                    {field.value === "Uruguay" ? (
+                      <CircleDot className="mr-1.5 h-3.5 w-3.5" />
+                    ) : (
+                      <Circle className="mr-1.5 h-3.5 w-3.5 text-border-strong" />
+                    )}
+                    Uruguay
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="Argentina"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                  >
+                    {field.value === "Argentina" ? (
+                      <CircleDot className="mr-1.5 h-3.5 w-3.5" />
+                    ) : (
+                      <Circle className="mr-1.5 h-3.5 w-3.5 text-border-strong" />
+                    )}
+                    Argentina
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value="Indiferente"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                  >
+                    {field.value === "Indiferente" ? (
+                      <CircleDot className="mr-1.5 h-3.5 w-3.5" />
+                    ) : (
+                      <Circle className="mr-1.5 h-3.5 w-3.5 text-border-strong" />
+                    )}
+                    Indiferente
                   </ToggleGroupItem>
                 </ToggleGroup>
               )}
