@@ -110,8 +110,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           }
         >
           <span className="break-words">
-            {props.applicant.jobOpening[props.applicant.jobOpening.length - 1] ||
-              "-"}
+            {props.applicant.jobOpening[
+              props.applicant.jobOpening.length - 1
+            ] || "-"}
 
             {props.applicant.jobOpening.length > 1 && (
               <span className="block">
@@ -133,7 +134,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Seniority */}
-      <TableCell className={`${columns.seniority} py-2 text-center align-middle`}>
+      <TableCell
+        className={`${columns.seniority} py-2 text-center align-middle`}
+      >
         {props.applicant.seniorityName ? (
           <Badge
             style={{
@@ -186,7 +189,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* CV */}
-      <TableCell className={`${columns.cv} whitespace-nowrap py-2 text-center align-middle`}>
+      <TableCell
+        className={`${columns.cv} whitespace-nowrap py-2 text-center align-middle`}
+      >
         {props.applicant.hasCv && props.applicant.cvUrl ? (
           <a
             href={props.applicant.cvUrl}
@@ -206,7 +211,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* LinkedIn */}
-      <TableCell className={`${columns.linkedin} whitespace-nowrap px-2 py-2 text-center align-middle`}>
+      <TableCell
+        className={`${columns.linkedin} whitespace-nowrap px-2 py-2 text-center align-middle`}
+      >
         {props.applicant.hasLinkedin && props.applicant.linkedinUrl ? (
           <a
             href={props.applicant.linkedinUrl}

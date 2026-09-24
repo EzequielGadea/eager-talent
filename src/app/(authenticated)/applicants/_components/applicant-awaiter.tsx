@@ -34,10 +34,10 @@ export async function ApplicantAwaiterTable(props: {
 
 export async function ApplicantAwaiterHeader(props: {
   promiseCountApplicants: Promise<number>;
-  promiseCountOpenings: ReturnType<typeof api.jobOpening.getAllJobOpenings>
+  promiseCountOpenings: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
 }) {
   const countApplicants = await props.promiseCountApplicants;
-  const countOpenings = (await props.promiseCountOpenings)?.length
+  const countOpenings = (await props.promiseCountOpenings)?.length;
   return (
     <Header countApplicants={countApplicants} countOpenings={countOpenings} />
   );

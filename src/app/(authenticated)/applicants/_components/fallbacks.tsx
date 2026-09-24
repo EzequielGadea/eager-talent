@@ -1,4 +1,4 @@
-import { ChevronDown, Download, Loader2, Plus, Search } from "lucide-react";
+import { ChevronDown, Loader2, Plus, Search } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { TableCell, TableRow } from "~/components/ui/table";
 import { Input } from "~/components/ui/input";
