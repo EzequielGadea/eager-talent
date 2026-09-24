@@ -131,8 +131,8 @@ async function ProtectedApplicantsPage(props: {
     <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 text-dashboard-text-primary">
       <Suspense fallback={<HeaderFallback />}>
         <ApplicantAwaiterHeader
-          promiseData={data}
-          promiseCount={countApplicants}
+          promiseCountApplicants={countApplicants}
+          promiseCountOpenings={jobOpeningData}
         />
       </Suspense>
 
