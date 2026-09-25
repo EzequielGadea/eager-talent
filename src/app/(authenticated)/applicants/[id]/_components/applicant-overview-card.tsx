@@ -1,15 +1,5 @@
-import {
-  Mail,
-  MapPin,
-  Phone,
-  UserRound,
-  MoreHorizontal,
-  Pencil,
-  Briefcase,
-  Trash2,
-} from "lucide-react";
+import { Mail, MapPin, Phone, UserRound } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
-import Link from "next/link";
 import {
   Card,
   CardAction,
@@ -20,14 +10,6 @@ import {
 } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "~/components/ui/dropdown-menu";
-import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
