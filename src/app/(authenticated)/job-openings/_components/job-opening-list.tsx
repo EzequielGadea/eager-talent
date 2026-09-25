@@ -5,6 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import JobOpeningsFallback from "./job-openings-fallback";
 import { api } from "~/lib/trpc/react";
 import AssignedInterviews from "./assigned-interviews";
+import { JobOpeningFilters } from "./job-opening-filters";
+import { JobOpeningSort } from "./job-opening-sort";
 import { Button } from "~/components/ui/button";
 import {
   Table,
@@ -78,14 +80,19 @@ export default function JobOpeningsList({
         </div>
 
         {!isHiringManagerView && (
-          <Button
-            size="sm"
-            className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover"
-            onClick={() => router.push("/job-openings/new")}
-          >
-            <Plus size={16} />
-            Nueva vacante
-          </Button>
+          <div className="flex items-center gap-2">
+            <JobOpeningFilters />
+            <JobOpeningSort />
+
+            <Button
+              size="sm"
+              className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover"
+              onClick={() => router.push("/job-openings/new")}
+            >
+              <Plus size={16} />
+              Nueva vacante
+            </Button>
+          </div>
         )}
       </div>
 
