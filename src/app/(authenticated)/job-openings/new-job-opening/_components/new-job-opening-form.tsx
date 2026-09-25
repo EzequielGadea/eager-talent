@@ -16,6 +16,10 @@ import OpeningData from "./opening-data";
 
 import OpeningDate from "./opening-date";
 
+import OpeningStage from "./opening-stage";
+
+import OpeningHiring from "./opening-hiring";
+
 export const jobOpeningFormSchema = z.object({
   name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
   area: z.string().min(1, "El area de la vacante es obligatoria"),
@@ -80,6 +84,8 @@ export default function NewJobOpeningForm() {
       >
         <OpeningData />
         <OpeningDate />
+        <OpeningStage />
+        <OpeningHiring />
       </form>
     </FormProvider>
   );
