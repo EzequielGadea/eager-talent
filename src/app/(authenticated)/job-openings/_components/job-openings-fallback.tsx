@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Plus, ChevronDown, Filter } from "lucide-react";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Button } from "~/components/ui/button";
 import {
@@ -22,14 +22,38 @@ export default function JobOpeningsFallback() {
           </div>
         </div>
 
-        <Button
-          size="sm"
-          disabled
-          className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark"
-        >
-          <Plus size={16} />
-          Nueva vacante
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled
+            className="h-8 gap-2 px-4 text-[13px] font-normal text-text-secondary"
+          >
+            <Filter size={16} />
+            Filtrar
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled
+            className="h-8 gap-2 px-4 text-[13px] font-normal text-text-secondary"
+          >
+            Ordenar
+            <ChevronDown size={16} />
+          </Button>
+
+          <Button
+            size="sm"
+            disabled
+            className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark"
+          >
+            <Plus size={16} />
+            Nueva vacante
+          </Button>
+        </div>
       </div>
 
       <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
