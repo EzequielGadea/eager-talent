@@ -7,6 +7,7 @@ import { api } from "~/lib/trpc/react";
 import { CandidateCard } from "./candidate-card";
 import { LoadMoreCandidates } from "./load-more-candidates";
 import type { PipelineCandidate } from "./types";
+import { useDroppable } from "@dnd-kit/core";
 
 type PipelineColumnClientProps = {
   jobOpeningId: string;
@@ -25,23 +26,19 @@ export function PipelineColumnClient({
   canUpdateApplication,
   canCreateInterview,
 }: PipelineColumnClientProps) {
-  const [loadedCandidates, setLoadedCandidates] =
-    useState<PipelineCandidate[]>(initialCandidates);
+  const { setNodeRef, isOver } = useDroppable({
+    id: stageName,
+  });
+
+  const [loadedCandidates, setLoadedCandidates] = useState<PipelineCandidate[]>(
+    [],
+  );
 
   const [optimisticallyRemovedIds, setOptimisticallyRemovedIds] = useState<
     Set<string>
   >(new Set());
 
-  const allCandidates = [
-    ...initialCandidates,
-    ...loadedCandidates.filter(
-      (loadedCandidate) =>
-        !initialCandidates.some(
-          (initialCandidate) =>
-            initialCandidate.applicantId === loadedCandidate.applicantId,
-        ),
-    ),
-  ];
+  const allCandidates = [...initialCandidates, ...loadedCandidates];
 
   const initialCandidateIds = new Set(
     initialCandidates.map((candidate) => candidate.applicantId),
@@ -108,7 +105,12 @@ export function PipelineColumnClient({
   }
 
   return (
-    <div className="flex min-h-24 flex-col gap-2">
+    <div
+      ref={setNodeRef}
+      className={`flex min-h-24 min-w-72 flex-1 flex-col gap-2 rounded-lg transition-colors ${
+        isOver ? "bg-accent" : ""
+      }`}
+    >
       {candidates.map((candidate) => (
         <CandidateCard
           key={candidate.applicantId}
