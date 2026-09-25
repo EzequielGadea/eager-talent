@@ -97,6 +97,7 @@ export default function JobOpeningsList({
                 <TableHead className="px-4 py-3">Vacante</TableHead>
 
                 <TableHead className="px-4 py-3">Área</TableHead>
+
                 {!isHiringManagerView && (
                   <TableHead className="px-4 py-3">Hiring Managers</TableHead>
                 )}
@@ -104,6 +105,18 @@ export default function JobOpeningsList({
                 <TableHead className="px-4 py-3">Estado</TableHead>
 
                 <TableHead className="px-4 py-3">Candidatos</TableHead>
+
+                {isHiringManagerView && (
+                  <>
+                    <TableHead className="px-4 py-3">
+                      Entrevista técnica
+                    </TableHead>
+
+                    <TableHead className="px-4 py-3">
+                      Ofertados
+                    </TableHead>
+                  </>
+                )}
 
                 <TableHead className="px-4 py-3">Abierta hace</TableHead>
 
@@ -115,7 +128,7 @@ export default function JobOpeningsList({
               {jobOpenings.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={isHiringManagerView ? 8 : 7}
                     className="h-24 text-center text-dashboard-text-muted"
                   >
                     Todavía no hay vacantes registradas.

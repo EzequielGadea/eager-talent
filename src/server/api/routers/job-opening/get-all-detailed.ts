@@ -34,7 +34,7 @@ export const getAllJobOpeningsDetailed = protectedProcedure
       ? {}
       : isHiringManagerAssignedToJobOpening(ctx.session.user.id);
 
-    return ctx.db.jobOpening.findMany({
+    const jobOpenings = await ctx.db.jobOpening.findMany({
       where,
 
       skip: (input.page - 1) * 8,
@@ -61,13 +61,12 @@ export const getAllJobOpeningsDetailed = protectedProcedure
           },
         },
 
-        _count: {
+        applications: {
+          where: {
+            active: true,
+          },
           select: {
-            applications: {
-              where: {
-                active: true,
-              },
-            },
+            currentStage: true,
           },
         },
       },
@@ -75,5 +74,28 @@ export const getAllJobOpeningsDetailed = protectedProcedure
       orderBy: {
         openingDate: "desc",
       },
+    });
+
+   return jobOpenings.map((jobOpening) => {
+      const {
+        applications,
+        ...jobOpeningData
+      } = jobOpening;
+
+      return {
+        ...jobOpeningData,
+
+        applicants: applications.length,
+
+        technicalInterviewApplicants: applications.filter(
+          (application) =>
+            application.currentStage === "Entrevista Técnica",
+        ).length,
+
+        offeredApplicants: applications.filter(
+          (application) =>
+            application.currentStage === "Oferta",
+        ).length,
+      };
     });
   });

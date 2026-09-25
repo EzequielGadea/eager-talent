@@ -156,26 +156,42 @@ export default function JobOpeningRow({
         </span>
       </TableCell>
 
-      <TableCell className="px-4 py-3">
-        <div className="flex items-center gap-1.5">
+     <TableCell className="px-4 py-3">
+      <div className="flex items-center gap-1.5">
+        <span className="font-semibold text-text-primary">
+          {jobOpening.applicants}
+        </span>
+
+        <span className="text-xs text-text-tertiary">en pipeline</span>
+      </div>
+    </TableCell>
+
+    {isHiringManagerView && (
+      <>
+        <TableCell className="px-4 py-3">
           <span className="font-semibold text-text-primary">
-            {jobOpening._count.applications}
+            {jobOpening.technicalInterviewApplicants}
           </span>
+        </TableCell>
 
-          <span className="text-xs text-text-tertiary">en pipeline</span>
-        </div>
-      </TableCell>
+        <TableCell className="px-4 py-3">
+          <span className="font-semibold text-text-primary">
+            {jobOpening.offeredApplicants}
+          </span>
+        </TableCell>
+      </>
+    )}
 
-      <TableCell className="px-4 py-3 text-text-secondary">
-        {formattedDate}
-      </TableCell>
+    <TableCell className="px-4 py-3 text-text-secondary">
+      {formattedDate}
+    </TableCell>
 
-      <TableCell className="px-4 py-3">
-        <ArrowRight
-          size={16}
-          className="text-text-tertiary transition-transform group-hover:translate-x-1"
-        />
-      </TableCell>
+    <TableCell className="px-4 py-3">
+      <ArrowRight
+        size={16}
+        className="text-text-tertiary transition-transform group-hover:translate-x-1"
+      />
+    </TableCell>
     </TableRow>
   );
 }
