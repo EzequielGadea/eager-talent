@@ -13,6 +13,7 @@ import { Button } from "~/components/ui/button";
 import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
+import { ApplicantActionsMenu } from "./applicant-actions-menu";
 
 type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
@@ -118,53 +119,12 @@ export function ApplicantOverviewCard({
             )}
 
             {canShowActions && (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      className="size-8 rounded-lg hover:bg-muted"
-                    />
-                  }
-                >
-                  <MoreHorizontal className="size-4 text-text-tertiary" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  {canUpdateApplicant && (
-                    <>
-                      <DropdownMenuItem
-                        render={
-                          <Link
-                            href={`/applicants/${applicant.id}/edit-applicant`}
-                          />
-                        }
-                        className="gap-2"
-                      >
-                        <Pencil className="size-4" />
-                        <span>Editar datos del candidato</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="gap-2">
-                        <Briefcase className="size-4" />
-                        <span>Postular a una vacante</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  {canUpdateApplicant && canDeleteApplicant && (
-                    <DropdownMenuSeparator />
-                  )}
-                  {canDeleteApplicant && (
-                    <DropdownMenuItem
-                      className={cn(
-                        "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
-                      )}
-                    >
-                      <Trash2 className="size-4" />
-                      <span>Eliminar candidato</span>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ApplicantActionsMenu
+                canUpdateApplicant={canUpdateApplicant}
+                applicant={applicant}
+                canDeleteApplicant={canDeleteApplicant}
+                defaultShow={false}
+              />
             )}
           </CardAction>
         )}
