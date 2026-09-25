@@ -175,7 +175,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4"
+        className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4"
       >
         <PersonalData
           currentPhoto={applicant.photo}
