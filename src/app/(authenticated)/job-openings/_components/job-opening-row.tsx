@@ -10,6 +10,7 @@ import {
 } from "~/components/ui/popover";
 
 import { TableCell, TableRow } from "~/components/ui/table";
+import { statusConfig } from "../constants";
 
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
@@ -20,25 +21,6 @@ type JobOpening =
 type Props = {
   jobOpening: JobOpening;
   isHiringManagerView: boolean;
-};
-
-const statusConfig = {
-  Open: {
-    label: "Abierta",
-    className: "bg-success-bg text-success",
-  },
-  Paused: {
-    label: "Pausada",
-    className: "bg-warning-bg text-warning",
-  },
-  Closed: {
-    label: "Cerrada",
-    className: "bg-tag-gray-bg text-tag-gray-fg",
-  },
-  Cancelled: {
-    label: "Cancelada",
-    className: "bg-danger-bg text-danger",
-  },
 };
 
 function getInitials(name: string) {
