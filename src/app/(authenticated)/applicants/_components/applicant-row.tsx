@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
 import { getSourceIcon } from "./source-icon";
 
+import { columns } from "../constants";
+
 function getSafeExternalUrl(value: string | null): string | null {
   if (!value) return null;
 
@@ -40,7 +42,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-dashboard-success-light last:border-0"
     >
       {/* Candidato */}
-      <TableCell className="px-2 py-2 align-middle">
+      <TableCell className={`${columns.applicant} py-2 align-middle`}>
         <div className="flex min-w-0 items-center gap-2">
           {photoUrl && photoUrl !== failedPhoto ? (
             <Image
@@ -70,7 +72,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Etiquetas */}
-      <TableCell className="px-2 py-2 align-middle">
+      <TableCell className={`${columns.tags} py-2 align-middle`}>
         <div className="@container">
           <div className="flex flex-col items-center gap-1 @[10px]:flex-row @[10px]:flex-wrap @[10px]:justify-center">
             {props.applicant.tags.length > 0 ? (
@@ -98,30 +100,33 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Vacante */}
-      <TableCell className="px-3 py-2 align-middle">
+      <TableCell className={`${columns.vacancy} py-2 align-middle`}>
         <div
-          className="line-clamp-2 break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
           title={
             props.applicant.jobOpening.length <= 1
               ? ""
               : props.applicant.jobOpening.join(", ")
           }
         >
-          {props.applicant.jobOpening[props.applicant.jobOpening.length - 1] ||
-            "-"}
+          <span className="break-words">
+            {props.applicant.jobOpening[
+              props.applicant.jobOpening.length - 1
+            ] || "-"}
 
-          {props.applicant.jobOpening.length > 1 && (
-            <span className="block">
-              +{props.applicant.jobOpening.length - 1}
-            </span>
-          )}
+            {props.applicant.jobOpening.length > 1 && (
+              <span className="block">
+                +{props.applicant.jobOpening.length - 1}
+              </span>
+            )}
+          </span>
         </div>
       </TableCell>
 
       {/* Rol */}
-      <TableCell className="px-3 py-2 align-middle">
+      <TableCell className={`${columns.role} py-2 align-middle`}>
         <div
-          className="line-clamp-2 break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
           title={props.applicant.role || "-"}
         >
           {props.applicant.role || "-"}
@@ -129,7 +134,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Seniority */}
-      <TableCell className="px-2 py-2 text-center align-middle">
+      <TableCell
+        className={`${columns.seniority} py-2 text-center align-middle`}
+      >
         {props.applicant.seniorityName ? (
           <Badge
             style={{
@@ -150,9 +157,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Área */}
-      <TableCell className="px-3 py-2 align-middle">
+      <TableCell className={`${columns.area} py-2 align-middle`}>
         <div
-          className="line-clamp-2 break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
           title={props.applicant.area || "-"}
         >
           {props.applicant.area || "-"}
@@ -160,7 +167,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Fuente */}
-      <TableCell className="px-2 py-2 align-middle">
+      <TableCell className={`${columns.source} py-2 align-middle`}>
         <div className="flex min-w-0 items-center justify-center gap-1 text-center text-sm text-dashboard-text-muted">
           {props.applicant.sourceText ? (
             <>
@@ -182,7 +189,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* CV */}
-      <TableCell className="w-px whitespace-nowrap px-2 py-2 text-center align-middle">
+      <TableCell
+        className={`${columns.cv} whitespace-nowrap py-2 text-center align-middle`}
+      >
         {props.applicant.hasCv && props.applicant.cvUrl ? (
           <a
             href={props.applicant.cvUrl}
@@ -202,7 +211,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* LinkedIn */}
-      <TableCell className="w-px whitespace-nowrap px-2 py-2 text-center align-middle">
+      <TableCell
+        className={`${columns.linkedin} whitespace-nowrap px-2 py-2 text-center align-middle`}
+      >
         {props.applicant.hasLinkedin && props.applicant.linkedinUrl ? (
           <a
             href={props.applicant.linkedinUrl}
@@ -222,7 +233,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Email */}
-      <TableCell className="px-3 py-2 align-middle">
+      <TableCell className={`${columns.email} py-2 align-middle`}>
         <div
           className="line-clamp-2 break-words whitespace-normal text-center text-xs leading-tight text-dashboard-text-muted [overflow-wrap:anywhere]"
           title={props.applicant.email || "-"}

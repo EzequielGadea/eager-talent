@@ -1,11 +1,7 @@
 "use client";
 
-import { Upload, X } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 import { api } from "~/lib/trpc/react";
-import Image from "next/image";
-import type { Dispatch, SetStateAction } from "react";
-import { useEffect } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
@@ -30,7 +26,6 @@ import {
 import { JobOpeningFormValues } from "./new-job-opening-form";
 
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
-import { Field } from "@base-ui/react";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 
 export default function OpeningData() {
