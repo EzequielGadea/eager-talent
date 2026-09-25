@@ -20,8 +20,8 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { api } from "~/lib/trpc/react";
 
-import type { PipelineCandidate } from "./types";
 import { useDraggable } from "@dnd-kit/core";
+import type { PipelineCandidate } from "./types";
 
 type CandidateCardProps = {
   candidate: PipelineCandidate;
@@ -41,6 +41,7 @@ export function CandidateCard({
   canCreateInterview,
 }: CandidateCardProps) {
   const router = useRouter();
+
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: candidate.applicantId,
   });
@@ -50,6 +51,9 @@ export function CandidateCard({
       onSuccess: () => {
         onAdvanced(candidate.applicantId);
         router.refresh();
+      },
+      onError: (error) => {
+        console.error("Error al avanzar etapa:", error);
       },
     });
 
@@ -129,13 +133,18 @@ export function CandidateCard({
         <DropdownMenu>
           <DropdownMenuTrigger
             type="button"
+            onPointerDown={(event) => event.stopPropagation()}
             className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-text-secondary hover:bg-accent hover:text-text-primary"
             aria-label={`Acciones para ${candidate.name} ${candidate.lastName}`}
           >
             <MoreHorizontal className="size-4" />
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-52">
+          <DropdownMenuContent
+            align="end"
+            className="w-52"
+            onPointerDown={(event) => event.stopPropagation()}
+          >
             <DropdownMenuItem onClick={handleViewProfile}>
               <UserRound className="size-4" />
               <span>Ver perfil</span>
@@ -147,7 +156,11 @@ export function CandidateCard({
                 disabled={advanceApplicationStageMutation.isPending}
               >
                 <ArrowRight className="size-4" />
-                <span>Avanzar etapa</span>
+                <span>
+                  {advanceApplicationStageMutation.isPending
+                    ? "Avanzando..."
+                    : "Avanzar etapa"}
+                </span>
               </DropdownMenuItem>
             )}
 
