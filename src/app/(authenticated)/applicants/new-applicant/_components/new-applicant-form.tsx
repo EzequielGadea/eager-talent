@@ -17,63 +17,97 @@ import NewCandidateButton from "./new-applicant-button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import SourceAndTags from "./source-and-tags";
-import { EnglishLevel, Source, HearAboutUs, SalaryCurrency } from "~/generated/prisma/enums";
+import {
+  EnglishLevel,
+  Source,
+  HearAboutUs,
+  SalaryCurrency,
+} from "~/generated/prisma/enums";
 
 import { useUploadThing } from "~/components/ui/uploadthing";
 
-export const applicantFormSchema = z.object({
-  name: z.string().min(1, "El nombre es obligatorio"),
-  lastname: z.string().min(1, "El apellido es obligatorio"),
-  email: z.string().min(1, "El correo es obligatorio").email("Correo inválido"),
-  phone: z
-    .string()
-    .regex(
-      /^\+[1-9]\d{1,14}$/,
-      "El teléfono debe tener formato E.164 (ej. +59899000000)",
-    )
-    .optional()
-    .or(z.literal("")),
-  country: z.string(),
-  photo: z.custom<FileList>()
-          .refine((files) => !files || files.length === 0 || files[0].type === "image/png" || files[0].type === "image/jpeg" || files[0].type === "image/jpg", "El archivo debe ser una imagen PNG, JPEG o JPG")
-          .optional(),
+export const applicantFormSchema = z
+  .object({
+    name: z.string().min(1, "El nombre es obligatorio"),
+    lastname: z.string().min(1, "El apellido es obligatorio"),
+    email: z
+      .string()
+      .min(1, "El correo es obligatorio")
+      .email("Correo inválido"),
+    phone: z
+      .string()
+      .regex(
+        /^\+[1-9]\d{1,14}$/,
+        "El teléfono debe tener formato E.164 (ej. +59899000000)",
+      )
+      .optional()
+      .or(z.literal("")),
+    country: z.string(),
+    photo: z
+      .custom<FileList>()
+      .refine(
+        (files) =>
+          !files ||
+          files.length === 0 ||
+          files[0].type === "image/png" ||
+          files[0].type === "image/jpeg" ||
+          files[0].type === "image/jpg",
+        "El archivo debe ser una imagen PNG, JPEG o JPG",
+      )
+      .optional(),
 
-  linkedin: z.string().url("Debe ingresar una URL válida").
-            refine((url) => url.includes("linkedin.com"), "Debe ingresar una URL de LinkedIn válida").
-            optional().
-            or(z.literal("")),
+    linkedin: z
+      .string()
+      .url("Debe ingresar una URL válida")
+      .refine(
+        (url) => url.includes("linkedin.com"),
+        "Debe ingresar una URL de LinkedIn válida",
+      )
+      .optional()
+      .or(z.literal("")),
 
-  role: z.string().min(1, "El rol es obligatorio"),
-  jobOpening: z.string(),
-  seniority: z.string(),
-  area: z.string(),
-  
-  desiredSalary: z.number().positive().optional().or(z.literal("")),
-  currency: z.union([z.enum(SalaryCurrency), z.literal("")]),
+    role: z.string().min(1, "El rol es obligatorio"),
+    jobOpening: z.string(),
+    seniority: z.string(),
+    area: z.string(),
 
-  availability: z.string(),
-  englishLevel: z.union([z.enum(EnglishLevel), z.literal("")]),
+    desiredSalary: z.number().positive().optional().or(z.literal("")),
+    currency: z.union([z.enum(SalaryCurrency), z.literal("")]),
 
-  source: z.union([z.enum(Source), z.literal("")]),
+    availability: z.string(),
+    englishLevel: z.union([z.enum(EnglishLevel), z.literal("")]),
 
-  howDidYouHear: z.union([z.enum(HearAboutUs), z.literal("")]),
+    source: z.union([z.enum(Source), z.literal("")]),
 
-  tags: z.array(z.string()),
+    howDidYouHear: z.union([z.enum(HearAboutUs), z.literal("")]),
 
-  resume: z.custom<FileList>()
-          .refine((files) => !files || files.length === 0 || files[0].type === "application/pdf", "Debe subir un archivo PDF").optional(),
+    tags: z.array(z.string()),
 
-  education: z.custom<FileList>()
-          .refine((files) => !files || files.length === 0 || files[0].type === "application/pdf", "Debe subir un archivo PDF")
-          .optional(),
+    resume: z
+      .custom<FileList>()
+      .refine(
+        (files) =>
+          !files || files.length === 0 || files[0].type === "application/pdf",
+        "Debe subir un archivo PDF",
+      )
+      .optional(),
 
-  academicInstitution: z.string(),
+    education: z
+      .custom<FileList>()
+      .refine(
+        (files) =>
+          !files || files.length === 0 || files[0].type === "application/pdf",
+        "Debe subir un archivo PDF",
+      )
+      .optional(),
 
+    academicInstitution: z.string(),
 
-  title: z.string(),
-  careerStartYear: z.number().optional(),
-  careerEndYear: z.number().optional(),
-}).superRefine((data, ctx) => {
+    title: z.string(),
+    careerStartYear: z.number().optional(),
+    careerEndYear: z.number().optional(),
+  })
+  .superRefine((data, ctx) => {
     if (data.desiredSalary !== undefined && !data.currency) {
       ctx.addIssue({
         code: "custom",
@@ -89,7 +123,7 @@ export const applicantFormSchema = z.object({
         message: "Debe ingresar el salario deseado",
       });
     }
-  });;
+  });
 
 export type ApplicantFormValues = z.infer<typeof applicantFormSchema>;
 
@@ -191,7 +225,9 @@ export default function NewApplicantForm() {
       tagIds: data.tags,
 
       jobOpeningId: data.jobOpening || undefined,
-      desiredSalary:  data.desiredSalary ? String(data.desiredSalary) : undefined,
+      desiredSalary: data.desiredSalary
+        ? String(data.desiredSalary)
+        : undefined,
       currency: data.currency || undefined,
       availability: data.availability,
     });
