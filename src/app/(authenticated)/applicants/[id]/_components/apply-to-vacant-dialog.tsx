@@ -16,6 +16,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "~/components/ui/combobox";
+
 import { z } from "zod";
 
 import { api } from "~/lib/trpc/react";
@@ -109,16 +118,11 @@ export function ApplyToVacantDialog({
     control,
     name: "jobOpeningId",
   });
-
   return (
     <>
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
-          <form
-            onSubmit={handleSubmit(createApplication, (err) =>
-              console.log("Errores bloqueando el form:", err),
-            )}
-          >
+          <form onSubmit={handleSubmit(createApplication)}>
             <DialogHeader>
               <DialogTitle>Postular candidato</DialogTitle>
               <DialogDescription>
@@ -135,51 +139,48 @@ export function ApplyToVacantDialog({
               <Controller
                 control={control}
                 name="jobOpeningId"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Vacante</FieldLabel>
-                    <Select
-                      name={field.name}
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      disabled={isLoadingJobOpening}
-                    >
-                      <SelectTrigger
-                        aria-invalid={fieldState.invalid}
-                        className="h-auto min-h-10 py-2.5 whitespace-normal text-left items-center gap-2"
-                      >
-                        <SelectValue
-                          placeholder={
-                            isLoadingJobOpening
-                              ? "Cargando vacantes..."
-                              : "Seleccionar vacante"
-                          }
-                        >
-                          {
-                            jobOpenings?.find(
-                              (jobOpening) => jobOpening.id === field.value,
-                            )?.name
-                          }
-                        </SelectValue>
-                      </SelectTrigger>
+                render={({ field, fieldState }) => {
+                  const selected =
+                    jobOpenings?.find((item) => item.id === field.value) ??
+                    null;
 
-                      <SelectContent>
-                        {jobOpenings?.map((jobOpening) => (
-                          <SelectItem
-                            key={jobOpening.id}
-                            value={jobOpening.id}
-                            className="whitespace-normal [&>span]:line-clamp-none"
-                          >
-                            {jobOpening.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {fieldState.invalid && (
-                      <FieldError>{fieldState.error?.message}</FieldError>
-                    )}
-                  </Field>
-                )}
+                  return (
+                    <Field>
+                      <FieldLabel>Vacante</FieldLabel>
+                      <Combobox
+                        items={jobOpenings}
+                        name={field.name}
+                        value={selected}
+                        autoHighlight
+                        onValueChange={(item) => field.onChange(item?.id ?? "")}
+                        itemToStringValue={(item) => item.id}
+                        itemToStringLabel={(item) => item.name}
+                        isItemEqualToValue={(a, b) => a.id === b.id}
+                      >
+                        <ComboboxInput
+                          placeholder="Buscar vacante..."
+                          onBlur={field.onBlur}
+                          aria-invalid={fieldState.invalid}
+                          showClear
+                          className="flex justify-between *:grow"
+                        />
+                        <ComboboxContent className="w-full justify-between">
+                          <ComboboxEmpty>No hay vacantes.</ComboboxEmpty>
+                          <ComboboxList>
+                            {(item) => (
+                              <ComboboxItem key={item.id} value={item}>
+                                {item.name}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
+                      {fieldState.invalid && (
+                        <FieldError>{fieldState.error?.message}</FieldError>
+                      )}
+                    </Field>
+                  );
+                }}
               />
               <Controller
                 control={control}
@@ -192,7 +193,7 @@ export function ApplyToVacantDialog({
                       disabled={!isJobOpeningSelected}
                       {...field}
                     />
-                    {fieldState.invalid && (
+                    {fieldState.invalid && isJobOpeningSelected && (
                       <FieldError>{fieldState.error?.message}</FieldError>
                     )}
                   </Field>
@@ -215,7 +216,7 @@ export function ApplyToVacantDialog({
                           (field.value as string | number | undefined) ?? ""
                         }
                       />
-                      {fieldState.invalid && (
+                      {fieldState.invalid && isJobOpeningSelected && (
                         <FieldError>{fieldState.error?.message}</FieldError>
                       )}
                     </Field>
@@ -241,7 +242,7 @@ export function ApplyToVacantDialog({
                           <SelectItem value="UYU">UYU</SelectItem>
                         </SelectContent>
                       </Select>
-                      {fieldState.invalid && (
+                      {fieldState.invalid && isJobOpeningSelected && (
                         <FieldError>{fieldState.error?.message}</FieldError>
                       )}
                     </Field>
