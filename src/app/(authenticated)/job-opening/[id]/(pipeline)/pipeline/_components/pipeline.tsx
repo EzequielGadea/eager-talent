@@ -7,6 +7,7 @@ import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { PipelineColumn } from "./pipeline-column";
 import { PipelineColumnSkeleton } from "./pipeline-column-skeleton";
 import type { PipelineStage } from "./types";
+import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
 
 type PipelineProps = {
   jobOpeningId: string;
@@ -37,18 +38,20 @@ export async function Pipeline({ jobOpeningId, stages }: PipelineProps) {
 
   return (
     <ScrollArea className="w-full">
-      <div className="flex min-w-max gap-4 pb-4">
-        {stages.map((stage) => (
-          <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
-            <PipelineColumn
-              jobOpeningId={jobOpeningId}
-              stage={stage}
-              canUpdateApplication={canUpdateApplication.success}
-              canCreateInterview={canCreateInterview.success}
-            />
-          </Suspense>
-        ))}
-      </div>
+      <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
+        <div className="flex min-w-max gap-4 pb-4">
+          {stages.map((stage) => (
+            <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
+              <PipelineColumn
+                jobOpeningId={jobOpeningId}
+                stage={stage}
+                canUpdateApplication={canUpdateApplication.success}
+                canCreateInterview={canCreateInterview.success}
+              />
+            </Suspense>
+          ))}
+        </div>
+      </PipelineDndProviderClient>
 
       <ScrollBar orientation="horizontal" />
     </ScrollArea>

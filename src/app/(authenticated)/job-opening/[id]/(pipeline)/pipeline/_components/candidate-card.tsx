@@ -21,6 +21,7 @@ import {
 import { api } from "~/lib/trpc/react";
 
 import type { PipelineCandidate } from "./types";
+import { useDraggable } from "@dnd-kit/core";
 
 type CandidateCardProps = {
   candidate: PipelineCandidate;
@@ -40,6 +41,9 @@ export function CandidateCard({
   canCreateInterview,
 }: CandidateCardProps) {
   const router = useRouter();
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: candidate.applicantId,
+  });
 
   const advanceApplicationStageMutation =
     api.application.advanceApplicationStage.useMutation({
@@ -89,7 +93,17 @@ export function CandidateCard({
   const avatarColor = getAvatarColor(candidate.applicantId);
 
   return (
-    <Card className="rounded-xl border-border-default bg-card p-3 shadow-none">
+    <Card
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={{
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : undefined,
+      }}
+      className="cursor-grab rounded-xl border-border-default bg-card p-3 shadow-none active:cursor-grabbing"
+    >
       <div className="flex items-center gap-3">
         <Avatar className="size-9 shrink-0">
           <AvatarImage
