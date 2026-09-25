@@ -7,11 +7,18 @@ import { auth } from "~/lib/auth";
 export const createApplicationProcedure = protectedProcedure
   .input(
     z.object({
-      applicantId: z.string().min(1),
-      jobOpeningId: z.string(),
-      desiredSalary: z.number().positive().or(z.literal("")),
-      currency: z.union([z.enum(SalaryCurrency)]),
-      availability: z.string(),
+      applicantId: z.string({ error: "Debe elegir un candidato ." }),
+      jobOpeningId: z.string({ error: "Debe elegir una vacante." }),
+      desiredSalary: z
+        .number({ error: "El salario deseado debe ser un numero." })
+        .positive({ error: "El salario debe ser positivo." }),
+      currency: z.enum(SalaryCurrency, { error: "La moneda no es valida." }),
+      availability: z
+        .string({
+          error:
+            "Debe proveer una descripcion de cuando estara disponible para trabajar si se lo contrata.",
+        })
+        .min(1, "La descripcion de su disponibilidad es muy corta."),
     }),
   )
   .mutation(async ({ input, ctx }) => {
