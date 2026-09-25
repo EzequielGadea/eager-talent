@@ -43,7 +43,24 @@ export default function ApplicantsPage(props: {
   searchParams?: Promise<ApplicantsSearchParams>;
 }) {
   return (
-    <Suspense fallback={<div>Cargando candidatos...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 text-dashboard-text-primary">
+          <HeaderFallback />
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <FiltersFallback />
+          </div>
+          <div className="w-full overflow-x-auto rounded-xl border border-dashboard-border bg-white shadow-sm">
+            <Table className="min-w-262.5 table-fixed">
+              <ApplicantTableHeader />
+              <TableBody className="divide-y divide-dashboard-border">
+                <TableFallback />
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      }
+    >
       <ProtectedApplicantsPage searchParams={props.searchParams} />
     </Suspense>
   );
@@ -116,8 +133,8 @@ async function ProtectedApplicantsPage(props: {
     <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 text-dashboard-text-primary">
       <Suspense fallback={<HeaderFallback />}>
         <ApplicantAwaiterHeader
-          promiseData={data}
-          promiseCount={countApplicants}
+          promiseCountApplicants={countApplicants}
+          promiseCountOpenings={jobOpeningData}
         />
       </Suspense>
 

@@ -14,17 +14,13 @@ async function awaitData(promise: ApplicantsPromise) {
   return { applicantsData, countApplicants, countOpenings };
 }
 
-async function awaitCount(promiseCount: Promise<number>) {
-  return await promiseCount;
-}
-
 export async function ApplicantAwaiterTable(props: {
   promiseData: ApplicantsPromise;
   promiseCount: Promise<number>;
   currentPage: Promise<number>;
 }) {
   const { applicantsData } = await awaitData(props.promiseData);
-  const countApplicants = await awaitCount(props.promiseCount);
+  const countApplicants = await props.promiseCount;
   const currentPage = await props.currentPage;
 
   return (
@@ -37,12 +33,11 @@ export async function ApplicantAwaiterTable(props: {
 }
 
 export async function ApplicantAwaiterHeader(props: {
-  promiseData: ApplicantsPromise;
-  promiseCount: Promise<number>;
+  promiseCountApplicants: Promise<number>;
+  promiseCountOpenings: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
 }) {
-  const { countOpenings } = await awaitData(props.promiseData);
-  const countApplicants = await awaitCount(props.promiseCount);
-
+  const countApplicants = await props.promiseCountApplicants;
+  const countOpenings = (await props.promiseCountOpenings)?.length;
   return (
     <Header countApplicants={countApplicants} countOpenings={countOpenings} />
   );
