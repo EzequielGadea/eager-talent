@@ -25,8 +25,8 @@ async function ProtectedNewJobOpeningPage() {
     redirect("/dashboard");
   }
   //TODO Mantener solo la version de DB cuando haya objeto
-  //const templateStages = await api.templateStages.getDefault()
-  const templateStages = {
+  const templateStages = await api.templateStages.getDefault()
+  /*const templateStages = {
     id:"0",
     stages: [
     { key:"0", name: "Hardcodeado", type: "Entrevista", label: "text",color: "#ff6f"},
@@ -35,7 +35,7 @@ async function ProtectedNewJobOpeningPage() {
     { key:"3", name: "para traer de DB", type: "Entrevista", label: "text",color: "#142f"},
     { key:"4", name: "manzana", type: "Entrevista", label: "text",color: "#142f"},
     ]
-  }
+  }*/
   return (
     <>
       <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">

@@ -158,7 +158,6 @@ function IndividualStage(
 
       const rect = ref.current.getBoundingClientRect();
       const hoverMiddleY = (rect.bottom - rect.top) / 2;
-
       //para evitar demasiados cambios no intencionados no aplico hasta totalmente encima
       const clientOffset = monitor.getClientOffset();
       if (!clientOffset) return;
