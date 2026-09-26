@@ -50,7 +50,7 @@ export function JobOpeningHeader({
     <header className="flex items-center justify-between gap-4">
       <div className="flex min-w-0 items-center gap-3">
         <Link
-          href="/job-opening"
+          href="/job-openings"
           aria-label="Volver a vacantes"
           className="inline-flex size-8 shrink-0 items-center justify-center rounded-md hover:bg-accent"
         >
@@ -79,7 +79,7 @@ export function JobOpeningHeader({
       <div className="flex shrink-0 items-center gap-3">
         {canUpdateJobOpening && (
           <Link
-            href={`/job-opening/${jobOpeningId}/edit`}
+            href={`/job-openings/${jobOpeningId}/edit`}
             className="inline-flex h-10 shrink-0 flex-row items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <Pencil className="size-4 shrink-0" />

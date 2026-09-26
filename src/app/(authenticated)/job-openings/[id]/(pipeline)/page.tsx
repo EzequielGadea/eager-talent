@@ -7,5 +7,5 @@ type JobOpeningPageProps = {
 export default async function JobOpeningPage({ params }: JobOpeningPageProps) {
   const { id } = await params;
 
-  redirect(`/job-opening/${id}/pipeline`);
+  redirect(`/job-openings/${id}/pipeline`);
 }

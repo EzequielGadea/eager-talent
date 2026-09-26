@@ -19,7 +19,7 @@ export function JobOpeningTabs({ jobOpeningId }: JobOpeningTabsProps) {
       <div className="flex items-center justify-between gap-6">
         <div className="flex items-center gap-6">
           <Link
-            href={`/job-opening/${jobOpeningId}/pipeline`}
+            href={`/job-openings/${jobOpeningId}/pipeline`}
             aria-current={activeTab === "pipeline" ? "page" : undefined}
             className={
               activeTab === "pipeline"
@@ -34,7 +34,7 @@ export function JobOpeningTabs({ jobOpeningId }: JobOpeningTabsProps) {
           </Link>
 
           <Link
-            href={`/job-opening/${jobOpeningId}/disqualified`}
+            href={`/job-openings/${jobOpeningId}/disqualified`}
             aria-current={activeTab === "disqualified" ? "page" : undefined}
             className={
               activeTab === "disqualified"
