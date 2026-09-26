@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { Filter } from "lucide-react";
 
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
@@ -14,18 +16,112 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { JobOpeningStatus } from "~/generated/prisma/enums";
+import { api } from "~/lib/trpc/react";
 import { statusConfig } from "../constants";
-import { Checkbox } from "~/components/ui/checkbox";
 
-export function JobOpeningFilters() {
+const ALL_AREAS_VALUE = "all";
+const ALL_HIRING_MANAGERS_VALUE = "all";
+
+export type JobOpeningFiltersValue = {
+  statuses: JobOpeningStatus[];
+  areaId?: string;
+  hiringManagerId?: string;
+};
+
+export function JobOpeningFilters({
+  value,
+  onValueChange,
+}: {
+  value: JobOpeningFiltersValue;
+  onValueChange: (value: JobOpeningFiltersValue) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const [draftFilters, setDraftFilters] = useState(value);
+  const { data: areas = [], isLoading: isLoadingAreas } =
+    api.area.getAllAreas.useQuery({});
+  const { data: hiringManagers = [], isLoading: isLoadingHiringManagers } =
+    api.jobOpening.getJobOpeningHiringManagers.useQuery({});
+
+  const areaOptions = [
+    { label: "Todas las áreas", value: ALL_AREAS_VALUE },
+    ...areas.map((area) => ({ label: area.name, value: area.id })),
+  ];
+  const hiringManagerOptions = [
+    {
+      label: "Todos los Hiring Managers",
+      value: ALL_HIRING_MANAGERS_VALUE,
+    },
+    ...hiringManagers.map((hiringManager) => ({
+      label: `${hiringManager.name} ${hiringManager.lastName}`.trim(),
+      value: hiringManager.id,
+    })),
+  ];
+  const activeFilterCount =
+    Number(value.statuses.length > 0) +
+    Number(Boolean(value.areaId)) +
+    Number(Boolean(value.hiringManagerId));
+  const draftFilterCount =
+    Number(draftFilters.statuses.length > 0) +
+    Number(Boolean(draftFilters.areaId)) +
+    Number(Boolean(draftFilters.hiringManagerId));
+
+  function handleOpenChange(open: boolean) {
+    if (open) {
+      setDraftFilters(value);
+    }
+
+    setIsOpen(open);
+  }
+
+  function updateStatus(status: JobOpeningStatus, checked: boolean) {
+    setDraftFilters((currentFilters) => {
+      const statuses = checked
+        ? currentFilters.statuses.includes(status)
+          ? currentFilters.statuses
+          : [...currentFilters.statuses, status]
+        : currentFilters.statuses.filter(
+            (currentStatus) => currentStatus !== status,
+          );
+
+      return { ...currentFilters, statuses };
+    });
+  }
+
+  function updateArea(areaId: string | null) {
+    setDraftFilters((currentFilters) => ({
+      ...currentFilters,
+      areaId: areaId && areaId !== ALL_AREAS_VALUE ? areaId : undefined,
+    }));
+  }
+
+  function updateHiringManager(hiringManagerId: string | null) {
+    setDraftFilters((currentFilters) => ({
+      ...currentFilters,
+      hiringManagerId:
+        hiringManagerId && hiringManagerId !== ALL_HIRING_MANAGERS_VALUE
+          ? hiringManagerId
+          : undefined,
+    }));
+  }
+
+  function cancelChanges() {
+    setDraftFilters(value);
+    setIsOpen(false);
+  }
+
+  function applyFilters() {
+    onValueChange(draftFilters);
+    setIsOpen(false);
+  }
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         render={
           <Button
@@ -39,6 +135,14 @@ export function JobOpeningFilters() {
       >
         <Filter data-icon="inline-start" />
         Filtrar
+        {activeFilterCount > 0 && (
+          <Badge
+            variant="secondary"
+            className="size-5 rounded-full p-0 text-[11px]"
+          >
+            {activeFilterCount}
+          </Badge>
+        )}
       </PopoverTrigger>
 
       <PopoverContent align="end" className="w-72 gap-0 p-0">
@@ -52,6 +156,8 @@ export function JobOpeningFilters() {
             variant="link"
             size="sm"
             className="h-auto p-0 text-xs"
+            disabled={draftFilterCount === 0}
+            onClick={() => setDraftFilters({ statuses: [] })}
           >
             Limpiar
           </Button>
@@ -63,16 +169,23 @@ export function JobOpeningFilters() {
           </legend>
 
           <div className="mt-1 flex flex-col gap-2">
-            {" "}
-            {Object.entries(statusConfig).map(([status, config]) => (
-              <label
-                key={status}
-                className="flex cursor-pointer items-center gap-2 text-sm font-normal text-text-primary"
-              >
-                <Checkbox className="data-checked:border-accent-green data-checked:bg-accent-green" />
-                <span>{config.label}</span>
-              </label>
-            ))}
+            {Object.values(JobOpeningStatus).map((status) => {
+              const config = statusConfig[status];
+
+              return (
+                <label
+                  key={status}
+                  className="flex cursor-pointer items-center gap-2 text-sm font-normal text-text-primary"
+                >
+                  <Checkbox
+                    checked={draftFilters.statuses.includes(status)}
+                    onCheckedChange={(checked) => updateStatus(status, checked)}
+                    className="data-checked:border-accent-green data-checked:bg-accent-green"
+                  />
+                  <span>{config.label}</span>
+                </label>
+              );
+            })}
           </div>
         </fieldset>
 
@@ -81,13 +194,24 @@ export function JobOpeningFilters() {
             Área
           </legend>
 
-          <Select>
+          <Select
+            items={areaOptions}
+            value={draftFilters.areaId ?? ALL_AREAS_VALUE}
+            onValueChange={updateArea}
+            disabled={isLoadingAreas}
+          >
             <SelectTrigger className="mt-2 w-full">
               <SelectValue placeholder="Todas las áreas" />
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="all">Todas las áreas</SelectItem>
+              <SelectGroup>
+                {areaOptions.map((area) => (
+                  <SelectItem key={area.value} value={area.value}>
+                    {area.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </fieldset>
@@ -97,13 +221,27 @@ export function JobOpeningFilters() {
             Hiring Manager
           </legend>
 
-          <Select>
+          <Select
+            items={hiringManagerOptions}
+            value={draftFilters.hiringManagerId ?? ALL_HIRING_MANAGERS_VALUE}
+            onValueChange={updateHiringManager}
+            disabled={isLoadingHiringManagers}
+          >
             <SelectTrigger className="mt-2 w-full">
-              <SelectValue placeholder="Todas los Hiring Manager" />
+              <SelectValue placeholder="Todos los Hiring Managers" />
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="all">Todos los Hiring Manager</SelectItem>
+              <SelectGroup>
+                {hiringManagerOptions.map((hiringManager) => (
+                  <SelectItem
+                    key={hiringManager.value}
+                    value={hiringManager.value}
+                  >
+                    {hiringManager.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </fieldset>
@@ -119,7 +257,9 @@ export function JobOpeningFilters() {
             </SelectTrigger>
 
             <SelectContent>
-              <SelectItem value="all">Todos los reclutadores</SelectItem>
+              <SelectGroup>
+                <SelectItem value="all">Todos los reclutadores</SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         </fieldset>
@@ -174,6 +314,7 @@ export function JobOpeningFilters() {
             variant="outline"
             size="sm"
             className="rounded-full font-semibold"
+            onClick={cancelChanges}
           >
             Cancelar
           </Button>
@@ -182,6 +323,7 @@ export function JobOpeningFilters() {
             type="button"
             size="sm"
             className="rounded-full font-semibold"
+            onClick={applyFilters}
           >
             Aplicar filtros
           </Button>

@@ -4,11 +4,53 @@ import { z } from "zod";
 import { auth } from "~/lib/auth";
 import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
+import {
+  defaultJobOpeningSort,
+  getJobOpeningOrderBy,
+  isApplicantCountSort,
+  jobOpeningSortSchema,
+} from "./sort";
+
+import { getJobOpeningFilterWhere, jobOpeningFilterSchema } from "./filter";
+
+const PAGE_SIZE = 8;
+
+const jobOpeningSelect = {
+  id: true,
+  name: true,
+  status: true,
+  openingDate: true,
+
+  area: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+
+  hiringManagers: {
+    select: {
+      id: true,
+      name: true,
+      lastName: true,
+    },
+  },
+
+  applications: {
+    where: {
+      active: true,
+    },
+    select: {
+      currentStage: true,
+    },
+  },
+} as const;
 
 export const getAllJobOpeningsDetailed = protectedProcedure
   .input(
-    z.object({
+    jobOpeningFilterSchema.extend({
       page: z.number().int().min(1).default(1),
+      sort: jobOpeningSortSchema.default(defaultJobOpeningSort),
     }),
   )
   .query(async ({ ctx, input }) => {
@@ -30,57 +72,82 @@ export const getAllJobOpeningsDetailed = protectedProcedure
       });
     }
 
-    const where = canReadAllResult.success
+    const accessWhere = canReadAllResult.success
       ? {}
       : isHiringManagerAssignedToJobOpening(ctx.session.user.id);
 
-    const jobOpenings = await ctx.db.jobOpening.findMany({
-      where,
+    const filterWhere = getJobOpeningFilterWhere(input);
 
-      skip: (input.page - 1) * 8,
-      take: 8,
+    const where = {
+      AND: [accessWhere, filterWhere],
+    };
 
-      select: {
-        id: true,
-        name: true,
-        status: true,
-        openingDate: true,
+    const pageOffset = (input.page - 1) * PAGE_SIZE;
 
-        area: {
-          select: {
-            id: true,
-            name: true,
+    const jobOpenings = isApplicantCountSort(input.sort)
+      ? await findJobOpeningsOrderedByApplicantCount()
+      : await ctx.db.jobOpening.findMany({
+          where,
+          skip: pageOffset,
+          take: PAGE_SIZE,
+          select: jobOpeningSelect,
+          orderBy: getJobOpeningOrderBy(input.sort),
+        });
+
+    async function findJobOpeningsOrderedByApplicantCount() {
+      const counts = await ctx.db.jobOpening.findMany({
+        where,
+        select: {
+          id: true,
+          _count: {
+            select: {
+              applications: {
+                where: {
+                  active: true,
+                },
+              },
+            },
           },
         },
+      });
 
-        hiringManagers: {
-          select: {
-            id: true,
-            name: true,
-            lastName: true,
-          },
+      const direction = input.sort === "applicants-asc" ? 1 : -1;
+      const pageIds = [...counts]
+        .sort((first, second) => {
+          const countDifference =
+            first._count.applications - second._count.applications;
+
+          if (countDifference !== 0) {
+            return countDifference * direction;
+          }
+
+          return first.id.localeCompare(second.id);
+        })
+        .slice(pageOffset, pageOffset + PAGE_SIZE)
+        .map((jobOpening) => jobOpening.id);
+
+      if (pageIds.length === 0) {
+        return [];
+      }
+
+      const pageJobOpenings = await ctx.db.jobOpening.findMany({
+        where: {
+          AND: [where, { id: { in: pageIds } }],
         },
+        select: jobOpeningSelect,
+      });
 
-        applications: {
-          where: {
-            active: true,
-          },
-          select: {
-            currentStage: true,
-          },
-        },
-      },
+      const positionById = new Map(pageIds.map((id, index) => [id, index]));
 
-      orderBy: {
-        openingDate: "desc",
-      },
-    });
+      return [...pageJobOpenings].sort(
+        (first, second) =>
+          (positionById.get(first.id) ?? 0) -
+          (positionById.get(second.id) ?? 0),
+      );
+    }
 
-   return jobOpenings.map((jobOpening) => {
-      const {
-        applications,
-        ...jobOpeningData
-      } = jobOpening;
+    return jobOpenings.map((jobOpening) => {
+      const { applications, ...jobOpeningData } = jobOpening;
 
       return {
         ...jobOpeningData,
@@ -88,13 +155,11 @@ export const getAllJobOpeningsDetailed = protectedProcedure
         applicants: applications.length,
 
         technicalInterviewApplicants: applications.filter(
-          (application) =>
-            application.currentStage === "Entrevista Técnica",
+          (application) => application.currentStage === "Entrevista Técnica",
         ).length,
 
         offeredApplicants: applications.filter(
-          (application) =>
-            application.currentStage === "Oferta",
+          (application) => application.currentStage === "Oferta",
         ).length,
       };
     });

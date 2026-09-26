@@ -9,18 +9,61 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { cn } from "~/lib/utils";
+
+import type { JobOpeningSortValue } from "~/server/api/routers/job-opening/sort";
+
+type JobOpeningSortProps = {
+  value: JobOpeningSortValue;
+  onValueChange: (value: JobOpeningSortValue) => void;
+};
 
 const sortOptions = [
-  { label: "Más recientes primero", selected: true },
-  { label: "Más antiguas primero", selected: false },
-  { label: "Título (A–Z)", selected: false },
-  { label: "Más candidatos", selected: false },
-  { label: "Menos candidatos", selected: false },
-  { label: "Estado", selected: false },
-];
+  {
+    value: "newest",
+    label: "Más recientes primero",
+    triggerLabel: "Más recientes",
+  },
+  {
+    value: "oldest",
+    label: "Más antiguas primero",
+    triggerLabel: "Más antiguas",
+  },
+  {
+    value: "title-asc",
+    label: "Título (A–Z)",
+    triggerLabel: "Título",
+  },
+  {
+    value: "applicants-desc",
+    label: "Más candidatos",
+    triggerLabel: "Más candidatos",
+  },
+  {
+    value: "applicants-asc",
+    label: "Menos candidatos",
+    triggerLabel: "Menos candidatos",
+  },
+  {
+    value: "status",
+    label: "Estado",
+    triggerLabel: "Estado",
+  },
+] satisfies Array<{
+  value: JobOpeningSortValue;
+  label: string;
+  triggerLabel: string;
+}>;
 
-export function JobOpeningSort() {
+export function JobOpeningSort({ value, onValueChange }: JobOpeningSortProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const selectedOption = sortOptions.find((option) => option.value === value);
+
+  function selectOption(optionValue: JobOpeningSortValue) {
+    onValueChange(optionValue);
+    setIsOpen(false);
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -34,7 +77,7 @@ export function JobOpeningSort() {
           />
         }
       >
-        Ordenar: Título
+        Ordenar: {selectedOption?.triggerLabel ?? "Más recientes"}
         <ChevronDown data-icon="inline-end" />
       </PopoverTrigger>
 
@@ -44,25 +87,34 @@ export function JobOpeningSort() {
         </p>
 
         <div className="flex flex-col gap-1">
-          {sortOptions.map((option) => (
-            <Button
-              key={option.label}
-              type="button"
-              variant="ghost"
-              aria-pressed={option.selected}
-              className={`h-9 w-full justify-between rounded-lg px-3 text-sm ${
-                option.selected
-                  ? "bg-muted font-semibold text-text-primary hover:bg-muted"
-                  : "font-normal text-text-primary"
-              }`}
-            >
-              {option.label}
+          {sortOptions.map((option) => {
+            const isSelected = option.value === value;
 
-              {option.selected && (
-                <Check className="size-4 text-accent-green-strong" />
-              )}
-            </Button>
-          ))}
+            return (
+              <Button
+                key={option.value}
+                type="button"
+                variant="ghost"
+                aria-pressed={isSelected}
+                onClick={() => selectOption(option.value)}
+                className={cn(
+                  "h-9 w-full justify-between rounded-lg px-3 text-sm",
+                  isSelected
+                    ? "bg-muted font-semibold text-text-primary hover:bg-muted"
+                    : "font-normal text-text-primary",
+                )}
+              >
+                {option.label}
+
+                {isSelected ? (
+                  <Check
+                    data-icon="inline-end"
+                    className="text-accent-green-strong"
+                  />
+                ) : null}
+              </Button>
+            );
+          })}
         </div>
       </PopoverContent>
     </Popover>

@@ -3,9 +3,11 @@ import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
 import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
+import { getJobOpeningFilterWhere, jobOpeningFilterSchema } from "./filter";
 
-export const getJobOpeningsAmount = protectedProcedure.query(
-  async ({ ctx }) => {
+export const getJobOpeningsAmount = protectedProcedure
+  .input(jobOpeningFilterSchema)
+  .query(async ({ ctx, input }) => {
     const [canReadAllResult, canReadAssignedResult] = await Promise.all([
       auth.api.hasPermission({
         headers: ctx.headers,
@@ -32,40 +34,40 @@ export const getJobOpeningsAmount = protectedProcedure.query(
       });
     }
 
-    const where = canReadAllResult.success
+    const accessWhere = canReadAllResult.success
       ? {}
       : isHiringManagerAssignedToJobOpening(ctx.session.user.id);
 
+    const filteredWhere = {
+      AND: [accessWhere, getJobOpeningFilterWhere(input)],
+    };
+
     const [total, open, paused, closed, cancelled] = await Promise.all([
       ctx.db.jobOpening.count({
-        where,
+        where: filteredWhere,
       }),
 
       ctx.db.jobOpening.count({
         where: {
-          ...where,
-          status: "Open",
+          AND: [accessWhere, { status: "Open" }],
         },
       }),
 
       ctx.db.jobOpening.count({
         where: {
-          ...where,
-          status: "Paused",
+          AND: [accessWhere, { status: "Paused" }],
         },
       }),
 
       ctx.db.jobOpening.count({
         where: {
-          ...where,
-          status: "Closed",
+          AND: [accessWhere, { status: "Closed" }],
         },
       }),
 
       ctx.db.jobOpening.count({
         where: {
-          ...where,
-          status: "Cancelled",
+          AND: [accessWhere, { status: "Cancelled" }],
         },
       }),
     ]);
@@ -77,5 +79,4 @@ export const getJobOpeningsAmount = protectedProcedure.query(
       closed,
       cancelled,
     };
-  },
-);
+  });
