@@ -8,6 +8,7 @@ const stageSchema = z.object({
   name: z.string(),
   type: z.string(),
   label: z.string(),
+  color: z.string(),
 });
 
 export const getDefault = protectedProcedure
