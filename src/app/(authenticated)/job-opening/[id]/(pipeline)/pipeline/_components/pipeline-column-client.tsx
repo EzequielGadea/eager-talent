@@ -38,8 +38,16 @@ export function PipelineColumnClient({
     Set<string>
   >(new Set());
 
-  const allCandidates = [...initialCandidates, ...loadedCandidates];
-
+  const allCandidates = [
+    ...initialCandidates,
+    ...loadedCandidates.filter(
+      (loadedCandidate) =>
+        !initialCandidates.some(
+          (initialCandidate) =>
+            initialCandidate.applicantId === loadedCandidate.applicantId,
+        ),
+    ),
+  ];
   const initialCandidateIds = new Set(
     initialCandidates.map((candidate) => candidate.applicantId),
   );

@@ -71,6 +71,7 @@ export const fetchPipelineCandidates = protectedProcedure
         take: input.limit,
         select: {
           applicantId: true,
+          jobOpeningId: true,
           applicant: {
             select: {
               name: true,
@@ -79,6 +80,20 @@ export const fetchPipelineCandidates = protectedProcedure
               role: {
                 select: {
                   name: true,
+                },
+              },
+              interviews: {
+                where: {
+                  status: "Scheduled",
+                  jobOpeningId: input.jobOpeningId,
+                  date: { not: null },
+                },
+                orderBy: {
+                  date: "asc",
+                },
+                take: 1,
+                select: {
+                  date: true,
                 },
               },
             },
@@ -90,13 +105,18 @@ export const fetchPipelineCandidates = protectedProcedure
       }),
     ]);
 
-    const candidates = applications.map((application) => ({
-      applicantId: application.applicantId,
-      name: application.applicant.name,
-      lastName: application.applicant.lastName,
-      photo: application.applicant.photo,
-      role: application.applicant.role.name,
-    }));
+    const candidates = applications.map((application) => {
+      const nextInterview = application.applicant.interviews[0];
+
+      return {
+        applicantId: application.applicantId,
+        name: application.applicant.name,
+        lastName: application.applicant.lastName,
+        photo: application.applicant.photo,
+        role: application.applicant.role.name,
+        nextInterview: nextInterview ? { date: nextInterview.date! } : null,
+      };
+    });
 
     return {
       candidates,
