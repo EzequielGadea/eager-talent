@@ -13,7 +13,6 @@ const stageSchema = z.object({
 
 export const getDefault = protectedProcedure.query(async ({ ctx }) => {
   const template = await ctx.db.stageTemplate.findFirst({
-    //where: { default:true }, TODO forma de saber cual es la por defecto
     select: { stages: true, id: true },
   });
 
