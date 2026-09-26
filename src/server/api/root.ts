@@ -10,6 +10,7 @@ import { roleRouter } from "./routers/job-role";
 import { seniorityRouter } from "./routers/seniority";
 import { tagRouter } from "./routers/tag";
 import { usersRouter } from "./routers/users";
+import { templateStagesRouter } from "./routers/template-stages";
 
 export const appRouter = createTRPCRouter({
   applicant: applicantRouter,
@@ -23,6 +24,7 @@ export const appRouter = createTRPCRouter({
   jobOpening: jobOpeningRouter,
   tag: tagRouter,
   users: usersRouter,
+  templateStages: templateStagesRouter,
 });
 
 export type AppRouter = typeof appRouter;
