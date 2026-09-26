@@ -4,7 +4,7 @@ import es from "i18n-iso-countries/langs/es.json";
 countries.registerLocale(es);
 
 export const paises = Object.entries(
-  countries.getNames("es", { select: "official" })
+  countries.getNames("es", { select: "official" }),
 )
   .map(([codigo, nombre]) => ({
     codigo,

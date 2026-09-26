@@ -94,7 +94,10 @@ export function TagSelector({ tags, value, onChange }: Props) {
 
   return (
     <div className="space-y-2">
-      <div className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-default px-3 py-2  cursor-pointer" onClick={() => setOpen(true)}>
+      <div
+        className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-default px-3 py-2  cursor-pointer"
+        onClick={() => setOpen(true)}
+      >
         {value.map((tagId) => {
           const tag = tags.find((tag) => tag.id === tagId);
 

@@ -158,25 +158,22 @@ export function NotesEditor({
   const statusRef = useRef(status);
   const saveQueueRef = useRef<Promise<void>>(Promise.resolve());
 
-  const debouncedSave = useDebouncedCallback(
-    (jsonContent: JSONContent) => {
-      setStatus("saving");
-      saveQueueRef.current = saveQueueRef.current.then(async () => {
-        try {
-          const result = await onSave(jsonContent);
-          setLastModified(result.lastModified);
-          setLastModifiedBy(result.lastModifiedBy);
-          await new Promise((resolve) =>
-            setTimeout(resolve, SAVED_STATUS_DELAY_MS),
-          );
-          setStatus("saved");
-        } catch {
-          setStatus("error");
-        }
-      });
-    },
-    AUTOSAVE_DELAY_MS,
-  );
+  const debouncedSave = useDebouncedCallback((jsonContent: JSONContent) => {
+    setStatus("saving");
+    saveQueueRef.current = saveQueueRef.current.then(async () => {
+      try {
+        const result = await onSave(jsonContent);
+        setLastModified(result.lastModified);
+        setLastModifiedBy(result.lastModifiedBy);
+        await new Promise((resolve) =>
+          setTimeout(resolve, SAVED_STATUS_DELAY_MS),
+        );
+        setStatus("saved");
+      } catch {
+        setStatus("error");
+      }
+    });
+  }, AUTOSAVE_DELAY_MS);
 
   useEffect(() => {
     statusRef.current = status;
