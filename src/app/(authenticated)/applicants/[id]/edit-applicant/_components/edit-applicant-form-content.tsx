@@ -37,7 +37,7 @@ function getApplicantDefaultValues(applicant: Applicant): ApplicantFormValues {
     name: applicant.name,
     lastname: applicant.lastName,
     email: applicant.email ?? "",
-    phone: applicant.phone ?? "",
+    phone: applicant.phone?.replace(/\s/g, "") ?? "",
     country: applicant.country ?? "",
     linkedin: applicant.linkedin ?? "",
 
