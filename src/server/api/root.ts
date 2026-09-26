@@ -24,7 +24,7 @@ export const appRouter = createTRPCRouter({
   jobOpening: jobOpeningRouter,
   tag: tagRouter,
   user: userRouter,
-  users: usersRouter
+  users: usersRouter,
 });
 
 export type AppRouter = typeof appRouter;
