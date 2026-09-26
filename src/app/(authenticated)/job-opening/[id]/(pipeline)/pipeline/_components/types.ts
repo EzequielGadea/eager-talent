@@ -8,4 +8,5 @@ export type PipelineCandidate = {
   lastName: string;
   photo: string | null;
   role: string | null;
+  nextInterview: { date: string } | null;
 };
