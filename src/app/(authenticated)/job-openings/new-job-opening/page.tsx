@@ -51,7 +51,6 @@ async function ProtectedNewJobOpeningPage() {
   if (!permission.success) {
     redirect("/dashboard");
   }
-
   return (
     <>
       <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
