@@ -13,6 +13,7 @@ async function DelayedNewJobOpeningForm() {
   return <NewJobOpeningForm />;
 }
 
+import { api } from "~/lib/trpc/server";
 export default function newJobOpeningPage() {
   return (
     <Suspense>
@@ -33,6 +34,15 @@ async function ProtectedNewJobOpeningPage() {
   if (!permission.success) {
     redirect("/dashboard");
   }
+  //const templateStages = await api.templateStages.getDefault()
+  const templateStages = {
+    id:"0",
+    stages: [{
+        key: "key",
+        name: "name",
+        type: "type",
+        label: "label",
+    }]}
   return (
     <>
       <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">

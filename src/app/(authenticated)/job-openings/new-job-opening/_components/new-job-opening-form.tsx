@@ -25,6 +25,7 @@ import NewJobOpeningButtonProps from "./new-job-opening-button";
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
+import { Stages, Template } from "../utils";
 
 export const jobOpeningFormSchema = z
   .object({
@@ -47,7 +48,7 @@ export const jobOpeningFormSchema = z
 
 export type JobOpeningFormValues = z.infer<typeof jobOpeningFormSchema>;
 
-export default function NewJobOpeningForm() {
+export default function NewJobOpeningForm(props: {templateStages:Template}) {
   const router = useRouter();
   const methods = useForm<JobOpeningFormValues>({
     resolver: zodResolver(jobOpeningFormSchema),
@@ -105,7 +106,7 @@ export default function NewJobOpeningForm() {
       >
         <OpeningData />
         <OpeningDate />
-        <OpeningStage />
+        {<OpeningStage templateStages={props.templateStages}/>}
         <OpeningHiring />
         <Card className="w-full items-end rounded-x1 shadow-sm">
           <CardContent>
