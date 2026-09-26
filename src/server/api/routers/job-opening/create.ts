@@ -14,8 +14,8 @@ export const createJobOpening = protectedProcedure
       seniorityIds: z.array(z.string()).default([]),
       hiringManagerIds: z.array(z.string()).default([]),
       location: z.string(),
-      openingDate: z.date(),
-      closingDate: z.date(),
+      openingDate: z.coerce.date(),
+      closingDate: z.coerce.date(),
     }),
   )
   .mutation(async ({ ctx, input }) => {

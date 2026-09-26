@@ -56,7 +56,11 @@ export default function OpeningData() {
               id="name"
               placeholder="Ej. Sr. Node js Developer"
               className="w-full"
+              {...register("name")}
             />
+            {errors.name && (
+              <p className="text-xs text-danger">{errors.name.message}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="area">
@@ -92,6 +96,9 @@ export default function OpeningData() {
                 </Select>
               )}
             />
+            {errors.area && (
+              <p className="text-xs text-danger">{errors.area.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -157,30 +164,40 @@ export default function OpeningData() {
               name="seniorityIds"
               control={control}
               render={({ field }) => (
-                <ToggleGroup
-                  multiple
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isLoadingSeniority}
-                  spacing={1}
-                  aria-label="Seniorities de la vacante"
-                  className="flex flex-wrap justify-start gap-2"
-                >
-                  {seniorities?.map((seniority) => {
-                    const isSelected = field.value.includes(seniority.id);
+                <div className="space-y-1">
+                  <ToggleGroup
+                    multiple
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={isLoadingSeniority}
+                    spacing={1}
+                    aria-label="Seniorities de la vacante"
+                    aria-invalid={!!errors.seniorityIds}
+                    className="flex flex-wrap justify-start gap-2"
+                  >
+                    {seniorities?.map((seniority) => {
+                      const isSelected = field.value.includes(seniority.id);
 
-                    return (
-                      <ToggleGroupItem
-                        key={seniority.id}
-                        value={seniority.id}
-                        className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
-                      >
-                        {isSelected && <Check className="mr-1.5 h-3.5 w-3.5" />}
-                        {seniority.name}
-                      </ToggleGroupItem>
-                    );
-                  })}
-                </ToggleGroup>
+                      return (
+                        <ToggleGroupItem
+                          key={seniority.id}
+                          value={seniority.id}
+                          className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                        >
+                          {isSelected && (
+                            <Check className="mr-1.5 h-3.5 w-3.5" />
+                          )}
+                          {seniority.name}
+                        </ToggleGroupItem>
+                      );
+                    })}
+                  </ToggleGroup>
+                  {errors.seniorityIds?.message && (
+                    <p className="text-xs text-danger">
+                      {errors.seniorityIds.message}
+                    </p>
+                  )}
+                </div>
               )}
             />
           </div>
@@ -245,6 +262,9 @@ export default function OpeningData() {
                 </ToggleGroup>
               )}
             />
+            {errors.location && (
+              <p className="text-xs text-danger">{errors.location.message}</p>
+            )}
           </div>
         </div>
       </CardContent>
