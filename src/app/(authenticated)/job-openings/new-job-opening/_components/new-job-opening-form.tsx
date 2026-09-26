@@ -19,6 +19,7 @@ import OpeningDate from "./opening-date";
 import OpeningStage from "./opening-stage";
 
 import OpeningHiring from "./opening-hiring";
+import { Stages, Template } from "../utils";
 
 export const jobOpeningFormSchema = z.object({
   name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
@@ -34,7 +35,7 @@ export const jobOpeningFormSchema = z.object({
 
 export type JobOpeningFormValues = z.infer<typeof jobOpeningFormSchema>;
 
-export default function NewJobOpeningForm() {
+export default function NewJobOpeningForm(props: {templateStages:Template}) {
   const router = useRouter();
   const methods = useForm<JobOpeningFormValues>({
     resolver: zodResolver(jobOpeningFormSchema),
@@ -84,7 +85,7 @@ export default function NewJobOpeningForm() {
       >
         <OpeningData />
         <OpeningDate />
-        <OpeningStage />
+        {<OpeningStage templateStages={props.templateStages}/>}
         <OpeningHiring />
       </form>
     </FormProvider>
