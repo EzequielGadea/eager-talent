@@ -1,6 +1,11 @@
 import { z } from "zod";
 
-import { EnglishLevel, Source, HearAboutUs, SalaryCurrency } from "~/generated/prisma/enums";
+import {
+  EnglishLevel,
+  Source,
+  HearAboutUs,
+  SalaryCurrency,
+} from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
@@ -50,12 +55,12 @@ export const createApplicant = protectedProcedure
     });
 
     if (!permission.success) {
-      throw new TRPCError ({
+      throw new TRPCError({
         code: "FORBIDDEN",
-        message: "No tenes permisos para crear un candidato"
-      })
+        message: "No tenes permisos para crear un candidato",
+      });
     }
-    try { 
+    try {
       let firstStage: string | undefined;
 
       // Si se seleccionó una vacante, buscamos su primera stage

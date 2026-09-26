@@ -11,8 +11,12 @@ import { Label } from "~/components/ui/label";
 import type { ApplicantFormValues } from "./new-applicant-form";
 
 export default function EducationAndFiles() {
-  const { control, register, resetField, formState: { errors } } =
-    useFormContext<ApplicantFormValues>();
+  const {
+    control,
+    register,
+    resetField,
+    formState: { errors },
+  } = useFormContext<ApplicantFormValues>();
 
   const educationWatch = useWatch({
     control,
@@ -65,8 +69,8 @@ export default function EducationAndFiles() {
               <Input
                 id="careerStartYear"
                 type="number"
-                max = "2100"
-                min = "1900"
+                max="2100"
+                min="1900"
                 placeholder="Ej. 2020"
                 {...register("careerStartYear", {
                   setValueAs: (value) =>
@@ -81,8 +85,8 @@ export default function EducationAndFiles() {
               <Input
                 id="careerEndYear"
                 type="number"
-                max = "2100"
-                min = "1900"
+                max="2100"
+                min="1900"
                 placeholder="Ej. 2024"
                 {...register("careerEndYear", {
                   setValueAs: (value) =>
@@ -141,7 +145,6 @@ export default function EducationAndFiles() {
                 {...register("education")}
               />
 
-
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="education"
@@ -162,11 +165,10 @@ export default function EducationAndFiles() {
                     <X className="h-4 w-4" />
                   </button>
                 )}
-
               </div>
               {errors.education && (
                 <p className="text-danger">{errors.education.message}</p>
-              )} 
+              )}
             </div>
           </div>
         </div>

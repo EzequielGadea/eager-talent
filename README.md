@@ -22,7 +22,6 @@ bun run db:seed
 
 El script de seed (`src/server/db/prisma/seed-data.ts`) es **idempotente**: se puede ejecutar N veces sin duplicar datos. Solo se permite ejecutar contra PostgreSQL local.
 
-
 - **Usuarios iniciales (credenciales de login):**
 
 | Rol              | Email                         | Contraseña       |

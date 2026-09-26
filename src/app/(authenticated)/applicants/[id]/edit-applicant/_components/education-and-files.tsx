@@ -87,8 +87,7 @@ export default function EducationAndFiles({
                 min="1900"
                 placeholder="Ej. 2020"
                 {...register("careerStartYear", {
-                  setValueAs: (value) =>
-                    (value === "" ? null : Number(value))
+                  setValueAs: (value) => (value === "" ? null : Number(value)),
                 })}
               />
             </div>
@@ -103,8 +102,7 @@ export default function EducationAndFiles({
                 min="1900"
                 placeholder="Ej. 2024"
                 {...register("careerEndYear", {
-                  setValueAs: (value) =>
-                    (value === "" ? null : Number(value))
+                  setValueAs: (value) => (value === "" ? null : Number(value)),
                 })}
               />
             </div>
