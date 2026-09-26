@@ -32,6 +32,7 @@ async function ProtectedNewJobOpeningPage() {
         name: "name",
         type: "type",
         label: "label",
+        color: "#142f"
     }]}
   return (
     <>
