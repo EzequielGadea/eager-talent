@@ -20,10 +20,10 @@ export default function OpeningStage(props: {templateStages:Template}) {
 
   //TODO esto debe venir del flujo por defecto originalmente
   const stagesDefault = /*props.templateStages.stages*/ [
-    { key:"0", name: "Revisión Inicial", type: "Entrevista", label: "text"},
-    { key:"1", name: "Entrevista Técnica", type: "Entrevista", label: "text"},
-    { key:"2", name: "Entrevista Cultural", type: "Entrevista",label: "text"},
-    { key:"3", name: "Oferta", type: "Entrevista", label: "text"},
+    { key:"0", name: "Revisión Inicial", type: "Entrevista", label: "text",color: "#ff6f"},
+    { key:"1", name: "Entrevista Técnica", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"2", name: "Entrevista Cultural", type: "Entrevista",label: "text",color: "#142f"},
+    { key:"3", name: "Oferta", type: "Entrevista", label: "text",color: "#142f"},
   ];
   const startKey = stagesDefault[0].key
   const endKey = stagesDefault[stagesDefault.length - 1].key
@@ -104,7 +104,7 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
 
       const rect = ref.current.getBoundingClientRect();
       const hoverMiddleY = (rect.bottom - rect.top) / 2;
-      
+
       //para evitar demasiados cambios no intencionados no aplico hasta totalmente encima
       const clientOffset = monitor.getClientOffset();
       if (!clientOffset) return;
@@ -141,7 +141,8 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
       <span className="w-4 text-[13px] font-medium text-text-tertiary">
         {props.getStageIndex(props.stage.key) + 1}
       </span>
-      <div className="h-2 w-2 rounded-full bg-blue-500" />
+      <div className="h-2 w-2 rounded-full"
+          style={{backgroundColor: props.stage.color}}/>
       <span className="flex-1 text-[13px] font-medium text-text-primary">
         {props.stage.name}
       </span>

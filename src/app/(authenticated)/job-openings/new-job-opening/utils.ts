@@ -5,6 +5,7 @@ export type Stage = {
     name: string;
     type: string;
     label: string;
+    color:string;
 }
 
 export type Template = {id:string, stages:Stages}
