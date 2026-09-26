@@ -1,11 +1,14 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import JobOpeningsFallback from "./job-openings-fallback";
 import { api } from "~/lib/trpc/react";
 import AssignedInterviews from "./assigned-interviews";
-import { JobOpeningFilters } from "./job-opening-filters";
+import {
+  JobOpeningFilters,
+  type JobOpeningFiltersValue,
+} from "./job-opening-filters";
 import { JobOpeningSort } from "./job-opening-sort";
 import { Button } from "~/components/ui/button";
 import {
@@ -19,11 +22,22 @@ import {
 
 import JobOpeningRow from "./job-opening-row";
 import { JobOpeningPagination } from "./job-opening-pagination";
+import type { JobOpeningSortValue } from "~/server/api/routers/job-opening/sort";
+import type { JobOpeningStatus } from "~/generated/prisma/enums";
+
 export default function JobOpeningsList({
   currentPage,
+  currentSort,
+  currentStatuses,
+  currentAreaId,
+  currentHiringManagerId,
   isHiringManagerView,
 }: {
   currentPage: number;
+  currentSort: JobOpeningSortValue;
+  currentStatuses: JobOpeningStatus[];
+  currentAreaId?: string;
+  currentHiringManagerId?: string;
   isHiringManagerView: boolean;
 }) {
   const router = useRouter();
@@ -35,16 +49,66 @@ export default function JobOpeningsList({
     isError: isErrorJobOpenings,
   } = api.jobOpening.getAllJobOpeningsDetailed.useQuery({
     page: currentPage,
+    sort: currentSort,
+    statuses: currentStatuses,
+    areaId: currentAreaId,
+    hiringManagerId: currentHiringManagerId,
   });
 
   const {
     data: jobOpeningsAmount,
     isLoading: isLoadingAmount,
     isError: isErrorAmount,
-  } = api.jobOpening.getJobOpeningsAmount.useQuery();
+  } = api.jobOpening.getJobOpeningsAmount.useQuery({
+    statuses: currentStatuses,
+    areaId: currentAreaId,
+    hiringManagerId: currentHiringManagerId,
+  });
+
+  const searchParams = useSearchParams();
 
   function updatePage(page: number) {
-    router.replace(`${pathname}?page=${page}`, {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("page", String(page));
+
+    router.replace(`${pathname}?${params.toString()}`, {
+      scroll: false,
+    });
+  }
+
+  function updateSort(sort: JobOpeningSortValue) {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("sort", sort);
+    params.set("page", "1");
+
+    router.replace(`${pathname}?${params.toString()}`, {
+      scroll: false,
+    });
+  }
+
+  function updateFilters(filters: JobOpeningFiltersValue) {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.delete("status");
+    filters.statuses.forEach((status) => params.append("status", status));
+
+    if (filters.areaId) {
+      params.set("area", filters.areaId);
+    } else {
+      params.delete("area");
+    }
+
+    if (filters.hiringManagerId) {
+      params.set("hiringManager", filters.hiringManagerId);
+    } else {
+      params.delete("hiringManager");
+    }
+
+    params.set("page", "1");
+
+    router.replace(`${pathname}?${params.toString()}`, {
       scroll: false,
     });
   }
@@ -81,8 +145,15 @@ export default function JobOpeningsList({
 
         {!isHiringManagerView && (
           <div className="flex items-center gap-2">
-            <JobOpeningFilters />
-            <JobOpeningSort />
+            <JobOpeningFilters
+              value={{
+                statuses: currentStatuses,
+                areaId: currentAreaId,
+                hiringManagerId: currentHiringManagerId,
+              }}
+              onValueChange={updateFilters}
+            />
+            <JobOpeningSort value={currentSort} onValueChange={updateSort} />
 
             <Button
               size="sm"
@@ -119,9 +190,7 @@ export default function JobOpeningsList({
                       Entrevista técnica
                     </TableHead>
 
-                    <TableHead className="px-4 py-3">
-                      Ofertados
-                    </TableHead>
+                    <TableHead className="px-4 py-3">Ofertados</TableHead>
                   </>
                 )}
 
@@ -138,7 +207,11 @@ export default function JobOpeningsList({
                     colSpan={isHiringManagerView ? 8 : 7}
                     className="h-24 text-center text-dashboard-text-muted"
                   >
-                    Todavía no hay vacantes registradas.
+                    {currentStatuses.length > 0 ||
+                    currentAreaId ||
+                    currentHiringManagerId
+                      ? "No hay vacantes que cumplan con los criterios del filtro."
+                      : "Todavía no hay vacantes registradas."}
                   </TableCell>
                 </TableRow>
               ) : (
