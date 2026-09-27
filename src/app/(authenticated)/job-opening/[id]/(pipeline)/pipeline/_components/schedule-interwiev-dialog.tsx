@@ -25,6 +25,11 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
+const modalityLabels: Record<string, string> = {
+  VideoCall: "Videollamada",
+  InPerson: "Presencial",
+};
+
 const scheduleInterviewSchema = z.object({
   name: z.string().trim().min(1, "El nombre es obligatorio."),
   modality: z.string().min(1, "Seleccioná una modalidad."),
@@ -32,7 +37,8 @@ const scheduleInterviewSchema = z.object({
     .number({ message: "Ingresá la duración en minutos." })
     .int()
     .positive("La duración debe ser mayor a 0."),
-  date: z.string().min(1, "Seleccioná fecha y hora."),
+  date: z.string().min(1, "Seleccioná una fecha."),
+  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Formato: HH:MM"),
   interviewerIds: z
     .array(z.string())
     .min(1, "Seleccioná al menos un entrevistador."),
@@ -74,6 +80,7 @@ export function ScheduleInterviewDialog({
       modality: "",
       duration: 60,
       date: "",
+      time: "",
       interviewerIds: [],
     },
   });
@@ -93,7 +100,7 @@ export function ScheduleInterviewDialog({
       name: data.name.trim(),
       modality: data.modality as InterviewType,
       duration: data.duration,
-      date: new Date(data.date),
+      date: new Date(`${data.date}T${data.time}`),
       interviewerIds: data.interviewerIds,
     });
   }
@@ -154,7 +161,9 @@ export function ScheduleInterviewDialog({
                     onValueChange={(value) => field.onChange(value ?? "")}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Elegir" />
+                      <SelectValue placeholder="Elegir">
+                        {field.value ? modalityLabels[field.value] : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="VideoCall">Videollamada</SelectItem>
@@ -188,19 +197,22 @@ export function ScheduleInterviewDialog({
           </div>
 
           <div className="grid gap-2">
-            <label
-              htmlFor="interview-date"
-              className="text-sm font-medium text-text-primary"
-            >
+            <label className="text-sm font-medium text-text-primary">
               Fecha y hora
             </label>
-            <Input
-              id="interview-date"
-              type="datetime-local"
-              {...register("date")}
-            />
-            {errors.date && (
-              <p className="text-xs text-danger">{errors.date.message}</p>
+            <div className="flex gap-2">
+              <Input type="date" className="flex-1" {...register("date")} />
+              <Input
+                type="text"
+                placeholder="14:30"
+                className="w-24"
+                {...register("time")}
+              />
+            </div>
+            {(errors.date || errors.time) && (
+              <p className="text-xs text-danger">
+                {errors.date?.message ?? errors.time?.message}
+              </p>
             )}
           </div>
 

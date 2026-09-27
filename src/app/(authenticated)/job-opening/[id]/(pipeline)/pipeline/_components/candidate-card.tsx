@@ -26,6 +26,7 @@ import { useState } from "react";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-opening/[id]/(pipeline)/pipeline/_components/schedule-interwiev-dialog";
 import { format, isToday, isTomorrow } from "date-fns";
 import { es } from "date-fns/locale";
+import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
 
 function formatInterviewLabel(date: Date) {
   if (isToday(date)) {
@@ -58,6 +59,7 @@ export function CandidateCard({
   canCreateInterview,
 }: CandidateCardProps) {
   const router = useRouter();
+  const [isDisqualifyDialogOpen, setIsDisqualifyDialogOpen] = useState(false);
   const [isScheduleInterviewDialogOpen, setIsScheduleInterviewDialogOpen] =
     useState(false);
 
@@ -204,7 +206,10 @@ export function CandidateCard({
                 <>
                   <DropdownMenuSeparator />
 
-                  <DropdownMenuItem className="text-destructive focus:text-destructive">
+                  <DropdownMenuItem
+                    onClick={() => setIsDisqualifyDialogOpen(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
                     <CircleX className="size-4" />
                     <span>Descalificar candidato</span>
                   </DropdownMenuItem>
@@ -214,6 +219,17 @@ export function CandidateCard({
           </DropdownMenu>
         </div>
       </Card>
+
+      {canUpdateApplication && (
+        <DisqualifyCandidateDialog
+          open={isDisqualifyDialogOpen}
+          onOpenChange={setIsDisqualifyDialogOpen}
+          applicantId={candidate.applicantId}
+          jobOpeningId={jobOpeningId}
+          candidateName={`${candidate.name} ${candidate.lastName}`}
+          onSuccess={() => router.refresh()}
+        />
+      )}
 
       {canCreateInterview && (
         <ScheduleInterviewDialog
