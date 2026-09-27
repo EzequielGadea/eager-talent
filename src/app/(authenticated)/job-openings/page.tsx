@@ -11,6 +11,7 @@ import {
 } from "~/server/api/routers/job-opening/sort";
 import {
   jobOpeningAreaIdSchema,
+  jobOpeningDateRangeSchema,
   jobOpeningHiringManagerIdSchema,
   jobOpeningStatusSchema,
 } from "~/server/api/routers/job-opening/filter";
@@ -24,6 +25,8 @@ const jobOpeningsSearchParamsSchema = z.object({
     .catch(undefined),
   area: jobOpeningAreaIdSchema.optional().catch(undefined),
   hiringManager: jobOpeningHiringManagerIdSchema.optional().catch(undefined),
+  openingDate: jobOpeningDateRangeSchema.optional().catch(undefined),
+  withActiveCandidates: z.literal("true").optional().catch(undefined),
 });
 
 export default function JobOpeningsPage(props: {
@@ -33,6 +36,8 @@ export default function JobOpeningsPage(props: {
     status?: string | string[];
     area?: string | string[];
     hiringManager?: string | string[];
+    openingDate?: string | string[];
+    withActiveCandidates?: string | string[];
   }>;
 }) {
   return (
@@ -49,6 +54,8 @@ async function JobOpeningsPageContent(props: {
     status?: string | string[];
     area?: string | string[];
     hiringManager?: string | string[];
+    openingDate?: string | string[];
+    withActiveCandidates?: string | string[];
   }>;
 }) {
   const rawParams = await (props.searchParams ?? Promise.resolve({}));
@@ -78,6 +85,8 @@ async function JobOpeningsPageContent(props: {
       currentStatuses={currentStatuses}
       currentAreaId={params.area}
       currentHiringManagerId={params.hiringManager}
+      currentOpeningDateRange={params.openingDate}
+      currentOnlyWithActiveCandidates={Boolean(params.withActiveCandidates)}
       isHiringManagerView={isHiringManagerView}
     />
   );
