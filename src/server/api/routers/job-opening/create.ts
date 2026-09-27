@@ -5,6 +5,15 @@ import { Prisma } from "~/generated/prisma/client";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { TRPCError } from "@trpc/server";
 
+const stageSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+  type: z.string(),
+  color: z.string(),
+  label: z.string(),
+});
+
+
 export const createJobOpening = protectedProcedure
   .input(
     z.object({
@@ -16,6 +25,7 @@ export const createJobOpening = protectedProcedure
       location: z.string(),
       openingDate: z.coerce.date(),
       closingDate: z.coerce.date(),
+      stages: z.array(stageSchema)
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -36,6 +46,7 @@ export const createJobOpening = protectedProcedure
     }
     try {
       // creating the job opening
+      const obj = {}
       const jobOpening = await ctx.db.$transaction(async (tx) => {
         const jobOpening = await tx.jobOpening.create({
           select: {
@@ -45,20 +56,7 @@ export const createJobOpening = protectedProcedure
             name: input.name,
             status: input.status,
             //seniority: input.seniority,
-            stages: [
-              {
-                name: "Revisión Inicial",
-              },
-              {
-                name: "Entrevista Técnica",
-              },
-              {
-                name: "Entrevista Cultural",
-              },
-              {
-                name: "Oferta",
-              },
-            ],
+            stages: JSON.stringify(input.stages),
             location: input.location,
             openingDate: input.openingDate,
             targetClosingDate: input.closingDate,
