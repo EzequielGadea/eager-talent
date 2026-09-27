@@ -26,6 +26,7 @@ import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
 import { Stages, Template } from "../utils";
+import { useState } from "react";
 
 export const jobOpeningFormSchema = z
   .object({
@@ -39,7 +40,7 @@ export const jobOpeningFormSchema = z
     openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
     closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
     hiringManagerIds: z.array(z.string()),
-    // stages: z.json().optional(),
+    stages: z.json().optional(),
   })
   .refine((data) => data.closingDate >= data.openingDate, {
     path: ["closingDate"],
@@ -78,6 +79,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
   });
 
   async function onSubmit(data: JobOpeningFormValues) {
+    console.log(data.stages)
     await createJobOpeningMutation.mutateAsync({
       name: data.name,
       area: data.area,
@@ -95,6 +97,16 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
     router.push("/job-openings");
   }
 
+    //TODO esto debe venir del flujo por defecto originalmente
+  const stagesDefault = /*props.templateStages.stages*/ [
+    { key:"0", name: "Revisión Inicial", type: "Entrevista", label: "text",color: "#ff6f"},
+    { key:"1", name: "Entrevista Técnica", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"2", name: "Entrevista Cultural", type: "Entrevista",label: "text",color: "#142f"},
+    { key:"3", name: "Oferta", type: "Entrevista", label: "text",color: "#142f"},
+  ];
+
+  const [stages, setStages] = useState(stagesDefault/*props.templateStages.stages*/)
+
   return (
     <FormProvider {...methods}>
       <form
@@ -103,7 +115,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
       >
         <OpeningData />
         <OpeningDate />
-        {<OpeningStage templateStages={props.templateStages}/>}
+        {<OpeningStage stages={stages} setStages={setStages}/>}
         <OpeningHiring />
         <Card className="w-full items-end rounded-x1 shadow-sm">
           <CardContent>

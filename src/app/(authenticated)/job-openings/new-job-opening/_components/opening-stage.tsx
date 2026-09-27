@@ -8,33 +8,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Stage, Stages, Template } from "../utils";
 
-export default function OpeningStage(props: {templateStages:Template}) {
+export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<SetStateAction<Stages>>}) {
   const {
     register,
     control,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
-
-  //TODO esto debe venir del flujo por defecto originalmente
-  const stagesDefault = /*props.templateStages.stages*/ [
-    { key:"0", name: "Revisión Inicial", type: "Entrevista", label: "text",color: "#ff6f"},
-    { key:"1", name: "Entrevista Técnica", type: "Entrevista", label: "text",color: "#142f"},
-    { key:"2", name: "Entrevista Cultural", type: "Entrevista",label: "text",color: "#142f"},
-    { key:"3", name: "Oferta", type: "Entrevista", label: "text",color: "#142f"},
-  ];
-  const startKey = stagesDefault[0].key
-  const endKey = stagesDefault[stagesDefault.length - 1].key
+  
+  const startKey = props.stages[0].key
+  const endKey = props.stages[props.stages.length - 1].key
 
   function getStageIndex(key: string) {
-    return stages.findIndex(stage => stage.key === key)
+    return props.stages.findIndex(stage => stage.key === key)
   } 
-  const [stages, setStages] = useState(stagesDefault)
-
   function reorderStages(dragkey:string, dropkey:string){
-    setStages((currentStages) => {
+    props.setStages((currentStages:Stages) => {
       const dragIndex = currentStages.findIndex((stage) => stage.key === dragkey)
       const dropIndex = currentStages.findIndex((stage) => stage.key === dropkey)
       if (dragIndex === -1 || dropIndex === -1 || dragIndex === dropIndex) {
@@ -61,7 +52,7 @@ export default function OpeningStage(props: {templateStages:Template}) {
         <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-1">
           <div className="space-y-2">
             <DndProvider backend={HTML5Backend}>
-              {stages.map((stage) => (
+              {props.stages.map((stage) => (
                 <IndividualStage key={stage.key} stage={stage} onDrop={reorderStages} getStageIndex={getStageIndex} startKey={startKey} endKey={endKey}/>
               ))}
             </DndProvider>
