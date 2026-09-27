@@ -27,6 +27,14 @@ import { Button } from "~/components/ui/button";
 import { Stages, Template } from "../utils";
 import { useState } from "react";
 
+const stageSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+  type: z.string(),
+  color: z.string(),
+  label: z.string(),
+})
+  
 export const jobOpeningFormSchema = z.object({
   name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
   area: z.string().min(1, "El area de la vacante es obligatoria"),
@@ -36,7 +44,7 @@ export const jobOpeningFormSchema = z.object({
   openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
   closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
   hiringManagerIds: z.array(z.string()),
-  stages: z.json().optional(),
+  stages: z.array(stageSchema),
 });
 
 export type JobOpeningFormValues = z.infer<typeof jobOpeningFormSchema>;
@@ -54,6 +62,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
       openingDate: undefined,
       closingDate: undefined,
       hiringManagerIds: [],
+      stages: props.templateStages.stages,
     },
   });
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
@@ -67,7 +76,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
   });
 
   async function onSubmit(data: JobOpeningFormValues) {
-    console.log(data.stages)
+    console.log(data)
     await createJobOpeningMutation.mutateAsync({
       name: data.name,
       area: data.area,
@@ -77,7 +86,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
       openingDate: data.openingDate,
       closingDate: data.closingDate,
       hiringManagerIds: data.hiringManagerIds,
-      //stages: data.stages,
+      stages: data.stages,
     });
   }
   function handleCancel() {
@@ -85,15 +94,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
     router.push("/job-openings");
   }
 
-    //TODO esto debe venir del flujo por defecto originalmente
-  const stagesDefault = /*props.templateStages.stages*/ [
-    { key:"0", name: "Revisión Inicial", type: "Entrevista", label: "text",color: "#ff6f"},
-    { key:"1", name: "Entrevista Técnica", type: "Entrevista", label: "text",color: "#142f"},
-    { key:"2", name: "Entrevista Cultural", type: "Entrevista",label: "text",color: "#142f"},
-    { key:"3", name: "Oferta", type: "Entrevista", label: "text",color: "#142f"},
-  ];
-
-  const [stages, setStages] = useState(stagesDefault/*props.templateStages.stages*/)
+  const [stages, setStages] = useState(props.templateStages.stages)
 
   return (
     <FormProvider {...methods}>
@@ -103,7 +104,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
       >
         <OpeningData />
         <OpeningDate />
-        {<OpeningStage stages={stages} setStages={setStages}/>}
+        {<OpeningStage stages={stages} setStages={setStages} form={methods}/>}
         <OpeningHiring />
         <Card className="w-full items-end rounded-x1 shadow-sm">
           <CardContent>

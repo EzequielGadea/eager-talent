@@ -24,16 +24,18 @@ async function ProtectedNewJobOpeningPage() {
   if (!permission.success) {
     redirect("/dashboard");
   }
+  //TODO Mantener solo la version de DB cuando haya objeto
   //const templateStages = await api.templateStages.getDefault()
   const templateStages = {
     id:"0",
-    stages: [{
-        key: "key",
-        name: "name",
-        type: "type",
-        label: "label",
-        color: "#142f"
-    }]}
+    stages: [
+    { key:"0", name: "Hardcodeado", type: "Entrevista", label: "text",color: "#ff6f"},
+    { key:"1", name: "en page.tsx", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"2", name: "cambiar por comentado", type: "Entrevista",label: "text",color: "#142f"},
+    { key:"3", name: "para traer de DB", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"4", name: "manzana", type: "Entrevista", label: "text",color: "#142f"},
+    ]
+  }
   return (
     <>
       <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">

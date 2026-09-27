@@ -3,27 +3,44 @@
 import { JobOpeningFormValues } from "./new-job-opening-form";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Stage, Stages, Template } from "../utils";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLegend,
+  FieldSet,
+} from "~/components/ui/field"
+import { FormProvider, useForm } from "react-hook-form";
+import { InputGroup, InputGroupInput } from "~/components/ui/input-group";
 
-export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<SetStateAction<Stages>>}) {
+import { type } from "os";
+import { dropPoint } from "@tiptap/pm/transform";
+
+export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<SetStateAction<Stages>>, form:ReturnType<typeof useForm<JobOpeningFormValues>>}) {
   const {
     register,
     control,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
   
+  const { fields, replace, } = useFieldArray({ control, name: "stages" });
   const startKey = props.stages[0].key
   const endKey = props.stages[props.stages.length - 1].key
+  const stages = props.stages
 
   function getStageIndex(key: string) {
     return props.stages.findIndex(stage => stage.key === key)
   } 
+
   function reorderStages(dragkey:string, dropkey:string){
     props.setStages((currentStages:Stages) => {
       const dragIndex = currentStages.findIndex((stage) => stage.key === dragkey)
@@ -37,6 +54,10 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
       return newStages;
     });
   };
+
+  function handleDragEnd() {
+  replace(props.stages);
+}
 
   return (
     <Card className="w-full rounded-x1 shadow-sm">
@@ -52,8 +73,16 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
         <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-1">
           <div className="space-y-2">
             <DndProvider backend={HTML5Backend}>
-              {props.stages.map((stage) => (
-                <IndividualStage key={stage.key} stage={stage} onDrop={reorderStages} getStageIndex={getStageIndex} startKey={startKey} endKey={endKey}/>
+              {stages.map((stage) => (
+                <IndividualStage 
+                  key={stage.key} 
+                  stage={stage} 
+                  onDrop={reorderStages} 
+                  getStageIndex={getStageIndex} 
+                  startKey={startKey} 
+                  endKey={endKey}
+                  onDragEnd={handleDragEnd}
+                />
               ))}
             </DndProvider>
           </div>
@@ -67,7 +96,7 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
   );
 }
 
-function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:string)=>void, getStageIndex:(key:string)=>number, startKey:string, endKey:string}){
+function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:string)=>void, getStageIndex:(key:string)=>number, startKey:string, endKey:string, onDragEnd:()=>void}){
   const isDraggable = props.stage.key == props.startKey || props.stage.key==props.endKey
   const ref = useRef<HTMLDivElement>(null);
 
@@ -79,6 +108,9 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
     collect: (monitor) => ({
         isDragging: monitor.isDragging(),
     }),
+    end: () => {
+      props.onDragEnd();
+    }
   }));
   const [, drop] = useDrop(() => ({
     accept: "stage",
@@ -120,6 +152,7 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
   }));
 
   drag(drop(ref))
+
   return (
     <div
       ref={isDraggable ? null : ref}
