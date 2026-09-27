@@ -31,6 +31,8 @@ export default function JobOpeningsList({
   currentStatuses,
   currentAreaId,
   currentHiringManagerId,
+  currentOpeningDateRange,
+  currentOnlyWithActiveCandidates,
   isHiringManagerView,
 }: {
   currentPage: number;
@@ -38,6 +40,8 @@ export default function JobOpeningsList({
   currentStatuses: JobOpeningStatus[];
   currentAreaId?: string;
   currentHiringManagerId?: string;
+  currentOpeningDateRange?: JobOpeningFiltersValue["openingDateRange"];
+  currentOnlyWithActiveCandidates: boolean;
   isHiringManagerView: boolean;
 }) {
   const router = useRouter();
@@ -53,6 +57,8 @@ export default function JobOpeningsList({
     statuses: currentStatuses,
     areaId: currentAreaId,
     hiringManagerId: currentHiringManagerId,
+    openingDateRange: currentOpeningDateRange,
+    onlyWithActiveCandidates: currentOnlyWithActiveCandidates,
   });
 
   const {
@@ -63,6 +69,8 @@ export default function JobOpeningsList({
     statuses: currentStatuses,
     areaId: currentAreaId,
     hiringManagerId: currentHiringManagerId,
+    openingDateRange: currentOpeningDateRange,
+    onlyWithActiveCandidates: currentOnlyWithActiveCandidates,
   });
 
   const searchParams = useSearchParams();
@@ -106,6 +114,18 @@ export default function JobOpeningsList({
       params.delete("hiringManager");
     }
 
+    if (filters.openingDateRange) {
+      params.set("openingDate", filters.openingDateRange);
+    } else {
+      params.delete("openingDate");
+    }
+
+    if (filters.onlyWithActiveCandidates) {
+      params.set("withActiveCandidates", "true");
+    } else {
+      params.delete("withActiveCandidates");
+    }
+
     params.set("page", "1");
 
     router.replace(`${pathname}?${params.toString()}`, {
@@ -144,12 +164,14 @@ export default function JobOpeningsList({
         </div>
 
         {!isHiringManagerView && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <JobOpeningFilters
               value={{
                 statuses: currentStatuses,
                 areaId: currentAreaId,
                 hiringManagerId: currentHiringManagerId,
+                openingDateRange: currentOpeningDateRange,
+                onlyWithActiveCandidates: currentOnlyWithActiveCandidates,
               }}
               onValueChange={updateFilters}
             />
@@ -209,7 +231,9 @@ export default function JobOpeningsList({
                   >
                     {currentStatuses.length > 0 ||
                     currentAreaId ||
-                    currentHiringManagerId
+                    currentHiringManagerId ||
+                    currentOpeningDateRange ||
+                    currentOnlyWithActiveCandidates
                       ? "No hay vacantes que cumplan con los criterios del filtro."
                       : "Todavía no hay vacantes registradas."}
                   </TableCell>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Filter } from "lucide-react";
 
 import { Badge } from "~/components/ui/badge";
+import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -21,17 +22,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { api } from "~/lib/trpc/react";
+import type { JobOpeningFilterInput } from "~/server/api/routers/job-opening/filter";
 import { statusConfig } from "../constants";
 
 const ALL_AREAS_VALUE = "all";
 const ALL_HIRING_MANAGERS_VALUE = "all";
+const ALL_OPENING_DATES_VALUE = "all";
+const OPENING_DATE_RANGE_OPTIONS = [
+  { label: "7 d", value: "7" },
+  { label: "30 d", value: "30" },
+  { label: "90 d", value: "90" },
+] as const satisfies ReadonlyArray<{
+  label: string;
+  value: NonNullable<JobOpeningFilterInput["openingDateRange"]>;
+}>;
 
 export type JobOpeningFiltersValue = {
   statuses: JobOpeningStatus[];
   areaId?: string;
   hiringManagerId?: string;
+  openingDateRange?: JobOpeningFilterInput["openingDateRange"];
+  onlyWithActiveCandidates: boolean;
 };
 
 export function JobOpeningFilters({
@@ -43,10 +57,25 @@ export function JobOpeningFilters({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [draftFilters, setDraftFilters] = useState(value);
-  const { data: areas = [], isLoading: isLoadingAreas } =
-    api.area.getAllAreas.useQuery({});
-  const { data: hiringManagers = [], isLoading: isLoadingHiringManagers } =
-    api.jobOpening.getJobOpeningHiringManagers.useQuery({});
+  const areaLabelId = useId();
+  const areaErrorId = useId();
+  const hiringManagerLabelId = useId();
+  const hiringManagerErrorId = useId();
+  const openingDateLabelId = useId();
+  const {
+    data: areas = [],
+    isLoading: isLoadingAreas,
+    isFetching: isFetchingAreas,
+    isError: isErrorAreas,
+    refetch: refetchAreas,
+  } = api.area.getAllAreas.useQuery({});
+  const {
+    data: hiringManagers = [],
+    isLoading: isLoadingHiringManagers,
+    isFetching: isFetchingHiringManagers,
+    isError: isErrorHiringManagers,
+    refetch: refetchHiringManagers,
+  } = api.jobOpening.getJobOpeningHiringManagers.useQuery({});
 
   const areaOptions = [
     { label: "Todas las áreas", value: ALL_AREAS_VALUE },
@@ -65,11 +94,15 @@ export function JobOpeningFilters({
   const activeFilterCount =
     Number(value.statuses.length > 0) +
     Number(Boolean(value.areaId)) +
-    Number(Boolean(value.hiringManagerId));
+    Number(Boolean(value.hiringManagerId)) +
+    Number(Boolean(value.openingDateRange)) +
+    Number(value.onlyWithActiveCandidates);
   const draftFilterCount =
     Number(draftFilters.statuses.length > 0) +
     Number(Boolean(draftFilters.areaId)) +
-    Number(Boolean(draftFilters.hiringManagerId));
+    Number(Boolean(draftFilters.hiringManagerId)) +
+    Number(Boolean(draftFilters.openingDateRange)) +
+    Number(draftFilters.onlyWithActiveCandidates);
 
   function handleOpenChange(open: boolean) {
     if (open) {
@@ -107,6 +140,30 @@ export function JobOpeningFilters({
         hiringManagerId && hiringManagerId !== ALL_HIRING_MANAGERS_VALUE
           ? hiringManagerId
           : undefined,
+    }));
+  }
+
+  function updateOpeningDateRange(values: string[]) {
+    const [value] = values;
+
+    if (!value) {
+      return;
+    }
+
+    const openingDateRange = OPENING_DATE_RANGE_OPTIONS.find(
+      (option) => option.value === value,
+    )?.value;
+
+    setDraftFilters((currentFilters) => ({
+      ...currentFilters,
+      openingDateRange,
+    }));
+  }
+
+  function updateOnlyWithActiveCandidates(checked: boolean) {
+    setDraftFilters((currentFilters) => ({
+      ...currentFilters,
+      onlyWithActiveCandidates: checked,
     }));
   }
 
@@ -157,7 +214,12 @@ export function JobOpeningFilters({
             size="sm"
             className="h-auto p-0 text-xs"
             disabled={draftFilterCount === 0}
-            onClick={() => setDraftFilters({ statuses: [] })}
+            onClick={() =>
+              setDraftFilters({
+                statuses: [],
+                onlyWithActiveCandidates: false,
+              })
+            }
           >
             Limpiar
           </Button>
@@ -190,7 +252,10 @@ export function JobOpeningFilters({
         </fieldset>
 
         <fieldset className="px-4 pb-4">
-          <legend className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary">
+          <legend
+            id={areaLabelId}
+            className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary"
+          >
             Área
           </legend>
 
@@ -198,9 +263,14 @@ export function JobOpeningFilters({
             items={areaOptions}
             value={draftFilters.areaId ?? ALL_AREAS_VALUE}
             onValueChange={updateArea}
-            disabled={isLoadingAreas}
+            disabled={isLoadingAreas || isFetchingAreas || isErrorAreas}
           >
-            <SelectTrigger className="mt-2 w-full">
+            <SelectTrigger
+              aria-labelledby={areaLabelId}
+              aria-describedby={isErrorAreas ? areaErrorId : undefined}
+              aria-invalid={isErrorAreas}
+              className="mt-2 w-full"
+            >
               <SelectValue placeholder="Todas las áreas" />
             </SelectTrigger>
 
@@ -214,10 +284,29 @@ export function JobOpeningFilters({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {isErrorAreas && (
+            <Alert variant="destructive" className="mt-2">
+              <AlertDescription id={areaErrorId}>
+                No se pudieron cargar las áreas.
+              </AlertDescription>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                disabled={isFetchingAreas}
+                onClick={() => void refetchAreas()}
+              >
+                Reintentar
+              </Button>
+            </Alert>
+          )}
         </fieldset>
 
         <fieldset className="px-4 pb-4">
-          <legend className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary">
+          <legend
+            id={hiringManagerLabelId}
+            className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary"
+          >
             Hiring Manager
           </legend>
 
@@ -225,9 +314,20 @@ export function JobOpeningFilters({
             items={hiringManagerOptions}
             value={draftFilters.hiringManagerId ?? ALL_HIRING_MANAGERS_VALUE}
             onValueChange={updateHiringManager}
-            disabled={isLoadingHiringManagers}
+            disabled={
+              isLoadingHiringManagers ||
+              isFetchingHiringManagers ||
+              isErrorHiringManagers
+            }
           >
-            <SelectTrigger className="mt-2 w-full">
+            <SelectTrigger
+              aria-labelledby={hiringManagerLabelId}
+              aria-describedby={
+                isErrorHiringManagers ? hiringManagerErrorId : undefined
+              }
+              aria-invalid={isErrorHiringManagers}
+              className="mt-2 w-full"
+            >
               <SelectValue placeholder="Todos los Hiring Managers" />
             </SelectTrigger>
 
@@ -244,6 +344,22 @@ export function JobOpeningFilters({
               </SelectGroup>
             </SelectContent>
           </Select>
+          {isErrorHiringManagers && (
+            <Alert variant="destructive" className="mt-2">
+              <AlertDescription id={hiringManagerErrorId}>
+                No se pudieron cargar los Hiring Managers.
+              </AlertDescription>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                disabled={isFetchingHiringManagers}
+                onClick={() => void refetchHiringManagers()}
+              >
+                Reintentar
+              </Button>
+            </Alert>
+          )}
         </fieldset>
 
         <fieldset className="px-4 pb-4">
@@ -265,45 +381,48 @@ export function JobOpeningFilters({
         </fieldset>
 
         <fieldset className="px-4 pb-4">
-          <legend className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary">
+          <legend
+            id={openingDateLabelId}
+            className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary"
+          >
             Fecha de apertura
           </legend>
 
-          <div className="mt-2 grid grid-cols-4">
-            {" "}
-            <Button
-              type="button"
-              variant="ghost"
-              className="h-8 rounded-l-lg rounded-r-none border border-dashboard-border border-r-0 text-text-secondary"
-            >
-              7 d
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              className="h-8 rounded-none border border-dashboard-border border-r-0 text-text-secondary"
-            >
-              30 d
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              className="h-8 rounded-none border border-dashboard-border text-text-secondary"
-            >
-              90 d
-            </Button>
-            <Button
-              type="button"
-              className="h-8 rounded-l-none rounded-r-lg border-primary"
+          <ToggleGroup
+            value={[draftFilters.openingDateRange ?? ALL_OPENING_DATES_VALUE]}
+            onValueChange={updateOpeningDateRange}
+            aria-labelledby={openingDateLabelId}
+            variant="outline"
+            spacing={0}
+            className="mt-2 grid w-full grid-cols-4"
+          >
+            {OPENING_DATE_RANGE_OPTIONS.map((option) => (
+              <ToggleGroupItem
+                key={option.value}
+                value={option.value}
+                aria-label={`Vacantes abiertas en los últimos ${option.value} días`}
+                className="w-full text-text-secondary aria-pressed:border-primary aria-pressed:bg-primary! aria-pressed:text-primary-foreground! aria-pressed:hover:bg-primary!"
+              >
+                {option.label}
+              </ToggleGroupItem>
+            ))}
+            <ToggleGroupItem
+              value={ALL_OPENING_DATES_VALUE}
+              aria-label="Vacantes de todas las fechas"
+              className="w-full text-text-secondary aria-pressed:border-primary aria-pressed:bg-primary! aria-pressed:text-primary-foreground! aria-pressed:hover:bg-primary!"
             >
               Todas
-            </Button>
-          </div>
+            </ToggleGroupItem>
+          </ToggleGroup>
         </fieldset>
 
         <div className="px-4 pb-4">
           <label className="flex cursor-pointer items-center gap-2 text-sm font-normal text-text-primary">
-            <Checkbox className="data-checked:border-accent-green data-checked:bg-accent-green" />
+            <Checkbox
+              checked={draftFilters.onlyWithActiveCandidates}
+              onCheckedChange={updateOnlyWithActiveCandidates}
+              className="data-checked:border-accent-green data-checked:bg-accent-green"
+            />
             <span>Solo con candidatos en proceso</span>
           </label>
         </div>
