@@ -145,7 +145,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
   });
 
   async function onSubmit(data: JobOpeningFormValues) {
-    console.log(data.stages)
+    console.log(data)
     await createJobOpeningMutation.mutateAsync({
       name: data.name,
       area: data.area,

@@ -96,6 +96,7 @@ export const createJobOpening = protectedProcedure
     }
     try {
       // creating the job opening
+      const obj = {}
       const jobOpening = await ctx.db.$transaction(async (tx) => {
         const jobOpening = await tx.jobOpening.create({
           select: {
