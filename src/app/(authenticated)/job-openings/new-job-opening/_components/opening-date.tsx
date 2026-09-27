@@ -53,7 +53,13 @@ export default function OpeningDate() {
               id="openingDate"
               placeholder=""
               className="w-full"
+              {...register("openingDate", { valueAsDate: true })}
             />
+            {errors.openingDate && (
+              <p className="text-xs text-danger">
+                {errors.openingDate.message}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label
@@ -68,7 +74,13 @@ export default function OpeningDate() {
               placeholder="01/01/2001"
               id="closingDate"
               className="w-full"
+              {...register("closingDate", { valueAsDate: true })}
             />
+            {errors.closingDate && (
+              <p className="text-xs text-danger">
+                {errors.closingDate.message}
+              </p>
+            )}
           </div>
         </div>
       </CardContent>
