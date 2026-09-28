@@ -56,7 +56,7 @@ export const createJobOpening = protectedProcedure
             name: input.name,
             status: input.status,
             //seniority: input.seniority,
-            stages: JSON.stringify(input.stages),
+            stages: input.stages,
             location: input.location,
             openingDate: input.openingDate,
             targetClosingDate: input.closingDate,
