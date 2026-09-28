@@ -8,5 +8,11 @@ export type PipelineCandidate = {
   lastName: string;
   photo: string | null;
   role: string | null;
-  nextInterview: { date: string } | null;
+  nextInterview: { date: Date | string } | null;
+};
+
+export type PendingMove = {
+  candidate: PipelineCandidate;
+  fromStage: string;
+  toStage: string;
 };

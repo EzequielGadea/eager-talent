@@ -65,6 +65,7 @@ export function CandidateCard({
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: candidate.applicantId,
+    data: { candidate, stage: currentStage },
   });
 
   const advanceApplicationStageMutation =

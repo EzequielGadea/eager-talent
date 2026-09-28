@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useDroppable } from "@dnd-kit/core";
 
 import { api } from "~/lib/trpc/react";
 
 import { CandidateCard } from "./candidate-card";
 import { LoadMoreCandidates } from "./load-more-candidates";
+import { usePipelineMoves } from "./pipeline-dnd-provider";
 import type { PipelineCandidate } from "./types";
-import { useDroppable } from "@dnd-kit/core";
 
 type PipelineColumnClientProps = {
   jobOpeningId: string;
@@ -30,6 +32,8 @@ export function PipelineColumnClient({
     id: stageName,
   });
 
+  const { moves, clearMove } = usePipelineMoves();
+
   const [loadedCandidates, setLoadedCandidates] = useState<PipelineCandidate[]>(
     [],
   );
@@ -48,6 +52,7 @@ export function PipelineColumnClient({
         ),
     ),
   ];
+
   const initialCandidateIds = new Set(
     initialCandidates.map((candidate) => candidate.applicantId),
   );
@@ -56,17 +61,66 @@ export function PipelineColumnClient({
     [...optimisticallyRemovedIds].filter((id) => initialCandidateIds.has(id)),
   );
 
-  const candidates = allCandidates.filter(
-    (candidate) => !visibleOptimisticRemovedIds.has(candidate.applicantId),
+  const movedOutIds = new Set(
+    Object.entries(moves)
+      .filter(([, move]) => move.fromStage === stageName)
+      .map(([applicantId]) => applicantId),
   );
+
+  const [previousMoves, setPreviousMoves] = useState(moves);
+
+  if (moves !== previousMoves) {
+    setPreviousMoves(moves);
+
+    if (movedOutIds.size > 0) {
+      setLoadedCandidates((current) =>
+        current.filter((candidate) => !movedOutIds.has(candidate.applicantId)),
+      );
+    }
+  }
+
+  const allCandidateIds = new Set(
+    allCandidates.map((candidate) => candidate.applicantId),
+  );
+
+  const movedIn = Object.values(moves)
+    .filter((move) => move.toStage === stageName)
+    .map((move) => move.candidate)
+    .filter((candidate) => !allCandidateIds.has(candidate.applicantId));
+
+  const candidates = [
+    ...movedIn,
+    ...allCandidates.filter(
+      (candidate) =>
+        !visibleOptimisticRemovedIds.has(candidate.applicantId) &&
+        !movedOutIds.has(candidate.applicantId),
+    ),
+  ];
 
   const loadedCount = allCandidates.length;
 
-  const effectiveTotal = total - visibleOptimisticRemovedIds.size;
+  const effectiveTotal =
+    total -
+    visibleOptimisticRemovedIds.size -
+    movedOutIds.size +
+    movedIn.length;
 
   const remaining = Math.max(0, effectiveTotal - candidates.length);
 
   const hasMore = remaining > 0;
+
+  useEffect(() => {
+    for (const move of Object.values(moves)) {
+      if (
+        move.toStage === stageName &&
+        initialCandidates.some(
+          (candidate) => candidate.applicantId === move.candidate.applicantId,
+        )
+      ) {
+        clearMove(move.candidate.applicantId);
+      }
+    }
+  }, [initialCandidates, moves, stageName, clearMove]);
 
   const fetchMore = api.jobOpening.fetchPipelineCandidates.useQuery(
     {
