@@ -3,40 +3,27 @@
 import { JobOpeningFormValues } from "./new-job-opening-form";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext, UseFormRegister } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Stage, Stages, Template } from "../utils";
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLegend,
-  FieldSet,
-} from "~/components/ui/field"
-import { FormProvider, useForm } from "react-hook-form";
-import { InputGroup, InputGroupInput } from "~/components/ui/input-group";
-
-import { type } from "os";
-import { dropPoint } from "@tiptap/pm/transform";
-import { randomUUID } from "crypto";
+import { useForm } from "react-hook-form";
 
 export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<SetStateAction<Stages>>, form:ReturnType<typeof useForm<JobOpeningFormValues>>}) {
   const {
-    register,
     control,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
-  
-  const { fields, replace, } = useFieldArray({ control, name: "stages" });
+  const { fields, replace, remove, insert,} = useFieldArray({ 
+    control, 
+    name: "stages",
+  });
   const startKey = props.stages[0].key
   const endKey = props.stages[props.stages.length - 1].key
-  var stages = props.stages
+  const stages = props.stages
 
   function getStageIndex(key: string) {
     return props.stages.findIndex(stage => stage.key === key)
@@ -68,15 +55,17 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
       newStages.splice(currentStages.length - 1, 0, added)
       return newStages;
     });
+    insert(fields.length - 1,added)
   }
 
   function removeStage(key:string){
+    const index = props.stages.findIndex((stage) => stage.key === key)
     props.setStages((currentStages:Stages) => {
-      const index = currentStages.findIndex((stage) => stage.key === key)
       const newStages = [...currentStages];
       newStages.splice(index,1)
       return newStages
     })
+    remove(index)
   }
 
   return (
@@ -88,6 +77,9 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
             arrastrá para reordenar
           </span>
         </CardTitle>
+        {errors.stages && (
+          <p className="text-xs text-danger whitespace-pre-line">{errors.stages?.root?.message}</p>
+        )}
       </CardHeader>
       <CardContent>
         <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-1">
@@ -124,7 +116,18 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
   );
 }
 
-function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:string)=>void, getStageIndex:(key:string)=>number, startKey:string, endKey:string, onDragEnd:()=>void, removeStage:(key:string)=>void}){
+function IndividualStage(
+  props:{
+    stage:Stage,
+    onDrop:(dragged:string, dropedOn:string)=>void, 
+    getStageIndex:(key:string)=>number, 
+    startKey:string, 
+    endKey:string, 
+    onDragEnd:()=>void, 
+    removeStage:(key:string)=>void, 
+  }
+){
+  const {register} = useFormContext<JobOpeningFormValues>();
   const isDraggable = props.stage.key == props.startKey || props.stage.key==props.endKey
   const ref = useRef<HTMLDivElement>(null);
 
@@ -180,7 +183,6 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
   }));
 
   drag(drop(ref))
-
   return (
     <div
       ref={isDraggable ? null : ref}
@@ -195,11 +197,14 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
       </span>
       <div className="h-2 w-2 rounded-full"
           style={{backgroundColor: props.stage.color}}/>
-      <span className="flex-1 text-[13px] font-medium text-text-primary">
-        {props.stage.name}
-      </span>
-      {!isDraggable ? (
+      {!isDraggable ? (    
         <>
+          <div className="flex-1">
+            <input
+              {...register(`stages.${props.getStageIndex(props.stage.key)}.name`)}
+              className="w-auto rounded-md border border-border-default bg-transparent px-2 py-1 text-[13px]"
+            />
+          </div>
           <div className="flex items-center gap-1 flex-nowrap rounded-full border border-border-default px-3 py-1 text-[12px] font-medium text-text-secondary">
             {props.stage.type}
             <ChevronDown className="h-3 w-3 text-text-tertiary" />
@@ -212,7 +217,7 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
             <X className="h-4 w-4 text-text-tertiary hover:text-text-secondary" />
           </button>
         </>
-      ) : (<></>)}
+      ) : (<span>{props.stage.name}</span>)}
     </div>
   )
 }
