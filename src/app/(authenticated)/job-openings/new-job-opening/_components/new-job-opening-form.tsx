@@ -44,7 +44,35 @@ export const jobOpeningFormSchema = z.object({
   openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
   closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
   hiringManagerIds: z.array(z.string()),
-  stages: z.array(stageSchema),
+  stages: z.array(stageSchema).superRefine((stages, ctx) => {
+      const errors: string[] = []
+      if (stages[0]?.name !== "Applicado") {
+        errors.push("La primera etapa debe ser Aplicado")
+      }
+
+      if (stages[stages.length - 1]?.name !== "Contratado/a") {
+        errors.push("La última etapa debe ser Contratado/a")
+      }
+
+      if (!stages.some((stage) => stage.name === "Entrevista Técnica")) {
+        errors.push("Debe haber una etapa de 'Entrevista Técnica'")
+      }
+
+      if (!stages.some((stage) => stage.name === "Entrevista HR")) {
+          errors.push("Debe haber una etapa de 'Entrevista HR'")
+      }
+
+      if (!stages.some((stage) => stage.name === "Oferta")) {
+        errors.push("Debe haber una etapa de 'Oferta'")
+      }
+      if (errors.length){
+        ctx.addIssue({
+          code: "custom",
+          path: [],
+          message: errors.join(",\n")
+        })
+      }
+    })
 });
 
 export type JobOpeningFormValues = z.infer<typeof jobOpeningFormSchema>;
