@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { InterviewType } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
+import { stageAllowsInterview } from "~/lib/interview-stages";
 
 export const createInterviewProcedure = protectedProcedure
   .input(
@@ -50,13 +51,42 @@ export const createInterviewProcedure = protectedProcedure
             jobOpeningId: input.jobOpeningId,
           },
         },
-        select: { applicantId: true },
+        select: { applicantId: true, currentStage: true },
       });
 
       if (!application) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Application not found",
+        });
+      }
+
+      const jobOpening = await ctx.db.jobOpening.findUnique({
+        where: { id: input.jobOpeningId },
+        select: { stages: true },
+      });
+
+      const stages = Array.isArray(jobOpening?.stages) ? jobOpening.stages : [];
+      const currentStageData = stages.find(
+        (stage) =>
+          typeof stage === "object" &&
+          stage !== null &&
+          "name" in stage &&
+          stage.name === application.currentStage,
+      );
+
+      const currentStageType =
+        currentStageData &&
+        typeof currentStageData === "object" &&
+        "type" in currentStageData &&
+        typeof currentStageData.type === "string"
+          ? currentStageData.type
+          : "";
+
+      if (!stageAllowsInterview(currentStageType)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Esta etapa no permite agendar entrevistas",
         });
       }
     }

@@ -2,6 +2,7 @@ import { api } from "~/lib/trpc/server";
 
 import { PipelineColumnClient } from "./pipeline-column-client";
 import type { PipelineStage } from "./types";
+import { stageAllowsInterview } from "./stage-type";
 
 const stageColors = [
   "border-dashboard-sky-text",
@@ -42,6 +43,7 @@ export async function PipelineColumn({
   });
 
   const stageColor = getStageColor(stage.name);
+  const canScheduleInterviewInStage = stageAllowsInterview(stage);
 
   return (
     <section
@@ -65,7 +67,7 @@ export async function PipelineColumn({
         initialCandidates={data.candidates}
         total={data.total}
         canUpdateApplication={canUpdateApplication}
-        canCreateInterview={canCreateInterview}
+        canCreateInterview={canCreateInterview && canScheduleInterviewInStage}
       />
     </section>
   );

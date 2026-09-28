@@ -1,5 +1,9 @@
 export type PipelineStage = {
+  key: string;
   name: string;
+  type: string;
+  label: string;
+  color: string;
 };
 
 export type PipelineCandidate = {
