@@ -24,6 +24,7 @@ import { InputGroup, InputGroupInput } from "~/components/ui/input-group";
 
 import { type } from "os";
 import { dropPoint } from "@tiptap/pm/transform";
+import { randomUUID } from "crypto";
 
 export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<SetStateAction<Stages>>, form:ReturnType<typeof useForm<JobOpeningFormValues>>}) {
   const {
@@ -35,7 +36,7 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
   const { fields, replace, } = useFieldArray({ control, name: "stages" });
   const startKey = props.stages[0].key
   const endKey = props.stages[props.stages.length - 1].key
-  const stages = props.stages
+  var stages = props.stages
 
   function getStageIndex(key: string) {
     return props.stages.findIndex(stage => stage.key === key)
@@ -56,8 +57,27 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
   };
 
   function handleDragEnd() {
-  replace(props.stages);
-}
+    replace(props.stages);
+  }
+
+  function newStage(){
+    const key = crypto.randomUUID()
+    const added = { key:key, name: "nueva etapa", type: "Ninguna", label: "text",color: "rgb(34, 42, 180)"}
+    props.setStages((currentStages:Stages) => {
+      const newStages = [...currentStages];
+      newStages.splice(currentStages.length - 1, 0, added)
+      return newStages;
+    });
+  }
+
+  function removeStage(key:string){
+    props.setStages((currentStages:Stages) => {
+      const index = currentStages.findIndex((stage) => stage.key === key)
+      const newStages = [...currentStages];
+      newStages.splice(index,1)
+      return newStages
+    })
+  }
 
   return (
     <Card className="w-full rounded-x1 shadow-sm">
@@ -82,11 +102,19 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
                   startKey={startKey} 
                   endKey={endKey}
                   onDragEnd={handleDragEnd}
+                  removeStage={removeStage}
                 />
               ))}
             </DndProvider>
           </div>
-          <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover">
+          <button 
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              newStage()}}
+            type="button"
+          >
             <Plus className="h-4 w-4" />
             Agregar etapa
           </button>
@@ -96,7 +124,7 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
   );
 }
 
-function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:string)=>void, getStageIndex:(key:string)=>number, startKey:string, endKey:string, onDragEnd:()=>void}){
+function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:string)=>void, getStageIndex:(key:string)=>number, startKey:string, endKey:string, onDragEnd:()=>void, removeStage:(key:string)=>void}){
   const isDraggable = props.stage.key == props.startKey || props.stage.key==props.endKey
   const ref = useRef<HTMLDivElement>(null);
 
@@ -170,13 +198,21 @@ function IndividualStage(props:{stage:Stage, onDrop:(dragged:string, dropedOn:st
       <span className="flex-1 text-[13px] font-medium text-text-primary">
         {props.stage.name}
       </span>
-      <div className="flex items-center gap-1 flex-nowrap rounded-full border border-border-default px-3 py-1 text-[12px] font-medium text-text-secondary">
-        {props.stage.type}
-        <ChevronDown className="h-3 w-3 text-text-tertiary" />
-      </div>
-      <button className="flex items-center justify-center rounded-md p-1 hover:bg-surface-sunken">
-        <X className="h-4 w-4 text-text-tertiary hover:text-text-secondary" />
-      </button>
+      {!isDraggable ? (
+        <>
+          <div className="flex items-center gap-1 flex-nowrap rounded-full border border-border-default px-3 py-1 text-[12px] font-medium text-text-secondary">
+            {props.stage.type}
+            <ChevronDown className="h-3 w-3 text-text-tertiary" />
+          </div>
+          <button 
+            className="flex items-center justify-center rounded-md p-1 hover:bg-surface-sunken"
+            onClick={()=>{props.removeStage(props.stage.key)}}
+            type="button"
+          >
+            <X className="h-4 w-4 text-text-tertiary hover:text-text-secondary" />
+          </button>
+        </>
+      ) : (<></>)}
     </div>
   )
 }
