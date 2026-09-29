@@ -47,24 +47,24 @@ export const jobOpeningFormSchema = z.object({
   hiringManagerIds: z.array(z.string()),
   stages: z.array(stageSchema).superRefine((stages, ctx) => {
       const errors: string[] = []
-      if (stages[0]?.name !== "Applicado") {
-        errors.push("La primera etapa debe ser Aplicado")
+      if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== " Ninguna") {
+        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna")
       }
 
-      if (stages[stages.length - 1]?.name !== "Contratado/a") {
-        errors.push("La última etapa debe ser Contratado/a")
+      if (stages[stages.length - 1]?.name !== "Contratado/a" || stages[stages.length - 1]?.type !== "Ninguna") {
+        errors.push("La última etapa debe ser 'Contratado/a' de tipo 'Ninguna'")
       }
 
-      if (!stages.some((stage) => stage.name === "Entrevista Técnica")) {
-        errors.push("Debe haber una etapa de 'Entrevista Técnica'")
+      if (!stages.some((stage) => stage.name === "Entrevista Técnica" && stage.type === "Entrevista")) {
+        errors.push("Debe haber una etapa de 'Entrevista Técnica' de tipo 'Entrevista")
       }
 
-      if (!stages.some((stage) => stage.name === "Entrevista HR")) {
-          errors.push("Debe haber una etapa de 'Entrevista HR'")
+      if (!stages.some((stage) => stage.name === "Entrevista HR" && stage.type === "Entrevista")) {
+          errors.push("Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista")
       }
 
-      if (!stages.some((stage) => stage.name === "Oferta")) {
-        errors.push("Debe haber una etapa de 'Oferta'")
+      if (!stages.some((stage) => stage.name === "Oferta" && stage.type === "Oferta")) {
+        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta")
       }
       if (errors.length){
         ctx.addIssue({
