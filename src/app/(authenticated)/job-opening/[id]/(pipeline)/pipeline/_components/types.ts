@@ -1,10 +1,6 @@
-export type PipelineStage = {
-  key: string;
-  name: string;
-  type: string;
-  label: string;
-  color: string;
-};
+import type { JobOpeningStage } from "~/lib/interview-stages";
+
+export type PipelineStage = JobOpeningStage;
 
 export type PipelineCandidate = {
   applicantId: string;

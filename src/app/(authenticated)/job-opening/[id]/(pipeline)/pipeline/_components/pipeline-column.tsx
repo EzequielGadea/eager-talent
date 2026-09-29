@@ -1,8 +1,8 @@
 import { api } from "~/lib/trpc/server";
+import { stageAllowsInterview } from "~/lib/interview-stages";
 
 import { PipelineColumnClient } from "./pipeline-column-client";
 import type { PipelineStage } from "./types";
-import { stageAllowsInterview } from "./stage-type";
 
 const stageColors = [
   "border-dashboard-sky-text",
