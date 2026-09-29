@@ -25,7 +25,7 @@ export const createJobOpening = protectedProcedure
       location: z.string(),
       openingDate: z.coerce.date(),
       closingDate: z.coerce.date(),
-      stages: z.array(stageSchema).superRefine((stages, ctx) => {
+      stages: z.array(stageSchema).superRefine((stages) => {
       const errors: string[] = []
       if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
         errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'")
@@ -73,7 +73,6 @@ export const createJobOpening = protectedProcedure
     }
     try {
       // creating the job opening
-      const obj = {}
       const jobOpening = await ctx.db.$transaction(async (tx) => {
         const jobOpening = await tx.jobOpening.create({
           select: {

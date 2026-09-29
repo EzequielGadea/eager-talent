@@ -18,7 +18,7 @@ import OpeningDate from "./opening-date";
 
 import OpeningStage from "./opening-stage";
 
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
