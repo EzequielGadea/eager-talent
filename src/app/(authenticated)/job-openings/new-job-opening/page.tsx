@@ -29,11 +29,16 @@ async function ProtectedNewJobOpeningPage() {
   const templateStages = {
     id:"0",
     stages: [
-    { key:"0", name: "Hardcodeado", type: "Entrevista", label: "text",color: "#ff6f"},
-    { key:"1", name: "en page.tsx", type: "Entrevista", label: "text",color: "#142f"},
-    { key:"2", name: "cambiar por comentado", type: "Entrevista",label: "text",color: "#142f"},
-    { key:"3", name: "para traer de DB", type: "Entrevista", label: "text",color: "#142f"},
-    { key:"4", name: "manzana", type: "Entrevista", label: "text",color: "#142f"},
+      { key:"-1", name: "Aplicado", type:"Ninguna", label:"text", color:"#dddd"},
+      { key:"0", name: "Hardcodeado", type: "Entrevista", label: "text",color: "#ff6f"},
+      { key:"1", name: "en page.tsx", type: "Entrevista", label: "text",color: "#142f"},
+      { key:"2", name: "cambiar por comentado", type: "Entrevista",label: "text",color: "#142f"},
+      { key:"3", name: "para traer de DB", type: "Entrevista", label: "text",color: "#142f"},
+      { key:"4", name: "manzana", type: "Entrevista", label: "text",color: "#142f"},
+      { key:"5", name: "Entrevista Técnica", type: "Entrevista", label: "text",color: "#142f"},
+      { key:"6", name: "Entrevista HR", type: "Entrevista", label: "text",color: "#142f"},
+      { key:"7", name: "Oferta", type: "Oferta", label: "text",color: "#142f"},
+      { key:"8", name: "Contratado/a", type: "Ninguna", label: "text",color: "#142f"},
     ]
   }
   return (
