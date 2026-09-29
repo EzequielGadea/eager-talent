@@ -130,7 +130,7 @@ export default function OpeningStage(props: {
     );
     setValue(`stages.${index}.name`, value);
   }
-
+  
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
