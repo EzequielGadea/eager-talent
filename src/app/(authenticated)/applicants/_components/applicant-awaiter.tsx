@@ -48,13 +48,9 @@ export async function ApplicantAwaiterHeader(props: {
     ? (await props.promiseSharedData).total
     : 0;
 
-  const totalApplicants = props.isHiringManagerView
-    ? countApplicants + countSharedApplicants
-    : countApplicants;
-
   return (
     <Header
-      countApplicants={totalApplicants}
+      countApplicants={countApplicants}
       countOpenings={countOpenings}
       countSharedApplicants={countSharedApplicants}
       isHiringManagerView={props.isHiringManagerView}
