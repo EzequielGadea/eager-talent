@@ -18,13 +18,13 @@ import OpeningDate from "./opening-date";
 
 import OpeningStage from "./opening-stage";
 
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
-import { Stages, Template } from "../utils";
+import { Template } from "../utils";
 import { useState } from "react";
 
 const stageSchema = z.object({
