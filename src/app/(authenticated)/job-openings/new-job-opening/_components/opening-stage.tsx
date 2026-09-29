@@ -14,6 +14,12 @@ import { useForm } from "react-hook-form";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
 import { Button } from "@base-ui/react";
+import { 
+  ColorPicker, 
+  ColorPickerHex, 
+  ColorPickerInput 
+} from "~/components/ui/color-picker";
+
 
 const types = [
   {name : "Ninguna", key: 0}, 
@@ -25,9 +31,10 @@ const types = [
 export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<SetStateAction<Stages>>, form:ReturnType<typeof useForm<JobOpeningFormValues>>}) {
   const {
     control,
+    setValue,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
-  const { fields, replace, remove, insert, update} = useFieldArray({ 
+  const { fields, replace, remove, insert} = useFieldArray({ 
     control, 
     name: "stages",
   });
@@ -90,9 +97,22 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
       })
       return newStages
     })
-    update(index, {...fields[index], type:newType})
+    setValue(`stages.${index}.type`, newType)
   }
 
+  const [openColor, setOpenColor] = useState<string|null>(null)
+  function updateColor(stageKey:string, value:string) {
+    const index = getStageIndex(stageKey)
+    props.setStages((currentStages:Stages) => {
+      const newStages = currentStages.map((stage)=> {
+        return stage.key === stageKey
+        ? { ...stage, color: value }
+        : stage
+      })
+      return newStages
+    })
+    setValue(`stages.${index}.color`, value)
+  }
 
   return (
     <Card className="w-full rounded-x1 shadow-sm">
@@ -123,7 +143,10 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
                   removeStage={removeStage}
                   setOpenType={setOpenType}
                   openType={openType}
-                  update={updateType}
+                  updateType={updateType}
+                  updateColor={updateColor}
+                  setOpenColor={setOpenColor}
+                  openColor={openColor}
                 />
               ))}
             </DndProvider>
@@ -156,7 +179,10 @@ function IndividualStage(
     removeStage:(key:string)=>void, 
     openType: string | null,
     setOpenType:(key:string | null)=>void,
-    update: (stageKey:string, typeKey:number) => void
+    updateType: (stageKey:string, typeKey:number) => void,
+    updateColor: (stageKey:string, colorValue:string) => void,
+    openColor: string | null,
+    setOpenColor:(key:string|null) => void,
   }
 ){
   const {register} = useFormContext<JobOpeningFormValues>();
@@ -215,6 +241,7 @@ function IndividualStage(
   }));
 
   drag(drop(ref))
+
   return (
     <div
       ref={isDraggable ? null : ref}
@@ -227,8 +254,30 @@ function IndividualStage(
       <span className="w-4 text-[13px] font-medium text-text-tertiary">
         {props.getStageIndex(props.stage.key) + 1}
       </span>
-      <div className="h-2 w-2 rounded-full"
-          style={{backgroundColor: props.stage.color}}/>
+        <Popover
+            key={props.stage.key}
+            open={props.openColor === props.stage.key}
+            onOpenChange={(open) => {
+              props.setOpenColor(open ? props.stage.key : null);
+            }}
+          >
+            <PopoverTrigger
+              type="button"
+              className="h-3 w-3 cursor-pointer rounded-full border-0 p-0"
+              style={{ backgroundColor: props.stage.color }}
+              aria-label="Elegir color"
+            />
+            <PopoverContent align="start" className="w-56 rounded-xl p-3">
+              <ColorPicker>
+                <ColorPickerHex color={props.stage.color} onChange={(colorValue) => props.updateColor(props.stage.key, colorValue)} />
+                <ColorPickerInput
+                  type="text"
+                  value={props.stage.color}
+                  onChange={(e) => props.updateColor(props.stage.key, e.target.value)}
+                />
+              </ColorPicker>
+            </PopoverContent>
+          </Popover>
       {!isDraggable ? (    
         <>
           <div className="flex-1">
@@ -263,7 +312,7 @@ function IndividualStage(
                   type="button"
                   className="flex cursor-pointer items-center gap-2"
                   onClick={()=>{
-                    props.update(props.stage.key, type.key)
+                    props.updateType(props.stage.key, type.key)
                     props.setOpenType(null)
                   }}
                 >

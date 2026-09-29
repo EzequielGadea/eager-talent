@@ -46,8 +46,8 @@ export const jobOpeningFormSchema = z.object({
   hiringManagerIds: z.array(z.string()),
   stages: z.array(stageSchema).superRefine((stages, ctx) => {
       const errors: string[] = []
-      if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== " Ninguna") {
-        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna")
+      if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
+        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'")
       }
 
       if (stages[stages.length - 1]?.name !== "Contratado/a" || stages[stages.length - 1]?.type !== "Ninguna") {
