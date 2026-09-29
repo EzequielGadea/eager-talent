@@ -25,7 +25,34 @@ export const createJobOpening = protectedProcedure
       location: z.string(),
       openingDate: z.coerce.date(),
       closingDate: z.coerce.date(),
-      stages: z.array(stageSchema)
+      stages: z.array(stageSchema).superRefine((stages, ctx) => {
+      const errors: string[] = []
+      if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
+        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'")
+      }
+
+      if (stages[stages.length - 1]?.name !== "Contratado/a" || stages[stages.length - 1]?.type !== "Ninguna") {
+        errors.push("La última etapa debe ser 'Contratado/a' de tipo 'Ninguna'")
+      }
+
+      if (!stages.some((stage) => stage.name === "Entrevista Técnica" && stage.type === "Entrevista")) {
+        errors.push("Debe haber una etapa de 'Entrevista Técnica' de tipo 'Entrevista")
+      }
+
+      if (!stages.some((stage) => stage.name === "Entrevista HR" && stage.type === "Entrevista")) {
+          errors.push("Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista")
+      }
+
+      if (!stages.some((stage) => stage.name === "Oferta" && stage.type === "Oferta")) {
+        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta")
+      }
+      if (errors.length){
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No se cumplen las etapas minimas para la vacante"
+        })
+      }
+    })
     }),
   )
   .mutation(async ({ ctx, input }) => {
