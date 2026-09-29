@@ -37,6 +37,8 @@ export const updateStatus = protectedProcedure
       },
       select: {
         id: true,
+        status: true,
+        hasBeenOpened: true,
       },
     });
 
@@ -47,16 +49,23 @@ export const updateStatus = protectedProcedure
       });
     }
 
+    const hasBeenOpened =
+      jobOpening.hasBeenOpened ||
+      jobOpening.status === "Open" ||
+      input.status === "Open";
+
     return ctx.db.jobOpening.update({
       where: {
         id: input.jobOpeningId,
       },
       data: {
         status: input.status,
+        hasBeenOpened,
       },
       select: {
         id: true,
         status: true,
+        hasBeenOpened: true,
       },
     });
   });
