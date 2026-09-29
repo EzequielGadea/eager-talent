@@ -1,20 +1,22 @@
 import { getSourceIcon } from "./_components/source-icon";
-import { ApplicantsPromise } from "./types";
+import { ApplicantsPromise, SharedApplicantsPromise } from "./types";
 import { avatarPalette } from "./constants";
 
-export async function transformApplicants(promise: ApplicantsPromise) {
+export async function transformApplicants(
+  promise: ApplicantsPromise | SharedApplicantsPromise,
+) {
   const data = await promise;
+
   const applicantsData = data
     ? data.applicants.map((applicant) => {
         const jobOpenings = applicant.applications
           ? applicant.applications
               .filter((application) => application.active)
-              .map((application) => {
-                if (application.active) {
-                  return application.jobOpening.name;
-                }
-              })
+              .map((application) => application.jobOpening.name)
           : [];
+
+        const currentStage = applicant.applications[0]?.currentStage;
+
         return {
           id: applicant.id,
           initials:
@@ -33,14 +35,8 @@ export async function transformApplicants(promise: ApplicantsPromise) {
                 color: tag.color || "-",
               }))
             : [],
-
-          jobOpening:
-            jobOpenings.length > 0
-              ? jobOpenings.filter(
-                  (opening): opening is string => opening !== undefined,
-                )
-              : ["-"],
-
+          jobOpening: jobOpenings,
+          currentStage: currentStage ?? null,
           role: applicant.role.name || "-",
           seniorityName: applicant.seniority?.name || "-",
           seniorityColor: applicant.seniority?.color || "-",
@@ -57,16 +53,22 @@ export async function transformApplicants(promise: ApplicantsPromise) {
     : [];
 
   const countApplicants = applicantsData.length;
+
   const uniqueOpenings = new Set<string>();
+
   for (const applicant of data.applicants) {
     for (const open of applicant.applications) {
       uniqueOpenings.add(open.jobOpening.name);
     }
   }
-  const countOpenings = uniqueOpenings.has("—")
-    ? uniqueOpenings.size - 1
-    : uniqueOpenings.size;
-  return { applicantsData, countApplicants, countOpenings };
+
+  const countOpenings = uniqueOpenings.size;
+
+  return {
+    applicantsData,
+    countApplicants,
+    countOpenings,
+  };
 }
 
 export function getRandomColor() {
