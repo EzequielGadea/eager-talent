@@ -1,15 +1,13 @@
 "use client";
 
 import { JobOpeningFormValues } from "./new-job-opening-form";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Controller, useFieldArray, UseFieldArrayUpdate, useFormContext, UseFormRegister } from "react-hook-form";
+import { useFieldArray, useFormContext, } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
+import { GripVertical, X, Plus, ChevronDown } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { Stage, Stages, Template } from "../utils";
+import { Stage, Stages } from "../utils";
 import { useForm } from "react-hook-form";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
@@ -189,7 +187,7 @@ function IndividualStage(
   const isDraggable = props.stage.key == props.startKey || props.stage.key==props.endKey
   const ref = useRef<HTMLDivElement>(null);
 
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [, drag] = useDrag(() => ({
     type: 'stage',
     item: { 
       key: props.stage.key
@@ -239,11 +237,18 @@ function IndividualStage(
     },
   }));
 
-  drag(drop(ref))
+  const setRef = (node: HTMLDivElement | null) => {
+    ref.current = node;
+
+    if (node) {
+      drag(drop(node));
+    }
+  };
+
 
   return (
     <div
-      ref={isDraggable ? null : ref}
+      ref={setRef}
       data-stage-key={props.stage.key}
       className="flex h-12 items-center gap-4 rounded-lg border border-border-default bg-surface-card p-3 transition-colors hover:bg-surface-hover "
     >
