@@ -21,24 +21,55 @@ export const fetchAll = protectedProcedure
     }),
   )
   .query(async ({ ctx, input }) => {
-    const canListApplicantsResult = await auth.api.hasPermission({
-      headers: ctx.headers,
-      body: { permissions: { applicant: ["read"] } },
-    });
+    const canReadAllResult = await auth.api.hasPermission({
+  headers: ctx.headers,
+  body: { permissions: { applicant: ["read"] } },
+});
 
-    if (!canListApplicantsResult.success) {
+const canReadAssignedResult = await auth.api.hasPermission({
+  headers: ctx.headers,
+  body: { permissions: { applicant: ["readAssigned"] } },
+});
+
+    if (!canReadAllResult.success && !canReadAssignedResult.success) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Solo los reclutadores pueden consultar candidatos",
+        message: "No tenés permiso para consultar candidatos",
       });
     }
 
-    const where: Prisma.ApplicantWhereInput = {
-      ...(input.roleId.length > 0 && { roleId: { in: input.roleId } }),
+    const accessWhere: Prisma.ApplicantWhereInput = canReadAllResult.success
+      ? {}
+      : {
+          
+            
+              applications: {
+                some: {
+                  active: true,
+                  jobOpening: {
+                    hiringManagers: {
+                      some: {
+                        id: ctx.session.user.id,
+                      },
+                    },
+                  },
+                },
+              },
+            
+            
+          
+        };
+
+    const filtersWhere: Prisma.ApplicantWhereInput = {
+      ...(input.roleId.length > 0 && {
+        roleId: { in: input.roleId },
+      }),
       ...(input.seniorityId.length > 0 && {
         seniorityId: { in: input.seniorityId },
       }),
-      ...(input.areaId.length > 0 && { areaId: { in: input.areaId } }),
+      ...(input.areaId.length > 0 && {
+        areaId: { in: input.areaId },
+      }),
       ...(input.jobOpeningId.length > 0 && {
         applications: {
           some: {
@@ -48,16 +79,43 @@ export const fetchAll = protectedProcedure
         },
       }),
       ...(input.tagId.length > 0 && {
-        tags: { some: { id: { in: input.tagId } } },
+        tags: {
+          some: {
+            id: { in: input.tagId },
+          },
+        },
       }),
       ...(input.search && {
         OR: [
-          { name: { contains: input.search, mode: "insensitive" } },
-          { lastName: { contains: input.search, mode: "insensitive" } },
-          { email: { contains: input.search, mode: "insensitive" } },
+          {
+            name: {
+              contains: input.search,
+              mode: "insensitive",
+            },
+          },
+          {
+            lastName: {
+              contains: input.search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: input.search,
+              mode: "insensitive",
+            },
+          },
         ],
       }),
-      ...(input.source.length > 0 && { source: { in: input.source } }),
+      ...(input.source.length > 0 && {
+        source: {
+          in: input.source,
+        },
+      }),
+    };
+
+    const where: Prisma.ApplicantWhereInput = {
+      AND: [accessWhere, filtersWhere],
     };
 
     try {
@@ -65,21 +123,65 @@ export const fetchAll = protectedProcedure
         where,
         skip: (input.page - 1) * 8,
         take: 8,
-        orderBy: { id: "asc" },
+        orderBy: {
+          id: "asc",
+        },
         include: {
-          role: { select: { name: true } },
-          tags: { select: { name: true, color: true } },
-          seniority: { select: { name: true, color: true } },
-          applications: {
-            where: { active: true },
-            orderBy: { applicationDate: "desc" },
-            include: { jobOpening: { select: { name: true } } },
+          role: {
+            select: {
+              name: true,
+            },
           },
-          area: { select: { name: true } },
+          tags: {
+            select: {
+              name: true,
+              color: true,
+            },
+          },
+          seniority: {
+            select: {
+              name: true,
+              color: true,
+            },
+          },
+          applications: {
+            where: canReadAllResult.success
+              ? {
+                  active: true,
+                }
+              : {
+                  active: true,
+                  jobOpening: {
+                    hiringManagers: {
+                      some: {
+                        id: ctx.session.user.id,
+                      },
+                    },
+                  },
+                },
+            orderBy: {
+              applicationDate: "desc",
+            },
+            include: {
+              jobOpening: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          area: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
 
-      return { applicants: result };
+      return {
+        applicants: result,
+      };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw new TRPCError({
