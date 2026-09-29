@@ -3,7 +3,7 @@
 import { JobOpeningFormValues } from "./new-job-opening-form";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Controller, useFieldArray, useFormContext, UseFormRegister } from "react-hook-form";
+import { Controller, useFieldArray, UseFieldArrayUpdate, useFormContext, UseFormRegister } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
@@ -11,13 +11,23 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Stage, Stages, Template } from "../utils";
 import { useForm } from "react-hook-form";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { cn } from "~/lib/utils";
+import { Button } from "@base-ui/react";
+
+const types = [
+  {name : "Ninguna", key: 0}, 
+  {name: "Entrevista", key: 1}, 
+  {name: "Oferta", key: 2}, 
+  {name: "Contratado", key: 3},
+]
 
 export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<SetStateAction<Stages>>, form:ReturnType<typeof useForm<JobOpeningFormValues>>}) {
   const {
     control,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
-  const { fields, replace, remove, insert,} = useFieldArray({ 
+  const { fields, replace, remove, insert, update} = useFieldArray({ 
     control, 
     name: "stages",
   });
@@ -68,6 +78,22 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
     remove(index)
   }
 
+  const [openType, setOpenType] = useState<string| null>(null)
+  function updateType(stageKey:string, typeKey:number) {
+    const newType = types[typeKey].name
+    const index = getStageIndex(stageKey)
+    props.setStages((currentStages:Stages) => {
+      const newStages = currentStages.map((stage)=> {
+        return stage.key === stageKey
+        ? { ...stage, type: newType }
+        : stage
+      })
+      return newStages
+    })
+    update(index, {...fields[index], type:newType})
+  }
+
+
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
@@ -95,6 +121,9 @@ export default function OpeningStage(props: {stages:Stages, setStages:Dispatch<S
                   endKey={endKey}
                   onDragEnd={handleDragEnd}
                   removeStage={removeStage}
+                  setOpenType={setOpenType}
+                  openType={openType}
+                  update={updateType}
                 />
               ))}
             </DndProvider>
@@ -125,6 +154,9 @@ function IndividualStage(
     endKey:string, 
     onDragEnd:()=>void, 
     removeStage:(key:string)=>void, 
+    openType: string | null,
+    setOpenType:(key:string | null)=>void,
+    update: (stageKey:string, typeKey:number) => void
   }
 ){
   const {register} = useFormContext<JobOpeningFormValues>();
@@ -204,10 +236,41 @@ function IndividualStage(
               className="w-auto rounded-md border border-border-default bg-transparent px-2 py-1 text-[13px]"
             />
           </div>
-          <div className="flex items-center gap-1 flex-nowrap rounded-full border border-border-default px-3 py-1 text-[12px] font-medium text-text-secondary">
-            {props.stage.type}
-            <ChevronDown className="h-3 w-3 text-text-tertiary" />
-          </div>
+
+          {/*combobox type*/}
+          <Popover
+            key={props.stage.key}
+            open={props.openType === props.stage.key}
+            onOpenChange={(open) => {
+              props.setOpenType(open ? props.stage.key : null);
+            }}
+          >
+            <PopoverTrigger
+              className={cn(
+                "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text",)}
+            >
+              <span>{props.stage.type}</span>
+              <ChevronDown
+                size={14}
+                className={cn("text-dashboard-text-muted")}
+              />
+            </PopoverTrigger>
+            <PopoverContent align="start" className="w-56 rounded-xl p-3">
+              {types.map((type) => (
+                <Button
+                  key={type.key}
+                  type="button"
+                  className="flex cursor-pointer items-center gap-2"
+                  onClick={()=>{
+                    props.update(props.stage.key, type.key)
+                    props.setOpenType(null)
+                  }}
+                >
+                  {type.name}
+                </Button>
+              ))}
+            </PopoverContent>
+          </Popover>
           <button 
             className="flex items-center justify-center rounded-md p-1 hover:bg-surface-sunken"
             onClick={()=>{props.removeStage(props.stage.key)}}
