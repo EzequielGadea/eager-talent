@@ -7,6 +7,7 @@ export type FilterKey =
 export type ApplicantsSearchParams = {
   search?: string | string[];
   page?: string | string[];
+  sharedPage?: string | string[];
   role?: string | string[];
   jobOpening?: string | string[];
   seniority?: string | string[];
@@ -38,9 +39,13 @@ export interface ApplicantInfo {
   hasLinkedin: boolean;
   linkedinUrl: string;
   email: string;
+  currentStage: string | null;
 }
 
 export type ApplicantsPromise = ReturnType<typeof api.applicant.fetchAll>;
+export type SharedApplicantsPromise = ReturnType<
+  typeof api.applicant.fetchShared
+>;
 
 export interface FiltersProps {
   roleData: Awaited<ReturnType<typeof api.role.getAllRoles>>;
@@ -48,6 +53,7 @@ export interface FiltersProps {
   areaData: Awaited<ReturnType<typeof api.area.getAllAreas>>;
   jobOpeningData: Awaited<ReturnType<typeof api.jobOpening.getAllJobOpenings>>;
   tagData: Awaited<ReturnType<typeof api.tag.getAllTags>>;
+  isHiringManagerView: boolean;
 }
 
 export function getRandomColor() {
