@@ -36,7 +36,7 @@ export function ApplicantLogsFilter({
             size="sm"
             disabled={applications.length === 0}
             aria-label="Filtrar logs por postulación"
-            className="relative h-auto min-h-11 w-96 max-w-[calc(100vw-2rem)] gap-2 rounded-xl border-border-strong bg-background py-2 pl-3 pr-8 text-left text-sm font-semibold text-text-primary"
+            className="relative h-auto min-h-11 w-full max-w-96 gap-2 rounded-xl border-border-strong bg-background py-2 pl-3 pr-8 text-left text-sm font-semibold text-text-primary @[640px]/card-header:w-96"
           />
         }
       >

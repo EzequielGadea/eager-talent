@@ -4,7 +4,8 @@ import { headers } from "next/headers";
 import { NotesEditor } from "~/components/notes-editor";
 import { api } from "~/lib/trpc/server";
 import { auth } from "~/lib/auth";
-import type { Applicant } from "./applicant-details";
+
+type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
 type ApplicantNotesProps = {
   applicantPromise: Promise<Applicant>;

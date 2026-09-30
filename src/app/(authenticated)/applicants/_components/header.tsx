@@ -14,15 +14,15 @@ export function Header(props: {
       {/* Cabezal */}
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-dashboard-dark">
+          <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
             Candidatos
           </h1>
           {props.countApplicants == 0 ? (
-            <p className="mt-0.5 text-base font-medium text-dashboard-text-muted">
+            <p className="mt-1 text-sm font-normal leading-normal text-dashboard-text-muted">
               No hay candidatos
             </p>
           ) : (
-            <p className="mt-0.5 text-base font-medium text-dashboard-text-muted">
+            <p className="mt-1 text-sm font-normal leading-normal text-dashboard-text-muted">
               {props.countApplicants} candidatos activos en{" "}
               {props.countOpenings} vacantes
             </p>
@@ -34,7 +34,7 @@ export function Header(props: {
           <Button
             size="sm"
             onClick={() => router.push("/applicants/new-applicant")}
-            className="h-9 gap-1.5 rounded-full bg-dashboard-dark px-5 py-5 text-sm font-medium text-white shadow-xs hover:bg-dashboard-dark-hover"
+            className="h-8.5 gap-2 rounded-full bg-dashboard-dark px-4 text-[13px] font-semibold text-white shadow-none hover:bg-dashboard-dark-hover"
           >
             <Plus size={16} strokeWidth={2.5} />
             <span>Nuevo candidato</span>

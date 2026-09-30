@@ -87,6 +87,7 @@ export function AppSidebar() {
           <NavigationItem
             icon={<VacanciesIcon className="size-4.5" aria-hidden="true" />}
             label="Vacantes"
+            href="/job-openings"
           />
 
           <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
