@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
+import { useTransition } from "react";
 import {
   Dialog,
   DialogContent,
@@ -38,13 +40,14 @@ import {
   FieldError,
 } from "~/components/ui/field";
 import { Button } from "~/components/ui/button";
+import { toast } from "~/components/ui/toast";
 
 const applicationFormSchema = z.object({
-  applicantId: z.string({ error: "Debe indicar a quién postula." }),
-  jobOpeningId: z.string({ error: "Debe indicar la vacante." }),
+  applicantId: z.string({ error: "Debe indicar a quién postula" }),
+  jobOpeningId: z.string({ error: "Debe indicar la vacante" }),
   desiredSalary: z.coerce
-    .number({ error: "Debe indicar el salario." })
-    .positive({ error: "Salario negativo?" }),
+    .number({ error: "Debe indicar el salario" })
+    .positive({ error: "El salario debe ser positivo" }),
   currency: z.enum(SalaryCurrency, { error: "Debe elegir una moneda" }),
   availability: z
     .string({ error: "Debe indicar la disponibilidad" })
@@ -60,29 +63,44 @@ export function ApplyToVacantDialog({
   setShowDialog: (show: boolean) => void;
   applicantId: string;
 }) {
+  const router = useRouter();
+  const [isTransitionPending, startTransition] = useTransition();
+  const utils = api.useUtils();
+
   const {
     control,
     handleSubmit,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<
     z.input<typeof applicationFormSchema>,
     unknown,
     z.output<typeof applicationFormSchema>
   >({
     resolver: zodResolver(applicationFormSchema),
+    mode: "onChange",
     defaultValues: {
-      applicantId: applicantId,
+      applicantId,
+      jobOpeningId: "",
+      desiredSalary: "",
+      availability: "",
     },
   });
 
   const createApplicationMutation =
     api.application.createApplication.useMutation({
-      onSuccess: () => {
-        reset();
-        setTimeout(() => {}, 200);
-        setShowDialog(false);
+      onSuccess: async () => {
+        toast.add({
+          title: "Postulación creada correctamente",
+          type: "success",
+        });
+        await utils.jobOpening.getAllJobOpenings.invalidate({ applicantId });
+        startTransition(() => {
+          reset();
+          setShowDialog(false);
+          router.refresh();
+        });
       },
       onError: (e) => {
         if (e.data?.code === "CONFLICT") {
@@ -95,7 +113,6 @@ export function ApplyToVacantDialog({
         setError("root", {
           message: e.message,
         });
-        console.log("hubo error...");
       },
     });
 
@@ -111,8 +128,14 @@ export function ApplyToVacantDialog({
     });
   }
 
-  const { data: jobOpenings, isLoading: isLoadingJobOpening } =
-    api.jobOpening.getAllJobOpenings.useQuery({});
+  const {
+    data: jobOpenings,
+    isLoading: isLoadingJobOpening,
+    error: jobOpeningsError,
+  } = api.jobOpening.getAllJobOpenings.useQuery(
+    { applicantId },
+    { enabled: showDialog },
+  );
 
   const isJobOpeningSelected = useWatch({
     control,
@@ -135,6 +158,21 @@ export function ApplyToVacantDialog({
                 {errors.root.message}
               </div>
             )}
+            {jobOpeningsError && (
+              <div
+                role="alert"
+                className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              >
+                {jobOpeningsError.message}
+              </div>
+            )}
+            {!isLoadingJobOpening &&
+              !jobOpeningsError &&
+              jobOpenings?.length === 0 && (
+                <p className="mb-4 rounded-md border border-border-default bg-muted px-3 py-2 text-sm text-text-secondary">
+                  No hay vacantes sin postulación para este candidato.
+                </p>
+              )}
             <FieldGroup>
               <Controller
                 control={control}
@@ -148,7 +186,7 @@ export function ApplyToVacantDialog({
                     <Field>
                       <FieldLabel>Vacante</FieldLabel>
                       <Combobox
-                        items={jobOpenings}
+                        items={jobOpenings ?? []}
                         name={field.name}
                         value={selected}
                         autoHighlight
@@ -229,7 +267,7 @@ export function ApplyToVacantDialog({
                     <Field>
                       <FieldLabel>Moneda</FieldLabel>
                       <Select
-                        value={field.value}
+                        value={field.value ?? null}
                         onValueChange={field.onChange}
                         disabled={!isJobOpeningSelected}
                       >
@@ -260,9 +298,16 @@ export function ApplyToVacantDialog({
               </Button>
               <Button
                 type="submit"
-                disabled={createApplicationMutation.isPending}
+                disabled={
+                  createApplicationMutation.isPending ||
+                  isTransitionPending ||
+                  isLoadingJobOpening ||
+                  !!jobOpeningsError ||
+                  !isValid ||
+                  !jobOpenings?.length
+                }
               >
-                {createApplicationMutation.isPending
+                {createApplicationMutation.isPending || isTransitionPending
                   ? "Enviando..."
                   : "Postular"}
               </Button>
