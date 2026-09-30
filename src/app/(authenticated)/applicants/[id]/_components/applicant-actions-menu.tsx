@@ -68,7 +68,7 @@ export function ApplicantActionsMenu({
                 }}
               >
                 <Briefcase className="size-4" />
-                <span>Postular candidato</span>
+                <span>Postular a otra vacante</span>
               </DropdownMenuItem>
             </>
           )}
