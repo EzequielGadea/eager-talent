@@ -30,19 +30,44 @@ const modalityLabels: Record<string, string> = {
   InPerson: "Presencial",
 };
 
-const scheduleInterviewSchema = z.object({
-  name: z.string().trim().min(1, "El nombre es obligatorio."),
-  modality: z.string().min(1, "Seleccioná una modalidad."),
-  duration: z
-    .number({ message: "Ingresá la duración en minutos." })
-    .int()
-    .positive("La duración debe ser mayor a 0."),
-  date: z.string().min(1, "Seleccioná una fecha."),
-  time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Formato: HH:MM"),
-  interviewerIds: z
-    .array(z.string())
-    .min(1, "Seleccioná al menos un entrevistador."),
-});
+const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+const scheduleInterviewSchema = z
+  .object({
+    name: z.string().trim().min(1, "El nombre es obligatorio."),
+    modality: z.string().min(1, "Seleccioná una modalidad."),
+    duration: z
+      .number({ message: "Ingresá la duración en minutos." })
+      .int()
+      .positive("La duración debe ser mayor a 0."),
+    date: z.string().min(1, "Seleccioná una fecha."),
+    time: z.string().regex(TIME_REGEX, "Formato: HH:MM"),
+    interviewerIds: z
+      .array(z.string())
+      .min(1, "Seleccioná al menos un entrevistador."),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.date || !TIME_REGEX.test(data.time)) return;
+
+    const scheduledAt = new Date(`${data.date}T${data.time}`);
+
+    if (
+      Number.isNaN(scheduledAt.getTime()) ||
+      scheduledAt.getTime() <= Date.now()
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["date"],
+        message: "La fecha y hora deben ser posteriores al momento actual.",
+      });
+    }
+  });
+
+function getTodayLocalISO() {
+  const now = new Date();
+  const offsetMs = now.getTimezoneOffset() * 60_000;
+  return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
+}
 
 type ScheduleInterviewFormValues = z.infer<typeof scheduleInterviewSchema>;
 
@@ -201,7 +226,12 @@ export function ScheduleInterviewDialog({
               Fecha y hora
             </label>
             <div className="flex gap-2">
-              <Input type="date" className="flex-1" {...register("date")} />
+              <Input
+                type="date"
+                className="flex-1"
+                min={getTodayLocalISO()}
+                {...register("date")}
+              />
               <Input
                 type="text"
                 placeholder="14:30"

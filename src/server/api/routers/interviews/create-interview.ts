@@ -15,7 +15,9 @@ export const createInterviewProcedure = protectedProcedure
       name: z.string().trim().min(1, "El nombre es obligatorio."),
       duration: z.number().int().positive(),
       modality: z.enum(InterviewType),
-      date: z.coerce.date(),
+      date: z.coerce.date().refine((d) => d.getTime() > Date.now(), {
+        message: "La fecha y hora de la entrevista deben ser futuras.",
+      }),
       interviewerIds: z
         .array(z.string())
         .min(1, "Seleccioná al menos un entrevistador."),
