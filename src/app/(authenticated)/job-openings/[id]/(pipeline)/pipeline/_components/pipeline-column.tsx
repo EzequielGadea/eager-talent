@@ -1,4 +1,5 @@
 import { api } from "~/lib/trpc/server";
+import { stageAllowsInterview } from "~/lib/interview-stages";
 
 import { PipelineColumnClient } from "./pipeline-column-client";
 import type { PipelineStage } from "./types";
@@ -42,6 +43,7 @@ export async function PipelineColumn({
   });
 
   const stageColor = getStageColor(stage.name);
+  const canScheduleInterviewInStage = stageAllowsInterview(stage);
 
   return (
     <section
@@ -65,7 +67,7 @@ export async function PipelineColumn({
         initialCandidates={data.candidates}
         total={data.total}
         canUpdateApplication={canUpdateApplication}
-        canCreateInterview={canCreateInterview}
+        canCreateInterview={canCreateInterview && canScheduleInterviewInStage}
       />
     </section>
   );
