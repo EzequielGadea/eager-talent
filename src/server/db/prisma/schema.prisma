@@ -186,7 +186,7 @@ model ApplicantHiringManager {
   applicantId     String @map("applicant_id")
   hiringManagerId String @map("hiring_manager_id")
   sharedByUserId  String @map("shared_by_user_id")
-  viewedAt        DateTime? @map("viewed_at")
+  viewed          Boolean @default(false)
 
   applicant     Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   hiringManager User      @relation("ApplicantHiringManager", fields: [hiringManagerId], references: [id], onDelete: Cascade)
