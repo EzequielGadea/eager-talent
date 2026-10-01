@@ -6,6 +6,7 @@ import { fetchAll } from "./fetch-all";
 import { fetchAmount } from "./fetch-amount";
 import { getApplicantByIdProcedure } from "./get-by-id";
 import { fetchShared } from "./fetch-shared";
+
 export { getApplicantByIdProcedure };
 
 export { createApplicant };

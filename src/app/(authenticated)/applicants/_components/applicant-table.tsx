@@ -65,7 +65,7 @@ export function ApplicantTable(props: {
           }
         >
           {props.isHiringManagerView ? (
-            <HiringManagerApplicantTableHeader />
+            <HiringManagerApplicantTableHeader showSharedBy={false} />
           ) : (
             <ApplicantTableHeader />
           )}
@@ -91,6 +91,7 @@ export function ApplicantTable(props: {
                 <HiringManagerApplicantRow
                   key={applicant.id}
                   applicant={applicant}
+                    showSharedBy={false}
                 />
               ))
             ) : (
@@ -114,29 +115,31 @@ export function ApplicantTable(props: {
   );
 }
 
-export function HiringManagerApplicantTableHeader() {
+export function HiringManagerApplicantTableHeader({
+  showSharedBy,
+}: {
+  showSharedBy: boolean;
+}) {
   return (
     <TableHeader>
-      <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-        <TableHead className="w-[28%] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+      <TableRow>
+        <TableHead className={showSharedBy ? "w-[30%]" : "w-[35%]"}>
           Candidato
         </TableHead>
 
-        <TableHead className="w-[24%] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={showSharedBy ? "w-[25%]" : "w-[35%]"}>
           Vacante
         </TableHead>
 
-        <TableHead className="w-[20%] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
+        <TableHead className={showSharedBy ? "w-[25%]" : "w-[30%]"}>
           Etapa / Estado
         </TableHead>
 
-        <TableHead className="w-[16%] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
-          Enviado por
-        </TableHead>
-
-        <TableHead className="w-[12%] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-dashboard-text-light">
-          Actividad
-        </TableHead>
+        {showSharedBy && (
+          <TableHead className="w-[20%]">
+            Enviado por
+          </TableHead>
+        )}
       </TableRow>
     </TableHeader>
   );

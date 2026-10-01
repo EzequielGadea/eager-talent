@@ -52,7 +52,7 @@ export function SharedApplicantsTable(props: {
       <div className="w-full overflow-hidden rounded-b-xl border-x border-b border-dashboard-border bg-white shadow-sm">
         <div className="w-full overflow-x-auto">
           <Table className="min-w-200 table-fixed">
-            <HiringManagerApplicantTableHeader />
+            <HiringManagerApplicantTableHeader showSharedBy={true}/>
 
             <TableBody className="divide-y divide-dashboard-border">
               {isPending ? (
@@ -71,6 +71,7 @@ export function SharedApplicantsTable(props: {
                   <HiringManagerApplicantRow
                     key={applicant.id}
                     applicant={applicant}
+                      showSharedBy={true}
                   />
                 ))
               )}

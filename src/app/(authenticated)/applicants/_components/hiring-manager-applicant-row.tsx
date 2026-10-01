@@ -24,8 +24,10 @@ function getSafeExternalUrl(value: string | null): string | null {
 
 export function HiringManagerApplicantRow({
   applicant,
+  showSharedBy,
 }: {
   applicant: ApplicantInfo;
+  showSharedBy: boolean;
 }) {
   const router = useRouter();
   const photoUrl = getSafeExternalUrl(applicant.photo);
@@ -87,24 +89,28 @@ export function HiringManagerApplicantRow({
       </TableCell>
 
       <TableCell className="px-4 py-3">
-        {applicant.currentStage ? (
-          <span className="inline-flex rounded-full bg-tag-green-bg px-2.5 py-1 text-xs font-semibold text-tag-green-fg">
-            {applicant.currentStage}
-          </span>
-        ) : (
-          <span className="inline-flex rounded-full bg-tag-gray-bg px-2.5 py-1 text-xs font-semibold text-tag-gray-fg">
-            Compartido para revisar
-          </span>
-        )}
+       {applicant.currentStage ? (
+  <span className="...">
+    {applicant.currentStage}
+  </span>
+) : applicant.viewed ? (
+  <span className="inline-flex rounded-full bg-tag-green-bg px-2.5 py-1 text-xs font-semibold text-tag-green-fg">
+    Visto
+  </span>
+) : (
+  <span className="inline-flex rounded-full bg-tag-purple-bg px-2.5 py-1 text-xs font-semibold text-tag-purple-fg">
+    Compartido para revisar
+  </span>
+)}
       </TableCell>
 
-      <TableCell className="px-4 py-3 text-sm text-dashboard-text-muted">
-        -
-      </TableCell>
+       {showSharedBy && (
+        <TableCell>
+          {applicant.sharedBy ?? "-"}
+        </TableCell>
+      )}
 
-      <TableCell className="px-4 py-3 text-sm text-dashboard-text-muted">
-        -
-      </TableCell>
+     
     </TableRow>
   );
 }
