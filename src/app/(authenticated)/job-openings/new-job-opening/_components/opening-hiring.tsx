@@ -9,6 +9,18 @@ import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import Image from "next/image";
 
+import {
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+} from "~/components/ui/combobox";
+
 import { api } from "~/lib/trpc/react";
 
 import {
@@ -75,7 +87,7 @@ export default function OpeningHiring() {
                           className="size-6 shrink-0 rounded-full object-cover"
                         />
                       ) : (
-                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-xs">
+                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-tag-purple-bg text-xs text-tag-purple-fg">
                           {getInitials(manager.name, manager.lastName)}
                         </span>
                       )}
@@ -83,6 +95,7 @@ export default function OpeningHiring() {
                       <span>
                         {manager.name} {manager.lastName}
                       </span>
+
                       <button
                         type="button"
                         onClick={() => {
@@ -101,35 +114,83 @@ export default function OpeningHiring() {
                   ))}
                 </div>
 
-                <Select
-                  value=""
-                  onValueChange={(managerId) => {
-                    if (managerId && !field.value.includes(managerId)) {
-                      field.onChange([...field.value, managerId]);
+                <div className="w-1/2">
+                  <Combobox
+                    value=""
+                    onValueChange={(managerId) => {
+                      if (managerId && !field.value.includes(managerId)) {
+                        field.onChange([...field.value, managerId]);
+                      }
+                    }}
+                    disabled={
+                      isLoadingManager || availableManagers?.length === 0
                     }
-                  }}
-                  disabled={isLoadingManager || availableManagers?.length === 0}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
+                  >
+                    <ComboboxInput
+                      className="w-full rounded-md focus-within:!border-border-focus focus-within:!ring-3 focus-within:!ring-accent-green/30"
                       placeholder={
                         isLoadingManager
                           ? "Cargando hiring managers..."
                           : availableManagers?.length === 0
                             ? "Todos los hiring managers fueron seleccionados"
-                            : "Seleccionar hiring manager"
+                            : "Buscar hiring manager"
                       }
                     />
-                  </SelectTrigger>
 
-                  <SelectContent>
-                    {availableManagers?.map((manager) => (
-                      <SelectItem key={manager.id} value={manager.id}>
-                        {manager.name} {manager.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <ComboboxContent>
+                      <ComboboxList>
+                        <ComboboxGroup>
+                          <ComboboxLabel className="px-4 py-3 text-xs font-bold text-text-tertiary">
+                            USUARIOS DEL SISTEMA
+                          </ComboboxLabel>
+
+                          {availableManagers?.map((manager) => (
+                            <ComboboxItem
+                              key={manager.id}
+                              value={manager.id}
+                              className="flex items-center justify-between"
+                            >
+                              <span className="flex min-w-0 items-center gap-2">
+                                {manager.image ? (
+                                  <Image
+                                    src={manager.image}
+                                    alt=""
+                                    width={24}
+                                    height={24}
+                                    className="size-6 shrink-0 rounded-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-xs text-text-secondary">
+                                    {getInitials(
+                                      manager.name,
+                                      manager.lastName,
+                                    )}
+                                  </span>
+                                )}
+                                <span className="truncate">
+                                  {manager.name} {manager.lastName}
+                                </span>
+                              </span>
+                              <span className="ml-4 shrink-0 text-xs text-text-tertiary">
+                                {manager._count.assignedJobOpenings}{" "}
+                                {manager._count.assignedJobOpenings === 1
+                                  ? "vacante"
+                                  : "vacantes"}
+                              </span>
+                            </ComboboxItem>
+                          ))}
+                        </ComboboxGroup>
+                      </ComboboxList>
+                      <div className="mt-2 border-t border-border-default p-4">
+                        <p className="text-xs leading-relaxed text-text-tertiary">
+                          Solo podés asignar usuarios existentes. Invitá nuevos
+                          desde <br />
+                          Configuración → Usuarios.
+                        </p>
+                      </div>
+                    </ComboboxContent>
+                  </Combobox>
+                </div>
               </div>
             );
           }}
