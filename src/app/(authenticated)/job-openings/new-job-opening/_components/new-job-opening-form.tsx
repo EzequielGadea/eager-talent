@@ -22,10 +22,13 @@ import { Card, CardContent } from "~/components/ui/card";
 
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
+import { DndProvider } from "react-dnd";
+import { dndManager } from "../dnd-manager";
+
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
-import { Stages, Template } from "../utils";
+import { Template } from "../utils";
 import { useState } from "react";
 
 const stageSchema = z.object({
@@ -34,54 +37,81 @@ const stageSchema = z.object({
   type: z.string(),
   color: z.string(),
   label: z.string(),
-})
-  
-export const jobOpeningFormSchema = z.object({
-  name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
-  area: z.string().min(1, "El area de la vacante es obligatoria"),
-  status: z.enum(JobOpeningStatus),
-  seniorityIds: z.array(z.string()).min(1, "Selecciona al menos un seniority"),
-  location: z.string().min(1, "Selecciona una ubicación"),
-  openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
-  closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
-  hiringManagerIds: z.array(z.string()),
-  stages: z.array(stageSchema).superRefine((stages, ctx) => {
-      const errors: string[] = []
+});
+
+export const jobOpeningFormSchema = z
+  .object({
+    name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
+    area: z.string().min(1, "El area de la vacante es obligatoria"),
+    status: z.enum(JobOpeningStatus),
+    seniorityIds: z
+      .array(z.string())
+      .min(1, "Selecciona al menos un seniority"),
+    location: z.string().min(1, "Selecciona una ubicación"),
+    openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
+    closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
+    hiringManagerIds: z.array(z.string()),
+    stages: z.array(stageSchema).superRefine((stages, ctx) => {
+      const errors: string[] = [];
       if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
-        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'")
+        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'");
       }
 
-      if (stages[stages.length - 1]?.name !== "Contratado/a" || stages[stages.length - 1]?.type !== "Ninguna") {
-        errors.push("La última etapa debe ser 'Contratado/a' de tipo 'Ninguna'")
+      if (
+        stages[stages.length - 1]?.name !== "Contratado/a" ||
+        stages[stages.length - 1]?.type !== "Ninguna"
+      ) {
+        errors.push(
+          "La última etapa debe ser 'Contratado/a' de tipo 'Ninguna'",
+        );
       }
 
-      if (!stages.some((stage) => stage.name === "Entrevista Técnica" && stage.type === "Entrevista")) {
-        errors.push("Debe haber una etapa de 'Entrevista Técnica' de tipo 'Entrevista")
+      if (
+        !stages.some(
+          (stage) =>
+            stage.name === "Entrevista técnica" && stage.type === "Entrevista",
+        )
+      ) {
+        errors.push(
+          "Debe haber una etapa de 'Entrevista técnica' de tipo 'Entrevista",
+        );
       }
 
-      if (!stages.some((stage) => stage.name === "Entrevista HR" && stage.type === "Entrevista")) {
-          errors.push("Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista")
+      if (
+        !stages.some(
+          (stage) =>
+            stage.name === "Entrevista HR" && stage.type === "Entrevista",
+        )
+      ) {
+        errors.push(
+          "Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista",
+        );
       }
 
-      if (!stages.some((stage) => stage.name === "Oferta" && stage.type === "Oferta")) {
-        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta")
+      if (
+        !stages.some(
+          (stage) => stage.name === "Oferta" && stage.type === "Oferta",
+        )
+      ) {
+        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta");
       }
-      if (errors.length){
+      if (errors.length) {
         ctx.addIssue({
           code: "custom",
           path: [],
-          message: errors.join(",\n")
-        })
+          message: errors.join(",\n"),
+        });
       }
-    })
-  }).refine((data) => data.closingDate >= data.openingDate, {
+    }),
+  })
+  .refine((data) => data.closingDate >= data.openingDate, {
     path: ["closingDate"],
     message: "La fecha de cierre no puede ser anterior a la fecha de apertura",
   });
 
 export type JobOpeningFormValues = z.infer<typeof jobOpeningFormSchema>;
 
-export default function NewJobOpeningForm(props: {templateStages:Template}) {
+export default function NewJobOpeningForm(props: { templateStages: Template }) {
   const router = useRouter();
   const methods = useForm<JobOpeningFormValues>({
     resolver: zodResolver(jobOpeningFormSchema),
@@ -129,7 +159,7 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
     router.push("/job-openings");
   }
 
-  const [stages, setStages] = useState(props.templateStages.stages)
+  const [stages, setStages] = useState(props.templateStages.stages);
 
   return (
     <FormProvider {...methods}>
@@ -139,7 +169,15 @@ export default function NewJobOpeningForm(props: {templateStages:Template}) {
       >
         <OpeningData />
         <OpeningDate />
-        {<OpeningStage stages={stages} setStages={setStages} form={methods}/>}
+        <DndProvider manager={dndManager}>
+          {
+            <OpeningStage
+              stages={stages}
+              setStages={setStages}
+              form={methods}
+            />
+          }
+        </DndProvider>
         <OpeningHiring />
         <Card className="w-full items-end rounded-x1 shadow-sm">
           <CardContent>

@@ -11,16 +11,15 @@ const stageSchema = z.object({
   color: z.string(),
 });
 
-export const getDefault = protectedProcedure
-  .query(async ({ ctx }) => {
-    const template = await ctx.db.stageTemplate.findFirst({
-      //where: { default:true }, TODO forma de saber cual es la por defecto
-      select: {stages:true, id:true}
-    });
-    
-    if (!template) {
-      throw new TRPCError({ code: "NOT_FOUND" });
-    }
-    const stages = z.array(stageSchema).parse(template.stages)
-    return {id: template?.id, stages,};
+export const getDefault = protectedProcedure.query(async ({ ctx }) => {
+  const template = await ctx.db.stageTemplate.findFirst({
+    //where: { default:true }, TODO forma de saber cual es la por defecto
+    select: { stages: true, id: true },
   });
+
+  if (!template) {
+    throw new TRPCError({ code: "NOT_FOUND" });
+  }
+  const stages = z.array(stageSchema).parse(template.stages);
+  return { id: template?.id, stages };
+});
