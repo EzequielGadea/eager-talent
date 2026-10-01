@@ -11,7 +11,15 @@ export const getAllHiringManagers = protectedProcedure
         role: "hiringManager",
       },
       select: {
-        user: true,
+        user: {
+          include: {
+            _count: {
+              select: {
+                assignedJobOpenings: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!hiringManagers) {

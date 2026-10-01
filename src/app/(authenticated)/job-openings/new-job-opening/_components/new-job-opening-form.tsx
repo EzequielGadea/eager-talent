@@ -24,18 +24,26 @@ import NewJobOpeningButtonProps from "./new-job-opening-button";
 
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
+import { toast } from "~/components/ui/toast";
 
-export const jobOpeningFormSchema = z.object({
-  name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
-  area: z.string().min(1, "El area de la vacante es obligatoria"),
-  status: z.enum(JobOpeningStatus),
-  seniorityIds: z.array(z.string()).min(1, "Selecciona al menos un seniority"),
-  location: z.string().min(1, "Selecciona una ubicación"),
-  openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
-  closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
-  hiringManagerIds: z.array(z.string()),
-  // stages: z.json().optional(),
-});
+export const jobOpeningFormSchema = z
+  .object({
+    name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
+    area: z.string().min(1, "El area de la vacante es obligatoria"),
+    status: z.enum(JobOpeningStatus),
+    seniorityIds: z
+      .array(z.string())
+      .min(1, "Selecciona al menos un seniority"),
+    location: z.string().min(1, "Selecciona una ubicación"),
+    openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
+    closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
+    hiringManagerIds: z.array(z.string()),
+    // stages: z.json().optional(),
+  })
+  .refine((data) => data.closingDate >= data.openingDate, {
+    path: ["closingDate"],
+    message: "La fecha de cierre no puede ser anterior a la fecha de apertura",
+  });
 
 export type JobOpeningFormValues = z.infer<typeof jobOpeningFormSchema>;
 
@@ -55,7 +63,11 @@ export default function NewJobOpeningForm() {
     },
   });
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
+      toast.add({
+        title: "Vacante creada correctamente",
+        type: "success",
+      });
       // router.push(`/job-openings/${data.id}`); DESCOMENTAR CUANDO ESTE IMPLEMENTADO LA CONSULTA DE VACANTE
       router.push("/job-openings");
     },

@@ -1,20 +1,47 @@
-"use client";
+import "server-only";
+import { headers } from "next/headers";
+import { Suspense } from "react";
+import { z } from "zod";
+import JobOpeningsFallback from "./_components/job-openings-fallback";
+import { auth } from "~/lib/auth";
+import JobOpeningsList from "./_components/job-opening-list";
 
-import { redirect } from "next/navigation";
-import { Button } from "~/components/ui/button";
-import { Plus } from "lucide-react";
+const jobOpeningsSearchParamsSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+});
 
-export default function jobOpeningPage() {
+export default function JobOpeningsPage(props: {
+  searchParams?: Promise<{ page?: string }>;
+}) {
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        size="sm"
-        onClick={() => redirect("/job-openings/new-job-opening")}
-        className="h-9 gap-1.5 rounded-full bg-dashboard-dark px-5 py-5 text-sm font-medium text-white shadow-xs hover:bg-dashboard-dark-hover"
-      >
-        <Plus size={16} strokeWidth={2.5} />
-        <span>Nueva vacante</span>
-      </Button>
-    </div>
+    <Suspense fallback={<JobOpeningsFallback />}>
+      <JobOpeningsPageContent searchParams={props.searchParams} />
+    </Suspense>
+  );
+}
+
+async function JobOpeningsPageContent(props: {
+  searchParams?: Promise<{ page?: string }>;
+}) {
+  const rawParams = await (props.searchParams ?? Promise.resolve({}));
+
+  const params = jobOpeningsSearchParamsSchema.parse(rawParams);
+
+  const canReadAllResult = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        jobOpening: ["read"],
+      },
+    },
+  });
+
+  const isHiringManagerView = !canReadAllResult.success;
+
+  return (
+    <JobOpeningsList
+      currentPage={params.page}
+      isHiringManagerView={isHiringManagerView}
+    />
   );
 }
