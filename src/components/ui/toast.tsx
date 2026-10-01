@@ -184,8 +184,9 @@ function ToastList() {
         key={toastItem.id}
         toast={toastItem}
         className={
-          isSuccess &&
-          "border-success bg-success text-white focus-visible:border-success"
+          isSuccess
+            ? "border-success bg-success text-white focus-visible:border-success"
+            : undefined
         }
       >
         <ToastContent>
