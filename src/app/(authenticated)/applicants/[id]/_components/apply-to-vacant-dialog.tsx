@@ -91,15 +91,16 @@ export function ApplyToVacantDialog({
   const createApplicationMutation =
     api.application.createApplication.useMutation({
       onSuccess: async () => {
-        toast.add({
-          title: "Postulación creada correctamente",
-          type: "success",
-        });
         await utils.jobOpening.getAllJobOpenings.invalidate({ applicantId });
         startTransition(() => {
           reset();
           setShowDialog(false);
           router.refresh();
+        });
+        toast.add({
+          title: "Postulación creada correctamente",
+          type: "success",
+          timeout: 8000,
         });
       },
       onError: (e) => {
@@ -170,7 +171,7 @@ export function ApplyToVacantDialog({
               !jobOpeningsError &&
               jobOpenings?.length === 0 && (
                 <p className="mb-4 rounded-md border border-border-default bg-muted px-3 py-2 text-sm text-text-secondary">
-                  No hay vacantes sin postulación para este candidato.
+                  No hay vacantes en las que postular al candidato disponibles.
                 </p>
               )}
             <FieldGroup>
