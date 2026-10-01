@@ -106,10 +106,21 @@ export const globalSearch = protectedProcedure
         seniority: applicant.seniority
           ? { name: applicant.seniority.name, color: applicant.seniority.color }
           : null,
-        tags: applicant.tags.map((tag) => ({
-          name: tag.name,
-          color: tag.color,
-        })),
+        tags: applicant.tags
+          .map((tag, index) => ({
+            name: tag.name,
+            color: tag.color,
+            index,
+            matchesQuery: tag.name
+              .toLocaleLowerCase()
+              .includes(input.query.toLocaleLowerCase()),
+          }))
+          .sort(
+            (firstTag, secondTag) =>
+              Number(secondTag.matchesQuery) - Number(firstTag.matchesQuery) ||
+              firstTag.index - secondTag.index,
+          )
+          .map(({ name, color }) => ({ name, color })),
       })),
       jobOpenings: jobOpenings.map((jobOpening) => ({
         id: jobOpening.id,
