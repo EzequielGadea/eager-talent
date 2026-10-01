@@ -70,30 +70,40 @@ export default function OpeningData() {
               name="area"
               control={control}
               render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isLoadingArea}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={
-                        isLoadingArea ? "Cargando areas..." : "Seleccionar area"
-                      }
-                    >
-                      {areas?.find((areas) => areas.id === field.value)?.name}
-                    </SelectValue>
-                  </SelectTrigger>
+                <div className="space-y-2">
+                  <Select
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    disabled={isLoadingArea}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={
+                          isLoadingArea
+                            ? "Cargando areas..."
+                            : "Seleccionar area"
+                        }
+                      >
+                        {areas?.find((areas) => areas.id === field.value)?.name}
+                      </SelectValue>
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    <SelectItem value=""> Sin seleccionar</SelectItem>
-                    {areas?.map((area) => (
-                      <SelectItem key={area.id} value={area.id}>
-                        {area.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <SelectContent>
+                      <SelectItem value=""> Sin seleccionar</SelectItem>
+                      {areas?.map((area) => (
+                        <SelectItem key={area.id} value={area.id}>
+                          {area.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <button
+                    type="button"
+                    className="cursor-pointer text-xs font-medium text-text-link transition-colors hover:text-text-primary hover:underline"
+                  >
+                    Gestionar áreas
+                  </button>
+                </div>
               )}
             />
             {errors.area && (
