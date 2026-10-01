@@ -3,18 +3,11 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { Share2 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 
 import type { ApplicantInfo } from "../types";
 import { ApplicantPagination } from "./applicant-pagination";
-import {
-  HiringManagerApplicantTableHeader,
-} from "./applicant-table";
+import { HiringManagerApplicantTableHeader } from "./applicant-table";
 import { HiringManagerApplicantRow } from "./hiring-manager-applicant-row";
 import { TableFallback } from "./fallbacks";
 
@@ -44,15 +37,15 @@ export function SharedApplicantsTable(props: {
     <div className="w-full">
       <div className="rounded-t-xl border border-dashboard-border bg-tag-purple-bg px-4 py-2">
         <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.06em] text-tag-purple-fg">
-            <Share2 className="size-3.5 shrink-0" />
-            <span>Compartidos con vos · Sin vacante</span>
+          <Share2 className="size-3.5 shrink-0" />
+          <span>Compartidos con vos · Sin vacante</span>
         </div>
-        </div>
+      </div>
 
       <div className="w-full overflow-hidden rounded-b-xl border-x border-b border-dashboard-border bg-white shadow-sm">
         <div className="w-full overflow-x-auto">
           <Table className="min-w-200 table-fixed">
-            <HiringManagerApplicantTableHeader showSharedBy={true}/>
+            <HiringManagerApplicantTableHeader showSharedBy={true} />
 
             <TableBody className="divide-y divide-dashboard-border">
               {isPending ? (
@@ -71,7 +64,7 @@ export function SharedApplicantsTable(props: {
                   <HiringManagerApplicantRow
                     key={applicant.id}
                     applicant={applicant}
-                      showSharedBy={true}
+                    showSharedBy={true}
                   />
                 ))
               )}

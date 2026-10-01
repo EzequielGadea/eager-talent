@@ -98,15 +98,16 @@ export function HeaderFallback({
 
 export function TableFallback({
   isHiringManagerView = false,
+  showSharedBy = false,
 }: {
   isHiringManagerView?: boolean;
+  showSharedBy?: boolean;
 }) {
+  const colSpan = isHiringManagerView ? (showSharedBy ? 4 : 3) : 10;
+
   return (
     <TableRow className="h-17.5 hover:bg-transparent">
-      <TableCell
-        colSpan={isHiringManagerView ? 5 : 10}
-        className="px-4 py-3 text-center"
-      >
+      <TableCell colSpan={colSpan} className="px-4 py-3 text-center">
         <Loader2 className="mx-auto size-5 animate-spin text-dashboard-text-muted" />
       </TableCell>
     </TableRow>
@@ -119,12 +120,7 @@ export function FiltersFallback({
   isHiringManagerView?: boolean;
 }) {
   type FilterId =
-    | "Vacantes"
-    | "Roles"
-    | "Seniority"
-    | "Area"
-    | "Source"
-    | "Etiquetas";
+    "Vacantes" | "Roles" | "Seniority" | "Area" | "Source" | "Etiquetas";
 
   type FilterConfig = {
     id: FilterId;
