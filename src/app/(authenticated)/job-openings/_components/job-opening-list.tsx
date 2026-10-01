@@ -2,7 +2,8 @@
 
 import { Plus } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import JobOpeningsFallback from "./job-openings-fallback";
+import { HiringManagerJobOpeningsFallback } from "./hiring-manager-job-openings-fallback";
+import { RecruiterJobOpeningsFallback } from "./recruiter-job-openings-fallback";
 import { api } from "~/lib/trpc/react";
 import AssignedInterviews from "./assigned-interviews";
 import {
@@ -134,7 +135,11 @@ export default function JobOpeningsList({
   }
 
   if (isLoadingJobOpenings || isLoadingAmount) {
-    return <JobOpeningsFallback />;
+    return isHiringManagerView ? (
+      <HiringManagerJobOpeningsFallback />
+    ) : (
+      <RecruiterJobOpeningsFallback />
+    );
   }
 
   if (

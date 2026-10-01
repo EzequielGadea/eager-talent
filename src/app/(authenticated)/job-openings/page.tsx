@@ -2,8 +2,10 @@ import "server-only";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { z } from "zod";
-import JobOpeningsFallback from "./_components/job-openings-fallback";
+import { HiringManagerJobOpeningsFallback } from "./_components/hiring-manager-job-openings-fallback";
+import { RecruiterJobOpeningsFallback } from "./_components/recruiter-job-openings-fallback";
 import { auth } from "~/lib/auth";
+import { Skeleton } from "~/components/ui/skeleton";
 import JobOpeningsList from "./_components/job-opening-list";
 import {
   defaultJobOpeningSort,
@@ -29,7 +31,7 @@ const jobOpeningsSearchParamsSchema = z.object({
   withActiveCandidates: z.literal("true").optional().catch(undefined),
 });
 
-export default function JobOpeningsPage(props: {
+type JobOpeningsPageProps = {
   searchParams?: Promise<{
     page?: string;
     sort?: string;
@@ -39,29 +41,28 @@ export default function JobOpeningsPage(props: {
     openingDate?: string | string[];
     withActiveCandidates?: string | string[];
   }>;
-}) {
+};
+
+export default function JobOpeningsPage(props: JobOpeningsPageProps) {
   return (
-    <Suspense fallback={<JobOpeningsFallback />}>
+    <Suspense fallback={<JobOpeningsRoleFallback />}>
       <JobOpeningsPageContent searchParams={props.searchParams} />
     </Suspense>
   );
 }
 
-async function JobOpeningsPageContent(props: {
-  searchParams?: Promise<{
-    page?: string;
-    sort?: string;
-    status?: string | string[];
-    area?: string | string[];
-    hiringManager?: string | string[];
-    openingDate?: string | string[];
-    withActiveCandidates?: string | string[];
-  }>;
-}) {
-  const rawParams = await (props.searchParams ?? Promise.resolve({}));
+function JobOpeningsRoleFallback() {
+  return (
+    <div role="status" className="mx-auto flex w-full flex-col gap-5 p-6">
+      <span className="sr-only">Cargando vacantes</span>
+      <Skeleton className="h-8 w-44" />
+      <Skeleton className="h-4 w-64" />
+      <Skeleton className="h-148 w-full rounded-xl" />
+    </div>
+  );
+}
 
-  const params = jobOpeningsSearchParamsSchema.parse(rawParams);
-
+async function JobOpeningsPageContent(props: JobOpeningsPageProps) {
   const canReadAllResult = await auth.api.hasPermission({
     headers: await headers(),
     body: {
@@ -72,6 +73,34 @@ async function JobOpeningsPageContent(props: {
   });
 
   const isHiringManagerView = !canReadAllResult.success;
+
+  return (
+    <Suspense
+      fallback={
+        isHiringManagerView ? (
+          <HiringManagerJobOpeningsFallback />
+        ) : (
+          <RecruiterJobOpeningsFallback />
+        )
+      }
+    >
+      <JobOpeningsListContent
+        searchParams={props.searchParams}
+        isHiringManagerView={isHiringManagerView}
+      />
+    </Suspense>
+  );
+}
+
+async function JobOpeningsListContent(
+  props: JobOpeningsPageProps & {
+    isHiringManagerView: boolean;
+  },
+) {
+  const rawParams = await (props.searchParams ?? Promise.resolve({}));
+
+  const params = jobOpeningsSearchParamsSchema.parse(rawParams);
+
   const currentStatuses = params.status
     ? Array.isArray(params.status)
       ? params.status
@@ -87,7 +116,7 @@ async function JobOpeningsPageContent(props: {
       currentHiringManagerId={params.hiringManager}
       currentOpeningDateRange={params.openingDate}
       currentOnlyWithActiveCandidates={Boolean(params.withActiveCandidates)}
-      isHiringManagerView={isHiringManagerView}
+      isHiringManagerView={props.isHiringManagerView}
     />
   );
 }
