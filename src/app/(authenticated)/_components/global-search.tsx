@@ -142,7 +142,11 @@ export function GlobalSearch() {
 
   const hasApplicants = (data?.applicants.length ?? 0) > 0;
   const hasJobOpenings = (data?.jobOpenings.length ?? 0) > 0;
-  const showResults = isFocused && query.trim().length > 0;
+  const normalizedQuery = query.trim();
+  const isDebouncing = normalizedQuery !== debouncedQuery;
+  const isSearchPending =
+    normalizedQuery.length > 0 && (isDebouncing || (isLoading && !data));
+  const showResults = isFocused && normalizedQuery.length > 0;
 
   return (
     <div className="relative flex w-[calc(50%-2rem)] items-center">
@@ -186,12 +190,12 @@ export function GlobalSearch() {
           >
             <CommandList hideScrollbar={false} className="max-h-96">
               <CommandEmpty className="py-8 text-center text-sm text-text-tertiary">
-                {isLoading && !data
+                {isSearchPending
                   ? "Buscando…"
                   : `No se encontraron resultados para "${query}".`}
               </CommandEmpty>
 
-              {hasApplicants && (
+              {!isDebouncing && hasApplicants && (
                 <CommandGroup
                   heading="CANDIDATOS"
                   className={`px-2 pt-2 ${commandGroupClassName}`}
@@ -227,7 +231,7 @@ export function GlobalSearch() {
                 </CommandGroup>
               )}
 
-              {hasJobOpenings && (
+              {!isDebouncing && hasJobOpenings && (
                 <CommandGroup
                   heading="VACANTES"
                   className={`px-2 pb-2 ${commandGroupClassName}`}
