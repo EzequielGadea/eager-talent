@@ -12,7 +12,6 @@ export { getApplicantByIdProcedure };
 export { createApplicant };
 export { updateApplicant };
 
-
 export const applicantRouter = createTRPCRouter({
   createApplicant,
   getApplicantById: getApplicantByIdProcedure,

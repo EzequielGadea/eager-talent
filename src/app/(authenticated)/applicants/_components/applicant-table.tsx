@@ -31,8 +31,6 @@ export function ApplicantTable(props: {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-
-
   function updatePage(page: number) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", String(page));
@@ -71,10 +69,8 @@ export function ApplicantTable(props: {
           )}
 
           <TableBody className="divide-y divide-dashboard-border">
-           {isPending ? (
-              <TableFallback
-                isHiringManagerView={props.isHiringManagerView}
-              />
+            {isPending ? (
+              <TableFallback isHiringManagerView={props.isHiringManagerView} />
             ) : props.applicantsData.length === 0 ? (
               <TableRow>
                 <TableCell
@@ -91,15 +87,12 @@ export function ApplicantTable(props: {
                 <HiringManagerApplicantRow
                   key={applicant.id}
                   applicant={applicant}
-                    showSharedBy={false}
+                  showSharedBy={false}
                 />
               ))
             ) : (
               props.applicantsData.map((applicant) => (
-                <ApplicantRow
-                  key={applicant.id}
-                  applicant={applicant}
-                />
+                <ApplicantRow key={applicant.id} applicant={applicant} />
               ))
             )}
           </TableBody>
@@ -135,11 +128,7 @@ export function HiringManagerApplicantTableHeader({
           Etapa / Estado
         </TableHead>
 
-        {showSharedBy && (
-          <TableHead className="w-[20%]">
-            Enviado por
-          </TableHead>
-        )}
+        {showSharedBy && <TableHead className="w-[20%]">Enviado por</TableHead>}
       </TableRow>
     </TableHeader>
   );
@@ -212,4 +201,3 @@ export function ApplicantTableHeader() {
     </TableHeader>
   );
 }
-

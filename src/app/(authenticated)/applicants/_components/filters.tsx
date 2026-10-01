@@ -53,61 +53,61 @@ export function Filters({
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }, 300);
 
-const filterGroups = [
-  {
-    key: "jobOpening" as const,
-    label: "Todas las vacantes",
-    options: jobOpeningData.map((item) => ({
-      id: item.id,
-      label: item.name,
-    })),
-  },
-  ...(!isHiringManagerView
-    ? [
-        {
-          key: "role" as const,
-          label: "Todos los roles",
-          options: roleData.map((item) => ({
-            id: item.id,
-            label: item.name,
-          })),
-        },
-        {
-          key: "seniority" as const,
-          label: "Seniority",
-          options: seniorityData.map((item) => ({
-            id: item.id,
-            label: item.name,
-          })),
-        },
-        {
-          key: "area" as const,
-          label: "Área",
-          options: areaData.map((item) => ({
-            id: item.id,
-            label: item.name,
-          })),
-        },
-        {
-          key: "source" as const,
-          label: "Fuente",
-          options: Object.values(Source).map((value) => ({
-            id: value,
-            label: value,
-          })),
-        },
-        {
-          key: "tag" as const,
-          label: "Etiquetas",
-          options: tagData.map((item) => ({
-            id: item.id,
-            label: item.name,
-            color: item.color,
-          })),
-        },
-      ]
-    : []),
-];
+  const filterGroups = [
+    {
+      key: "jobOpening" as const,
+      label: "Todas las vacantes",
+      options: jobOpeningData.map((item) => ({
+        id: item.id,
+        label: item.name,
+      })),
+    },
+    ...(!isHiringManagerView
+      ? [
+          {
+            key: "role" as const,
+            label: "Todos los roles",
+            options: roleData.map((item) => ({
+              id: item.id,
+              label: item.name,
+            })),
+          },
+          {
+            key: "seniority" as const,
+            label: "Seniority",
+            options: seniorityData.map((item) => ({
+              id: item.id,
+              label: item.name,
+            })),
+          },
+          {
+            key: "area" as const,
+            label: "Área",
+            options: areaData.map((item) => ({
+              id: item.id,
+              label: item.name,
+            })),
+          },
+          {
+            key: "source" as const,
+            label: "Fuente",
+            options: Object.values(Source).map((value) => ({
+              id: value,
+              label: value,
+            })),
+          },
+          {
+            key: "tag" as const,
+            label: "Etiquetas",
+            options: tagData.map((item) => ({
+              id: item.id,
+              label: item.name,
+              color: item.color,
+            })),
+          },
+        ]
+      : []),
+  ];
 
   const [selectedFilters, setSelectedFilters] = useState<
     Record<FilterKey, Set<string>>

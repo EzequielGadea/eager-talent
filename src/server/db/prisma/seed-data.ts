@@ -13,7 +13,6 @@ import type {
   JobOpeningStatus,
   InterviewStatus,
   InterviewType,
-  UserStatus,
 } from "~/generated/prisma/client";
 
 const ORGANIZATION_NAME = "EagerWorks";
@@ -234,8 +233,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   });
 
   const admin1 = dbUsers.find((u) => u.email === "admin@example.com")!;
-  const admin2 = dbUsers.find((u) => u.email === "admin2@example.com")!;
-  const admin3 = dbUsers.find((u) => u.email === "admin3@example.com")!;
+  /*const admin2 = dbUsers.find((u) => u.email === "admin2@example.com")!;
+  const admin3 = dbUsers.find((u) => u.email === "admin3@example.com")!;*/
   const hm1 = dbUsers.find((u) => u.email === "hiring.manager@example.com")!;
   const hm2 = dbUsers.find((u) => u.email === "hiring.manager2@example.com")!;
   const hm3 = dbUsers.find((u) => u.email === "hiring.manager3@example.com")!;
@@ -543,7 +542,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  const appFede1 = await prisma.application.create({
+ /* const appFede1 = await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
@@ -555,9 +554,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
-  });
+  });*/
 
-  const appFede2 = await prisma.application.create({
+ /* const appFede2 = await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening2.id,
@@ -569,7 +568,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
     },
-  });
+  });*/
 
   // Fecha de la entrevista de Valverde: se usa en la entrevista y en su Activity
   // para que el log muestre exactamente la misma fecha y hora.
