@@ -31,43 +31,56 @@ export const getApplicantByIdProcedure = protectedProcedure
     }
 
     const applicant = await ctx.db.applicant.findFirst({
-      where: {
-        id: input.id,
-        ...(canReadAllResult.success
-          ? {}
-          : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
-      },
-      select: {
-        id: true,
-        name: true,
-        lastName: true,
-        email: true,
-        phone: true,
-        photo: true,
-        country: true,
-        linkedin: true,
-        englishLevel: true,
-        source: true,
-        hearAboutUs: true,
-        title: true,
-        academicInstitution: true,
-        careerStartYear: true,
-        careerEndYear: true,
-        education: true,
-        resume: true,
-        role: { select: { id: true, name: true } },
-        area: { select: { id: true, name: true } },
-        seniority: { select: { id: true, name: true } },
-        tags: { select: { id: true, name: true, color: true } },
-      },
-    });
+  where: {
+    id: input.id,
+    ...(canReadAllResult.success
+      ? {}
+      : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
+  },
+  select: {
+    id: true,
+    name: true,
+    lastName: true,
+    email: true,
+    phone: true,
+    photo: true,
+    country: true,
+    linkedin: true,
+    englishLevel: true,
+    source: true,
+    hearAboutUs: true,
+    title: true,
+    academicInstitution: true,
+    careerStartYear: true,
+    careerEndYear: true,
+    education: true,
+    resume: true,
+    role: { select: { id: true, name: true } },
+    area: { select: { id: true, name: true } },
+    seniority: { select: { id: true, name: true } },
+    tags: { select: { id: true, name: true, color: true } },
+  },
+});
 
-    if (!applicant) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Candidato no encontrado",
-      });
-    }
+if (!applicant) {
+  throw new TRPCError({
+    code: "NOT_FOUND",
+    message: "Candidato no encontrado",
+  });
+}
 
-    return applicant;
+if (!canReadAllResult.success) {
+  await ctx.db.applicantHiringManager.updateMany({
+    where: {
+      applicantId: input.id,
+      hiringManagerId: ctx.session.user.id,
+      viewed: false,
+    },
+    data: {
+      viewed: true,
+    },
+  });
+}
+
+return applicant;
   });

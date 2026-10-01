@@ -33,9 +33,9 @@ export const fetchShared = protectedProcedure
     const where: Prisma.ApplicantWhereInput = {
       AND: [
         {
-          hiringManagers: {
+          applicantHiringManagers: {
             some: {
-              id: ctx.session.user.id,
+              hiringManagerId: ctx.session.user.id,
             },
           },
         },
@@ -115,6 +115,23 @@ export const fetchShared = protectedProcedure
               name: true,
             },
           },
+
+          applicantHiringManagers: {
+            where: {
+              hiringManagerId: ctx.session.user.id,
+            },
+            select: {
+              viewed: true,
+              sharedBy: {
+                select: {
+                  id: true,
+                  name: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+
           applications: {
             where: {
               active: true,
