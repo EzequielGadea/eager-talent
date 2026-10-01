@@ -36,21 +36,21 @@ export function Header(props: {
         )}
       </div>
       {props.isHiringManagerView && (
-  <div className="flex flex-wrap items-center gap-2">
-    <span className="text-sm text-text-secondary">
-  {props.countApplicants}{" "}
-  {props.countApplicants === 1 ? "candidato" : "candidatos"} de vacantes
-  asignadas
-</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-text-secondary">
+            {props.countApplicants}{" "}
+            {props.countApplicants === 1 ? "candidato" : "candidatos"} de
+            vacantes asignadas
+          </span>
 
-    <span className="inline-flex items-start gap-1.5 rounded-full bg-tag-purple-bg px-3 py-1 text-xs font-semibold text-tag-purple-fg">
-      <Share2 className="mt-0.5 size-3.5 shrink-0" />
-      <span>
-        {props.countSharedApplicants} perfiles compartidos con vos
-      </span>
-    </span>
-  </div>
-)}
+          <span className="inline-flex items-start gap-1.5 rounded-full bg-tag-purple-bg px-3 py-1 text-xs font-semibold text-tag-purple-fg">
+            <Share2 className="mt-0.5 size-3.5 shrink-0" />
+            <span>
+              {props.countSharedApplicants} perfiles compartidos con vos
+            </span>
+          </span>
+        </div>
+      )}
       {!props.isHiringManagerView && (
         <div className="flex items-center gap-2">
           <Button

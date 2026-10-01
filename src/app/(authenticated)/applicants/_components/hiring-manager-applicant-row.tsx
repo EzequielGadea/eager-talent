@@ -89,28 +89,20 @@ export function HiringManagerApplicantRow({
       </TableCell>
 
       <TableCell className="px-4 py-3">
-       {applicant.currentStage ? (
-  <span className="...">
-    {applicant.currentStage}
-  </span>
-) : applicant.viewed ? (
-  <span className="inline-flex rounded-full bg-tag-green-bg px-2.5 py-1 text-xs font-semibold text-tag-green-fg">
-    Visto
-  </span>
-) : (
-  <span className="inline-flex rounded-full bg-tag-purple-bg px-2.5 py-1 text-xs font-semibold text-tag-purple-fg">
-    Compartido para revisar
-  </span>
-)}
+        {applicant.currentStage ? (
+          <span className="...">{applicant.currentStage}</span>
+        ) : applicant.viewed ? (
+          <span className="inline-flex rounded-full bg-tag-green-bg px-2.5 py-1 text-xs font-semibold text-tag-green-fg">
+            Visto
+          </span>
+        ) : (
+          <span className="inline-flex rounded-full bg-tag-purple-bg px-2.5 py-1 text-xs font-semibold text-tag-purple-fg">
+            Compartido para revisar
+          </span>
+        )}
       </TableCell>
 
-       {showSharedBy && (
-        <TableCell>
-          {applicant.sharedBy ?? "-"}
-        </TableCell>
-      )}
-
-     
+      {showSharedBy && <TableCell>{applicant.sharedBy ?? "-"}</TableCell>}
     </TableRow>
   );
 }

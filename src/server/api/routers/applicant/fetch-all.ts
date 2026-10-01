@@ -22,14 +22,14 @@ export const fetchAll = protectedProcedure
   )
   .query(async ({ ctx, input }) => {
     const canReadAllResult = await auth.api.hasPermission({
-  headers: ctx.headers,
-  body: { permissions: { applicant: ["read"] } },
-});
+      headers: ctx.headers,
+      body: { permissions: { applicant: ["read"] } },
+    });
 
-const canReadAssignedResult = await auth.api.hasPermission({
-  headers: ctx.headers,
-  body: { permissions: { applicant: ["readAssigned"] } },
-});
+    const canReadAssignedResult = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { applicant: ["readAssigned"] } },
+    });
 
     if (!canReadAllResult.success && !canReadAssignedResult.success) {
       throw new TRPCError({
@@ -41,23 +41,18 @@ const canReadAssignedResult = await auth.api.hasPermission({
     const accessWhere: Prisma.ApplicantWhereInput = canReadAllResult.success
       ? {}
       : {
-          
-            
-              applications: {
-                some: {
-                  active: true,
-                  jobOpening: {
-                    hiringManagers: {
-                      some: {
-                        id: ctx.session.user.id,
-                      },
-                    },
+          applications: {
+            some: {
+              active: true,
+              jobOpening: {
+                hiringManagers: {
+                  some: {
+                    id: ctx.session.user.id,
                   },
                 },
               },
-            
-            
-          
+            },
+          },
         };
 
     const filtersWhere: Prisma.ApplicantWhereInput = {
