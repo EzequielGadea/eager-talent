@@ -7,7 +7,7 @@ import { advanceApplicationStage } from "./advance-application-stage";
 
 export const applicationRouter = createTRPCRouter({
   getAllByApplicantId: getApplicationsByApplicantIdProcedure,
-  createApplication: createApplicationProcedure,
+  createApplicationFromApplicant: createApplicationProcedure,
   fetchAvailableApplicants,
   createApplication,
   advanceApplicationStage,
