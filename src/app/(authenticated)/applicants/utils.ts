@@ -9,6 +9,11 @@ export async function transformApplicants(
 
   const applicantsData = data
     ? data.applicants.map((applicant) => {
+        const sharedInfo =
+          "applicantHiringManagers" in applicant
+            ? applicant.applicantHiringManagers[0]
+            : undefined;
+
         const jobOpenings = applicant.applications
           ? applicant.applications
               .filter((application) => application.active)
@@ -48,6 +53,11 @@ export async function transformApplicants(
           cvUrl: applicant.resume ?? "-",
           linkedinUrl: applicant.linkedin ?? "-",
           email: applicant.email ?? "-",
+
+          viewed: sharedInfo?.viewed ?? null,
+          sharedBy: sharedInfo
+            ? `${sharedInfo.sharedBy.name} ${sharedInfo.sharedBy.lastName}`.trim()
+            : null,
         };
       })
     : [];

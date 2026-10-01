@@ -194,7 +194,7 @@ const currentSharedPage = normalized.then(
                 }
               >
                 {isHiringManagerView ? (
-                  <HiringManagerApplicantTableHeader />
+                  <HiringManagerApplicantTableHeader showSharedBy={false}  />
                 ) : (
                   <ApplicantTableHeader />
                 )}
@@ -223,10 +223,10 @@ const currentSharedPage = normalized.then(
       <div className="mt-4 w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
         <div className="w-full overflow-x-auto">
           <Table className="min-w-200 table-fixed">
-            <HiringManagerApplicantTableHeader />
+            <HiringManagerApplicantTableHeader showSharedBy={true} />
 
             <TableBody className="divide-y divide-dashboard-border">
-              <TableFallback isHiringManagerView />
+              <TableFallback isHiringManagerView showSharedBy />
             </TableBody>
           </Table>
         </div>
