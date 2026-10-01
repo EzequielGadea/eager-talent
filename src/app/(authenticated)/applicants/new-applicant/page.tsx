@@ -31,7 +31,7 @@ async function ProtectedNewApplicantPage(){
   }
   return (
     <>
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4 mb-0">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4 mb-0">
         <h1 className="mb-0 text-2xl --text-primary">
           Nuevo candidato
         </h1>

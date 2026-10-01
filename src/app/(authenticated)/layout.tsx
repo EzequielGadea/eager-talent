@@ -15,7 +15,11 @@ export default function AuthenticatedLayout({
       <div className="flex min-w-0 flex-1 flex-col">
         <AppHeader />
 
-        <main className="flex-1 p-8">{children}</main>
+        <main className="flex-1 p-8">
+          <div className="mx-auto w-full min-w-0 max-w-[1440px]">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
