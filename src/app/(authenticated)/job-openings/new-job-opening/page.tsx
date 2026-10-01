@@ -34,8 +34,8 @@ async function ProtectedNewJobOpeningPage() {
   if (!permission.success) {
     redirect("/dashboard");
   }
-  //TODO Mantener solo la version de DB cuando haya objeto
-  const templateStages = await api.templateStages.getDefault()
+
+  const templateStages = await api.templateStages.getDefault();
   /*const templateStages = {
     id:"0",
     stages: [

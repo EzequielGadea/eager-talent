@@ -1,11 +1,11 @@
-export type Stages = Stage[]
+export type Stages = Stage[];
 
 export type Stage = {
-    key: string;
-    name: string;
-    type: string;
-    label: string;
-    color:string;
-}
+  key: string;
+  name: string;
+  type: string;
+  label: string;
+  color: string;
+};
 
-export type Template = {id:string, stages:Stages}
+export type Template = { id: string; stages: Stages };
