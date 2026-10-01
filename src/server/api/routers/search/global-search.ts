@@ -39,6 +39,9 @@ export const globalSearch = protectedProcedure
     const canReadApplicants =
       canReadAllApplicants.success || canReadAssignedApplicants.success;
 
+    const queryTerms = input.query.split(/\s+/).filter(Boolean);
+    const normalizedTerms = queryTerms.map((t) => t.toLowerCase());
+
     const [applicants, jobOpenings] = await Promise.all([
       canReadApplicants
         ? ctx.db.applicant.findMany({
@@ -46,17 +49,20 @@ export const globalSearch = protectedProcedure
               ...(canReadAllApplicants.success
                 ? {}
                 : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
-              OR: [
-                { name: { contains: input.query, mode: "insensitive" } },
-                { lastName: { contains: input.query, mode: "insensitive" } },
-                {
-                  tags: {
-                    some: {
-                      name: { contains: input.query, mode: "insensitive" },
+              AND: queryTerms.map((term) => ({
+                OR: [
+                  { name: { contains: term, mode: "insensitive" } },
+                  { lastName: { contains: term, mode: "insensitive" } },
+                  { role: { name: { contains: term, mode: "insensitive" } } },
+                  {
+                    tags: {
+                      some: {
+                        name: { contains: term, mode: "insensitive" },
+                      },
                     },
                   },
-                },
-              ],
+                ],
+              })),
             },
             take: RESULTS_LIMIT,
             select: {
@@ -72,10 +78,15 @@ export const globalSearch = protectedProcedure
       canReadJobOpenings
         ? ctx.db.jobOpening.findMany({
             where: {
-              name: { contains: input.query, mode: "insensitive" },
               ...(canReadAllJobOpenings.success
                 ? {}
                 : isHiringManagerAssignedToJobOpening(ctx.session.user.id)),
+              AND: queryTerms.map((term) => ({
+                OR: [
+                  { name: { contains: term, mode: "insensitive" } },
+                  { area: { name: { contains: term, mode: "insensitive" } } },
+                ],
+              })),
             },
             take: RESULTS_LIMIT,
             orderBy: { openingDate: "desc" },
@@ -111,9 +122,9 @@ export const globalSearch = protectedProcedure
             name: tag.name,
             color: tag.color,
             index,
-            matchesQuery: tag.name
-              .toLocaleLowerCase()
-              .includes(input.query.toLocaleLowerCase()),
+            matchesQuery: normalizedTerms.some((term) =>
+              tag.name.toLowerCase().includes(term),
+            ),
           }))
           .sort(
             (firstTag, secondTag) =>
