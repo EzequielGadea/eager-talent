@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  Briefcase,
-  ChevronDown,
-  Plus,
-  Share2,
-  X,
-} from "lucide-react";
+import { ArrowUpRight, Plus, Share2, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -17,14 +10,6 @@ import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -36,6 +21,35 @@ import {
 import { Separator } from "~/components/ui/separator";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
+import {
+  ApplicantApplicationDropdown,
+  type ApplicationSelection,
+} from "./applicant-application-dropdown";
+
+export type Interview = {
+  id: string;
+  name: string;
+  duration: number;
+  modality: string;
+  date: Date | string | null;
+  status: string;
+  summary: string | null;
+  interviewers: { name: string; lastName: string }[];
+};
+
+export type ApplicationSummary = {
+  applicantId: string;
+  jobOpeningId: string;
+  applicationDate: Date | string;
+  currentStage: string;
+  active: boolean;
+  disqualificationReason?: string | null;
+  desiredSalaryAmount?: string | null;
+  desiredSalaryCurrency?: string | null;
+  availability?: string | null;
+  jobOpening: { id: string; name: string };
+  interviews: Interview[];
+};
 
 type ApplicantApplicationsCardProps = {
   applicantId: string;
@@ -44,45 +58,57 @@ type ApplicantApplicationsCardProps = {
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
   canCreateApplication: boolean;
-  applications: {
-    applicantId: string;
-    jobOpeningId: string;
-    applicationDate: Date | string;
-    currentStage: string;
-    active: boolean;
-    desiredSalaryAmount?: string | null;
-    desiredSalaryCurrency?: string | null;
-    availability?: string | null;
-    jobOpening: { id: string; name: string };
-    interviews: {
-      id: string;
-      name: string;
-      duration: number;
-      modality: string;
-      date: Date | string | null;
-      status: string;
-      summary: string | null;
-      interviewers: { name: string; lastName: string }[];
-    }[];
-  }[];
+  applications: ApplicationSummary[];
+  explorationInterviews?: Interview[];
 };
+
+function getHeaderApplicationStatus(application: { active: boolean }) {
+  return application.active
+    ? {
+        label: "En proceso",
+        badgeClassName: "bg-info-bg text-info",
+        dotClassName: "bg-info",
+      }
+    : {
+        label: "Descartado",
+        badgeClassName: "bg-danger-bg text-danger",
+        dotClassName: "bg-danger",
+      };
+}
+
+function getInitialSelection(
+  applications: ApplicationSummary[],
+  explorationInterviews: Interview[],
+): ApplicationSelection | undefined {
+  if (applications[0]) {
+    return { type: "application", jobOpeningId: applications[0].jobOpeningId };
+  }
+  return explorationInterviews.length > 0 ? { type: "exploration" } : undefined;
+}
 
 export function ApplicantApplicationsCard({
   applicantId,
   applicantName,
   applications,
+  explorationInterviews = [],
   canCreatePublicLink,
   canUpdateApplication,
   canCreateInterview,
   canCreateApplication,
 }: ApplicantApplicationsCardProps) {
-  const [selectedId, setSelectedId] = useState(applications[0]?.jobOpeningId);
+  const [selection, setSelection] = useState<ApplicationSelection | undefined>(
+    () => getInitialSelection(applications, explorationInterviews),
+  );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
 
+  const isExploration = selection?.type === "exploration";
   const app =
-    applications.find((a) => a.jobOpeningId === selectedId) || applications[0];
+    selection?.type === "application"
+      ? (applications.find((a) => a.jobOpeningId === selection.jobOpeningId) ??
+        applications[0])
+      : undefined;
 
-  if (!app) {
+  if (!app && !isExploration) {
     return (
       <Card className="border border-border-default bg-card p-6 text-sm text-text-tertiary">
         No hay postulaciones registradas para este candidato.
@@ -90,22 +116,32 @@ export function ApplicantApplicationsCard({
     );
   }
 
-  const { interviews = [], jobOpening, active } = app;
-  const desiredSalary = [app.desiredSalaryCurrency, app.desiredSalaryAmount]
-    .filter(Boolean)
-    .join(" ");
+  const interviews = isExploration
+    ? explorationInterviews
+    : (app?.interviews ?? []);
+  const jobOpening = app?.jobOpening;
+  const headerStatus = app ? getHeaderApplicationStatus(app) : null;
+  const desiredSalary = app
+    ? [app.desiredSalaryCurrency, app.desiredSalaryAmount]
+        .filter(Boolean)
+        .join(" ")
+    : "";
 
-  const details = [
-    { label: "Etapa actual", value: app.currentStage },
-    {
-      label: "Postuló",
-      value: app.applicationDate
-        ? format(new Date(app.applicationDate), "d MMM yyyy", { locale: es })
-        : "—",
-    },
-    { label: "Salario pretendido", value: desiredSalary || "—" },
-    { label: "Disponibilidad", value: app.availability || "Inmediata" },
-  ];
+  const details = app
+    ? [
+        { label: "Etapa actual", value: app.currentStage },
+        {
+          label: "Postuló",
+          value: app.applicationDate
+            ? format(new Date(app.applicationDate), "d MMM yyyy", {
+                locale: es,
+              })
+            : "—",
+        },
+        { label: "Salario pretendido", value: desiredSalary || "—" },
+        { label: "Disponibilidad", value: app.availability || "Inmediata" },
+      ]
+    : [];
 
   return (
     <Card className="bg-card p-0">
@@ -115,123 +151,91 @@ export function ApplicantApplicationsCard({
             Postulación
           </CardTitle>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger className="relative flex h-auto min-h-9 w-full max-w-full items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-[state=open]:ring-2 data-[state=open]:ring-tag-gray-bg sm:w-52 lg:w-60">
-              <Briefcase className="h-4 w-4 shrink-0 text-text-secondary" />
-              <span className="min-w-0 flex-1 truncate">{jobOpening.name}</span>
-              <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 shrink-0 text-text-tertiary" />
-            </DropdownMenuTrigger>
+          <ApplicantApplicationDropdown
+            applicantName={applicantName}
+            applications={applications}
+            explorationInterviews={explorationInterviews}
+            selection={selection}
+            onSelectionChange={setSelection}
+            canCreateApplication={canCreateApplication}
+            onCreateApplication={() => setShowApplyDialog(true)}
+          />
 
-            <DropdownMenuContent
-              align="start"
-              className="max-h-60 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-border-strong p-0 shadow-lg"
-            >
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="border-b border-border-default bg-surface-subtle px-[13px] py-[9px] text-[11px] font-bold tracking-[0.05em] text-text-tertiary uppercase">
-                  Postulaciones de {applicantName}
-                </DropdownMenuLabel>
-                {applications.map((a) => (
-                  <DropdownMenuItem
-                    key={a.jobOpeningId}
-                    onClick={() => setSelectedId(a.jobOpeningId)}
-                    className={cn(
-                      "flex w-full cursor-pointer items-center rounded-lg px-3 py-2.5 text-sm transition-colors data-highlighted:bg-tag-gray-bg data-highlighted:text-text-primary",
-                      selectedId === a.jobOpeningId
-                        ? "bg-tag-gray-bg font-semibold text-text-primary"
-                        : "font-medium text-tag-gray-fg hover:bg-tag-gray-bg hover:text-text-primary",
-                    )}
-                  >
-                    <span className="wrap-break-word whitespace-normal">
-                      {a.jobOpening.name}
-                    </span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-              {canCreateApplication && (
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={(event) => {
-                      event.preventDefault();
-                      setShowApplyDialog(true);
-                    }}
-                    onSelect={(event) => {
-                      event.preventDefault();
-                      setShowApplyDialog(true);
-                    }}
-                    className="flex w-full cursor-pointer items-center gap-2 rounded-none border-t border-border-default bg-surface-subtle px-[13px] py-[11px] text-xs font-semibold text-text-link no-underline hover:bg-surface-subtle hover:text-text-link focus:bg-surface-subtle focus:text-text-link data-highlighted:bg-surface-subtle data-highlighted:text-text-link"
-                  >
-                    <Plus className="text-text-link group-hover/dropdown-menu-item:text-text-link group-focus/dropdown-menu-item:text-text-link group-data-[highlighted]/dropdown-menu-item:text-text-link" />
-                    <span className="text-text-link group-hover/dropdown-menu-item:text-text-link group-hover/dropdown-menu-item:underline group-focus/dropdown-menu-item:text-text-link group-focus/dropdown-menu-item:underline group-data-[highlighted]/dropdown-menu-item:text-text-link group-data-[highlighted]/dropdown-menu-item:underline">
-                      Postular a otra vacante
-                    </span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Badge
-            className={cn(
-              "shrink-0",
-              active
-                ? "border-transparent bg-info-bg text-info"
-                : "border-transparent bg-warning-bg text-warning",
-            )}
-          >
-            <span
+          {headerStatus && (
+            <Badge
               className={cn(
-                "mr-1.5 h-1.5 w-1.5 rounded-full",
-                active ? "bg-info" : "bg-warning",
+                "shrink-0 border-transparent",
+                headerStatus.badgeClassName,
               )}
-            />
-            {active ? "En proceso" : "Cerrada"}
-          </Badge>
-        </div>
-
-        <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2.5 lg:w-auto">
-          <Link
-            href={`/job-openings/${encodeURIComponent(jobOpening.id)}`}
-            className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
-          >
-            Ver vacante{" "}
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </Link>
-
-          {canCreatePublicLink && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
             >
-              <Share2 className="h-3.5 w-3.5" /> Compartir
-            </Button>
+              <span
+                className={cn(
+                  "mr-1.5 h-1.5 w-1.5 rounded-full",
+                  headerStatus.dotClassName,
+                )}
+              />
+              {headerStatus.label}
+            </Badge>
           )}
-          {canUpdateApplication && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
-            >
-              <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
-                <X className="h-2.5 w-2.5" strokeWidth={2.5} />
-              </span>
-              Descalificar
-            </Button>
+          {isExploration && (
+            <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg">
+              Sin postulación
+            </Badge>
           )}
         </div>
+
+        {!isExploration && jobOpening && (
+          <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2.5 lg:w-auto">
+            <Link
+              href={`/job-opening/${encodeURIComponent(jobOpening.id)}`}
+              className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
+            >
+              Ver vacante{" "}
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+
+            {canCreatePublicLink && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
+              >
+                <Share2 className="h-3.5 w-3.5" /> Compartir
+              </Button>
+            )}
+            {canUpdateApplication && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
+              >
+                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
+                  <X className="h-2.5 w-2.5" strokeWidth={2.5} />
+                </span>
+                Descalificar
+              </Button>
+            )}
+          </div>
+        )}
       </CardHeader>
 
       <Separator className="bg-border-default" />
 
       <CardContent className="p-0">
-        <dl className="flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 text-sm text-text-secondary">
-          {details.map(({ label, value }) => (
-            <div key={label}>
-              <dt className="inline">{label}: </dt>
-              <dd className="inline font-bold text-text-primary">{value}</dd>
-            </div>
-          ))}
-        </dl>
+        {isExploration ? (
+          <p className="px-6 py-4 text-sm text-text-secondary">
+            Entrevistas exploratorias, no asociadas a una vacante.
+          </p>
+        ) : (
+          <dl className="flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-4 text-sm text-text-secondary">
+            {details.map(({ label, value }) => (
+              <div key={label}>
+                <dt className="inline">{label}: </dt>
+                <dd className="inline font-bold text-text-primary">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
       </CardContent>
 
       <ApplyToVacantDialog
@@ -261,7 +265,9 @@ export function ApplicantApplicationsCard({
 
         {interviews.length === 0 ? (
           <div className="py-6 text-sm text-text-tertiary">
-            No hay entrevistas registradas para esta postulación.
+            {isExploration
+              ? "No hay entrevistas exploratorias registradas para este candidato."
+              : "No hay entrevistas registradas para esta postulación."}
           </div>
         ) : (
           <Table>
