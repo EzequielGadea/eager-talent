@@ -100,19 +100,47 @@ export function ApplicantApplicationsCard({
     () => getInitialSelection(applications, explorationInterviews),
   );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
+  const effectiveSelection =
+    selection ?? getInitialSelection(applications, explorationInterviews);
 
-  const isExploration = selection?.type === "exploration";
+  const isExploration = effectiveSelection?.type === "exploration";
   const app =
-    selection?.type === "application"
-      ? (applications.find((a) => a.jobOpeningId === selection.jobOpeningId) ??
-        applications[0])
+    effectiveSelection?.type === "application"
+      ? (applications.find(
+          (a) => a.jobOpeningId === effectiveSelection.jobOpeningId,
+        ) ?? applications[0])
       : undefined;
 
   if (!app && !isExploration) {
     return (
-      <Card className="border border-border-default bg-card p-6 text-sm text-text-tertiary">
-        No hay postulaciones registradas para este candidato.
-      </Card>
+      <>
+        <Card className="border border-border-default bg-card">
+          <CardContent className="flex min-h-36 flex-col items-center justify-center gap-3 p-6 text-center">
+            <p className="text-sm text-text-tertiary">
+              No hay postulaciones registradas para este candidato.
+            </p>
+            {canCreateApplication && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-auto gap-2 rounded-lg border border-dashed border-info px-3 text-xs font-semibold text-text-link hover:bg-info-bg hover:text-text-link"
+                onClick={() => setShowApplyDialog(true)}
+              >
+                <Plus className="size-3.5" />
+                Postular a una vacante
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+        {canCreateApplication && (
+          <ApplyToVacantDialog
+            showDialog={showApplyDialog}
+            setShowDialog={setShowApplyDialog}
+            applicantId={applicantId}
+          />
+        )}
+      </>
     );
   }
 
@@ -155,7 +183,7 @@ export function ApplicantApplicationsCard({
             applicantName={applicantName}
             applications={applications}
             explorationInterviews={explorationInterviews}
-            selection={selection}
+            selection={effectiveSelection}
             onSelectionChange={setSelection}
             canCreateApplication={canCreateApplication}
             onCreateApplication={() => setShowApplyDialog(true)}
@@ -239,11 +267,13 @@ export function ApplicantApplicationsCard({
         )}
       </CardContent>
 
-      <ApplyToVacantDialog
-        showDialog={showApplyDialog}
-        setShowDialog={setShowApplyDialog}
-        applicantId={applicantId}
-      />
+      {canCreateApplication && (
+        <ApplyToVacantDialog
+          showDialog={showApplyDialog}
+          setShowDialog={setShowApplyDialog}
+          applicantId={applicantId}
+        />
+      )}
 
       <Separator className="bg-border-default" />
 
