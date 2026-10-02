@@ -187,7 +187,7 @@ export function ApplicantApplicationsCard({
         {!isExploration && jobOpening && (
           <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2.5 lg:w-auto">
             <Link
-              href={`/job-opening/${encodeURIComponent(jobOpening.id)}`}
+              href={`/job-openings/${encodeURIComponent(jobOpening.id)}`}
               className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
             >
               Ver vacante{" "}
