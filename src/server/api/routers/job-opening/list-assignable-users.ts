@@ -35,6 +35,7 @@ export const listAssignableUsers = protectedProcedure
     const members = await ctx.db.member.findMany({
       where: {
         organizationId,
+        role: "hiringManager",
         user: {
           status: "Active",
           banned: false,

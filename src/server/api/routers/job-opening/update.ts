@@ -164,6 +164,7 @@ export const updateJobOpening = protectedProcedure
       ctx.db.member.count({
         where: {
           organizationId,
+          role: "hiringManager",
           userId: {
             in: input.hiringManagerIds,
           },
