@@ -4,12 +4,20 @@ import {
   ArrowRight,
   CalendarDays,
   CircleX,
+  Loader2,
   MoreHorizontal,
+  Trash2,
   UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { format, isToday, isTomorrow } from "date-fns";
+import { es } from "date-fns/locale";
+
+import { useDraggable } from "@dnd-kit/core";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import {
   Dialog,
@@ -26,12 +34,8 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { api } from "~/lib/trpc/react";
 
-import { useDraggable } from "@dnd-kit/core";
 import type { PipelineCandidate } from "./types";
-import { useState } from "react";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interwiev-dialog";
-import { format, isToday, isTomorrow } from "date-fns";
-import { es } from "date-fns/locale";
 import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
 
 const modalityLabels: Record<string, string> = {
@@ -77,6 +81,7 @@ export function CandidateCard({
   canCreateInterview,
 }: CandidateCardProps) {
   const router = useRouter();
+
   const [isDisqualifyDialogOpen, setIsDisqualifyDialogOpen] = useState(false);
   const [isScheduleInterviewDialogOpen, setIsScheduleInterviewDialogOpen] =
     useState(false);
@@ -100,6 +105,19 @@ export function CandidateCard({
         console.error("Error al avanzar etapa:", error);
       },
     });
+
+  const deleteInterviewMutation = api.interview.delete.useMutation({
+    onSuccess: () => {
+      if (candidate.scheduledInterviews.length <= 1) {
+        setIsInterviewsDialogOpen(false);
+      }
+
+      router.refresh();
+    },
+    onError: (error) => {
+      console.error("Error al eliminar la entrevista:", error);
+    },
+  });
 
   const handleViewProfile = () => {
     router.push(`/applicants/${candidate.applicantId}`);
@@ -169,30 +187,24 @@ export function CandidateCard({
               {candidate.name} {candidate.lastName}
             </p>
 
-            {/*candidate.role && (
-              <p className="truncate text-xs text-text-secondary">
-                {candidate.role}
-              </p>
-            )}*/}
-
             {candidate.nextInterview && (
-              <div className="flex items-center gap-1 text-xs font-medium text-dashboard-sky-text">
-                <p className="truncate">
+              <button
+                type="button"
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={() => setIsInterviewsDialogOpen(true)}
+                className="flex max-w-full items-center gap-1 text-left text-xs font-medium text-dashboard-sky-text underline-offset-2 hover:underline"
+              >
+                <span className="truncate">
                   Entrevista ·{" "}
                   {formatInterviewLabel(new Date(candidate.nextInterview.date))}
-                </p>
+                </span>
 
                 {candidate.scheduledInterviews.length > 1 && (
-                  <button
-                    type="button"
-                    onPointerDown={(event) => event.stopPropagation()}
-                    onClick={() => setIsInterviewsDialogOpen(true)}
-                    className="shrink-0 underline-offset-2 hover:underline"
-                  >
+                  <span className="shrink-0">
                     · +{candidate.scheduledInterviews.length - 1} más
-                  </button>
+                  </span>
                 )}
-              </div>
+              </button>
             )}
           </div>
 
@@ -222,6 +234,7 @@ export function CandidateCard({
                   disabled={advanceApplicationStageMutation.isPending}
                 >
                   <ArrowRight className="size-4" />
+
                   <span>
                     {advanceApplicationStageMutation.isPending
                       ? "Avanzando..."
@@ -257,16 +270,19 @@ export function CandidateCard({
         </div>
       </Card>
 
-      {candidate.scheduledInterviews.length > 1 && (
+      {candidate.scheduledInterviews.length > 0 && (
         <Dialog
           open={isInterviewsDialogOpen}
           onOpenChange={setIsInterviewsDialogOpen}
         >
-          <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
+          <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
             <div className="border-b border-border-default px-6 py-5">
               <DialogTitle className="text-lg font-semibold text-text-primary">
-                Entrevistas agendadas
+                {candidate.scheduledInterviews.length > 1
+                  ? "Entrevistas agendadas"
+                  : "Entrevista agendada"}
               </DialogTitle>
+
               <DialogDescription className="mt-1 text-sm text-text-secondary">
                 {candidate.name} {candidate.lastName}
               </DialogDescription>
@@ -276,15 +292,55 @@ export function CandidateCard({
               {candidate.scheduledInterviews.map((interview) => (
                 <li
                   key={interview.id}
-                  className="rounded-lg border border-border-default p-3"
+                  className="flex items-start gap-3 rounded-lg border border-border-default p-3"
                 >
-                  <p className="text-sm font-medium text-text-primary">
-                    {interview.name}
-                  </p>
-                  <p className="text-xs text-text-secondary">
-                    {formatInterviewDateTime(new Date(interview.date))} ·{" "}
-                    {modalityLabels[interview.modality] ?? interview.modality}
-                  </p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-text-primary">
+                      {interview.name}
+                    </p>
+
+                    {/* CAMBIO: fecha, modalidad y duración quedan en un solo renglón */}
+                    <p className="whitespace-nowrap text-xs text-text-secondary">
+                      {formatInterviewDateTime(new Date(interview.date))} ·{" "}
+                      {modalityLabels[interview.modality] ?? interview.modality}{" "}
+                      · {interview.duration} min
+                    </p>
+
+                    {interview.interviewers.length > 0 && (
+                      <p className="mt-1 text-xs text-text-secondary">
+                        Entrevistadores:{" "}
+                        {interview.interviewers
+                          .map(
+                            (interviewer) =>
+                              `${interviewer.name} ${interviewer.lastName}`,
+                          )
+                          .join(", ")}
+                      </p>
+                    )}
+                  </div>
+
+                  {canCreateInterview && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      aria-label={`Eliminar entrevista ${interview.name}`}
+                      className="size-8 shrink-0 p-0 text-text-secondary hover:text-destructive"
+                      disabled={deleteInterviewMutation.isPending}
+                      onClick={() =>
+                        deleteInterviewMutation.mutate({
+                          interviewId: interview.id,
+                        })
+                      }
+                    >
+                      {deleteInterviewMutation.isPending &&
+                      deleteInterviewMutation.variables?.interviewId ===
+                        interview.id ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="size-4" />
+                      )}
+                    </Button>
+                  )}
                 </li>
               ))}
             </ul>

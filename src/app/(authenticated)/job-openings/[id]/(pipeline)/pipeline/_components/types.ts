@@ -13,7 +13,9 @@ export type PipelineCandidate = {
     id: string;
     name: string;
     modality: string;
+    duration: number;
     date: Date | string;
+    interviewers: { id: string; name: string; lastName: string }[];
   }[];
 };
 

@@ -95,7 +95,15 @@ export const fetchPipelineCandidates = protectedProcedure
                   id: true,
                   name: true,
                   modality: true,
+                  duration: true,
                   date: true,
+                  interviewers: {
+                    select: {
+                      id: true,
+                      name: true,
+                      lastName: true,
+                    },
+                  },
                 },
               },
             },
@@ -109,7 +117,7 @@ export const fetchPipelineCandidates = protectedProcedure
 
     const candidates = applications.map((application) => {
       const interviews = application.applicant.interviews;
-      const nextInterview = application.applicant.interviews[0];
+      const nextInterview = interviews[0];
 
       return {
         applicantId: application.applicantId,
@@ -122,6 +130,8 @@ export const fetchPipelineCandidates = protectedProcedure
           id: interview.id,
           name: interview.name,
           modality: interview.modality,
+          duration: interview.duration,
+          interviewers: interview.interviewers,
           date: interview.date!,
         })),
       };

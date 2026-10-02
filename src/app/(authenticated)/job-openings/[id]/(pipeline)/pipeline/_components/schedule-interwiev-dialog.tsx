@@ -63,6 +63,8 @@ const scheduleInterviewSchema = z
     }
   });
 
+// Fecha local de hoy (YYYY-MM-DD). toISOString() devuelve UTC y puede
+// dar el día equivocado según la hora.
 function getTodayLocalISO() {
   const now = new Date();
   const offsetMs = now.getTimezoneOffset() * 60_000;
@@ -118,8 +120,8 @@ export function ScheduleInterviewDialog({
     },
   });
 
-  async function onSubmit(data: ScheduleInterviewFormValues) {
-    await createInterviewMutation.mutateAsync({
+  function onSubmit(data: ScheduleInterviewFormValues) {
+    createInterviewMutation.mutate({
       applicantId,
       jobOpeningId,
       name: data.name.trim(),
@@ -309,7 +311,9 @@ export function ScheduleInterviewDialog({
 
           {createInterviewMutation.isError && (
             <p className="text-sm text-danger">
-              No se pudo agendar la entrevista.
+              {createInterviewMutation.error.data?.code === "CONFLICT"
+                ? createInterviewMutation.error.message
+                : "No se pudo agendar la entrevista."}
             </p>
           )}
 

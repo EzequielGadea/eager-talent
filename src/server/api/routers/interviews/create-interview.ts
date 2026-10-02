@@ -87,6 +87,44 @@ export const createInterviewProcedure = protectedProcedure
       }
     }
 
+    const start = input.date;
+    const end = new Date(start.getTime() + input.duration * 60_000);
+    const MAX_INTERVIEW_MS = 24 * 60 * 60_000;
+
+    const nearbyInterviews = await ctx.db.interview.findMany({
+      where: {
+        status: "Scheduled",
+        date: {
+          gt: new Date(start.getTime() - MAX_INTERVIEW_MS),
+          lt: end,
+        },
+      },
+      select: {
+        date: true,
+        duration: true,
+        applicantId: true,
+        interviewers: {
+          select: { id: true, name: true, lastName: true },
+        },
+      },
+    });
+
+    const overlapping = nearbyInterviews.filter((existing) => {
+      if (!existing.date) return false;
+
+      const existingStart = existing.date.getTime();
+      const existingEnd = existingStart + existing.duration * 60_000;
+
+      return existingStart < end.getTime() && existingEnd > start.getTime();
+    });
+
+    if (overlapping.length > 0) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "El candidato ya tiene una entrevista en ese horario.",
+      });
+    }
+
     const [interview] = await ctx.db.$transaction([
       ctx.db.interview.create({
         data: {
