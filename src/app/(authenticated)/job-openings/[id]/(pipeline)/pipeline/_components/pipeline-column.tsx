@@ -25,6 +25,7 @@ function getStageColor(stageName: string) {
 type PipelineColumnProps = {
   jobOpeningId: string;
   stage: PipelineStage;
+  isLastStage: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
 };
@@ -32,6 +33,7 @@ type PipelineColumnProps = {
 export async function PipelineColumn({
   jobOpeningId,
   stage,
+  isLastStage,
   canUpdateApplication,
   canCreateInterview,
 }: PipelineColumnProps) {
@@ -66,6 +68,7 @@ export async function PipelineColumn({
         stageName={stage.name}
         initialCandidates={data.candidates}
         total={data.total}
+        isLastStage={isLastStage}
         canUpdateApplication={canUpdateApplication}
         canCreateInterview={canCreateInterview && canScheduleInterviewInStage}
       />

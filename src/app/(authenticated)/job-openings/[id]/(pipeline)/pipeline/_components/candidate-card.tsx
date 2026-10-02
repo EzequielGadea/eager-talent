@@ -12,6 +12,12 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Card } from "~/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -28,6 +34,11 @@ import { format, isToday, isTomorrow } from "date-fns";
 import { es } from "date-fns/locale";
 import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
 
+const modalityLabels: Record<string, string> = {
+  VideoCall: "Videollamada",
+  InPerson: "Presencial",
+};
+
 function formatInterviewLabel(date: Date) {
   if (isToday(date)) {
     return `Hoy ${format(date, "HH:mm")}`;
@@ -41,10 +52,16 @@ function formatInterviewLabel(date: Date) {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+function formatInterviewDateTime(date: Date) {
+  const label = format(date, "EEEE d 'de' MMMM · HH:mm", { locale: es });
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
 type CandidateCardProps = {
   candidate: PipelineCandidate;
   jobOpeningId: string;
   currentStage: string;
+  isLastStage: boolean;
   onAdvanced: (applicantId: string) => void;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
@@ -54,6 +71,7 @@ export function CandidateCard({
   candidate,
   jobOpeningId,
   currentStage,
+  isLastStage,
   onAdvanced,
   canUpdateApplication,
   canCreateInterview,
@@ -62,11 +80,15 @@ export function CandidateCard({
   const [isDisqualifyDialogOpen, setIsDisqualifyDialogOpen] = useState(false);
   const [isScheduleInterviewDialogOpen, setIsScheduleInterviewDialogOpen] =
     useState(false);
+  const [isInterviewsDialogOpen, setIsInterviewsDialogOpen] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: candidate.applicantId,
     data: { candidate, stage: currentStage },
+    disabled: !canUpdateApplication,
   });
+
+  const dragProps = canUpdateApplication ? { ...listeners, ...attributes } : {};
 
   const advanceApplicationStageMutation =
     api.application.advanceApplicationStage.useMutation({
@@ -84,7 +106,7 @@ export function CandidateCard({
   };
 
   const handleAdvanceStage = () => {
-    if (!canUpdateApplication) {
+    if (!canUpdateApplication || isLastStage) {
       return;
     }
 
@@ -122,14 +144,15 @@ export function CandidateCard({
     <>
       <Card
         ref={setNodeRef}
-        {...listeners}
-        {...attributes}
+        {...dragProps}
         style={{
           transform: transform
             ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
             : undefined,
         }}
-        className="cursor-grab rounded-xl border-border-default bg-card p-3 shadow-none active:cursor-grabbing"
+        className={`rounded-xl border-border-default bg-card p-3 shadow-none ${
+          canUpdateApplication ? "cursor-grab active:cursor-grabbing" : ""
+        }`}
       >
         <div className="flex items-center gap-3">
           <Avatar className="size-9 shrink-0">
@@ -153,10 +176,23 @@ export function CandidateCard({
             )}*/}
 
             {candidate.nextInterview && (
-              <p className="truncate text-xs font-medium text-dashboard-sky-text">
-                Entrevista ·{" "}
-                {formatInterviewLabel(new Date(candidate.nextInterview.date))}
-              </p>
+              <div className="flex items-center gap-1 text-xs font-medium text-dashboard-sky-text">
+                <p className="truncate">
+                  Entrevista ·{" "}
+                  {formatInterviewLabel(new Date(candidate.nextInterview.date))}
+                </p>
+
+                {candidate.scheduledInterviews.length > 1 && (
+                  <button
+                    type="button"
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={() => setIsInterviewsDialogOpen(true)}
+                    className="shrink-0 underline-offset-2 hover:underline"
+                  >
+                    · +{candidate.scheduledInterviews.length - 1} más
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
@@ -180,7 +216,7 @@ export function CandidateCard({
                 <span>Ver perfil</span>
               </DropdownMenuItem>
 
-              {canUpdateApplication && (
+              {canUpdateApplication && !isLastStage && (
                 <DropdownMenuItem
                   onClick={handleAdvanceStage}
                   disabled={advanceApplicationStageMutation.isPending}
@@ -220,6 +256,41 @@ export function CandidateCard({
           </DropdownMenu>
         </div>
       </Card>
+
+      {candidate.scheduledInterviews.length > 1 && (
+        <Dialog
+          open={isInterviewsDialogOpen}
+          onOpenChange={setIsInterviewsDialogOpen}
+        >
+          <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
+            <div className="border-b border-border-default px-6 py-5">
+              <DialogTitle className="text-lg font-semibold text-text-primary">
+                Entrevistas agendadas
+              </DialogTitle>
+              <DialogDescription className="mt-1 text-sm text-text-secondary">
+                {candidate.name} {candidate.lastName}
+              </DialogDescription>
+            </div>
+
+            <ul className="flex max-h-80 flex-col gap-2 overflow-y-auto px-6 py-5">
+              {candidate.scheduledInterviews.map((interview) => (
+                <li
+                  key={interview.id}
+                  className="rounded-lg border border-border-default p-3"
+                >
+                  <p className="text-sm font-medium text-text-primary">
+                    {interview.name}
+                  </p>
+                  <p className="text-xs text-text-secondary">
+                    {formatInterviewDateTime(new Date(interview.date))} ·{" "}
+                    {modalityLabels[interview.modality] ?? interview.modality}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {canUpdateApplication && (
         <DisqualifyCandidateDialog

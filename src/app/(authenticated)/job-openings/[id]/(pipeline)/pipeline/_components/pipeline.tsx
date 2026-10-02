@@ -40,11 +40,12 @@ export async function Pipeline({ jobOpeningId, stages }: PipelineProps) {
     <ScrollArea className="w-full">
       <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
         <div className="flex min-w-max gap-4 pb-4">
-          {stages.map((stage) => (
+          {stages.map((stage, index) => (
             <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
               <PipelineColumn
                 jobOpeningId={jobOpeningId}
                 stage={stage}
+                isLastStage={index === stages.length - 1}
                 canUpdateApplication={canUpdateApplication.success}
                 canCreateInterview={canCreateInterview.success}
               />

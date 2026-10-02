@@ -9,6 +9,12 @@ export type PipelineCandidate = {
   photo: string | null;
   role: string | null;
   nextInterview: { date: Date | string } | null;
+  scheduledInterviews: {
+    id: string;
+    name: string;
+    modality: string;
+    date: Date | string;
+  }[];
 };
 
 export type PendingMove = {

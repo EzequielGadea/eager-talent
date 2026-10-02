@@ -16,6 +16,7 @@ type PipelineColumnClientProps = {
   stageName: string;
   initialCandidates: PipelineCandidate[];
   total: number;
+  isLastStage: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
 };
@@ -25,6 +26,7 @@ export function PipelineColumnClient({
   stageName,
   initialCandidates,
   total,
+  isLastStage,
   canUpdateApplication,
   canCreateInterview,
 }: PipelineColumnClientProps) {
@@ -41,6 +43,22 @@ export function PipelineColumnClient({
   const [optimisticallyRemovedIds, setOptimisticallyRemovedIds] = useState<
     Set<string>
   >(new Set());
+
+  const [previousInitialCandidates, setPreviousInitialCandidates] =
+    useState(initialCandidates);
+
+  if (initialCandidates !== previousInitialCandidates) {
+    setPreviousInitialCandidates(initialCandidates);
+
+    setOptimisticallyRemovedIds((current) => {
+      const stillInitial = new Set(
+        initialCandidates.map((candidate) => candidate.applicantId),
+      );
+      const next = new Set([...current].filter((id) => stillInitial.has(id)));
+
+      return next.size === current.size ? current : next;
+    });
+  }
 
   const allCandidates = [
     ...initialCandidates,
@@ -179,6 +197,7 @@ export function PipelineColumnClient({
           candidate={candidate}
           jobOpeningId={jobOpeningId}
           currentStage={stageName}
+          isLastStage={isLastStage}
           onAdvanced={handleCandidateAdvanced}
           canUpdateApplication={canUpdateApplication}
           canCreateInterview={canCreateInterview}
