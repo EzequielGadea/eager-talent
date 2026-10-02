@@ -11,7 +11,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import type {
@@ -91,92 +90,95 @@ export function ApplicantApplicationDropdown({
 
       <DropdownMenuContent
         align="start"
-        className="max-h-80 w-[min(28rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-border-strong p-0 shadow-lg"
+        className="w-[min(28rem,calc(100vw-2rem))] rounded-xl border border-border-strong p-0 shadow-lg"
       >
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className="border-b border-border-default bg-surface-subtle px-3.25 py-2.25 text-[11px] font-bold tracking-wider text-text-tertiary uppercase">
-            Postulaciones de {applicantName}
-          </DropdownMenuLabel>
-          {applications.map((application) => {
-            const isSelected =
-              application.jobOpeningId === selectedJobOpeningId;
-            const status = getDropdownApplicationStatus(application);
+        <div className="border-b border-border-default bg-surface-subtle px-3.25 py-2.25 text-[11px] font-bold tracking-wider text-text-tertiary uppercase">
+          Postulaciones de {applicantName}
+        </div>
+        <div className="max-h-60 overflow-y-auto">
+          <DropdownMenuGroup>
+            {applications.map((application) => {
+              const isSelected =
+                application.jobOpeningId === selectedJobOpeningId;
+              const status = getDropdownApplicationStatus(application);
 
-            return (
+              return (
+                <DropdownMenuItem
+                  key={application.jobOpeningId}
+                  onClick={() =>
+                    onSelectionChange({
+                      type: "application",
+                      jobOpeningId: application.jobOpeningId,
+                    })
+                  }
+                  className={cn(
+                    "flex w-full cursor-pointer items-start gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors data-highlighted:bg-tag-gray-bg",
+                    isSelected &&
+                      "bg-success-bg data-highlighted:bg-success-bg",
+                  )}
+                >
+                  <Check
+                    className={cn(
+                      "mt-0.5 h-4 w-4 shrink-0 text-tag-green-fg!",
+                      !isSelected && "invisible",
+                    )}
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center justify-between gap-2">
+                      <span className="truncate font-semibold text-text-primary!">
+                        {application.jobOpening.name}
+                      </span>
+                      <Badge
+                        className={cn(
+                          "shrink-0 border-transparent",
+                          status.className,
+                        )}
+                      >
+                        {status.label}
+                      </Badge>
+                    </span>
+                    <span className="mt-0.5 block wrap-break-word whitespace-normal text-xs text-text-tertiary!">
+                      {buildApplicationSubtitle(application)}
+                    </span>
+                  </span>
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
+
+          {explorationInterviews.length > 0 && (
+            <DropdownMenuGroup>
               <DropdownMenuItem
-                key={application.jobOpeningId}
-                onClick={() =>
-                  onSelectionChange({
-                    type: "application",
-                    jobOpeningId: application.jobOpeningId,
-                  })
-                }
+                onClick={() => onSelectionChange({ type: "exploration" })}
                 className={cn(
                   "flex w-full cursor-pointer items-start gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors data-highlighted:bg-tag-gray-bg",
-                  isSelected && "bg-success-bg data-highlighted:bg-success-bg",
+                  isExplorationSelected &&
+                    "bg-success-bg data-highlighted:bg-success-bg",
                 )}
               >
                 <Check
                   className={cn(
                     "mt-0.5 h-4 w-4 shrink-0 text-tag-green-fg!",
-                    !isSelected && "invisible",
+                    !isExplorationSelected && "invisible",
                   )}
                 />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center justify-between gap-2">
                     <span className="truncate font-semibold text-text-primary!">
-                      {application.jobOpening.name}
+                      Base de Talentos
                     </span>
-                    <Badge
-                      className={cn(
-                        "shrink-0 border-transparent",
-                        status.className,
-                      )}
-                    >
-                      {status.label}
+                    <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg! hover:text-tag-purple-fg! focus:text-tag-purple-fg! data-highlighted:text-tag-purple-fg!">
+                      Sin postulación
                     </Badge>
                   </span>
                   <span className="mt-0.5 block wrap-break-word whitespace-normal text-xs text-text-tertiary!">
-                    {buildApplicationSubtitle(application)}
+                    {`Entrevistas exploratorias, no asociadas a una vacante · ${explorationInterviews.length} registro${explorationInterviews.length === 1 ? "" : "s"}`}
                   </span>
                 </span>
               </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuGroup>
-
-        {explorationInterviews.length > 0 && (
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={() => onSelectionChange({ type: "exploration" })}
-              className={cn(
-                "flex w-full cursor-pointer items-start gap-2 rounded-lg px-3 py-2.5 text-sm transition-colors data-highlighted:bg-tag-gray-bg",
-                isExplorationSelected &&
-                  "bg-success-bg data-highlighted:bg-success-bg",
-              )}
-            >
-              <Check
-                className={cn(
-                  "mt-0.5 h-4 w-4 shrink-0 text-tag-green-fg!",
-                  !isExplorationSelected && "invisible",
-                )}
-              />
-              <span className="min-w-0 flex-1">
-                <span className="flex items-center justify-between gap-2">
-                  <span className="truncate font-semibold text-text-primary!">
-                    Base de Talentos
-                  </span>
-                  <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg! hover:text-tag-purple-fg! focus:text-tag-purple-fg! data-highlighted:text-tag-purple-fg!">
-                    Sin postulación
-                  </Badge>
-                </span>
-                <span className="mt-0.5 block wrap-break-word whitespace-normal text-xs text-text-tertiary!">
-                  {`Entrevistas exploratorias, no asociadas a una vacante · ${explorationInterviews.length} registro${explorationInterviews.length === 1 ? "" : "s"}`}
-                </span>
-              </span>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        )}
+            </DropdownMenuGroup>
+          )}
+        </div>
 
         {canCreateApplication && (
           <DropdownMenuGroup>
