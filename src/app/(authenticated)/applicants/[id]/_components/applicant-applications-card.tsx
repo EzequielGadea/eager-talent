@@ -62,17 +62,7 @@ type ApplicantApplicationsCardProps = {
   explorationInterviews?: Interview[];
 };
 
-function getHeaderApplicationStatus(application: {
-  active: boolean;
-  disqualificationReason?: string | null;
-}) {
-  if (application.disqualificationReason) {
-    return {
-      label: "Descartado",
-      badgeClassName: "bg-danger-bg text-danger",
-      dotClassName: "bg-danger",
-    };
-  }
+function getHeaderApplicationStatus(application: { active: boolean }) {
   return application.active
     ? {
         label: "En proceso",
@@ -80,9 +70,9 @@ function getHeaderApplicationStatus(application: {
         dotClassName: "bg-info",
       }
     : {
-        label: "Cerrada",
-        badgeClassName: "bg-warning-bg text-warning",
-        dotClassName: "bg-warning",
+        label: "Descartado",
+        badgeClassName: "bg-danger-bg text-danger",
+        dotClassName: "bg-danger",
       };
 }
 

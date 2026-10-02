@@ -32,19 +32,10 @@ type ApplicantApplicationDropdownProps = {
   onCreateApplication: () => void;
 };
 
-function getDropdownApplicationStatus(application: {
-  active: boolean;
-  disqualificationReason?: string | null;
-}) {
-  if (application.disqualificationReason) {
-    return {
-      label: "Descartado",
-      className: "bg-tag-red-bg !text-tag-red-fg",
-    };
-  }
+function getDropdownApplicationStatus(application: { active: boolean }) {
   return application.active
-    ? { label: "En proceso", className: "bg-tag-blue-bg !text-tag-blue-fg" }
-    : { label: "Cerrada", className: "bg-tag-amber-bg !text-tag-amber-fg" };
+    ? { label: "En proceso", className: "bg-info-bg text-info" }
+    : { label: "Descartado", className: "bg-danger-bg text-danger" };
 }
 
 function buildApplicationSubtitle(application: ApplicationSummary) {
@@ -119,13 +110,13 @@ export function ApplicantApplicationDropdown({
               >
                 <Check
                   className={cn(
-                    "mt-0.5 h-4 w-4 shrink-0 !text-tag-green-fg",
+                    "mt-0.5 h-4 w-4 shrink-0 text-tag-green-fg!",
                     !isSelected && "invisible",
                   )}
                 />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center justify-between gap-2">
-                    <span className="truncate font-semibold !text-text-primary">
+                    <span className="truncate font-semibold text-text-primary!">
                       {application.jobOpening.name}
                     </span>
                     <Badge
@@ -137,7 +128,7 @@ export function ApplicantApplicationDropdown({
                       {status.label}
                     </Badge>
                   </span>
-                  <span className="mt-0.5 block wrap-break-word whitespace-normal text-xs !text-text-tertiary">
+                  <span className="mt-0.5 block wrap-break-word whitespace-normal text-xs text-text-tertiary!">
                     {buildApplicationSubtitle(application)}
                   </span>
                 </span>
@@ -158,20 +149,20 @@ export function ApplicantApplicationDropdown({
             >
               <Check
                 className={cn(
-                  "mt-0.5 h-4 w-4 shrink-0 !text-tag-green-fg",
+                  "mt-0.5 h-4 w-4 shrink-0 text-tag-green-fg!",
                   !isExplorationSelected && "invisible",
                 )}
               />
               <span className="min-w-0 flex-1">
                 <span className="flex items-center justify-between gap-2">
-                  <span className="truncate font-semibold !text-text-primary">
+                  <span className="truncate font-semibold text-text-primary!">
                     Base de Talentos
                   </span>
-                  <Badge className="shrink-0 border-transparent bg-tag-purple-bg !text-tag-purple-fg">
+                  <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg!">
                     Sin postulación
                   </Badge>
                 </span>
-                <span className="mt-0.5 block wrap-break-word whitespace-normal text-xs !text-text-tertiary">
+                <span className="mt-0.5 block wrap-break-word whitespace-normal text-xs text-text-tertiary!">
                   {`Entrevistas exploratorias, no asociadas a una vacante · ${explorationInterviews.length} registro${explorationInterviews.length === 1 ? "" : "s"}`}
                 </span>
               </span>
