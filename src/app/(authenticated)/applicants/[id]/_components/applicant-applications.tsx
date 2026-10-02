@@ -19,23 +19,23 @@ export async function ApplicantApplications({
     canCreateInterview,
     canCreateApplication,
   ] = await Promise.all([
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { publicLink: ["create"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { application: ["update"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { interview: ["create"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { application: ["create"] } },
-      }),
-    ]);
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { publicLink: ["create"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { application: ["update"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { interview: ["create"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { application: ["create"] } },
+    }),
+  ]);
 
   const [applications, interviews] = await Promise.all([
     api.application.getAllByApplicantId({ applicantId: applicant.id }),
@@ -50,10 +50,15 @@ export async function ApplicantApplications({
         interview.jobOpeningId === application.jobOpeningId,
     ),
   }));
+  // Interviews without a job opening are exploratory, not tied to any application.
+  const explorationInterviews = interviews.filter(
+    (interview) => !interview.jobOpeningId,
+  );
 
   return (
     <ApplicantApplicationsCard
       applications={applicationsWithInterviews}
+      explorationInterviews={explorationInterviews}
       applicantId={applicant.id}
       applicantName={`${applicant.name} ${applicant.lastName}`}
       canCreatePublicLink={canCreatePublicLink.success}

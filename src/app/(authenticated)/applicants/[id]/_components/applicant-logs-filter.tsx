@@ -36,13 +36,13 @@ export function ApplicantLogsFilter({
             size="sm"
             disabled={applications.length === 0}
             aria-label="Filtrar logs por postulación"
-            className="relative h-auto min-h-11 w-full max-w-96 gap-2 rounded-xl border-border-strong bg-background py-2 pl-3 pr-8 text-left text-sm font-semibold text-text-primary @[640px]/card-header:w-96"
+            className="group/dropdown-trigger relative h-auto min-h-11 w-full max-w-96 gap-2 rounded-xl border-border-strong bg-background py-2 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-popup-open:border-accent-green data-popup-open:ring-1 data-popup-open:ring-accent-green @[640px]/card-header:w-96"
           />
         }
       >
         <Filter className="size-4 shrink-0 text-text-secondary" />
         <span className="min-w-0 flex-1 truncate">{selectedLabel}</span>
-        <ChevronDown className="absolute top-1/2 right-3 size-4 -translate-y-1/2 shrink-0 text-text-tertiary" />
+        <ChevronDown className="absolute top-1/2 right-3 size-4 -translate-y-1/2 shrink-0 text-text-tertiary transition-transform group-data-popup-open/dropdown-trigger:rotate-180" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
