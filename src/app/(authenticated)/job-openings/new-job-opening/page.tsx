@@ -3,6 +3,16 @@ import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import NewJobOpeningForm from "./_components/new-job-opening-form";
+import NewJobOpeningFallback from "./_components/new-job-opening-fallback";
+
+const FORM_LOADING_DELAY_MS = 3000;
+
+async function DelayedNewJobOpeningForm() {
+  await new Promise((resolve) => setTimeout(resolve, FORM_LOADING_DELAY_MS));
+
+  return <NewJobOpeningForm />;
+}
+
 export default function newJobOpeningPage() {
   return (
     <Suspense>
@@ -29,7 +39,10 @@ async function ProtectedNewJobOpeningPage() {
         <h1 className="mb-0 text-2xl --text-primary --font-heading">
           Nueva vacante
         </h1>
-        <NewJobOpeningForm />
+        <Suspense fallback={<NewJobOpeningFallback />}>
+          {/* Descomentar para probar fallback} <DelayedNewJobOpeningForm /> {*/}
+          <NewJobOpeningForm />
+        </Suspense>
       </div>
     </>
   );

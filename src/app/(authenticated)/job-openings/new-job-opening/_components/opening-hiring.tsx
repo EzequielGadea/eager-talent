@@ -9,9 +9,7 @@ import Image from "next/image";
 
 import {
   Combobox,
-  ComboboxCollection,
   ComboboxContent,
-  ComboboxEmpty,
   ComboboxGroup,
   ComboboxInput,
   ComboboxItem,
@@ -20,14 +18,6 @@ import {
 } from "~/components/ui/combobox2";
 
 import { api } from "~/lib/trpc/react";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 
 function getInitials(name: string, lastName?: string | null) {
   return `${name.charAt(0)}${lastName?.charAt(0) ?? ""}`.toUpperCase();
