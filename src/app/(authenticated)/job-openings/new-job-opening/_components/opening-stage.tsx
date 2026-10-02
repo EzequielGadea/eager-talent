@@ -1,11 +1,9 @@
 "use client";
 
 import { JobOpeningFormValues } from "./new-job-opening-form";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Controller, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
+import { GripVertical, X, Plus, ChevronDown } from "lucide-react";
 
 export default function OpeningStage() {
   const {
