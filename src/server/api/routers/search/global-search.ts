@@ -8,7 +8,7 @@ import { protectedProcedure } from "~/server/api/trpc";
 const RESULTS_LIMIT = 4;
 
 export const globalSearch = protectedProcedure
-  .input(z.object({ query: z.string().trim().min(1) }))
+  .input(z.object({ query: z.string().trim().min(1).max(100) }))
   .query(async ({ ctx, input }) => {
     const [
       canReadAllApplicants,
