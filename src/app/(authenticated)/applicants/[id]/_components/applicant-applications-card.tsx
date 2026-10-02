@@ -179,6 +179,7 @@ export function ApplicantApplicationsCard({
           )}
           {isExploration && (
             <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg">
+              <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-tag-purple-fg" />
               Sin postulación
             </Badge>
           )}
