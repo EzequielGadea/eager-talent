@@ -20,6 +20,8 @@ import {
   ColorPickerHex,
   ColorPickerInput,
 } from "~/components/ui/color-picker";
+import { Input } from "~/components/ui/input";
+import { set } from "date-fns";
 
 const types = [
   { name: "Ninguna", key: 0 },
@@ -208,7 +210,7 @@ function IndividualStage(props: {
   );
   const ref = useRef<HTMLDivElement>(null);
 
-  const [, drag] = useDrag(
+  const [, drag, preview] = useDrag(
     () => ({
       type: "stage",
       item: () => ({ key: props.stage.key /*latest.current.stage.key */ }),
@@ -256,7 +258,16 @@ function IndividualStage(props: {
 
   const setRef = (node: HTMLDivElement | null) => {
     ref.current = node;
-    if (node) drag(drop(node));
+    if (node) {
+      drop(node);
+      preview(node)
+    }
+  };
+
+  const dragHandleRef = (node: HTMLDivElement | null) => {
+    if (node) {
+      drag(node);
+    }
   };
 
   return (
@@ -266,7 +277,9 @@ function IndividualStage(props: {
       className="flex h-12 items-center gap-4 rounded-lg border border-border-default bg-surface-card p-3 transition-colors hover:bg-surface-hover "
     >
       {isDraggable ? (
-        <GripVertical className="h-4 w-4 cursor-grab text-text-tertiary hover:text-text-secondary" />
+        <div ref={dragHandleRef}>
+          <GripVertical className="h-4 w-4 cursor-grab text-text-tertiary hover:text-text-secondary"/>
+        </div>
       ) : (
         <div className="pl-4" />
       )}
@@ -307,7 +320,7 @@ function IndividualStage(props: {
       {isDraggable ? (
         <>
           <div className="flex-1">
-            <input
+            <Input
               value={props.stage.name}
               onChange={(e) =>
                 props.updateName(props.stage.key, e.target.value)
