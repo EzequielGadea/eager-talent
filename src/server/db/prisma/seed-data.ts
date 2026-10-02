@@ -11,6 +11,7 @@ import type {
   JobOpeningStatus,
   InterviewStatus,
   InterviewType,
+  UserStatus,
 } from "~/generated/prisma/client";
 
 const ORGANIZATION_NAME = "EagerWorks";
@@ -61,6 +62,20 @@ export const SEED_USERS = [
     name: "Jorge",
     lastName: "Bava",
     email: "hiring.manager3@example.com",
+    password: "hiring.manager",
+    orgRole: "hiringManager",
+  },
+  {
+    name: "Pep",
+    lastName: "Guardiola",
+    email: "hiring.manager4@example.com",
+    password: "hiring.manager",
+    orgRole: "hiringManager",
+  },
+  {
+    name: "Hansi",
+    lastName: "Flick",
+    email: "hiring.manager5@example.com",
     password: "hiring.manager",
     orgRole: "hiringManager",
   },
@@ -217,11 +232,13 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   });
 
   const admin1 = dbUsers.find((u) => u.email === "admin@example.com")!;
-  /*const admin2 = dbUsers.find((u) => u.email === "admin2@example.com")!;
-  const admin3 = dbUsers.find((u) => u.email === "admin3@example.com")!;*/
+  const admin2 = dbUsers.find((u) => u.email === "admin2@example.com")!;
+  const admin3 = dbUsers.find((u) => u.email === "admin3@example.com")!;
   const hm1 = dbUsers.find((u) => u.email === "hiring.manager@example.com")!;
   const hm2 = dbUsers.find((u) => u.email === "hiring.manager2@example.com")!;
   const hm3 = dbUsers.find((u) => u.email === "hiring.manager3@example.com")!;
+  const hm4 = dbUsers.find((u) => u.email === "hiring.manager4@example.com")!;
+  const hm5 = dbUsers.find((u) => u.email === "hiring.manager5@example.com")!;
 
   // ==========================================================================
   // TABLAS MAESTRAS (CONTEXTO REAL EAGERWORKS MONTEVIDEO)
@@ -316,11 +333,63 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   // VACANTES / JOB OPENINGS DE EAGERWORKS
   // ==========================================================================
   const defaultStages = [
-    { name: "Revisión Inicial" },
-    { name: "Entrevista Técnica" },
-    { name: "Entrevista Cultural" },
-    { name: "Oferta" },
+    {
+      key: "24534",
+      name: "Aplicado",
+      type: "Ninguna",
+      color: "#94a3b8",
+      label: "Aplicó",
+    },
+    {
+      key: "55678",
+      name: "Entrevista HR",
+      type: "Entrevista",
+      color: "#3c73ed",
+      label: "Entrevista HR",
+    },
+    {
+      key: "61245",
+      name: "Psicotécnico",
+      type: "Entrevista",
+      color: "#f59e0b",
+      label: "Psicotécnico",
+    },
+    {
+      key: "75365",
+      name: "Revisión de perfil",
+      type: "Ninguna",
+      color: "#8b5cf6",
+      label: "En revisión",
+    },
+    {
+      key: "83412",
+      name: "Entrevista técnica",
+      type: "Entrevista",
+      color: "#0284c7",
+      label: "Entrevista técnica",
+    },
+    {
+      key: "92156",
+      name: "Oferta",
+      type: "Oferta",
+      color: "#10b981",
+      label: "Ofertado",
+    },
+    {
+      key: "98721",
+      name: "Contratado/a",
+      type: "Ninguna",
+      color: "#059669",
+      label: "Contratado",
+    },
   ];
+
+  await prisma.stageTemplate.create({
+    data: {
+      stages: defaultStages,
+      lastModified: new Date(),
+    },
+  });
 
   const jobOpening1 = await prisma.jobOpening.create({
     data: {
@@ -379,7 +448,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       targetClosingDate: new Date(Date.now() + 50 * 24 * 60 * 60 * 1000),
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
-      hiringManagers: { connect: [{ id: hm3.id }] },
+      hiringManagers: { connect: [{ id: hm3.id }, { id: hm5.id }] },
     },
   });
 
@@ -393,7 +462,26 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       targetClosingDate: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
-      hiringManagers: { connect: [{ id: hm1.id }, { id: hm3.id }] },
+      hiringManagers: { connect: [{ id: hm1.id }, { id: hm4.id }] },
+    },
+  });
+
+  const jobOpening6 = await prisma.jobOpening.create({
+    data: {
+      name: "AI Solutions & Full Stack Engineer (Python & React) - GenAI Studio",
+      status: "Open" as JobOpeningStatus,
+      stages: defaultStages,
+      location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
+      openingDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      targetClosingDate: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000),
+      areaId: areas["AI Studio & Data"].id,
+      seniorities: {
+        connect: [
+          { id: seniorities["Semi Senior"].id },
+          { id: seniorities["Senior"].id },
+        ],
+      },
+      hiringManagers: { connect: [{ id: hm4.id }, { id: hm5.id }] },
     },
   });
 
@@ -448,33 +536,33 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
- /* const appFede1 = await prisma.application.create({
+  const appFede1 = await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista Técnica",
+      currentStage: "Entrevista técnica",
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4500,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
     },
-  });*/
+  });
 
- /* const appFede2 = await prisma.application.create({
+  const appFede2 = await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening2.id,
       applicationDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión Inicial",
+      currentStage: "Aplicado",
       stageEntryDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4200,
       desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
     },
-  });*/
+  });
 
   // 14 Actividades para Valverde (permite verificar páginas 1, 2 y 3 con 6 ítems por página - CP-008)
   const fedeActivities = [
@@ -611,7 +699,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening3.id,
       applicationDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión Inicial",
+      currentStage: "Aplicado",
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3200,
       desiredSalaryCurrency: "USD",
@@ -719,7 +807,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening2.id,
       applicationDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista Técnica",
+      currentStage: "Entrevista técnica",
       stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3800,
       desiredSalaryCurrency: "USD",
@@ -787,7 +875,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening2.id,
       applicationDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión Inicial",
+      currentStage: "Revisión de perfil",
       stageEntryDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3500,
       desiredSalaryCurrency: "USD",
@@ -864,7 +952,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista Cultural",
+      currentStage: "Entrevista HR",
       stageEntryDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 6000,
       desiredSalaryCurrency: "USD",
@@ -940,7 +1028,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening5.id,
       applicationDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión Inicial",
+      currentStage: "Aplicado",
       stageEntryDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3400,
       desiredSalaryCurrency: "USD",
@@ -997,7 +1085,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista Técnica",
+      currentStage: "Entrevista técnica",
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4300,
       desiredSalaryCurrency: "USD",
@@ -1054,7 +1142,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening4.id,
       applicationDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión Inicial",
+      currentStage: "Revisión de perfil",
       stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4800,
       desiredSalaryCurrency: "USD",
@@ -1119,11 +1207,391 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión Inicial",
+      currentStage: "Aplicado",
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3600,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
+    },
+  });
+
+  // --- CANDIDATO 11: FERRAN TORRES ---
+  const ferran = await prisma.applicant.create({
+    data: {
+      name: "Ferran",
+      lastName: "Torres",
+      email: "ferran.torres@eagerworks.uy",
+      phone: "+34 612 345 678",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/398184-1779789996.jpg",
+      country: "España",
+      linkedin: "https://www.linkedin.com/in/ferran-torres/",
+      englishLevel: "Intermediate" as EnglishLevel,
+      source: "Inbound" as Source,
+      hearAboutUs: "LinkedInJobs" as HearAboutUs,
+      title: "Grado en Ingeniería Multimedia",
+      academicInstitution: "Universidad Politécnica de Valencia",
+      careerStartYear: 2018,
+      careerEndYear: 2022,
+      education:
+        "https://utfs.io/f/bFtU7UL7iC6d95hoUdxLyWjIRhS6MJH8irfq4OdDoAZzlCFc",
+      resume:
+        "https://utfs.io/f/bFtU7UL7iC6dzWFqHmoa1xD0MSIcTmBLQnvy75wW6JAofbeO",
+      roleId: roles["Frontend Developer (React / Next.js)"].id,
+      areaId: areas["Ingeniería Web & Mobile"].id,
+      seniorityId: seniorities["Semi Senior"].id,
+      tags: {
+        connect: [
+          { id: tags["React"].id },
+          { id: tags["Next.js"].id },
+          { id: tags["TypeScript"].id },
+          { id: tags["Tailwind CSS"].id },
+          { id: tags["Top Talent"].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: ferran.id,
+        hiringManagerId: hm4.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: ferran.id,
+        hiringManagerId: hm5.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
+  });
+
+  await prisma.application.create({
+    data: {
+      applicantId: ferran.id,
+      jobOpeningId: jobOpening5.id,
+      applicationDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      active: true,
+      currentStage: "Entrevista técnica",
+      stageEntryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      desiredSalaryAmount: 3200,
+      desiredSalaryCurrency: "USD",
+      availability: "Inmediata",
+    },
+  });
+
+  await prisma.activity.create({
+    data: {
+      applicantId: ferran.id,
+      jobOpeningId: jobOpening5.id,
+      description:
+        "Postulación recibida para Frontend Developer (React / Next.js)",
+      date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+    },
+  });
+  await prisma.activity.create({
+    data: {
+      applicantId: ferran.id,
+      jobOpeningId: jobOpening5.id,
+      description: "Entrevista HR completada con feedback positivo",
+      date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  // --- CANDIDATO 12: ANTHONY GORDON ---
+  const gordon = await prisma.applicant.create({
+    data: {
+      name: "Anthony",
+      lastName: "Gordon",
+      email: "anthony.gordon@eagerworks.uy",
+      phone: "+44 7700 900123",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/503733-1761080304.jpg",
+      country: "Reino Unido",
+      linkedin: "https://www.linkedin.com/in/anthony-gordon/",
+      englishLevel: "Native" as EnglishLevel,
+      source: "Referral" as Source,
+      hearAboutUs: "Referral" as HearAboutUs,
+      title: "BSc in Software Engineering",
+      academicInstitution: "University of Liverpool",
+      careerStartYear: 2019,
+      careerEndYear: 2023,
+      education:
+        "https://utfs.io/f/bFtU7UL7iC6dyMNNhwx8zFcyb9IOKkRnudqe7tv6ZfUlQ1T3",
+      resume:
+        "https://utfs.io/f/bFtU7UL7iC6dGcNfXXUYw0mSlJeTNp9tf6qZPu1zACinMV8y",
+      roleId: roles["QA Automation Engineer"].id,
+      areaId: areas["Quality Assurance & Testing"].id,
+      seniorityId: seniorities["Semi Senior"].id,
+      tags: {
+        connect: [
+          { id: tags["TypeScript"].id },
+          { id: tags["Docker"].id },
+          { id: tags["Inglés C2 / Bilingüe"].id },
+          { id: tags["Referido Eagerworks"].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: gordon.id,
+      hiringManagerId: hm5.id,
+      sharedByUserId: admin1.id,
+    },
+  });
+
+  await prisma.application.create({
+    data: {
+      applicantId: gordon.id,
+      jobOpeningId: jobOpening3.id,
+      applicationDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      active: true,
+      currentStage: "Revisión de perfil",
+      stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      desiredSalaryAmount: 3500,
+      desiredSalaryCurrency: "USD",
+      availability: "1 mes de preaviso",
+    },
+  });
+
+  await prisma.activity.create({
+    data: {
+      applicantId: gordon.id,
+      jobOpeningId: jobOpening3.id,
+      description: "Perfil referido recibido y agregado al proceso de QA",
+      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  // --- CANDIDATO 13: CRISTIANO RONALDO ---
+  const cristiano = await prisma.applicant.create({
+    data: {
+      name: "Cristiano",
+      lastName: "Ronaldo",
+      email: "cristiano.ronaldo@eagerworks.uy",
+      phone: "+351 912 345 678",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/8198-1748102259.jpg",
+      country: "Portugal",
+      linkedin: "https://www.linkedin.com/in/cristiano-ronaldo/",
+      englishLevel: "Advanced" as EnglishLevel,
+      source: "Inbound" as Source,
+      hearAboutUs: "InternetSearch" as HearAboutUs,
+      title: "Licenciatura en Informática y Gestión",
+      academicInstitution: "Universidade de Lisboa",
+      careerStartYear: 2003,
+      careerEndYear: 2008,
+      education:
+        "https://utfs.io/f/bFtU7UL7iC6dbwmnNwL7iC6dek34qyNI5SROABGtaLoulWzs",
+      resume:
+        "https://utfs.io/f/bFtU7UL7iC6duOOQx4m9aDgwxjpJGVkudZlvmHYAX5iBrM3t",
+      roleId: roles["Tech Lead / Solutions Architect"].id,
+      areaId: areas["Ingeniería Web & Mobile"].id,
+      seniorityId: seniorities["Staff / Lead"].id,
+      tags: {
+        connect: [
+          { id: tags["Ruby on Rails"].id },
+          { id: tags["AWS"].id },
+          { id: tags["Docker"].id },
+          { id: tags["PostgreSQL"].id },
+          { id: tags["Top Talent"].id },
+          { id: tags["Inglés C1 / Fluido"].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: cristiano.id,
+        hiringManagerId: hm1.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: cristiano.id,
+        hiringManagerId: hm4.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
+  });
+
+  await prisma.application.create({
+    data: {
+      applicantId: cristiano.id,
+      jobOpeningId: jobOpening1.id,
+      applicationDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
+      active: true,
+      currentStage: "Ofertado",
+      stageEntryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      desiredSalaryAmount: 7000,
+      desiredSalaryCurrency: "USD",
+      availability: "Inmediata",
+    },
+  });
+
+  await prisma.activity.create({
+    data: {
+      applicantId: cristiano.id,
+      jobOpeningId: jobOpening1.id,
+      description:
+        "Entrevista técnica de arquitectura avanzada aprobada con distinción",
+      date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+    },
+  });
+  await prisma.activity.create({
+    data: {
+      applicantId: cristiano.id,
+      jobOpeningId: jobOpening1.id,
+      description: "Oferta formal enviada al candidato para posición Lead",
+      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  // --- CANDIDATO 14: JULIÁN ÁLVAREZ ---
+  const julian = await prisma.applicant.create({
+    data: {
+      name: "Julián",
+      lastName: "Álvarez",
+      email: "julian.alvarez@eagerworks.uy",
+      phone: "+54 9 11 2345 6789",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/576024-1684920938.jpg",
+      country: "Argentina",
+      linkedin: "https://www.linkedin.com/in/julian-alvarez/",
+      englishLevel: "Advanced" as EnglishLevel,
+      source: "Inbound" as Source,
+      hearAboutUs: "LinkedInJobs" as HearAboutUs,
+      title: "Licenciatura en Ciencias de la Computación",
+      academicInstitution: "Universidad de Buenos Aires (UBA)",
+      careerStartYear: 2018,
+      careerEndYear: 2023,
+      education:
+        "https://utfs.io/f/bFtU7UL7iC6dsUX6U0FQZz7f6ncx2REU4B5PwSyJV10gCYaD",
+      resume:
+        "https://utfs.io/f/bFtU7UL7iC6di8eJ1AKkNfUudbxes4p6tRO1vqZBKVlzyim0",
+      roleId: roles["AI / Machine Learning Engineer"].id,
+      areaId: areas["AI Studio & Data"].id,
+      seniorityId: seniorities["Semi Senior"].id,
+      tags: {
+        connect: [
+          { id: tags["Python"].id },
+          { id: tags["TypeScript"].id },
+          { id: tags["Docker"].id },
+          { id: tags["Top Talent"].id },
+          { id: tags["Remoto Uruguay"].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: julian.id,
+      hiringManagerId: hm4.id,
+      sharedByUserId: admin1.id,
+    },
+  });
+
+  await prisma.application.create({
+    data: {
+      applicantId: julian.id,
+      jobOpeningId: jobOpening6.id,
+      applicationDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      active: true,
+      currentStage: "Entrevista HR",
+      stageEntryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      desiredSalaryAmount: 4000,
+      desiredSalaryCurrency: "USD",
+      availability: "2 semanas",
+    },
+  });
+
+  await prisma.activity.create({
+    data: {
+      applicantId: julian.id,
+      jobOpeningId: jobOpening6.id,
+      description:
+        "Postulación recibida para AI Solutions & Full Stack Engineer",
+      date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  // --- CANDIDATO 15: FERNANDO MUSLERA ---
+  const muslera = await prisma.applicant.create({
+    data: {
+      name: "Fernando",
+      lastName: "Muslera",
+      email: "fernando.muslera@eagerworks.uy",
+      phone: "+598 99 123 456",
+      photo:
+        "https://img.a.transfermarkt.technology/portrait/header/58088-1671035581.png",
+      country: "Uruguay",
+      linkedin: "https://www.linkedin.com/in/fernando-muslera-uy/",
+      englishLevel: "Advanced" as EnglishLevel,
+      source: "Outbound" as Source,
+      hearAboutUs: "RecruiterContact" as HearAboutUs,
+      title: "Ingeniería en Sistemas de Información",
+      academicInstitution: "Universidad Manos de Manteca",
+      careerStartYear: 2004,
+      careerEndYear: 2009,
+      education:
+        "https://utfs.io/f/bFtU7UL7iC6dFR1FmelnY0ZCeByJDuXEmxFskzMjTUiI4PAO",
+      resume:
+        "https://utfs.io/f/bFtU7UL7iC6d2w8ytpqPpmvyQTLnRbxerGHSUXgMkc1YuiEC",
+      roleId: roles["DevOps & Cloud Engineer (AWS)"].id,
+      areaId: areas["Infraestructura Cloud & DevOps"].id,
+      seniorityId: seniorities["Senior"].id,
+      tags: {
+        connect: [
+          { id: tags["AWS"].id },
+          { id: tags["Docker"].id },
+          { id: tags["PostgreSQL"].id },
+          { id: tags["Híbrido Montevideo (Cordón)"].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: muslera.id,
+        hiringManagerId: hm3.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: muslera.id,
+        hiringManagerId: hm5.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
+  });
+
+  await prisma.application.create({
+    data: {
+      applicantId: muslera.id,
+      jobOpeningId: jobOpening4.id,
+      applicationDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      active: true,
+      currentStage: "Aplicado",
+      stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      desiredSalaryAmount: 4800,
+      desiredSalaryCurrency: "USD",
+      availability: "Inmediata",
+    },
+  });
+
+  await prisma.activity.create({
+    data: {
+      applicantId: muslera.id,
+      jobOpeningId: jobOpening4.id,
+      description:
+        "Contacto inicial establecido por el equipo de reclutamiento",
+      date: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1186,7 +1654,5 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  console.log(
-    "Seed completado exitosamente: 6 usuarios (3 Recruiters, 3 Hiring Managers), 9 roles IT Eagerworks, 5 áreas, 4 seniorities, 20 tags, 5 vacantes, 10 candidatos uruguayos con fotos de Transfermarkt y PDFs reales de CV/Escolaridad en UploadThing.",
-  );
+  console.log("Seed completado exitosamente.");
 }
