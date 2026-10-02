@@ -56,6 +56,9 @@ export const fetchPipelineCandidates = protectedProcedure
           }),
     };
 
+    const now = Date.now();
+    const MAX_INTERVIEW_MS = 24 * 60 * 60_000;
+
     const [applications, total] = await Promise.all([
       ctx.db.application.findMany({
         where,
@@ -86,7 +89,7 @@ export const fetchPipelineCandidates = protectedProcedure
                 where: {
                   status: "Scheduled",
                   jobOpeningId: input.jobOpeningId,
-                  date: { not: null },
+                  date: { gt: new Date(now - MAX_INTERVIEW_MS) },
                 },
                 orderBy: {
                   date: "asc",
@@ -116,7 +119,10 @@ export const fetchPipelineCandidates = protectedProcedure
     ]);
 
     const candidates = applications.map((application) => {
-      const interviews = application.applicant.interviews;
+      const interviews = application.applicant.interviews.filter(
+        (interview) =>
+          interview.date!.getTime() + interview.duration * 60_000 > now,
+      );
       const nextInterview = interviews[0];
 
       return {

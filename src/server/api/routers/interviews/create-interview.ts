@@ -93,6 +93,7 @@ export const createInterviewProcedure = protectedProcedure
 
     const nearbyInterviews = await ctx.db.interview.findMany({
       where: {
+        applicantId: input.applicantId,
         status: "Scheduled",
         date: {
           gt: new Date(start.getTime() - MAX_INTERVIEW_MS),
@@ -102,14 +103,10 @@ export const createInterviewProcedure = protectedProcedure
       select: {
         date: true,
         duration: true,
-        applicantId: true,
-        interviewers: {
-          select: { id: true, name: true, lastName: true },
-        },
       },
     });
 
-    const overlapping = nearbyInterviews.filter((existing) => {
+    const hasOverlap = nearbyInterviews.some((existing) => {
       if (!existing.date) return false;
 
       const existingStart = existing.date.getTime();
@@ -118,7 +115,7 @@ export const createInterviewProcedure = protectedProcedure
       return existingStart < end.getTime() && existingEnd > start.getTime();
     });
 
-    if (overlapping.length > 0) {
+    if (hasOverlap) {
       throw new TRPCError({
         code: "CONFLICT",
         message: "El candidato ya tiene una entrevista en ese horario.",

@@ -35,7 +35,7 @@ import {
 import { api } from "~/lib/trpc/react";
 
 import type { PipelineCandidate } from "./types";
-import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interwiev-dialog";
+import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
 
 const modalityLabels: Record<string, string> = {
@@ -69,6 +69,7 @@ type CandidateCardProps = {
   onAdvanced: (applicantId: string) => void;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
+  canDeleteInterview: boolean;
 };
 
 export function CandidateCard({
@@ -79,6 +80,7 @@ export function CandidateCard({
   onAdvanced,
   canUpdateApplication,
   canCreateInterview,
+  canDeleteInterview,
 }: CandidateCardProps) {
   const router = useRouter();
 
@@ -299,9 +301,11 @@ export function CandidateCard({
                       {interview.name}
                     </p>
 
-                    {/* CAMBIO: fecha, modalidad y duración quedan en un solo renglón */}
-                    <p className="whitespace-nowrap text-xs text-text-secondary">
-                      {formatInterviewDateTime(new Date(interview.date))} ·{" "}
+                    <p className="text-xs text-text-secondary">
+                      {formatInterviewDateTime(new Date(interview.date))}
+                    </p>
+
+                    <p className="text-xs text-text-secondary">
                       {modalityLabels[interview.modality] ?? interview.modality}{" "}
                       · {interview.duration} min
                     </p>
@@ -319,7 +323,7 @@ export function CandidateCard({
                     )}
                   </div>
 
-                  {canCreateInterview && (
+                  {canDeleteInterview && (
                     <Button
                       type="button"
                       variant="ghost"

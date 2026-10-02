@@ -13,7 +13,7 @@ export const deleteInterviewProcedure = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const permission = await auth.api.hasPermission({
       headers: ctx.headers,
-      body: { permissions: { interview: ["create"] } },
+      body: { permissions: { interview: ["delete"] } },
     });
 
     if (!permission.success) {

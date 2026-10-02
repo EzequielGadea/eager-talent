@@ -28,6 +28,7 @@ type PipelineColumnProps = {
   isLastStage: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
+  canDeleteInterview: boolean;
 };
 
 export async function PipelineColumn({
@@ -36,6 +37,7 @@ export async function PipelineColumn({
   isLastStage,
   canUpdateApplication,
   canCreateInterview,
+  canDeleteInterview,
 }: PipelineColumnProps) {
   const data = await api.jobOpening.fetchPipelineCandidates({
     jobOpeningId,
@@ -71,6 +73,7 @@ export async function PipelineColumn({
         isLastStage={isLastStage}
         canUpdateApplication={canUpdateApplication}
         canCreateInterview={canCreateInterview && canScheduleInterviewInStage}
+        canDeleteInterview={canDeleteInterview}
       />
     </section>
   );

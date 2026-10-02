@@ -3,7 +3,7 @@ import { getApplicationsByApplicantIdProcedure } from "./get-applications-by-app
 import { createApplication } from "./create-application";
 import { fetchAvailableApplicants } from "./fetch-available-applicants";
 import { advanceApplicationStage } from "./advance-application-stage";
-import { moveApplicationToStage } from "./moveApplicationToStage";
+import { moveApplicationToStage } from "./move-application-to-stage";
 import { disqualifyApplication } from "./disqualify-application";
 
 export const applicationRouter = createTRPCRouter({

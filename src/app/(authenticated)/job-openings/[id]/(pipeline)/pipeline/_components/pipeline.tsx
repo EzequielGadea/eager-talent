@@ -17,24 +17,33 @@ type PipelineProps = {
 export async function Pipeline({ jobOpeningId, stages }: PipelineProps) {
   const requestHeaders = await headers();
 
-  const [canUpdateApplication, canCreateInterview] = await Promise.all([
-    auth.api.hasPermission({
-      headers: requestHeaders,
-      body: {
-        permissions: {
-          application: ["update"],
+  const [canUpdateApplication, canCreateInterview, canDeleteInterview] =
+    await Promise.all([
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            application: ["update"],
+          },
         },
-      },
-    }),
-    auth.api.hasPermission({
-      headers: requestHeaders,
-      body: {
-        permissions: {
-          interview: ["create"],
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            interview: ["create"],
+          },
         },
-      },
-    }),
-  ]);
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            interview: ["delete"],
+          },
+        },
+      }),
+    ]);
 
   return (
     <ScrollArea className="w-full">
@@ -48,6 +57,7 @@ export async function Pipeline({ jobOpeningId, stages }: PipelineProps) {
                 isLastStage={index === stages.length - 1}
                 canUpdateApplication={canUpdateApplication.success}
                 canCreateInterview={canCreateInterview.success}
+                canDeleteInterview={canDeleteInterview.success}
               />
             </Suspense>
           ))}

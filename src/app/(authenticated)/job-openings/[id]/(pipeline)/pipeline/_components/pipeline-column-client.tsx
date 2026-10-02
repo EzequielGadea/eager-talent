@@ -19,6 +19,7 @@ type PipelineColumnClientProps = {
   isLastStage: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
+  canDeleteInterview: boolean;
 };
 
 export function PipelineColumnClient({
@@ -29,6 +30,7 @@ export function PipelineColumnClient({
   isLastStage,
   canUpdateApplication,
   canCreateInterview,
+  canDeleteInterview,
 }: PipelineColumnClientProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: stageName,
@@ -201,6 +203,7 @@ export function PipelineColumnClient({
           onAdvanced={handleCandidateAdvanced}
           canUpdateApplication={canUpdateApplication}
           canCreateInterview={canCreateInterview}
+          canDeleteInterview={canDeleteInterview}
         />
       ))}
 
