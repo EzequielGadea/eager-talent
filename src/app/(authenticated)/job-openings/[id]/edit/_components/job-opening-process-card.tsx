@@ -111,6 +111,11 @@ export function JobOpeningProcessCard({
     move(fromIndex, toIndex);
   }
 
+  const stageErrorMessage =
+    typeof errors.stages?.message === "string"
+      ? errors.stages.message
+      : errors.stages?.root?.message;
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader>
@@ -273,8 +278,8 @@ export function JobOpeningProcessCard({
           ))}
         </ol>
 
-        {typeof errors.stages?.message === "string" && (
-          <p className="text-xs text-danger">{errors.stages.message}</p>
+        {typeof stageErrorMessage === "string" && (
+          <p className="text-xs text-danger">{stageErrorMessage}</p>
         )}
 
         <Button

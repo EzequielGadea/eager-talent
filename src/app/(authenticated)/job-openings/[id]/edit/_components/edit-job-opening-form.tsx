@@ -6,7 +6,7 @@ import { ArrowRight, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
 
 import {
   updateJobOpeningSchema,
@@ -79,9 +79,17 @@ export function EditJobOpeningForm({
     await updateJobOpening.mutateAsync(values);
   }
 
-  function handleInvalidSubmit() {
+  function handleInvalidSubmit(errors: FieldErrors<UpdateJobOpeningInput>) {
+    const stageErrorMessage =
+      typeof errors.stages?.message === "string"
+        ? errors.stages.message
+        : errors.stages?.root?.message;
+
     toast.add({
-      title: "Revisá los campos obligatorios antes de guardar",
+      title:
+        typeof stageErrorMessage === "string"
+          ? stageErrorMessage
+          : "Revisá los campos obligatorios antes de guardar",
       type: "error",
     });
   }
