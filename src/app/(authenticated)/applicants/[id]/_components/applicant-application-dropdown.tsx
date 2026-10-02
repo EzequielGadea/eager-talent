@@ -34,8 +34,16 @@ type ApplicantApplicationDropdownProps = {
 
 function getDropdownApplicationStatus(application: { active: boolean }) {
   return application.active
-    ? { label: "En proceso", className: "bg-info-bg text-info" }
-    : { label: "Descartado", className: "bg-danger-bg text-danger" };
+    ? {
+        label: "En proceso",
+        className:
+          "bg-info-bg text-info! hover:text-info! focus:text-info! data-highlighted:text-info!",
+      }
+    : {
+        label: "Descartado",
+        className:
+          "bg-danger-bg text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger!",
+      };
 }
 
 function buildApplicationSubtitle(application: ApplicationSummary) {
@@ -158,7 +166,7 @@ export function ApplicantApplicationDropdown({
                   <span className="truncate font-semibold text-text-primary!">
                     Base de Talentos
                   </span>
-                  <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg!">
+                  <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg! hover:text-tag-purple-fg! focus:text-tag-purple-fg! data-highlighted:text-tag-purple-fg!">
                     Sin postulación
                   </Badge>
                 </span>
