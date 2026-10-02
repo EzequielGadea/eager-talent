@@ -361,7 +361,10 @@ export function JobOpeningFilters({
             </Alert>
           )}
         </fieldset>
+        {/*
 
+  Comentado hasta saber si este filtro va
+  
         <fieldset className="px-4 pb-4">
           <legend className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary">
             Reclutador a cargo
@@ -380,6 +383,8 @@ export function JobOpeningFilters({
           </Select>
         </fieldset>
 
+
+*/}
         <fieldset className="px-4 pb-4">
           <legend
             id={openingDateLabelId}
