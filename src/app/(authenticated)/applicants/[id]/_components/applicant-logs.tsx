@@ -228,7 +228,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
         )}
       </CardContent>
 
-      {(isLoading || activities.length > 0) && (
+      {(isLoading || data) && (
         <CardFooter className="flex flex-wrap items-center justify-between gap-3">
           {isLoading || !data ? (
             <>
@@ -238,8 +238,9 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
           ) : (
             <>
               <span>
-                {firstRecord}–{firstRecord + activities.length - 1} de {total}{" "}
-                registros
+                {activities.length === 0
+                  ? "No hay registros"
+                  : `${firstRecord}–${firstRecord + activities.length - 1} de ${total} registros`}
               </span>
               <Pagination className="mx-0 w-auto justify-end">
                 <PaginationContent>

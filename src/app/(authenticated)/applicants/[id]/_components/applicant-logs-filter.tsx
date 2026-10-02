@@ -46,7 +46,7 @@ export function ApplicantLogsFilter({
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="max-h-60 w-96 max-w-[calc(100vw-2rem)] overflow-y-auto rounded-xl border border-border-strong p-1.5 shadow-lg"
+        className="max-h-44 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-border-strong p-1.5 shadow-lg"
       >
         <DropdownMenuItem
           onClick={() => onFilterChange(undefined)}
