@@ -6,6 +6,7 @@ import { getJobOpeningsAmount } from "./get-amount";
 import { fetchById } from "./fetch-by-id";
 import { fetchPipelineCandidates } from "./fetch-pipeline-candidates";
 import { updateStatus } from "./update-status";
+import { getJobOpeningHiringManagers } from "./get-hiring-managers";
 
 export { getAllJobOpenings };
 export { getAllJobOpeningsDetailed };
@@ -13,6 +14,7 @@ export { getJobOpeningsAmount };
 export { fetchById };
 export { fetchPipelineCandidates };
 export { updateStatus };
+export { getJobOpeningHiringManagers };
 
 export const jobOpeningRouter = createTRPCRouter({
   getAllJobOpenings,
@@ -21,4 +23,5 @@ export const jobOpeningRouter = createTRPCRouter({
   fetchById,
   fetchPipelineCandidates,
   updateStatus,
+  getJobOpeningHiringManagers,
 });

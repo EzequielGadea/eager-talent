@@ -10,6 +10,7 @@ import {
 } from "~/components/ui/popover";
 
 import { TableCell, TableRow } from "~/components/ui/table";
+import { statusConfig } from "../constants";
 
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
@@ -20,25 +21,6 @@ type JobOpening =
 type Props = {
   jobOpening: JobOpening;
   isHiringManagerView: boolean;
-};
-
-const statusConfig = {
-  Open: {
-    label: "Abierta",
-    className: "bg-success-bg text-success",
-  },
-  Paused: {
-    label: "Pausada",
-    className: "bg-warning-bg text-warning",
-  },
-  Closed: {
-    label: "Cerrada",
-    className: "bg-tag-gray-bg text-tag-gray-fg",
-  },
-  Cancelled: {
-    label: "Cancelada",
-    className: "bg-danger-bg text-danger",
-  },
 };
 
 function getInitials(name: string) {
@@ -156,42 +138,42 @@ export default function JobOpeningRow({
         </span>
       </TableCell>
 
-     <TableCell className="px-4 py-3">
-      <div className="flex items-center gap-1.5">
-        <span className="font-semibold text-text-primary">
-          {jobOpening.applicants}
-        </span>
-
-        <span className="text-xs text-text-tertiary">en pipeline</span>
-      </div>
-    </TableCell>
-
-    {isHiringManagerView && (
-      <>
-        <TableCell className="px-4 py-3">
+      <TableCell className="px-4 py-3">
+        <div className="flex items-center gap-1.5">
           <span className="font-semibold text-text-primary">
-            {jobOpening.technicalInterviewApplicants}
+            {jobOpening.applicants}
           </span>
-        </TableCell>
 
-        <TableCell className="px-4 py-3">
-          <span className="font-semibold text-text-primary">
-            {jobOpening.offeredApplicants}
-          </span>
-        </TableCell>
-      </>
-    )}
+          <span className="text-xs text-text-tertiary">en pipeline</span>
+        </div>
+      </TableCell>
 
-    <TableCell className="px-4 py-3 text-text-secondary">
-      {formattedDate}
-    </TableCell>
+      {isHiringManagerView && (
+        <>
+          <TableCell className="px-4 py-3">
+            <span className="font-semibold text-text-primary">
+              {jobOpening.technicalInterviewApplicants}
+            </span>
+          </TableCell>
 
-    <TableCell className="px-4 py-3">
-      <ArrowRight
-        size={16}
-        className="text-text-tertiary transition-transform group-hover:translate-x-1"
-      />
-    </TableCell>
+          <TableCell className="px-4 py-3">
+            <span className="font-semibold text-text-primary">
+              {jobOpening.offeredApplicants}
+            </span>
+          </TableCell>
+        </>
+      )}
+
+      <TableCell className="px-4 py-3 text-text-secondary">
+        {formattedDate}
+      </TableCell>
+
+      <TableCell className="px-4 py-3">
+        <ArrowRight
+          size={16}
+          className="text-text-tertiary transition-transform group-hover:translate-x-1"
+        />
+      </TableCell>
     </TableRow>
   );
 }

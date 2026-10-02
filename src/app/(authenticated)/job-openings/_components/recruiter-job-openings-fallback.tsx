@@ -1,6 +1,7 @@
-import { Plus } from "lucide-react";
-import { Skeleton } from "~/components/ui/skeleton";
+import { ChevronDown, Filter, Plus } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
+import { Skeleton } from "~/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -10,9 +11,11 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-export default function JobOpeningsFallback() {
+export function RecruiterJobOpeningsFallback() {
   return (
-    <div className="mx-auto flex w-full flex-col gap-5 p-6">
+    <div aria-busy="true" className="mx-auto flex w-full flex-col gap-5 p-6">
+      <span className="sr-only">Cargando vacantes</span>
+
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Vacantes</h1>
@@ -22,33 +25,51 @@ export default function JobOpeningsFallback() {
           </div>
         </div>
 
-        <Button
-          size="sm"
-          disabled
-          className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark"
-        >
-          <Plus size={16} />
-          Nueva vacante
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled
+            className="h-8 px-4 text-[13px] font-normal text-text-secondary"
+          >
+            <Filter data-icon="inline-start" />
+            Filtrar
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled
+            className="h-8 px-4 text-[13px] font-normal text-text-secondary"
+          >
+            Ordenar
+            <ChevronDown data-icon="inline-end" />
+          </Button>
+
+          <Button
+            size="sm"
+            disabled
+            className="rounded-full bg-dashboard-dark text-text-on-dark"
+          >
+            <Plus data-icon="inline-start" />
+            Nueva vacante
+          </Button>
+        </div>
       </div>
 
-      <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+      <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-background shadow-sm">
         <div className="w-full overflow-x-auto">
           <Table className="min-w-[900px]">
             <TableHeader>
               <TableRow className="border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
                 <TableHead className="px-4 py-3">Vacante</TableHead>
-
                 <TableHead className="px-4 py-3">Área</TableHead>
-
                 <TableHead className="px-4 py-3">Hiring Managers</TableHead>
-
                 <TableHead className="px-4 py-3">Estado</TableHead>
-
                 <TableHead className="px-4 py-3">Candidatos</TableHead>
-
                 <TableHead className="px-4 py-3">Abierta hace</TableHead>
-
                 <TableHead className="px-4 py-3" />
               </TableRow>
             </TableHeader>
@@ -59,29 +80,23 @@ export default function JobOpeningsFallback() {
                   <TableCell className="px-4 py-3">
                     <Skeleton className="h-4 w-36" />
                   </TableCell>
-
                   <TableCell className="px-4 py-3">
                     <Skeleton className="h-4 w-24" />
                   </TableCell>
-
                   <TableCell className="px-4 py-3">
                     <Skeleton className="h-4 w-32" />
                   </TableCell>
-
                   <TableCell className="px-4 py-3">
                     <Skeleton className="h-6 w-20 rounded-full" />
                   </TableCell>
-
                   <TableCell className="px-4 py-3">
                     <Skeleton className="h-4 w-8" />
                   </TableCell>
-
                   <TableCell className="px-4 py-3">
                     <Skeleton className="h-4 w-24" />
                   </TableCell>
-
                   <TableCell className="px-4 py-3">
-                    <Skeleton className="ml-auto h-4 w-4" />
+                    <Skeleton className="ml-auto size-4" />
                   </TableCell>
                 </TableRow>
               ))}

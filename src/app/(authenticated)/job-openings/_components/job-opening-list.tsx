@@ -1,10 +1,16 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import JobOpeningsFallback from "./job-openings-fallback";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { HiringManagerJobOpeningsFallback } from "./hiring-manager-job-openings-fallback";
+import { RecruiterJobOpeningsFallback } from "./recruiter-job-openings-fallback";
 import { api } from "~/lib/trpc/react";
 import AssignedInterviews from "./assigned-interviews";
+import {
+  JobOpeningFilters,
+  type JobOpeningFiltersValue,
+} from "./job-opening-filters";
+import { JobOpeningSort } from "./job-opening-sort";
 import { Button } from "~/components/ui/button";
 import {
   Table,
@@ -17,11 +23,26 @@ import {
 
 import JobOpeningRow from "./job-opening-row";
 import { JobOpeningPagination } from "./job-opening-pagination";
+import type { JobOpeningSortValue } from "~/server/api/routers/job-opening/sort";
+import type { JobOpeningStatus } from "~/generated/prisma/enums";
+
 export default function JobOpeningsList({
   currentPage,
+  currentSort,
+  currentStatuses,
+  currentAreaId,
+  currentHiringManagerId,
+  currentOpeningDateRange,
+  currentOnlyWithActiveCandidates,
   isHiringManagerView,
 }: {
   currentPage: number;
+  currentSort: JobOpeningSortValue;
+  currentStatuses: JobOpeningStatus[];
+  currentAreaId?: string;
+  currentHiringManagerId?: string;
+  currentOpeningDateRange?: JobOpeningFiltersValue["openingDateRange"];
+  currentOnlyWithActiveCandidates: boolean;
   isHiringManagerView: boolean;
 }) {
   const router = useRouter();
@@ -33,22 +54,92 @@ export default function JobOpeningsList({
     isError: isErrorJobOpenings,
   } = api.jobOpening.getAllJobOpeningsDetailed.useQuery({
     page: currentPage,
+    sort: currentSort,
+    statuses: currentStatuses,
+    areaId: currentAreaId,
+    hiringManagerId: currentHiringManagerId,
+    openingDateRange: currentOpeningDateRange,
+    onlyWithActiveCandidates: currentOnlyWithActiveCandidates,
   });
 
   const {
     data: jobOpeningsAmount,
     isLoading: isLoadingAmount,
     isError: isErrorAmount,
-  } = api.jobOpening.getJobOpeningsAmount.useQuery();
+  } = api.jobOpening.getJobOpeningsAmount.useQuery({
+    statuses: currentStatuses,
+    areaId: currentAreaId,
+    hiringManagerId: currentHiringManagerId,
+    openingDateRange: currentOpeningDateRange,
+    onlyWithActiveCandidates: currentOnlyWithActiveCandidates,
+  });
+
+  const searchParams = useSearchParams();
 
   function updatePage(page: number) {
-    router.replace(`${pathname}?page=${page}`, {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("page", String(page));
+
+    router.replace(`${pathname}?${params.toString()}`, {
+      scroll: false,
+    });
+  }
+
+  function updateSort(sort: JobOpeningSortValue) {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("sort", sort);
+    params.set("page", "1");
+
+    router.replace(`${pathname}?${params.toString()}`, {
+      scroll: false,
+    });
+  }
+
+  function updateFilters(filters: JobOpeningFiltersValue) {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.delete("status");
+    filters.statuses.forEach((status) => params.append("status", status));
+
+    if (filters.areaId) {
+      params.set("area", filters.areaId);
+    } else {
+      params.delete("area");
+    }
+
+    if (filters.hiringManagerId) {
+      params.set("hiringManager", filters.hiringManagerId);
+    } else {
+      params.delete("hiringManager");
+    }
+
+    if (filters.openingDateRange) {
+      params.set("openingDate", filters.openingDateRange);
+    } else {
+      params.delete("openingDate");
+    }
+
+    if (filters.onlyWithActiveCandidates) {
+      params.set("withActiveCandidates", "true");
+    } else {
+      params.delete("withActiveCandidates");
+    }
+
+    params.set("page", "1");
+
+    router.replace(`${pathname}?${params.toString()}`, {
       scroll: false,
     });
   }
 
   if (isLoadingJobOpenings || isLoadingAmount) {
-    return <JobOpeningsFallback />;
+    return isHiringManagerView ? (
+      <HiringManagerJobOpeningsFallback />
+    ) : (
+      <RecruiterJobOpeningsFallback />
+    );
   }
 
   if (
@@ -78,14 +169,28 @@ export default function JobOpeningsList({
         </div>
 
         {!isHiringManagerView && (
-          <Button
-            size="sm"
-            className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover"
-            onClick={() => router.push("/job-openings/new")}
-          >
-            <Plus size={16} />
-            Nueva vacante
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <JobOpeningFilters
+              value={{
+                statuses: currentStatuses,
+                areaId: currentAreaId,
+                hiringManagerId: currentHiringManagerId,
+                openingDateRange: currentOpeningDateRange,
+                onlyWithActiveCandidates: currentOnlyWithActiveCandidates,
+              }}
+              onValueChange={updateFilters}
+            />
+            <JobOpeningSort value={currentSort} onValueChange={updateSort} />
+
+            <Button
+              size="sm"
+              className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover"
+              onClick={() => router.push("/job-openings/new")}
+            >
+              <Plus size={16} />
+              Nueva vacante
+            </Button>
+          </div>
         )}
       </div>
 
@@ -112,9 +217,7 @@ export default function JobOpeningsList({
                       Entrevista técnica
                     </TableHead>
 
-                    <TableHead className="px-4 py-3">
-                      Ofertados
-                    </TableHead>
+                    <TableHead className="px-4 py-3">Ofertados</TableHead>
                   </>
                 )}
 
@@ -131,7 +234,13 @@ export default function JobOpeningsList({
                     colSpan={isHiringManagerView ? 8 : 7}
                     className="h-24 text-center text-dashboard-text-muted"
                   >
-                    Todavía no hay vacantes registradas.
+                    {currentStatuses.length > 0 ||
+                    currentAreaId ||
+                    currentHiringManagerId ||
+                    currentOpeningDateRange ||
+                    currentOnlyWithActiveCandidates
+                      ? "No hay vacantes que cumplan con los criterios del filtro."
+                      : "Todavía no hay vacantes registradas."}
                   </TableCell>
                 </TableRow>
               ) : (
