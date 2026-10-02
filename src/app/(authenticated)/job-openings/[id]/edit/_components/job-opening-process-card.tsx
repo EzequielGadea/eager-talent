@@ -54,6 +54,10 @@ const STAGE_TYPE_OPTIONS: Array<{
   { value: "hired", label: "Contratado" },
 ];
 
+function isBoundaryStage(index: number, totalStages: number) {
+  return index === 0 || index === totalStages - 1;
+}
+
 type JobOpeningProcessCardProps = {
   canEditStages: boolean;
 };
@@ -98,12 +102,20 @@ export function JobOpeningProcessCard({
     if (!canEditStages) {
       return;
     }
+
     if (
       fromIndex < 0 ||
       toIndex < 0 ||
       fromIndex >= stages.length ||
       toIndex >= stages.length ||
       fromIndex === toIndex
+    ) {
+      return;
+    }
+
+    if (
+      isBoundaryStage(fromIndex, stages.length) ||
+      isBoundaryStage(toIndex, stages.length)
     ) {
       return;
     }
@@ -165,12 +177,20 @@ export function JobOpeningProcessCard({
                 type="button"
                 variant="ghost"
                 size="icon-xs"
-                draggable={canEditStages}
-                disabled={!canEditStages}
-                aria-label={`Reordenar etapa ${stage.name}. Usa las flechas arriba y abajo.`}
+                draggable={
+                  canEditStages && !isBoundaryStage(index, stages.length)
+                }
+                disabled={
+                  !canEditStages || isBoundaryStage(index, stages.length)
+                }
+                aria-label={
+                  isBoundaryStage(index, stages.length)
+                    ? `${stage.name} es una etapa fija`
+                    : `Reordenar etapa ${stage.name}. Usa las flechas arriba y abajo.`
+                }
                 className={cn(
                   "text-text-tertiary",
-                  canEditStages
+                  canEditStages && !isBoundaryStage(index, stages.length)
                     ? "cursor-grab active:cursor-grabbing"
                     : "cursor-not-allowed",
                 )}
@@ -210,11 +230,13 @@ export function JobOpeningProcessCard({
                 <Input
                   aria-label={`Nombre de la etapa ${index + 1}`}
                   placeholder="Nombre de la etapa"
-                  readOnly={!canEditStages}
+                  readOnly={
+                    !canEditStages || isBoundaryStage(index, stages.length)
+                  }
                   maxLength={80}
                   className={cn(
                     "h-7 border-transparent bg-transparent px-1 font-medium shadow-none",
-                    canEditStages
+                    canEditStages && !isBoundaryStage(index, stages.length)
                       ? "hover:border-border-default"
                       : "cursor-not-allowed text-text-secondary",
                   )}
@@ -230,7 +252,9 @@ export function JobOpeningProcessCard({
                   <Select
                     value={field.value}
                     items={STAGE_TYPE_OPTIONS}
-                    disabled={!canEditStages}
+                    disabled={
+                      !canEditStages || isBoundaryStage(index, stages.length)
+                    }
                     onValueChange={(value) => {
                       const parsedType =
                         jobOpeningStageTypeSchema.safeParse(value);
@@ -268,8 +292,14 @@ export function JobOpeningProcessCard({
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                disabled={!canEditStages}
-                aria-label={`Eliminar etapa ${stage.name}`}
+                disabled={
+                  !canEditStages || isBoundaryStage(index, stages.length)
+                }
+                aria-label={
+                  isBoundaryStage(index, stages.length)
+                    ? `No se puede eliminar la etapa fija ${stage.name}`
+                    : `Eliminar etapa ${stage.name}`
+                }
                 onClick={() => remove(index)}
               >
                 <X aria-hidden="true" />

@@ -94,6 +94,27 @@ export const updateJobOpeningSchema = z
       });
     }
 
+    if (normalizedStageNames.length > 0) {
+      const firstStageName = normalizedStageNames[0];
+      const lastStageName = normalizedStageNames.at(-1);
+
+      if (firstStageName !== "aplicado") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["stages"],
+          message: "Aplicado debe ser la primera etapa del flujo",
+        });
+      }
+
+      if (!lastStageName?.startsWith("contratad")) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["stages"],
+          message: "Contratado debe ser la última etapa del flujo",
+        });
+      }
+    }
+
     if (new Set(data.seniorityIds).size !== data.seniorityIds.length) {
       ctx.addIssue({
         code: "custom",
