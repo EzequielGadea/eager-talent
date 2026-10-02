@@ -95,9 +95,10 @@ export const globalSearch = protectedProcedure
               name: true,
               status: true,
               area: { select: { name: true } },
-              applications: {
-                where: { active: true },
-                select: { applicantId: true },
+              _count: {
+                select: {
+                  applications: { where: { active: true } },
+                },
               },
             },
           })
@@ -138,7 +139,7 @@ export const globalSearch = protectedProcedure
         name: jobOpening.name,
         area: jobOpening.area.name,
         status: jobOpening.status,
-        applicantsCount: jobOpening.applications.length,
+        applicantsCount: jobOpening._count.applications,
       })),
     };
   });
