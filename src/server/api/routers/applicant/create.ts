@@ -62,6 +62,7 @@ export const createApplicant = protectedProcedure
     }
     try {
       let firstStage: string | undefined;
+      let jobOpeningName: string | undefined;
 
       // Si se seleccionó una vacante, buscamos su primera stage
       if (input.jobOpeningId) {
@@ -70,6 +71,7 @@ export const createApplicant = protectedProcedure
             id: input.jobOpeningId,
           },
           select: {
+            name: true,
             stages: true,
           },
         });
@@ -83,6 +85,7 @@ export const createApplicant = protectedProcedure
 
         const stages = jobOpening.stages as Array<{ name: string }>;
 
+        jobOpeningName = jobOpening.name;
         firstStage = stages[0]?.name;
 
         if (!firstStage) {
@@ -148,7 +151,16 @@ export const createApplicant = protectedProcedure
           },
         });
 
-        if (input.jobOpeningId && firstStage) {
+        await tx.activity.create({
+          data: {
+            applicantId: applicant.id,
+            jobOpeningId: null,
+            createdById: ctx.session.user.id,
+            description: "creó el candidato",
+          },
+        });
+
+        if (input.jobOpeningId && firstStage && jobOpeningName !== undefined) {
           await tx.application.create({
             data: {
               applicantId: applicant.id,
@@ -159,6 +171,15 @@ export const createApplicant = protectedProcedure
               desiredSalaryCurrency: input.currency,
               // Agregar cuando cambie la base : currency: input.currency,
               availability: input.availability,
+            },
+          });
+
+          await tx.activity.create({
+            data: {
+              applicantId: applicant.id,
+              jobOpeningId: input.jobOpeningId,
+              createdById: ctx.session.user.id,
+              description: `agregó el candidato a "${jobOpeningName}"`,
             },
           });
         }

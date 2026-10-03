@@ -190,39 +190,44 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
                       </TableCell>
                     </TableRow>
                   ))
-                : activities.map(({ id, date, description, application }) => (
-                    <TableRow key={id} className="text-sm">
-                      <TableCell className="whitespace-nowrap py-3 pr-3 text-muted-foreground">
-                        <time dateTime={new Date(date).toISOString()}>
-                          {formatActivityDate(new Date(date))}
-                        </time>
-                      </TableCell>
-                      <TableCell className="wrap-break-word py-3 pr-3">
-                        {description}
-                      </TableCell>
-                      <TableCell className="wrap-break-word py-3">
-                        <Badge
-                          variant="tag"
-                          className="h-auto max-w-full justify-center whitespace-normal text-center"
-                          style={
-                            {
-                              "--badge-background": application
-                                ? "var(--tag-blue-bg)"
-                                : "var(--tag-gray-bg)",
-                              "--badge-foreground": application
-                                ? "var(--tag-blue-fg)"
-                                : "var(--tag-gray-fg)",
-                              "--badge-border": "transparent",
-                            } as React.CSSProperties
-                          }
-                        >
-                          <span className="min-w-0 wrap-break-word">
-                            {application?.jobOpening.name || "Candidato"}
-                          </span>
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                : activities.map(
+                    ({ id, date, description, application, createdBy }) => (
+                      <TableRow key={id} className="text-sm">
+                        <TableCell className="whitespace-nowrap py-3 pr-3 text-muted-foreground">
+                          <time dateTime={new Date(date).toISOString()}>
+                            {formatActivityDate(new Date(date))}
+                          </time>
+                        </TableCell>
+                        <TableCell className="wrap-break-word py-3 pr-3">
+                          <span className="font-medium">
+                            {createdBy.name} {createdBy.lastName}
+                          </span>{" "}
+                          {description}
+                        </TableCell>
+                        <TableCell className="wrap-break-word py-3">
+                          <Badge
+                            variant="tag"
+                            className="h-auto max-w-full justify-center whitespace-normal text-center"
+                            style={
+                              {
+                                "--badge-background": application
+                                  ? "var(--tag-blue-bg)"
+                                  : "var(--tag-gray-bg)",
+                                "--badge-foreground": application
+                                  ? "var(--tag-blue-fg)"
+                                  : "var(--tag-gray-fg)",
+                                "--badge-border": "transparent",
+                              } as React.CSSProperties
+                            }
+                          >
+                            <span className="min-w-0 wrap-break-word">
+                              {application?.jobOpening.name || "Candidato"}
+                            </span>
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ),
+                  )}
             </TableBody>
           </Table>
         )}

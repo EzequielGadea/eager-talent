@@ -3,6 +3,8 @@ import { betterAuth } from "better-auth";
 import { organization } from "better-auth/plugins";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { faker } from "@faker-js/faker";
+import { TZDate } from "@date-fns/tz";
+import { format } from "date-fns";
 import type {
   PrismaClient,
   EnglishLevel,
@@ -561,77 +563,87 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
+  // Fecha de la entrevista de Valverde: se usa en la entrevista y en su Activity
+  // para que el log muestre exactamente la misma fecha y hora.
+  const fedeInterviewDate = new Date(Date.now() - 11 * 24 * 60 * 60 * 1000);
+  const fedeInterviewDateLabel = format(
+    new TZDate(fedeInterviewDate, "America/Montevideo"),
+    "dd/MM/yyyy 'a las' HH:mm",
+  );
+
   // 14 Actividades para Valverde (permite verificar páginas 1, 2 y 3 con 6 ítems por página - CP-008)
+  // Ordenadas de la más antigua a la más reciente: las del mismo día se crean
+  // en este orden, así "agregó el candidato" queda después de "creó el candidato".
   const fedeActivities = [
     {
-      desc: "Propuesta formal presentada y compartida con el Hiring Manager",
-      daysAgo: 1,
-      jobOp: jobOpening1.id,
-    },
-    {
-      desc: "Revisión de referencias laborales con CTO de empresa previa en EE.UU.",
-      daysAgo: 2,
+      desc: "creó el candidato",
+      daysAgo: 28,
       jobOp: null,
     },
     {
-      desc: "Segunda postulación asociada al proceso de Backend Ruby on Rails",
-      daysAgo: 4,
-      jobOp: jobOpening2.id,
-    },
-    {
-      desc: "Evaluación de competencias blandas y fit cultural con People Ops",
-      daysAgo: 7,
+      desc: `agregó el candidato a "${jobOpening1.name}"`,
+      daysAgo: 28,
       jobOp: jobOpening1.id,
     },
     {
-      desc: "Live coding de arquitectura de microservicios y consultas PostgreSQL completado",
-      daysAgo: 9,
-      jobOp: jobOpening1.id,
-    },
-    {
-      desc: "Entrevista técnica de diseño de APIs en Ruby on Rails completada con nota sobresaliente",
-      daysAgo: 11,
-      jobOp: jobOpening1.id,
-    },
-    {
-      desc: "Screening inicial de habilidades y disponibilidad con Recruiter",
-      daysAgo: 13,
-      jobOp: jobOpening1.id,
-    },
-    {
-      desc: "Certificado de escolaridad de FING validado por el equipo de selección",
-      daysAgo: 15,
+      desc: "creó una nota del candidato",
+      daysAgo: 26,
       jobOp: null,
     },
     {
-      desc: "Test técnico automatizado de algoritmos enviado al candidato",
-      daysAgo: 17,
-      jobOp: jobOpening1.id,
-    },
-    {
-      desc: "Resolución del challenge técnico recibido en repositorio Git",
-      daysAgo: 19,
-      jobOp: jobOpening1.id,
-    },
-    {
-      desc: "CV recibido y verificado por reclutamiento técnico",
-      daysAgo: 21,
-      jobOp: null,
-    },
-    {
-      desc: "Contacto inicial establecido a través de LinkedIn Jobs",
-      daysAgo: 23,
-      jobOp: jobOpening1.id,
-    },
-    {
-      desc: "Perfil preseleccionado para el partner tecnológico de Eagerworks",
+      desc: 'movió la postulación de "Aplicado" a "Entrevista HR"',
       daysAgo: 25,
       jobOp: jobOpening1.id,
     },
     {
-      desc: "Postulación recibida en el portal de carreras de Eagerworks",
-      daysAgo: 28,
+      desc: 'movió la postulación de "Entrevista HR" a "Psicotécnico"',
+      daysAgo: 22,
       jobOp: jobOpening1.id,
+    },
+    {
+      desc: "actualizó los datos del candidato",
+      daysAgo: 21,
+      jobOp: null,
+    },
+    {
+      desc: "actualizó los datos del candidato",
+      daysAgo: 20,
+      jobOp: null,
+    },
+    {
+      desc: `agregó el candidato a "${jobOpening2.name}"`,
+      daysAgo: 16,
+      jobOp: jobOpening2.id,
+    },
+    {
+      desc: "actualizó los datos del candidato",
+      daysAgo: 15,
+      jobOp: null,
+    },
+    {
+      desc: `agendó la entrevista "Evaluación Técnica de Arquitectura Ruby on Rails" el ${fedeInterviewDateLabel}`,
+      daysAgo: 14,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: 'movió la postulación de "Psicotécnico" a "Revisión de perfil"',
+      daysAgo: 12,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: 'movió la postulación de "Revisión de perfil" a "Entrevista técnica"',
+      daysAgo: 10,
+      jobOp: jobOpening1.id,
+    },
+    {
+      desc: "actualizó los datos del candidato",
+      daysAgo: 4,
+      jobOp: null,
+    },
+    {
+      desc: "actualizó los datos del candidato",
+      daysAgo: 2,
+      jobOp: null,
     },
   ];
 
@@ -790,8 +802,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: ronald.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening2.id,
-      description:
-        "Entrevista técnica de arquitectura y RSpec completada con buen desempeño",
+      description: 'movió la postulación de "Aplicado" a "Entrevista técnica"',
       date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
     },
   });
@@ -850,11 +861,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: ugarte.id,
-      createdById: hm2.id,
+      createdById: admin2.id,
       jobOpeningId: jobOpening2.id,
-      description:
-        "Postulación recibida y screening preliminar realizado por Diego Alonso",
-      date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
+      description: 'movió la postulación de "Aplicado" a "Revisión de perfil"',
+      date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -916,7 +926,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: bentancur.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
-      description: "Entrevista técnica de arquitectura aprobada unánimemente",
+      description: 'movió la postulación de "Aplicado" a "Entrevista HR"',
       date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
     },
   });
@@ -1182,8 +1192,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: ferran.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening5.id,
-      description:
-        "Postulación recibida para Frontend Developer (React / Next.js)",
+      description: `agregó el candidato a "${jobOpening5.name}"`,
       date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
     },
   });
@@ -1192,8 +1201,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: ferran.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening5.id,
-      description: "Entrevista HR completada con feedback positivo",
-      date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      description: 'movió la postulación de "Aplicado" a "Entrevista técnica"',
+      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1253,7 +1262,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: gordon.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening3.id,
-      description: "Perfil referido recibido y agregado al proceso de QA",
+      description: `agregó el candidato a "${jobOpening3.name}"`,
       date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
     },
   });
@@ -1303,7 +1312,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Ofertado",
+      currentStage: "Oferta",
       stageEntryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 7000,
       desiredSalaryCurrency: "USD",
@@ -1316,8 +1325,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: cristiano.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
-      description:
-        "Entrevista técnica de arquitectura avanzada aprobada con distinción",
+      description: 'movió la postulación de "Aplicado" a "Entrevista técnica"',
       date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
     },
   });
@@ -1326,7 +1334,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: cristiano.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
-      description: "Oferta formal enviada al candidato para posición Lead",
+      description: 'movió la postulación de "Entrevista técnica" a "Oferta"',
       date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
     },
   });
@@ -1388,8 +1396,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: julian.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening6.id,
-      description:
-        "Postulación recibida para AI Solutions & Full Stack Engineer",
+      description: `agregó el candidato a "${jobOpening6.name}"`,
       date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
     },
   });
@@ -1450,8 +1457,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: muslera.id,
       createdById: admin1.id,
       jobOpeningId: jobOpening4.id,
-      description:
-        "Contacto inicial establecido por el equipo de reclutamiento",
+      description: `agregó el candidato a "${jobOpening4.name}"`,
       date: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
     },
   });
@@ -1464,7 +1470,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Evaluación Técnica de Arquitectura Ruby on Rails",
       duration: 60,
       modality: "VideoCall" as InterviewType,
-      date: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000),
+      date: fedeInterviewDate,
       status: "Completed" as InterviewStatus,
       summary: "https://app.read.ai/meeting/abc123/summary",
       applicantId: federico.id,
