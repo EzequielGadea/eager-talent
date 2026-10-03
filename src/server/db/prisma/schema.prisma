@@ -32,6 +32,7 @@ model User {
   applicantNotes      ApplicantNote[]
   interviewNotes      InterviewNote[]
   publicLinks         PublicLink[]
+  activities Activity[]
 
   @@unique([email])
   @@map("user")
@@ -335,12 +336,15 @@ model Activity {
   date         DateTime     @default(now())
   applicantId  String       @map("applicant_id")
   jobOpeningId String?      @map("job_opening_id")
-  applicant    Applicant    @relation(fields: [applicantId], references: [id], onDelete: Restrict)
+  createdById  String       @map("created_by_id")
 
+  applicant    Applicant    @relation(fields: [applicantId], references: [id], onDelete: Restrict)
   application  Application? @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Restrict)
+  createdBy    User         @relation(fields: [createdById], references: [id], onDelete: Restrict)
 
   @@index([applicantId, date])
   @@index([applicantId, jobOpeningId])
+  @@index([createdById])
   @@map("activity")
 }
 

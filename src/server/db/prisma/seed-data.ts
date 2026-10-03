@@ -634,6 +634,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     await prisma.activity.create({
       data: {
         applicantId: federico.id,
+        createdById: admin1.id,
         jobOpeningId: act.jobOp,
         description: act.desc,
         date: new Date(Date.now() - act.daysAgo * 24 * 60 * 60 * 1000),
@@ -782,6 +783,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: ronald.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening2.id,
       description:
         "Entrevista técnica de arquitectura y RSpec completada con buen desempeño",
@@ -843,6 +845,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: ugarte.id,
+      createdById: hm2.id,
       jobOpeningId: jobOpening2.id,
       description:
         "Postulación recibida y screening preliminar realizado por Diego Alonso",
@@ -906,6 +909,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: bentancur.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
       description: "Entrevista técnica de arquitectura aprobada unánimemente",
       date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
@@ -1171,6 +1175,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: ferran.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening5.id,
       description:
         "Postulación recibida para Frontend Developer (React / Next.js)",
@@ -1180,6 +1185,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: ferran.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening5.id,
       description: "Entrevista HR completada con feedback positivo",
       date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
@@ -1240,6 +1246,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: gordon.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening3.id,
       description: "Perfil referido recibido y agregado al proceso de QA",
       date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
@@ -1302,6 +1309,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: cristiano.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
       description:
         "Entrevista técnica de arquitectura avanzada aprobada con distinción",
@@ -1311,6 +1319,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: cristiano.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
       description: "Oferta formal enviada al candidato para posición Lead",
       date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -1372,6 +1381,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: julian.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening6.id,
       description:
         "Postulación recibida para AI Solutions & Full Stack Engineer",
@@ -1433,6 +1443,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   await prisma.activity.create({
     data: {
       applicantId: muslera.id,
+      createdById: admin1.id,
       jobOpeningId: jobOpening4.id,
       description:
         "Contacto inicial establecido por el equipo de reclutamiento",
