@@ -1,0 +1,49 @@
+import { Suspense } from "react";
+import { auth } from "~/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import NewJobOpeningForm from "./_components/new-job-opening-form";
+import NewJobOpeningFallback from "./_components/new-job-opening-fallback";
+
+const FORM_LOADING_DELAY_MS = 3000;
+
+async function DelayedNewJobOpeningForm() {
+  await new Promise((resolve) => setTimeout(resolve, FORM_LOADING_DELAY_MS));
+
+  return <NewJobOpeningForm />;
+}
+
+export default function newJobOpeningPage() {
+  return (
+    <Suspense>
+      <ProtectedNewJobOpeningPage />
+    </Suspense>
+  );
+}
+
+async function ProtectedNewJobOpeningPage() {
+  const permission = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        jobOpening: ["create"],
+      },
+    },
+  });
+  if (!permission.success) {
+    redirect("/dashboard");
+  }
+  return (
+    <>
+      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
+        <h1 className="mb-0 text-2xl --text-primary --font-heading">
+          Nueva vacante
+        </h1>
+        <Suspense fallback={<NewJobOpeningFallback />}>
+          {/* Descomentar para probar fallback} <DelayedNewJobOpeningForm /> {*/}
+          <NewJobOpeningForm />
+        </Suspense>
+      </div>
+    </>
+  );
+}
