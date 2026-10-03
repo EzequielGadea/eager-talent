@@ -27,11 +27,8 @@ function getInitials(name: string, lastName?: string | null) {
 export default function OpeningHiring() {
   const [managerSearch, setManagerSearch] = React.useState("");
 
-  const {
-    register,
-    control,
-    formState: { errors },
-  } = useFormContext<JobOpeningFormValues>();
+  const { control } = useFormContext<JobOpeningFormValues>();
+
   const { data: hiringManagers, isLoading: isLoadingManager } =
     api.users.getAllHiringManagers.useQuery({});
   return (
