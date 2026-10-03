@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-
 import {
   jobOpeningStageTypeSchema,
   type JobOpeningStageType,
@@ -16,6 +14,10 @@ import { JobOpeningProcessCard } from "./job-opening-process-card";
 type EditJobOpeningContentProps = {
   jobOpeningId: string;
 };
+
+function formatDateOnly(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
 
 function normalizeLocation(
   location: string,
@@ -107,8 +109,8 @@ export async function EditJobOpeningContent({
     areaId: jobOpening.area.id,
     seniorityIds: jobOpening.seniorities.map((seniority) => seniority.id),
     location: normalizeLocation(jobOpening.location),
-    openingDate: format(jobOpening.openingDate, "yyyy-MM-dd"),
-    targetClosingDate: format(jobOpening.targetClosingDate, "yyyy-MM-dd"),
+    openingDate: formatDateOnly(jobOpening.openingDate),
+    targetClosingDate: formatDateOnly(jobOpening.targetClosingDate),
     stages: normalizeStages(jobOpening.stages),
     hiringManagerIds: jobOpening.hiringManagers.map(
       (hiringManager) => hiringManager.id,

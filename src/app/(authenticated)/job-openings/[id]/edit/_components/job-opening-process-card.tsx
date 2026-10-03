@@ -73,7 +73,7 @@ export function JobOpeningProcessCard({
 
   const {
     fields: stages,
-    append,
+    insert,
     remove,
     move,
   } = useFieldArray({
@@ -86,14 +86,18 @@ export function JobOpeningProcessCard({
     if (!canEditStages) {
       return;
     }
-    append(
+
+    const insertionIndex = Math.max(stages.length - 1, 0);
+
+    insert(
+      insertionIndex,
       {
         id: crypto.randomUUID(),
         name: "",
         type: "none",
       },
       {
-        focusName: `stages.${stages.length}.name`,
+        focusName: `stages.${insertionIndex}.name`,
       },
     );
   }
