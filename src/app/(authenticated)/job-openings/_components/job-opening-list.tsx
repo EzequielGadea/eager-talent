@@ -112,9 +112,7 @@ export default function JobOpeningsList({
                       Entrevista técnica
                     </TableHead>
 
-                    <TableHead className="px-4 py-3">
-                      Ofertados
-                    </TableHead>
+                    <TableHead className="px-4 py-3">Ofertados</TableHead>
                   </>
                 )}
 

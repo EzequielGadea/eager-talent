@@ -76,11 +76,8 @@ export const getAllJobOpeningsDetailed = protectedProcedure
       },
     });
 
-   return jobOpenings.map((jobOpening) => {
-      const {
-        applications,
-        ...jobOpeningData
-      } = jobOpening;
+    return jobOpenings.map((jobOpening) => {
+      const { applications, ...jobOpeningData } = jobOpening;
 
       return {
         ...jobOpeningData,
@@ -88,13 +85,11 @@ export const getAllJobOpeningsDetailed = protectedProcedure
         applicants: applications.length,
 
         technicalInterviewApplicants: applications.filter(
-          (application) =>
-            application.currentStage === "Entrevista Técnica",
+          (application) => application.currentStage === "Entrevista Técnica",
         ).length,
 
         offeredApplicants: applications.filter(
-          (application) =>
-            application.currentStage === "Oferta",
+          (application) => application.currentStage === "Oferta",
         ).length,
       };
     });
