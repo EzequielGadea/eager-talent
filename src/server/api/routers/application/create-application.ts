@@ -72,6 +72,7 @@ export const createApplication = protectedProcedure
         },
         select: {
           id: true,
+          name: true,
           stages: true,
         },
       }),
@@ -128,24 +129,38 @@ export const createApplication = protectedProcedure
       });
     }
     const now = new Date();
+    const firstStageName = firstStage.name;
     try {
-      return await ctx.db.application.create({
-        data: {
-          applicantId: input.applicantId,
-          jobOpeningId: input.jobOpeningId,
-          applicationDate: now,
-          currentStage: firstStage.name,
-          active: true,
-          stageEntryDate: now,
-          desiredSalaryAmount: input.desiredSalaryAmount,
-          desiredSalaryCurrency: input.desiredSalaryCurrency,
-          availability: input.availability,
-        },
-        select: {
-          applicantId: true,
-          jobOpeningId: true,
-          currentStage: true,
-        },
+      return await ctx.db.$transaction(async (tx) => {
+        const application = await tx.application.create({
+          data: {
+            applicantId: input.applicantId,
+            jobOpeningId: input.jobOpeningId,
+            applicationDate: now,
+            currentStage: firstStageName,
+            active: true,
+            stageEntryDate: now,
+            desiredSalaryAmount: input.desiredSalaryAmount,
+            desiredSalaryCurrency: input.desiredSalaryCurrency,
+            availability: input.availability,
+          },
+          select: {
+            applicantId: true,
+            jobOpeningId: true,
+            currentStage: true,
+          },
+        });
+
+        await tx.activity.create({
+          data: {
+            applicantId: input.applicantId,
+            jobOpeningId: input.jobOpeningId,
+            createdById: ctx.session.user.id,
+            description: `agregó el candidato a "${jobOpening.name}"`,
+          },
+        });
+
+        return application;
       });
     } catch (error) {
       if (

@@ -44,15 +44,41 @@ export const saveApplicantNoteProcedure = protectedProcedure
       lastModifiedById: ctx.session.user.id,
     };
 
-    return ctx.db.applicantNote.upsert({
-      where: { applicantId: input.applicantId },
-      create: { applicantId: input.applicantId, ...data },
-      update: data,
-      select: {
-        lastModified: true,
-        lastModifiedBy: {
-          select: { name: true, lastName: true },
-        },
+    const select = {
+      lastModified: true,
+      lastModifiedBy: {
+        select: { name: true, lastName: true },
       },
+    } as const;
+
+    return ctx.db.$transaction(async (tx) => {
+      // INSERT ... ON CONFLICT DO NOTHING: the database decides atomically
+      // whether this request created the note (count 1) or it already existed.
+      const { count: createdCount } = await tx.applicantNote.createMany({
+        data: [{ applicantId: input.applicantId, ...data }],
+        skipDuplicates: true,
+      });
+
+      if (createdCount === 0) {
+        return tx.applicantNote.update({
+          where: { applicantId: input.applicantId },
+          data,
+          select,
+        });
+      }
+
+      await tx.activity.create({
+        data: {
+          applicantId: input.applicantId,
+          jobOpeningId: null,
+          createdById: ctx.session.user.id,
+          description: "creó una nota del candidato",
+        },
+      });
+
+      return tx.applicantNote.findUniqueOrThrow({
+        where: { applicantId: input.applicantId },
+        select,
+      });
     });
   });

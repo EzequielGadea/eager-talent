@@ -1,6 +1,8 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { TZDate } from "@date-fns/tz";
+import { format } from "date-fns";
 
 import { InterviewType } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
@@ -141,7 +143,8 @@ export const createInterviewProcedure = protectedProcedure
         data: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
-          description: `Entrevista agendada: "${input.name}"`,
+          createdById: ctx.session.user.id,
+          description: `agendó la entrevista "${input.name}" el ${format(new TZDate(input.date, "America/Montevideo"), "dd/MM/yyyy 'a las' HH:mm")}`,
         },
       }),
     ]);

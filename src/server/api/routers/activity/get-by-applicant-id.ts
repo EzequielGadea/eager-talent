@@ -115,6 +115,9 @@ export const getActivitiesByApplicantIdProcedure = protectedProcedure
         application: {
           select: { jobOpening: { select: { name: true } } },
         },
+        createdBy: {
+          select: { name: true, lastName: true },
+        },
       },
       orderBy: [{ date: "desc" }, { id: "desc" }],
       take: pageSize,
