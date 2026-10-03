@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { JobOpeningFormValues } from "./new-job-opening-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -24,6 +25,8 @@ function getInitials(name: string, lastName?: string | null) {
 }
 
 export default function OpeningHiring() {
+  const [managerSearch, setManagerSearch] = React.useState("");
+
   const {
     register,
     control,
@@ -55,6 +58,12 @@ export default function OpeningHiring() {
 
             const availableManagers = hiringManagers?.filter(
               (manager) => !field.value.includes(manager.id),
+            );
+
+            const filteredManagers = availableManagers?.filter((manager) =>
+              `${manager.name} ${manager.lastName}`
+                .toLowerCase()
+                .includes(managerSearch.toLowerCase()),
             );
 
             return (
@@ -105,9 +114,13 @@ export default function OpeningHiring() {
                 <div className="w-1/2">
                   <Combobox
                     value=""
+                    onInputValueChange={(value) => {
+                      setManagerSearch(value);
+                    }}
                     onValueChange={(managerId) => {
                       if (managerId && !field.value.includes(managerId)) {
                         field.onChange([...field.value, managerId]);
+                        setManagerSearch("");
                       }
                     }}
                     disabled={
@@ -132,7 +145,7 @@ export default function OpeningHiring() {
                             USUARIOS DEL SISTEMA
                           </ComboboxLabel>
 
-                          {availableManagers?.map((manager) => (
+                          {filteredManagers?.map((manager) => (
                             <ComboboxItem
                               key={manager.id}
                               value={manager.id}
@@ -167,6 +180,11 @@ export default function OpeningHiring() {
                               </span>
                             </ComboboxItem>
                           ))}
+                          {filteredManagers?.length === 0 && (
+                            <div className="px-4 py-3 text-sm text-muted-foreground">
+                              No hay hiring managers.
+                            </div>
+                          )}
                         </ComboboxGroup>
                       </ComboboxList>
                       <div className="mt-2 border-t border-border-default p-4">
