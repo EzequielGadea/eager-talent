@@ -56,12 +56,15 @@ export default function NewJobOpeningForm() {
       area: "",
       status: JobOpeningStatus.Open,
       seniorityIds: [],
-      location: "",
+      location: "Indiferente",
       openingDate: undefined,
       closingDate: undefined,
       hiringManagerIds: [],
     },
   });
+
+  const { isSubmitting } = methods.formState;
+
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
     onSuccess: () => {
       toast.add({
@@ -115,7 +118,7 @@ export default function NewJobOpeningForm() {
               >
                 Cancelar
               </Button>
-              <NewJobOpeningButtonProps />
+              <NewJobOpeningButtonProps disabled={isSubmitting} />
             </div>
           </CardContent>
         </Card>

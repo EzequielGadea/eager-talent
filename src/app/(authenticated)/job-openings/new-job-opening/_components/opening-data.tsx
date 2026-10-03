@@ -22,6 +22,73 @@ import { JobOpeningFormValues } from "./new-job-opening-form";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 
+function SeniorityField() {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<JobOpeningFormValues>();
+
+  const { data: seniorities, isLoading } =
+    api.seniority.getAllSeniorities.useQuery({});
+
+  if (isLoading || !seniorities) {
+    return (
+      <ToggleGroup
+        aria-label="Cargando seniorities"
+        className="flex flex-wrap justify-start gap-2"
+      >
+        <ToggleGroupItem
+          value="loading"
+          disabled
+          className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-tertiary"
+        >
+          Cargando...
+        </ToggleGroupItem>
+      </ToggleGroup>
+    );
+  }
+
+  const availableSeniorities = seniorities;
+
+  return (
+    <Controller
+      name="seniorityIds"
+      control={control}
+      render={({ field }) => (
+        <div className="space-y-1">
+          <ToggleGroup
+            multiple
+            value={field.value}
+            onValueChange={field.onChange}
+            spacing={1}
+            aria-label="Seniorities de la vacante"
+            aria-invalid={!!errors.seniorityIds}
+            className="flex flex-wrap justify-start gap-2"
+          >
+            {availableSeniorities.map((seniority) => {
+              const isSelected = field.value.includes(seniority.id);
+
+              return (
+                <ToggleGroupItem
+                  key={seniority.id}
+                  value={seniority.id}
+                  className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                >
+                  {isSelected && <Check className="mr-1.5 h-3.5 w-3.5" />}
+                  {seniority.name}
+                </ToggleGroupItem>
+              );
+            })}
+          </ToggleGroup>
+          {errors.seniorityIds?.message && (
+            <p className="text-xs text-danger">{errors.seniorityIds.message}</p>
+          )}
+        </div>
+      )}
+    />
+  );
+}
+
 export default function OpeningData() {
   const {
     register,
@@ -31,9 +98,6 @@ export default function OpeningData() {
 
   const { data: areas, isLoading: isLoadingArea } =
     api.area.getAllAreas.useQuery({});
-
-  const { data: seniorities, isLoading: isLoadingSeniority } =
-    api.seniority.getAllSeniorities.useQuery({});
 
   return (
     <Card className="w-full rounded-x1 shadow-sm">
@@ -168,48 +232,10 @@ export default function OpeningData() {
               className="text-[13px] font-medium text-text-primary"
             >
               Seniority
+              <span className="text-danger">*</span>
               <span className="text-text-tertiary"> (uno o varios) </span>
             </Label>
-            <Controller
-              name="seniorityIds"
-              control={control}
-              render={({ field }) => (
-                <div className="space-y-1">
-                  <ToggleGroup
-                    multiple
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={isLoadingSeniority}
-                    spacing={1}
-                    aria-label="Seniorities de la vacante"
-                    aria-invalid={!!errors.seniorityIds}
-                    className="flex flex-wrap justify-start gap-2"
-                  >
-                    {seniorities?.map((seniority) => {
-                      const isSelected = field.value.includes(seniority.id);
-
-                      return (
-                        <ToggleGroupItem
-                          key={seniority.id}
-                          value={seniority.id}
-                          className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
-                        >
-                          {isSelected && (
-                            <Check className="mr-1.5 h-3.5 w-3.5" />
-                          )}
-                          {seniority.name}
-                        </ToggleGroupItem>
-                      );
-                    })}
-                  </ToggleGroup>
-                  {errors.seniorityIds?.message && (
-                    <p className="text-xs text-danger">
-                      {errors.seniorityIds.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
+            <SeniorityField />
           </div>
 
           <div className="space-y-2">
