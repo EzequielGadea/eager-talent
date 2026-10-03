@@ -3,7 +3,7 @@
 import { JobOpeningFormValues } from "./new-job-opening-form";
 import { Controller, useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { GripVertical, X, Plus, Info, ChevronDown } from "lucide-react";
+import { X } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
 import Image from "next/image";
 
@@ -29,13 +29,6 @@ export default function OpeningHiring() {
     control,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
-
-  const stages = [
-    { name: "Revisión Inicial" },
-    { name: "Entrevista Técnica" },
-    { name: "Entrevista Cultural" },
-    { name: "Oferta" },
-  ];
 
   const { data: hiringManagers, isLoading: isLoadingManager } =
     api.users.getAllHiringManagers.useQuery({});
@@ -110,9 +103,6 @@ export default function OpeningHiring() {
                         field.onChange([...field.value, managerId]);
                       }
                     }}
-                    disabled={
-                      isLoadingManager || availableManagers?.length === 0
-                    }
                   >
                     <ComboboxInput
                       className="w-full rounded-md focus-within:!border-border-focus focus-within:!ring-3 focus-within:!ring-accent-green/30"

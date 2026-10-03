@@ -138,7 +138,6 @@ export default function OpeningData() {
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
-                    disabled={isLoadingArea}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -153,12 +152,20 @@ export default function OpeningData() {
                     </SelectTrigger>
 
                     <SelectContent>
-                      <SelectItem value=""> Sin seleccionar</SelectItem>
-                      {areas?.map((area) => (
-                        <SelectItem key={area.id} value={area.id}>
-                          {area.name}
+                      {isLoadingArea ? (
+                        <SelectItem value="loading" disabled>
+                          Cargando áreas...
                         </SelectItem>
-                      ))}
+                      ) : (
+                        <>
+                        <SelectItem value=""> Sin seleccionar</SelectItem>
+                        {areas?.map((area) => (
+                          <SelectItem key={area.id} value={area.id}>
+                            {area.name}
+                          </SelectItem>
+                        ))}
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
                   <button

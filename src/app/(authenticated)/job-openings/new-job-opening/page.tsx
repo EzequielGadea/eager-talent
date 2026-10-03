@@ -6,7 +6,7 @@ import NewJobOpeningForm from "./_components/new-job-opening-form";
 import NewJobOpeningFallback from "./_components/new-job-opening-fallback";
 
 const FORM_LOADING_DELAY_MS = 3000;
-const templateStages = await api.templateStages.getDefault();
+const templateStages = api.templateStages.getDefault();
 /*const templateStages = {
   id:"0",
   stages: [
@@ -27,7 +27,7 @@ const templateStages = await api.templateStages.getDefault();
 async function DelayedNewJobOpeningForm() {
   await new Promise((resolve) => setTimeout(resolve, FORM_LOADING_DELAY_MS));
 
-  return <NewJobOpeningForm templateStages={ templateStages } />;
+  return <NewJobOpeningForm templateStages={ await templateStages } />;
 }
 
 import { api } from "~/lib/trpc/server";
@@ -51,6 +51,7 @@ async function ProtectedNewJobOpeningPage() {
   if (!permission.success) {
     redirect("/dashboard");
   }
+  
   return (
     <>
       <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
@@ -59,7 +60,7 @@ async function ProtectedNewJobOpeningPage() {
         </h1>
         <Suspense fallback={<NewJobOpeningFallback />}>
           {/* Descomentar para probar fallback} <DelayedNewJobOpeningForm /> {*/}
-          <NewJobOpeningForm templateStages={ templateStages } />
+          <NewJobOpeningForm templateStages={ await templateStages } />
         </Suspense>
       </div>
     </>
