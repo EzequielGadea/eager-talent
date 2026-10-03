@@ -1,26 +1,10 @@
-import { Search } from "lucide-react";
 import { SettingsIcon } from "./app-icons";
+import { GlobalSearch } from "./global-search";
 
 export function AppHeader() {
   return (
     <header className="flex h-15 shrink-0 items-center gap-4 border-b border-border-default bg-white px-6">
-      <div className="relative flex w-full max-w-110 items-center">
-        <Search
-          className="pointer-events-none absolute left-3 size-4 text-text-tertiary"
-          aria-hidden="true"
-        />
-
-        <input
-          type="search"
-          aria-label="Buscar"
-          placeholder="Buscar candidatos, vacantes o etiquetas…"
-          className="h-9.5 w-full rounded-md border border-border-default bg-slate-50 py-2 pr-14 pl-9 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-focus"
-        />
-
-        <kbd className="absolute right-2.5 rounded border border-border-default bg-white px-1.5 py-0.5 text-[11px] text-text-tertiary">
-          ⌘K
-        </kbd>
-      </div>
+      <GlobalSearch />
 
       <div className="flex-1" />
 
