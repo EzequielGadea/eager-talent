@@ -8,21 +8,21 @@ datasource db {
 }
 
 model User {
-  id            String     @id
+  id            String       @id
   name          String
   email         String
-  emailVerified Boolean    @default(false)
+  emailVerified Boolean      @default(false)
   image         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   sessions      Session[]
   accounts      Account[]
   members       Member[]
   invitations   Invitation[]
-  lastName      String     @default("") @map("last_name")
-  status        UserStatus @default(Active)
-  lastAccess    DateTime?  @map("last_access")
-  banned        Boolean    @default(false)
+  lastName      String       @default("") @map("last_name")
+  status        UserStatus   @default(Active)
+  lastAccess    DateTime?    @map("last_access")
+  banned        Boolean      @default(false)
   banReason     String?
   banExpires    DateTime?
 
@@ -38,16 +38,16 @@ model User {
 }
 
 model Session {
-  id             String   @id
-  expiresAt      DateTime
-  token          String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  ipAddress      String?
-  userAgent      String?
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy String?
+  id                   String   @id
+  expiresAt            DateTime
+  token                String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  ipAddress            String?
+  userAgent            String?
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy       String?
   activeOrganizationId String?
 
   @@unique([token])
@@ -174,7 +174,7 @@ model Applicant {
   activities     Activity[]
   note           ApplicantNote?
 
-  @@index([roleId]) 
+  @@index([roleId])
   @@index([areaId])
   @@index([seniorityId])
   @@index([source])
@@ -231,6 +231,7 @@ model JobOpening {
   id                String           @id @default(cuid())
   name              String
   status            JobOpeningStatus
+  hasBeenOpened     Boolean          @default(false) @map("has_been_opened")
   // Snapshot de StageTemplate.stages
   stages            Json
   location          String
@@ -258,21 +259,20 @@ model StageTemplate {
   @@map("stage_template")
 }
 
-
 model Application {
-  applicantId            String       @map("applicant_id")
-  jobOpeningId           String       @map("job_opening_id")
-  applicationDate        DateTime     @default(now()) @map("application_date")
-  active                 Boolean      @default(true)
-  currentStage           String       @map("current_stage")
-  stageEntryDate         DateTime     @default(now()) @map("stage_entry_date")
-  disqualificationDate   DateTime?    @map("disqualification_date")
-  disqualificationReason String?      @map("disqualification_reason")
-  desiredSalaryAmount    Decimal?      @map("desired_salary_amount")
+  applicantId            String          @map("applicant_id")
+  jobOpeningId           String          @map("job_opening_id")
+  applicationDate        DateTime        @default(now()) @map("application_date")
+  active                 Boolean         @default(true)
+  currentStage           String          @map("current_stage")
+  stageEntryDate         DateTime        @default(now()) @map("stage_entry_date")
+  disqualificationDate   DateTime?       @map("disqualification_date")
+  disqualificationReason String?         @map("disqualification_reason")
+  desiredSalaryAmount    Decimal?        @map("desired_salary_amount")
   desiredSalaryCurrency  SalaryCurrency? @map("desired_salary_currency")
   availability           String?
-  applicant              Applicant    @relation(fields: [applicantId], references: [id], onDelete: Restrict)
-  jobOpening             JobOpening   @relation(fields: [jobOpeningId], references: [id], onDelete: Restrict)
+  applicant              Applicant       @relation(fields: [applicantId], references: [id], onDelete: Restrict)
+  jobOpening             JobOpening      @relation(fields: [jobOpeningId], references: [id], onDelete: Restrict)
   interviews             Interview[]
   activities             Activity[]
   publicLinks            PublicLink[]
@@ -330,14 +330,14 @@ model InterviewNote {
 }
 
 model Activity {
-  id           String       @id @default(cuid())
+  id           String    @id @default(cuid())
   description  String
-  date         DateTime     @default(now())
-  applicantId  String       @map("applicant_id")
-  jobOpeningId String?      @map("job_opening_id")
-  applicant    Applicant    @relation(fields: [applicantId], references: [id], onDelete: Restrict)
+  date         DateTime  @default(now())
+  applicantId  String    @map("applicant_id")
+  jobOpeningId String?   @map("job_opening_id")
+  applicant    Applicant @relation(fields: [applicantId], references: [id], onDelete: Restrict)
 
-  application  Application? @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Restrict)
+  application Application? @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Restrict)
 
   @@index([applicantId, date])
   @@index([applicantId, jobOpeningId])

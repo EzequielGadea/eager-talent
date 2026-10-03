@@ -44,16 +44,34 @@ export const fetchById = protectedProcedure
         id: true,
         name: true,
         status: true,
+        hasBeenOpened: true,
         stages: true,
+        location: true,
         openingDate: true,
+        targetClosingDate: true,
         area: {
           select: {
+            id: true,
+            name: true,
+          },
+        },
+        seniorities: {
+          select: {
+            id: true,
             name: true,
           },
         },
         hiringManagers: {
           select: {
             id: true,
+            name: true,
+            lastName: true,
+            image: true,
+            _count: {
+              select: {
+                assignedJobOpenings: true,
+              },
+            },
           },
         },
       },
@@ -82,8 +100,19 @@ export const fetchById = protectedProcedure
       id: jobOpening.id,
       name: jobOpening.name,
       status: jobOpening.status,
+      hasBeenOpened: jobOpening.hasBeenOpened,
       stages: jobOpening.stages,
+      location: jobOpening.location,
       openingDate: jobOpening.openingDate,
+      targetClosingDate: jobOpening.targetClosingDate,
       area: jobOpening.area,
+      seniorities: jobOpening.seniorities,
+      hiringManagers: jobOpening.hiringManagers.map((hiringManager) => ({
+        id: hiringManager.id,
+        name: hiringManager.name,
+        lastName: hiringManager.lastName,
+        image: hiringManager.image,
+        jobOpeningCount: hiringManager._count.assignedJobOpenings,
+      })),
     };
   });

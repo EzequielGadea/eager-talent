@@ -394,6 +394,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       name: "Senior Full Stack Developer (Rails & React) - US Partner",
       status: "Open" as JobOpeningStatus,
+      hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
@@ -408,6 +409,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       name: "Backend Developer (Ruby on Rails) - Fintech Startup",
       status: "Open" as JobOpeningStatus,
+      hasBeenOpened: true,
       stages: defaultStages,
       location: "Remoto (Uruguay)",
       openingDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
@@ -427,6 +429,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       name: "QA Automation Engineer - HealthTech Platform",
       status: "Open" as JobOpeningStatus,
+      hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido)",
       openingDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
@@ -441,6 +444,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       name: "DevOps & Cloud Engineer (AWS) - Cloud Infrastructure",
       status: "Open" as JobOpeningStatus,
+      hasBeenOpened: true,
       stages: defaultStages,
       location: "Remoto (Uruguay)",
       openingDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
@@ -455,6 +459,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       name: "Frontend Developer (React / Next.js) - E-Commerce Platform",
       status: "Open" as JobOpeningStatus,
+      hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
       openingDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
