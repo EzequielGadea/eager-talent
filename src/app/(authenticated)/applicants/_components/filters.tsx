@@ -109,23 +109,11 @@ export function Filters({
       : []),
   ];
 
-  const [ setSelectedFilters] = useState<
-    Record<FilterKey, Set<string>>
-  >(() => ({
-    jobOpening: new Set(searchParams.getAll("jobOpening")),
-    role: new Set(searchParams.getAll("role")),
-    seniority: new Set(searchParams.getAll("seniority")),
-    area: new Set(searchParams.getAll("area")),
-    source: new Set(searchParams.getAll("source")),
-    tag: new Set(searchParams.getAll("tag")),
-  }));
-
   const updateFilterValue = (
     key: FilterKey,
     value: string,
     checked: boolean,
   ) => {
-    
     const params = new URLSearchParams(searchParams.toString());
     const selectedValues = new Set(params.getAll(key));
 
@@ -145,7 +133,6 @@ export function Filters({
   };
 
   const clearFilter = (key: FilterKey) => {
-   
     const params = new URLSearchParams(searchParams.toString());
     params.delete(key);
     params.set("page", "1");

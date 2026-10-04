@@ -54,7 +54,7 @@ export const fetchAmount = protectedProcedure
             },
           },
         };
-     const searchWhere = getApplicantSearchWhere(input.search);
+    const searchWhere = getApplicantSearchWhere(input.search);
     const filtersWhere: Prisma.ApplicantWhereInput = {
       ...searchWhere,
       ...(input.roleId.length > 0 && {
@@ -91,7 +91,7 @@ export const fetchAmount = protectedProcedure
           },
         },
       }),
-      
+
       ...(input.source.length > 0 && {
         source: {
           in: input.source,
