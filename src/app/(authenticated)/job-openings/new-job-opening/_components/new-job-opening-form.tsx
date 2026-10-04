@@ -18,13 +18,26 @@ import OpeningDate from "./opening-date";
 
 import OpeningStage from "./opening-stage";
 
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 
 import NewJobOpeningButtonProps from "./new-job-opening-button";
+
+import { DndProvider } from "react-dnd";
+import { dndManager } from "../dnd-manager";
 
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
+import { hasDuplicatedNames, Template } from "../utils";
+import { useState } from "react";
+
+const stageSchema = z.object({
+  key: z.string(),
+  name: z.string(),
+  type: z.string(),
+  color: z.string(),
+  label: z.string(),
+});
 
 export const jobOpeningFormSchema = z
   .object({
@@ -38,7 +51,66 @@ export const jobOpeningFormSchema = z
     openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
     closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
     hiringManagerIds: z.array(z.string()),
-    // stages: z.json().optional(),
+    stages: z.array(stageSchema).superRefine((stages, ctx) => {
+      const errors: string[] = [];
+      if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
+        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'");
+      }
+
+      if (
+        stages[stages.length - 1]?.name !== "Contratado/a" ||
+        stages[stages.length - 1]?.type !== "Ninguna"
+      ) {
+        errors.push(
+          "La última etapa debe ser 'Contratado/a' de tipo 'Ninguna'",
+        );
+      }
+
+      if (
+        !stages.some(
+          (stage) =>
+            stage.name === "Entrevista técnica" && stage.type === "Entrevista",
+        )
+      ) {
+        errors.push(
+          "Debe haber una etapa de 'Entrevista técnica' de tipo 'Entrevista",
+        );
+      }
+
+      if (
+        !stages.some(
+          (stage) =>
+            stage.name === "Entrevista HR" && stage.type === "Entrevista",
+        )
+      ) {
+        errors.push(
+          "Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista",
+        );
+      }
+
+      if (
+        !stages.some(
+          (stage) => stage.name === "Oferta" && stage.type === "Oferta",
+        )
+      ) {
+        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta");
+      }
+
+      if (stages.some((stage) => stage.name.trim() === "")) {
+        errors.push("No se permiten etapas sin nombre");
+      }
+
+      if (hasDuplicatedNames(stages)) {
+        errors.push("No se permiten etapas con mismo nombre");
+      }
+      if (errors.length) {
+        ctx.addIssue({
+          code: "custom",
+          path: [],
+          message: errors.join(",\n"),
+        });
+      }
+    }),
   })
   .refine((data) => data.closingDate >= data.openingDate, {
     path: ["closingDate"],
@@ -47,7 +119,7 @@ export const jobOpeningFormSchema = z
 
 export type JobOpeningFormValues = z.infer<typeof jobOpeningFormSchema>;
 
-export default function NewJobOpeningForm() {
+export default function NewJobOpeningForm(props: { templateStages: Template }) {
   const router = useRouter();
   const methods = useForm<JobOpeningFormValues>({
     resolver: zodResolver(jobOpeningFormSchema),
@@ -60,6 +132,7 @@ export default function NewJobOpeningForm() {
       openingDate: undefined,
       closingDate: undefined,
       hiringManagerIds: [],
+      stages: props.templateStages.stages,
     },
   });
 
@@ -89,13 +162,15 @@ export default function NewJobOpeningForm() {
       openingDate: data.openingDate,
       closingDate: data.closingDate,
       hiringManagerIds: data.hiringManagerIds,
-      //stages: data.stages,
+      stages: data.stages,
     });
   }
   function handleCancel() {
     methods.reset();
     router.push("/job-openings");
   }
+
+  const [stages, setStages] = useState(props.templateStages.stages);
 
   return (
     <FormProvider {...methods}>
@@ -105,7 +180,15 @@ export default function NewJobOpeningForm() {
       >
         <OpeningData />
         <OpeningDate />
-        <OpeningStage />
+        <DndProvider manager={dndManager}>
+          {
+            <OpeningStage
+              stages={stages}
+              setStages={setStages}
+              form={methods}
+            />
+          }
+        </DndProvider>
         <OpeningHiring />
         <Card className="w-full items-end rounded-x1 shadow-sm">
           <CardContent>
