@@ -59,6 +59,7 @@ export const getApplicantByIdProcedure = protectedProcedure
         area: { select: { id: true, name: true } },
         seniority: { select: { id: true, name: true } },
         tags: { select: { id: true, name: true, color: true } },
+        _count: { select: { applications: true } },
       },
     });
 

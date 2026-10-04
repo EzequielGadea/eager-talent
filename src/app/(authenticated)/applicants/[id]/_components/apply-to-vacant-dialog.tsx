@@ -42,17 +42,37 @@ import {
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
 
-const applicationFormSchema = z.object({
-  applicantId: z.string({ error: "Debe indicar a quién postula" }),
-  jobOpeningId: z.string({ error: "Debe indicar la vacante" }),
-  desiredSalary: z.coerce
-    .number({ error: "Debe indicar el salario" })
-    .positive({ error: "El salario debe ser positivo" }),
-  currency: z.enum(SalaryCurrency, { error: "Debe elegir una moneda" }),
-  availability: z
-    .string({ error: "Debe indicar la disponibilidad" })
-    .min(1, "La disponibilidad es demasiado corta."),
-});
+const applicationFormSchema = z
+  .object({
+    applicantId: z.string({ error: "Debe indicar a quién postula" }),
+    jobOpeningId: z.string({ error: "Debe indicar la vacante" }),
+    desiredSalary: z.preprocess(
+      (value) => (value === "" ? undefined : value),
+      z.coerce.number().positive().optional(),
+    ),
+    currency: z.enum(SalaryCurrency).optional(),
+    availability: z
+      .string({ error: "Debe indicar la disponibilidad" })
+      .trim()
+      .min(1, "La disponibilidad es demasiado corta."),
+  })
+  .superRefine((data, ctx) => {
+    if (data.desiredSalary !== undefined && data.currency === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["currency"],
+        message: "Debe elegir una moneda.",
+      });
+    }
+
+    if (data.currency !== undefined && data.desiredSalary === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["desiredSalary"],
+        message: "Debe indicar el salario deseado.",
+      });
+    }
+  });
 
 export function ApplyToVacantDialog({
   showDialog,
@@ -91,7 +111,7 @@ export function ApplyToVacantDialog({
   const createApplicationMutation =
     api.application.createApplicationFromApplicant.useMutation({
       onSuccess: async () => {
-        await utils.jobOpening.getAllJobOpenings.invalidate({ applicantId });
+        await utils.jobOpening.getAllOpenJobOpenings.invalidate({ applicantId });
         startTransition(() => {
           reset();
           setShowDialog(false);
@@ -133,7 +153,7 @@ export function ApplyToVacantDialog({
     data: jobOpenings,
     isLoading: isLoadingJobOpening,
     error: jobOpeningsError,
-  } = api.jobOpening.getAllJobOpenings.useQuery(
+  } = api.jobOpening.getAllOpenJobOpenings.useQuery(
     { applicantId },
     { enabled: showDialog },
   );
