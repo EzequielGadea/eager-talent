@@ -35,6 +35,13 @@ function normalizeLocation(
   return "Indiferente";
 }
 
+// Types stored in JobOpening.stages (read by the pipeline) → form values.
+const PERSISTED_STAGE_TYPES: Record<string, JobOpeningStageType> = {
+  Ninguna: "none",
+  Entrevista: "interview",
+  Oferta: "offer",
+};
+
 function inferStageType(name: string): JobOpeningStageType {
   const normalizedName = name.toLocaleLowerCase("es");
 
@@ -75,14 +82,20 @@ function normalizeStages(value: unknown): UpdateJobOpeningInput["stages"] {
     const name = stageRecord.name.trim();
     const parsedType = jobOpeningStageTypeSchema.safeParse(stageRecord.type);
 
-    const type = parsedType.success ? parsedType.data : inferStageType(name);
+    const type =
+      (typeof stageRecord.type === "string"
+        ? PERSISTED_STAGE_TYPES[stageRecord.type]
+        : undefined) ??
+      (parsedType.success ? parsedType.data : inferStageType(name));
 
     return [
       {
         id:
           typeof stageRecord.id === "string" && stageRecord.id !== ""
             ? stageRecord.id
-            : `stage-${index}`,
+            : typeof stageRecord.key === "string" && stageRecord.key !== ""
+              ? stageRecord.key
+              : `stage-${index}`,
         name,
         type,
       },

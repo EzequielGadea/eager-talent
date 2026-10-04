@@ -1,9 +1,14 @@
 import { randomUUID } from "node:crypto";
 
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 import { auth } from "~/lib/auth";
 import {
+  addRequiredStagesIssues,
+  isRequiredStageName,
+  jobOpeningStagesChanged,
+  jobOpeningStageSchema,
   jobOpeningStageTypeSchema,
   updateJobOpeningSchema,
   type JobOpeningStageType,
@@ -15,6 +20,37 @@ type CurrentStage = {
   name: string;
   type: JobOpeningStageType;
 };
+
+// JobOpening.stages keeps the format read by the pipeline and interviews:
+// { key, name, type: "Ninguna" | "Entrevista" | "Oferta", color, label }.
+const PERSISTED_STAGE_TYPES: Record<string, JobOpeningStageType> = {
+  Ninguna: "none",
+  Entrevista: "interview",
+  Oferta: "offer",
+};
+
+const FORM_TO_PERSISTED_STAGE_TYPE: Record<JobOpeningStageType, string> = {
+  none: "Ninguna",
+  interview: "Entrevista",
+  offer: "Oferta",
+  // "Contratado/a" is stored with type "Ninguna".
+  hired: "Ninguna",
+};
+
+// Neutral color for stages added from the edit form (same as "Aplicado").
+const NEW_STAGE_COLOR = "#94a3b8";
+
+function getStageId(stageRecord: Record<string, unknown>, index: number) {
+  if (typeof stageRecord.id === "string" && stageRecord.id !== "") {
+    return stageRecord.id;
+  }
+
+  if (typeof stageRecord.key === "string" && stageRecord.key !== "") {
+    return stageRecord.key;
+  }
+
+  return `stage-${index}`;
+}
 
 function inferStageType(name: string): JobOpeningStageType {
   const normalizedName = name.toLocaleLowerCase("es");
@@ -56,14 +92,15 @@ function getCurrentStages(value: unknown): CurrentStage[] {
     const name = stageRecord.name.trim();
     const parsedType = jobOpeningStageTypeSchema.safeParse(stageRecord.type);
 
-    const type = parsedType.success ? parsedType.data : inferStageType(name);
+    const type =
+      (typeof stageRecord.type === "string"
+        ? PERSISTED_STAGE_TYPES[stageRecord.type]
+        : undefined) ??
+      (parsedType.success ? parsedType.data : inferStageType(name));
 
     return [
       {
-        id:
-          typeof stageRecord.id === "string" && stageRecord.id !== ""
-            ? stageRecord.id
-            : `stage-${index}`,
+        id: getStageId(stageRecord, index),
         name,
         type,
       },
@@ -71,25 +108,65 @@ function getCurrentStages(value: unknown): CurrentStage[] {
   });
 }
 
-function stagesAreDifferent(
-  currentStages: CurrentStage[],
-  nextStages: CurrentStage[],
-) {
-  if (currentStages.length !== nextStages.length) {
-    return true;
+function getPersistedStagesById(value: unknown) {
+  const stagesById = new Map<string, Record<string, unknown>>();
+
+  if (!Array.isArray(value)) {
+    return stagesById;
   }
 
-  return currentStages.some((currentStage, index) => {
-    const nextStage = nextStages[index];
-
-    return (
-      !nextStage ||
-      currentStage.id !== nextStage.id ||
-      currentStage.name !== nextStage.name ||
-      currentStage.type !== nextStage.type
-    );
+  value.forEach((stage: unknown, index) => {
+    if (typeof stage === "object" && stage !== null && !Array.isArray(stage)) {
+      const stageRecord = stage as Record<string, unknown>;
+      stagesById.set(getStageId(stageRecord, index), stageRecord);
+    }
   });
+
+  return stagesById;
 }
+
+// Existing stages keep all their fields (key, color, label...); only the
+// edited values change. New stages are created in the same format.
+function toPersistedStage(
+  stage: CurrentStage,
+  persistedStage: Record<string, unknown> | undefined,
+) {
+  const type = FORM_TO_PERSISTED_STAGE_TYPE[stage.type];
+
+  if (!persistedStage) {
+    return {
+      key: stage.id,
+      name: stage.name,
+      type,
+      color: NEW_STAGE_COLOR,
+      label: stage.name,
+    };
+  }
+
+  const renamed = persistedStage.name !== stage.name;
+
+  return {
+    ...persistedStage,
+    key:
+      typeof persistedStage.key === "string" && persistedStage.key !== ""
+        ? persistedStage.key
+        : stage.id,
+    name: stage.name,
+    type,
+    color:
+      typeof persistedStage.color === "string"
+        ? persistedStage.color
+        : NEW_STAGE_COLOR,
+    label:
+      renamed || typeof persistedStage.label !== "string"
+        ? stage.name
+        : persistedStage.label,
+  };
+}
+
+const requiredStagesSchema = z
+  .array(jobOpeningStageSchema)
+  .superRefine(addRequiredStagesIssues);
 
 export const updateJobOpening = protectedProcedure
   .input(updateJobOpeningSchema)
@@ -205,14 +282,50 @@ export const updateJobOpening = protectedProcedure
     }
 
     const currentStages = getCurrentStages(currentJobOpening.stages);
+    const persistedStagesById = getPersistedStagesById(
+      currentJobOpening.stages,
+    );
+    const stagesChanged = jobOpeningStagesChanged(currentStages, input.stages);
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
-    if (hasBeenOpened && stagesAreDifferent(currentStages, input.stages)) {
+    if (hasBeenOpened && stagesChanged) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message:
           "No se puede modificar el flujo mientras la vacante está abierta",
       });
+    }
+
+    if (stagesChanged) {
+      const requiredStagesResult = requiredStagesSchema.safeParse(input.stages);
+
+      if (!requiredStagesResult.success) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            requiredStagesResult.error.issues[0]?.message ??
+            "El flujo de etapas no es válido",
+        });
+      }
+
+      const retypedRequiredStage = currentStages.find((currentStage) => {
+        const nextStage = input.stages.find(
+          (stage) => stage.id === currentStage.id,
+        );
+
+        return (
+          isRequiredStageName(currentStage.name) &&
+          nextStage !== undefined &&
+          nextStage.type !== currentStage.type
+        );
+      });
+
+      if (retypedRequiredStage) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `No se puede cambiar el tipo de la etapa obligatoria ${retypedRequiredStage.name}`,
+        });
+      }
     }
     const nextStagesById = new Map(
       input.stages.map((stage) => [stage.id, stage]),
@@ -291,11 +404,14 @@ export const updateJobOpening = protectedProcedure
             `${input.targetClosingDate}T00:00:00.000Z`,
           ),
 
-          stages: input.stages.map((stage) => ({
-            id: stage.id,
-            name: stage.name,
-            type: stage.type,
-          })),
+          // Unchanged stages are not rewritten.
+          ...(stagesChanged
+            ? {
+                stages: input.stages.map((stage) =>
+                  toPersistedStage(stage, persistedStagesById.get(stage.id)),
+                ),
+              }
+            : {}),
 
           area: {
             connect: {

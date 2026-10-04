@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
 
 import {
-  updateJobOpeningSchema,
+  getUpdateJobOpeningFormSchema,
   type UpdateJobOpeningInput,
 } from "~/lib/validations/job-opening";
 import { api } from "~/lib/trpc/react";
@@ -31,7 +31,7 @@ export function EditJobOpeningForm({
   const [isNavigationPending, startTransition] = useTransition();
 
   const form = useForm<UpdateJobOpeningInput>({
-    resolver: zodResolver(updateJobOpeningSchema),
+    resolver: zodResolver(getUpdateJobOpeningFormSchema(defaultValues.stages)),
     defaultValues,
   });
 

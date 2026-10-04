@@ -4,6 +4,7 @@ import { GripVertical, Info, Plus, X } from "lucide-react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
 import {
+  isRequiredStageName,
   jobOpeningStageTypeSchema,
   type JobOpeningStageType,
   type UpdateJobOpeningInput,
@@ -51,7 +52,6 @@ const STAGE_TYPE_OPTIONS: Array<{
   { value: "none", label: "Ninguna" },
   { value: "interview", label: "Entrevista" },
   { value: "offer", label: "Oferta" },
-  { value: "hired", label: "Contratado" },
 ];
 
 function isBoundaryStage(index: number, totalStages: number) {
@@ -68,8 +68,29 @@ export function JobOpeningProcessCard({
   const {
     control,
     register,
-    formState: { errors },
+    formState: { errors, defaultValues },
   } = useFormContext<UpdateJobOpeningInput>();
+
+  // Required stages as loaded (Aplicado, Entrevista HR, Entrevista Técnica,
+  // Oferta, Contratado/a), by id so typing one of those names in a new stage
+  // does not lock it.
+  const requiredStageIds = new Set(
+    (defaultValues?.stages ?? []).flatMap((stage) =>
+      stage?.id && stage.name && isRequiredStageName(stage.name)
+        ? [stage.id]
+        : [],
+    ),
+  );
+
+  // Locked stages can't be renamed, removed or change their type. Required
+  // middle stages can still be reordered.
+  function isStageLocked(index: number, stageId: string) {
+    return (
+      !canEditStages ||
+      isBoundaryStage(index, stages.length) ||
+      requiredStageIds.has(stageId)
+    );
+  }
 
   const {
     fields: stages,
@@ -234,15 +255,13 @@ export function JobOpeningProcessCard({
                 <Input
                   aria-label={`Nombre de la etapa ${index + 1}`}
                   placeholder="Nombre de la etapa"
-                  readOnly={
-                    !canEditStages || isBoundaryStage(index, stages.length)
-                  }
+                  readOnly={isStageLocked(index, stage.id)}
                   maxLength={80}
                   className={cn(
                     "h-7 border-transparent bg-transparent px-1 font-medium shadow-none",
-                    canEditStages && !isBoundaryStage(index, stages.length)
-                      ? "hover:border-border-default"
-                      : "cursor-not-allowed text-text-secondary",
+                    isStageLocked(index, stage.id)
+                      ? "cursor-not-allowed text-text-secondary"
+                      : "hover:border-border-default",
                   )}
                   errorMessage={errors.stages?.[index]?.name?.message}
                   {...register(`stages.${index}.name`)}
@@ -256,9 +275,7 @@ export function JobOpeningProcessCard({
                   <Select
                     value={field.value}
                     items={STAGE_TYPE_OPTIONS}
-                    disabled={
-                      !canEditStages || isBoundaryStage(index, stages.length)
-                    }
+                    disabled={isStageLocked(index, stage.id)}
                     onValueChange={(value) => {
                       const parsedType =
                         jobOpeningStageTypeSchema.safeParse(value);
@@ -296,15 +313,15 @@ export function JobOpeningProcessCard({
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                disabled={
-                  !canEditStages || isBoundaryStage(index, stages.length)
-                }
+                disabled={isStageLocked(index, stage.id)}
                 aria-label={
-                  isBoundaryStage(index, stages.length)
-                    ? `No se puede eliminar la etapa fija ${stage.name}`
+                  isStageLocked(index, stage.id)
+                    ? `No se puede eliminar la etapa ${stage.name}`
                     : `Eliminar etapa ${stage.name}`
                 }
-                onClick={() => remove(index)}
+                onClick={() => {
+                  if (!isStageLocked(index, stage.id)) remove(index);
+                }}
               >
                 <X aria-hidden="true" />
               </Button>
