@@ -213,6 +213,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     prisma.applicantNote.deleteMany(),
     prisma.interview.deleteMany(),
     prisma.application.deleteMany(),
+    prisma.applicantHiringManager.deleteMany(),
     prisma.applicant.deleteMany(),
     prisma.jobOpening.deleteMany(),
     prisma.tag.deleteMany(),
@@ -531,7 +532,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Inglés C1 / Fluido"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }] },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: federico.id,
+      hiringManagerId: hm1.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -692,7 +700,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Referido Eagerworks"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }] },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: darwin.id,
+      hiringManagerId: hm1.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -743,7 +758,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Remoto Uruguay"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }] },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: rochet.id,
+      hiringManagerId: hm1.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -779,8 +801,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Redis"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
     },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: ronald.id,
+        hiringManagerId: hm1.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: ronald.id,
+        hiringManagerId: hm2.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
   });
 
   await prisma.application.create({
@@ -840,7 +876,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["PostgreSQL"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm2.id }] }, // Asignado SOLO a Diego Alonso
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: ugarte.id,
+      hiringManagerId: hm2.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -903,8 +946,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Inglés C2 / Bilingüe"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
     },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: bentancur.id,
+        hiringManagerId: hm1.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: bentancur.id,
+        hiringManagerId: hm2.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
   });
 
   await prisma.application.create({
@@ -966,8 +1023,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Híbrido Montevideo (Cordón)"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }, { id: hm3.id }] },
     },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: pellistri.id,
+        hiringManagerId: hm1.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: pellistri.id,
+        hiringManagerId: hm3.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
   });
 
   await prisma.application.create({
@@ -1016,7 +1087,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["PostgreSQL"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }] },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: delacruz.id,
+      hiringManagerId: hm1.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -1066,7 +1144,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Remoto Uruguay"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm3.id }] }, // Asignado a Jorge Bava (hm3)
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: olivera.id,
+      hiringManagerId: hm3.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -1117,8 +1202,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Remoto Uruguay"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
     },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: maxi.id,
+        hiringManagerId: hm1.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: maxi.id,
+        hiringManagerId: hm2.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
   });
 
   await prisma.application.create({
@@ -1169,8 +1268,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Top Talent"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm4.id }, { id: hm5.id }] },
     },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: ferran.id,
+        hiringManagerId: hm4.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: ferran.id,
+        hiringManagerId: hm5.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
   });
 
   await prisma.application.create({
@@ -1239,7 +1352,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Referido Eagerworks"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm5.id }] },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: gordon.id,
+      hiringManagerId: hm5.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -1302,8 +1422,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Inglés C1 / Fluido"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm1.id }, { id: hm4.id }] },
     },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: cristiano.id,
+        hiringManagerId: hm1.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: cristiano.id,
+        hiringManagerId: hm4.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
   });
 
   await prisma.application.create({
@@ -1373,7 +1507,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Remoto Uruguay"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm4.id }] },
+    },
+  });
+
+  await prisma.applicantHiringManager.create({
+    data: {
+      applicantId: julian.id,
+      hiringManagerId: hm4.id,
+      sharedByUserId: admin1.id,
     },
   });
 
@@ -1434,8 +1575,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
           { id: tags["Híbrido Montevideo (Cordón)"].id },
         ],
       },
-      hiringManagers: { connect: [{ id: hm3.id }, { id: hm5.id }] },
     },
+  });
+
+  await prisma.applicantHiringManager.createMany({
+    data: [
+      {
+        applicantId: muslera.id,
+        hiringManagerId: hm3.id,
+        sharedByUserId: admin1.id,
+      },
+      {
+        applicantId: muslera.id,
+        hiringManagerId: hm5.id,
+        sharedByUserId: admin1.id,
+      },
+    ],
   });
 
   await prisma.application.create({
