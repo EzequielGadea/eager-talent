@@ -13,8 +13,12 @@ export async function ApplicantApplications({
 }: ApplicantApplicationsProps) {
   const applicant = await applicantPromise;
   const requestHeaders = await headers();
-  const [canCreatePublicLink, canUpdateApplication, canCreateInterview] =
-    await Promise.all([
+  const [
+    canCreatePublicLink,
+    canUpdateApplication,
+    canCreateInterview,
+    canCreateApplication,
+  ] = await Promise.all([
       auth.api.hasPermission({
         headers: requestHeaders,
         body: { permissions: { publicLink: ["create"] } },
@@ -26,6 +30,10 @@ export async function ApplicantApplications({
       auth.api.hasPermission({
         headers: requestHeaders,
         body: { permissions: { interview: ["create"] } },
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { application: ["create"] } },
       }),
     ]);
 
@@ -46,9 +54,12 @@ export async function ApplicantApplications({
   return (
     <ApplicantApplicationsCard
       applications={applicationsWithInterviews}
+      applicantId={applicant.id}
+      applicantName={`${applicant.name} ${applicant.lastName}`}
       canCreatePublicLink={canCreatePublicLink.success}
       canUpdateApplication={canUpdateApplication.success}
       canCreateInterview={canCreateInterview.success}
+      canCreateApplication={canCreateApplication.success}
     />
   );
 }

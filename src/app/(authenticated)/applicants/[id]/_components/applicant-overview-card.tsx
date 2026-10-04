@@ -1,15 +1,5 @@
-import {
-  Mail,
-  MapPin,
-  Phone,
-  UserRound,
-  MoreHorizontal,
-  Pencil,
-  Briefcase,
-  Trash2,
-} from "lucide-react";
+import { Mail, MapPin, Phone, UserRound } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
-import Link from "next/link";
 import {
   Card,
   CardAction,
@@ -20,17 +10,10 @@ import {
 } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { Button } from "~/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "~/components/ui/dropdown-menu";
-import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
+import { ApplicantActionsMenu } from "./applicant-actions-menu";
 
 type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
@@ -39,6 +22,7 @@ type ApplicantOverviewCardProps = {
   canShareWithHiringManager: boolean;
   canUpdateApplicant: boolean;
   canDeleteApplicant: boolean;
+  canCreateApplication: boolean;
 };
 
 export function ApplicantOverviewCard({
@@ -46,6 +30,7 @@ export function ApplicantOverviewCard({
   canShareWithHiringManager,
   canUpdateApplicant,
   canDeleteApplicant,
+  canCreateApplication,
 }: ApplicantOverviewCardProps) {
   const {
     name,
@@ -61,7 +46,8 @@ export function ApplicantOverviewCard({
     seniority,
   } = applicant;
 
-  const canShowActions = canUpdateApplicant || canDeleteApplicant;
+  const canShowActions =
+    canUpdateApplicant || canDeleteApplicant || canCreateApplication;
   const linkedinUrl = getSafeExternalUrl(linkedin);
   const linkedinLabel = linkedinUrl
     ?.replace(/^https?:\/\//, "")
@@ -136,53 +122,13 @@ export function ApplicantOverviewCard({
             )}
 
             {canShowActions && (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      className="size-8 rounded-lg hover:bg-muted"
-                    />
-                  }
-                >
-                  <MoreHorizontal className="size-4 text-text-tertiary" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
-                  {canUpdateApplicant && (
-                    <>
-                      <DropdownMenuItem
-                        render={
-                          <Link
-                            href={`/applicants/${applicant.id}/edit-applicant`}
-                          />
-                        }
-                        className="gap-2"
-                      >
-                        <Pencil className="size-4" />
-                        <span>Editar datos del candidato</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="gap-2">
-                        <Briefcase className="size-4" />
-                        <span>Postular a una vacante</span>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  {canUpdateApplicant && canDeleteApplicant && (
-                    <DropdownMenuSeparator />
-                  )}
-                  {canDeleteApplicant && (
-                    <DropdownMenuItem
-                      className={cn(
-                        "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
-                      )}
-                    >
-                      <Trash2 className="size-4" />
-                      <span>Eliminar candidato</span>
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ApplicantActionsMenu
+                canUpdateApplicant={canUpdateApplicant}
+                applicant={applicant}
+                canDeleteApplicant={canDeleteApplicant}
+                canCreateApplication={canCreateApplication}
+                defaultShow={false}
+              />
             )}
           </CardAction>
         )}

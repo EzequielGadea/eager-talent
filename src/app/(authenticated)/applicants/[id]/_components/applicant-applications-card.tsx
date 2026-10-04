@@ -20,7 +20,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
@@ -33,11 +35,15 @@ import {
 } from "~/components/ui/table";
 import { Separator } from "~/components/ui/separator";
 import { getSafeExternalUrl } from "../_lib/external-url";
+import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
 
 type ApplicantApplicationsCardProps = {
+  applicantId: string;
+  applicantName: string;
   canCreatePublicLink: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
+  canCreateApplication: boolean;
   applications: {
     applicantId: string;
     jobOpeningId: string;
@@ -62,12 +68,16 @@ type ApplicantApplicationsCardProps = {
 };
 
 export function ApplicantApplicationsCard({
+  applicantId,
+  applicantName,
   applications,
   canCreatePublicLink,
   canUpdateApplication,
   canCreateInterview,
+  canCreateApplication,
 }: ApplicantApplicationsCardProps) {
   const [selectedId, setSelectedId] = useState(applications[0]?.jobOpeningId);
+  const [showApplyDialog, setShowApplyDialog] = useState(false);
 
   const app =
     applications.find((a) => a.jobOpeningId === selectedId) || applications[0];
@@ -114,24 +124,49 @@ export function ApplicantApplicationsCard({
 
             <DropdownMenuContent
               align="start"
-              className="max-h-60 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-border-strong p-1.5 shadow-lg"
+              className="max-h-60 w-[min(24rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-border-strong p-0 shadow-lg"
             >
-              {applications.map((a) => (
-                <DropdownMenuItem
-                  key={a.jobOpeningId}
-                  onClick={() => setSelectedId(a.jobOpeningId)}
-                  className={cn(
-                    "flex w-full cursor-pointer items-center rounded-lg px-3 py-2.5 text-sm transition-colors data-highlighted:bg-tag-gray-bg data-highlighted:text-text-primary",
-                    selectedId === a.jobOpeningId
-                      ? "bg-tag-gray-bg font-semibold text-text-primary"
-                      : "font-medium text-tag-gray-fg hover:bg-tag-gray-bg hover:text-text-primary",
-                  )}
-                >
-                  <span className="wrap-break-word whitespace-normal">
-                    {a.jobOpening.name}
-                  </span>
-                </DropdownMenuItem>
-              ))}
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="border-b border-border-default bg-surface-subtle px-[13px] py-[9px] text-[11px] font-bold tracking-[0.05em] text-text-tertiary uppercase">
+                  Postulaciones de {applicantName}
+                </DropdownMenuLabel>
+                {applications.map((a) => (
+                  <DropdownMenuItem
+                    key={a.jobOpeningId}
+                    onClick={() => setSelectedId(a.jobOpeningId)}
+                    className={cn(
+                      "flex w-full cursor-pointer items-center rounded-lg px-3 py-2.5 text-sm transition-colors data-highlighted:bg-tag-gray-bg data-highlighted:text-text-primary",
+                      selectedId === a.jobOpeningId
+                        ? "bg-tag-gray-bg font-semibold text-text-primary"
+                        : "font-medium text-tag-gray-fg hover:bg-tag-gray-bg hover:text-text-primary",
+                    )}
+                  >
+                    <span className="wrap-break-word whitespace-normal">
+                      {a.jobOpening.name}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+              {canCreateApplication && (
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setShowApplyDialog(true);
+                    }}
+                    onSelect={(event) => {
+                      event.preventDefault();
+                      setShowApplyDialog(true);
+                    }}
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-none border-t border-border-default bg-surface-subtle px-[13px] py-[11px] text-xs font-semibold text-text-link no-underline hover:bg-surface-subtle hover:text-text-link focus:bg-surface-subtle focus:text-text-link data-highlighted:bg-surface-subtle data-highlighted:text-text-link"
+                  >
+                    <Plus className="text-text-link group-hover/dropdown-menu-item:text-text-link group-focus/dropdown-menu-item:text-text-link group-data-[highlighted]/dropdown-menu-item:text-text-link" />
+                    <span className="text-text-link group-hover/dropdown-menu-item:text-text-link group-hover/dropdown-menu-item:underline group-focus/dropdown-menu-item:text-text-link group-focus/dropdown-menu-item:underline group-data-[highlighted]/dropdown-menu-item:text-text-link group-data-[highlighted]/dropdown-menu-item:underline">
+                      Postular a otra vacante
+                    </span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -198,6 +233,12 @@ export function ApplicantApplicationsCard({
           ))}
         </dl>
       </CardContent>
+
+      <ApplyToVacantDialog
+        showDialog={showApplyDialog}
+        setShowDialog={setShowApplyDialog}
+        applicantId={applicantId}
+      />
 
       <Separator className="bg-border-default" />
 
