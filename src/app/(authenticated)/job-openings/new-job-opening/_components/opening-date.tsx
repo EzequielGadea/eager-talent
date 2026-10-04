@@ -1,25 +1,14 @@
 "use client";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { api } from "~/lib/trpc/react";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
-import { Check, Circle, CircleDot, Clock } from "lucide-react";
+import { Clock } from "lucide-react";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { JobOpeningFormValues } from "./new-job-opening-form";
-
-import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
-import { JobOpeningStatus } from "~/generated/prisma/enums";
 
 function toDateInputValue(date: Date | undefined) {
   return date && !Number.isNaN(date.getTime())
