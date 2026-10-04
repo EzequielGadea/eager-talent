@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { GripVertical, X, Plus, ChevronDown } from "lucide-react";
 import { useDrag, useDrop } from "react-dnd";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { Stage, Stages } from "../utils";
+import { mandatoryStages, Stage, Stages } from "../utils";
 import { useForm } from "react-hook-form";
 import {
   Popover,
@@ -198,6 +198,7 @@ function IndividualStage(props: {
   const isDraggable = !(
     props.stage.key == props.startKey || props.stage.key == props.endKey
   );
+  const isEditable = !(mandatoryStages.some((word) => word == props.stage.name))
   const ref = useRef<HTMLDivElement>(null);
 
   const [, drag, preview] = useDrag(
@@ -310,6 +311,7 @@ function IndividualStage(props: {
             <Input
               autoComplete="off"
               value={props.stage.name}
+              disabled={!isEditable}
               onChange={(e) =>
                 props.updateName(props.stage.key, e.target.value)
               }
@@ -320,21 +322,25 @@ function IndividualStage(props: {
           {/*combobox type*/}
           <Popover
             key={props.stage.key}
-            open={props.openType === props.stage.key}
+            open={isEditable && props.openType === props.stage.key}
             onOpenChange={(open) => {
+              if(!isEditable) return
               props.setOpenType(open ? props.stage.key : null);
             }}
           >
             <PopoverTrigger
               className={cn(
-                "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text",
+                "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors", 
+                isEditable && "hover:bg-dashboard-success-light hover:text-dashboard-success-text",
+                !isEditable && "bg-muted"
               )}
             >
               <span>{props.stage.type}</span>
+              {isEditable ? (
               <ChevronDown
                 size={14}
                 className={cn("text-dashboard-text-muted")}
-              />
+              />):(<div className="pl-3"/>)}
             </PopoverTrigger>
             <PopoverContent align="start" className="w-56 rounded-xl p-3">
               {types.map((type) => (
@@ -352,6 +358,7 @@ function IndividualStage(props: {
               ))}
             </PopoverContent>
           </Popover>
+          { isEditable ? (
           <button
             className="flex items-center justify-center rounded-md p-1 hover:bg-surface-sunken"
             onClick={() => {
@@ -361,6 +368,7 @@ function IndividualStage(props: {
           >
             <X className="h-4 w-4 text-text-tertiary hover:text-text-secondary" />
           </button>
+          ) : (<div className="pl-6"></div>)}
         </>
       ) : (
         <span>{props.stage.name}</span>
