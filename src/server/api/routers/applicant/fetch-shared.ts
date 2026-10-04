@@ -31,33 +31,33 @@ export const fetchShared = protectedProcedure
     }
     const searchWhere = getApplicantSearchWhere(input.search);
     const where: Prisma.ApplicantWhereInput = {
-  AND: [
-    {
-      applicantHiringManagers: {
-        some: {
-          hiringManagerId: ctx.session.user.id,
+      AND: [
+        {
+          applicantHiringManagers: {
+            some: {
+              hiringManagerId: ctx.session.user.id,
+            },
+          },
         },
-      },
-    },
-    {
-      NOT: {
-        applications: {
-          some: {
-            active: true,
-            jobOpening: {
-              hiringManagers: {
-                some: {
-                  id: ctx.session.user.id,
+        {
+          NOT: {
+            applications: {
+              some: {
+                active: true,
+                jobOpening: {
+                  hiringManagers: {
+                    some: {
+                      id: ctx.session.user.id,
+                    },
+                  },
                 },
               },
             },
           },
         },
-      },
-    },
-    searchWhere,
-  ],
-};
+        searchWhere,
+      ],
+    };
 
     try {
       const applicants = await ctx.db.applicant.findMany({
