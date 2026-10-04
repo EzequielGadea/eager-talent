@@ -7,8 +7,11 @@ import { interviewsRouter } from "./routers/interviews";
 import { areaRouter } from "./routers/area";
 import { jobOpeningRouter } from "./routers/job-opening";
 import { roleRouter } from "./routers/job-role";
+import { searchRouter } from "./routers/search";
 import { seniorityRouter } from "./routers/seniority";
 import { tagRouter } from "./routers/tag";
+import { userRouter } from "./routers/user";
+import { usersRouter } from "./routers/users";
 
 export const appRouter = createTRPCRouter({
   applicant: applicantRouter,
@@ -20,7 +23,10 @@ export const appRouter = createTRPCRouter({
   role: roleRouter,
   seniority: seniorityRouter,
   jobOpening: jobOpeningRouter,
+  search: searchRouter,
   tag: tagRouter,
+  user: userRouter,
+  users: usersRouter
 });
 
 export type AppRouter = typeof appRouter;

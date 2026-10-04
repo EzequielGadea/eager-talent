@@ -7,6 +7,7 @@ import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { PipelineColumn } from "./pipeline-column";
 import { PipelineColumnSkeleton } from "./pipeline-column-skeleton";
 import type { PipelineStage } from "./types";
+import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
 
 type PipelineProps = {
   jobOpeningId: string;
@@ -16,39 +17,52 @@ type PipelineProps = {
 export async function Pipeline({ jobOpeningId, stages }: PipelineProps) {
   const requestHeaders = await headers();
 
-  const [canUpdateApplication, canCreateInterview] = await Promise.all([
-    auth.api.hasPermission({
-      headers: requestHeaders,
-      body: {
-        permissions: {
-          application: ["update"],
+  const [canUpdateApplication, canCreateInterview, canDeleteInterview] =
+    await Promise.all([
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            application: ["update"],
+          },
         },
-      },
-    }),
-    auth.api.hasPermission({
-      headers: requestHeaders,
-      body: {
-        permissions: {
-          interview: ["create"],
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            interview: ["create"],
+          },
         },
-      },
-    }),
-  ]);
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: {
+          permissions: {
+            interview: ["delete"],
+          },
+        },
+      }),
+    ]);
 
   return (
     <ScrollArea className="w-full">
-      <div className="flex min-w-max gap-4 pb-4">
-        {stages.map((stage) => (
-          <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
-            <PipelineColumn
-              jobOpeningId={jobOpeningId}
-              stage={stage}
-              canUpdateApplication={canUpdateApplication.success}
-              canCreateInterview={canCreateInterview.success}
-            />
-          </Suspense>
-        ))}
-      </div>
+      <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
+        <div className="flex min-w-max gap-4 pb-4">
+          {stages.map((stage, index) => (
+            <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
+              <PipelineColumn
+                jobOpeningId={jobOpeningId}
+                stage={stage}
+                isLastStage={index === stages.length - 1}
+                canUpdateApplication={canUpdateApplication.success}
+                canCreateInterview={canCreateInterview.success}
+                canDeleteInterview={canDeleteInterview.success}
+              />
+            </Suspense>
+          ))}
+        </div>
+      </PipelineDndProviderClient>
 
       <ScrollBar orientation="horizontal" />
     </ScrollArea>

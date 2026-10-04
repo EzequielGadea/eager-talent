@@ -256,16 +256,16 @@ export default function ProfessionalProfile() {
                       id="desiredSalary"
                       type="number"
                       placeholder="Ej. 3.500"
-                        {...register("desiredSalary", {
-                          setValueAs: (value) =>
-                            value === "" ? undefined : Number(value),
-                        })}
+                      {...register("desiredSalary", {
+                        setValueAs: (value) =>
+                          value === "" ? undefined : Number(value),
+                      })}
                     />
                   </div>
                 </div>
                 {errors.currency && (
                   <p className="text-danger">{errors.currency.message}</p>
-                  )}
+                )}
                 {errors.desiredSalary && (
                   <p className="text-danger">{errors.desiredSalary.message}</p>
                 )}

@@ -81,7 +81,7 @@ export default function JobOpeningsList({
           <Button
             size="sm"
             className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover"
-            onClick={() => router.push("/job-openings/new")}
+            onClick={() => router.push("/job-openings/new-job-opening")}
           >
             <Plus size={16} />
             Nueva vacante
@@ -112,9 +112,7 @@ export default function JobOpeningsList({
                       Entrevista técnica
                     </TableHead>
 
-                    <TableHead className="px-4 py-3">
-                      Ofertados
-                    </TableHead>
+                    <TableHead className="px-4 py-3">Ofertados</TableHead>
                   </>
                 )}
 

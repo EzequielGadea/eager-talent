@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useDroppable } from "@dnd-kit/core";
 
 import { api } from "~/lib/trpc/react";
 
 import { CandidateCard } from "./candidate-card";
 import { LoadMoreCandidates } from "./load-more-candidates";
+import { usePipelineMoves } from "./pipeline-dnd-provider";
 import type { PipelineCandidate } from "./types";
 
 type PipelineColumnClientProps = {
@@ -13,8 +16,10 @@ type PipelineColumnClientProps = {
   stageName: string;
   initialCandidates: PipelineCandidate[];
   total: number;
+  isLastStage: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
+  canDeleteInterview: boolean;
 };
 
 export function PipelineColumnClient({
@@ -22,15 +27,40 @@ export function PipelineColumnClient({
   stageName,
   initialCandidates,
   total,
+  isLastStage,
   canUpdateApplication,
   canCreateInterview,
+  canDeleteInterview,
 }: PipelineColumnClientProps) {
-  const [loadedCandidates, setLoadedCandidates] =
-    useState<PipelineCandidate[]>(initialCandidates);
+  const { setNodeRef, isOver } = useDroppable({
+    id: stageName,
+  });
+
+  const { moves, clearMove } = usePipelineMoves();
+
+  const [loadedCandidates, setLoadedCandidates] = useState<PipelineCandidate[]>(
+    [],
+  );
 
   const [optimisticallyRemovedIds, setOptimisticallyRemovedIds] = useState<
     Set<string>
   >(new Set());
+
+  const [previousInitialCandidates, setPreviousInitialCandidates] =
+    useState(initialCandidates);
+
+  if (initialCandidates !== previousInitialCandidates) {
+    setPreviousInitialCandidates(initialCandidates);
+
+    setOptimisticallyRemovedIds((current) => {
+      const stillInitial = new Set(
+        initialCandidates.map((candidate) => candidate.applicantId),
+      );
+      const next = new Set([...current].filter((id) => stillInitial.has(id)));
+
+      return next.size === current.size ? current : next;
+    });
+  }
 
   const allCandidates = [
     ...initialCandidates,
@@ -51,17 +81,66 @@ export function PipelineColumnClient({
     [...optimisticallyRemovedIds].filter((id) => initialCandidateIds.has(id)),
   );
 
-  const candidates = allCandidates.filter(
-    (candidate) => !visibleOptimisticRemovedIds.has(candidate.applicantId),
+  const movedOutIds = new Set(
+    Object.entries(moves)
+      .filter(([, move]) => move.fromStage === stageName)
+      .map(([applicantId]) => applicantId),
   );
+
+  const [previousMoves, setPreviousMoves] = useState(moves);
+
+  if (moves !== previousMoves) {
+    setPreviousMoves(moves);
+
+    if (movedOutIds.size > 0) {
+      setLoadedCandidates((current) =>
+        current.filter((candidate) => !movedOutIds.has(candidate.applicantId)),
+      );
+    }
+  }
+
+  const allCandidateIds = new Set(
+    allCandidates.map((candidate) => candidate.applicantId),
+  );
+
+  const movedIn = Object.values(moves)
+    .filter((move) => move.toStage === stageName)
+    .map((move) => move.candidate)
+    .filter((candidate) => !allCandidateIds.has(candidate.applicantId));
+
+  const candidates = [
+    ...movedIn,
+    ...allCandidates.filter(
+      (candidate) =>
+        !visibleOptimisticRemovedIds.has(candidate.applicantId) &&
+        !movedOutIds.has(candidate.applicantId),
+    ),
+  ];
 
   const loadedCount = allCandidates.length;
 
-  const effectiveTotal = total - visibleOptimisticRemovedIds.size;
+  const effectiveTotal =
+    total -
+    visibleOptimisticRemovedIds.size -
+    movedOutIds.size +
+    movedIn.length;
 
   const remaining = Math.max(0, effectiveTotal - candidates.length);
 
   const hasMore = remaining > 0;
+
+  useEffect(() => {
+    for (const move of Object.values(moves)) {
+      if (
+        move.toStage === stageName &&
+        initialCandidates.some(
+          (candidate) => candidate.applicantId === move.candidate.applicantId,
+        )
+      ) {
+        clearMove(move.candidate.applicantId);
+      }
+    }
+  }, [initialCandidates, moves, stageName, clearMove]);
 
   const fetchMore = api.jobOpening.fetchPipelineCandidates.useQuery(
     {
@@ -108,16 +187,23 @@ export function PipelineColumnClient({
   }
 
   return (
-    <div className="flex min-h-24 flex-col gap-2">
+    <div
+      ref={setNodeRef}
+      className={`flex min-h-24 min-w-72 flex-1 flex-col gap-2 rounded-lg transition-colors ${
+        isOver ? "bg-accent" : ""
+      }`}
+    >
       {candidates.map((candidate) => (
         <CandidateCard
           key={candidate.applicantId}
           candidate={candidate}
           jobOpeningId={jobOpeningId}
           currentStage={stageName}
+          isLastStage={isLastStage}
           onAdvanced={handleCandidateAdvanced}
           canUpdateApplication={canUpdateApplication}
           canCreateInterview={canCreateInterview}
+          canDeleteInterview={canDeleteInterview}
         />
       ))}
 

@@ -56,6 +56,9 @@ export const fetchPipelineCandidates = protectedProcedure
           }),
     };
 
+    const now = Date.now();
+    const MAX_INTERVIEW_MS = 24 * 60 * 60_000;
+
     const [applications, total] = await Promise.all([
       ctx.db.application.findMany({
         where,
@@ -71,6 +74,7 @@ export const fetchPipelineCandidates = protectedProcedure
         take: input.limit,
         select: {
           applicantId: true,
+          jobOpeningId: true,
           applicant: {
             select: {
               name: true,
@@ -79,6 +83,30 @@ export const fetchPipelineCandidates = protectedProcedure
               role: {
                 select: {
                   name: true,
+                },
+              },
+              interviews: {
+                where: {
+                  status: "Scheduled",
+                  jobOpeningId: input.jobOpeningId,
+                  date: { gt: new Date(now - MAX_INTERVIEW_MS) },
+                },
+                orderBy: {
+                  date: "asc",
+                },
+                select: {
+                  id: true,
+                  name: true,
+                  modality: true,
+                  duration: true,
+                  date: true,
+                  interviewers: {
+                    select: {
+                      id: true,
+                      name: true,
+                      lastName: true,
+                    },
+                  },
                 },
               },
             },
@@ -90,13 +118,30 @@ export const fetchPipelineCandidates = protectedProcedure
       }),
     ]);
 
-    const candidates = applications.map((application) => ({
-      applicantId: application.applicantId,
-      name: application.applicant.name,
-      lastName: application.applicant.lastName,
-      photo: application.applicant.photo,
-      role: application.applicant.role.name,
-    }));
+    const candidates = applications.map((application) => {
+      const interviews = application.applicant.interviews.filter(
+        (interview) =>
+          interview.date!.getTime() + interview.duration * 60_000 > now,
+      );
+      const nextInterview = interviews[0];
+
+      return {
+        applicantId: application.applicantId,
+        name: application.applicant.name,
+        lastName: application.applicant.lastName,
+        photo: application.applicant.photo,
+        role: application.applicant.role.name,
+        nextInterview: nextInterview ? { date: nextInterview.date! } : null,
+        scheduledInterviews: interviews.map((interview) => ({
+          id: interview.id,
+          name: interview.name,
+          modality: interview.modality,
+          duration: interview.duration,
+          interviewers: interview.interviewers,
+          date: interview.date!,
+        })),
+      };
+    });
 
     return {
       candidates,

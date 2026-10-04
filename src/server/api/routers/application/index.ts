@@ -4,6 +4,8 @@ import { createApplicationProcedure } from "./create";
 import { createApplication } from "./create-application";
 import { fetchAvailableApplicants } from "./fetch-available-applicants";
 import { advanceApplicationStage } from "./advance-application-stage";
+import { moveApplicationToStage } from "./move-application-to-stage";
+import { disqualifyApplication } from "./disqualify-application";
 
 export const applicationRouter = createTRPCRouter({
   getAllByApplicantId: getApplicationsByApplicantIdProcedure,
@@ -11,4 +13,6 @@ export const applicationRouter = createTRPCRouter({
   fetchAvailableApplicants,
   createApplication,
   advanceApplicationStage,
+  moveApplicationToStage,
+  disqualifyApplication,
 });
