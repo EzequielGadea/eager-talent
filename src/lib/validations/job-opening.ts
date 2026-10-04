@@ -94,26 +94,8 @@ export const updateJobOpeningSchema = z
       });
     }
 
-    if (normalizedStageNames.length > 0) {
-      const firstStageName = normalizedStageNames[0];
-      const lastStageName = normalizedStageNames.at(-1);
-
-      if (firstStageName !== "aplicado") {
-        ctx.addIssue({
-          code: "custom",
-          path: ["stages"],
-          message: "Aplicado debe ser la primera etapa del flujo",
-        });
-      }
-
-      if (!lastStageName?.startsWith("contratad")) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["stages"],
-          message: "Contratado debe ser la última etapa del flujo",
-        });
-      }
-    }
+    // The required stages rule (addRequiredStagesIssues) only applies when the
+    // stages change, so job openings with an older flow can save other data.
 
     if (new Set(data.seniorityIds).size !== data.seniorityIds.length) {
       ctx.addIssue({
@@ -133,3 +115,94 @@ export const updateJobOpeningSchema = z
   });
 
 export type UpdateJobOpeningInput = z.infer<typeof updateJobOpeningSchema>;
+
+type JobOpeningStage = z.infer<typeof jobOpeningStageSchema>;
+
+const FIRST_STAGE = "Aplicado";
+const LAST_STAGE = "Contratado/a";
+// Required between the first and last stages, in any order.
+const REQUIRED_MIDDLE_STAGES = [
+  "Entrevista HR",
+  "Entrevista Técnica",
+  "Oferta",
+];
+
+function normalizeStageName(name: string) {
+  return name.trim().replace(/\s+/g, " ").toLocaleLowerCase("es");
+}
+
+const REQUIRED_STAGE_NAMES = new Set(
+  [FIRST_STAGE, ...REQUIRED_MIDDLE_STAGES, LAST_STAGE].map(normalizeStageName),
+);
+
+export function isRequiredStageName(name: string) {
+  return REQUIRED_STAGE_NAMES.has(normalizeStageName(name));
+}
+
+export function jobOpeningStagesChanged(
+  currentStages: JobOpeningStage[],
+  nextStages: JobOpeningStage[],
+) {
+  if (currentStages.length !== nextStages.length) {
+    return true;
+  }
+
+  return currentStages.some((currentStage, index) => {
+    const nextStage = nextStages[index];
+
+    return (
+      !nextStage ||
+      currentStage.id !== nextStage.id ||
+      currentStage.name !== nextStage.name ||
+      currentStage.type !== nextStage.type
+    );
+  });
+}
+
+export function addRequiredStagesIssues(
+  stages: JobOpeningStage[],
+  ctx: z.RefinementCtx,
+) {
+  const stageNames = stages.map((stage) => normalizeStageName(stage.name));
+
+  if (stageNames[0] !== normalizeStageName(FIRST_STAGE)) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["stages"],
+      message: `${FIRST_STAGE} debe ser la primera etapa del flujo`,
+    });
+  }
+
+  if (stageNames.at(-1) !== normalizeStageName(LAST_STAGE)) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["stages"],
+      message: `${LAST_STAGE} debe ser la última etapa del flujo`,
+    });
+  }
+
+  const middleStageNames = new Set(stageNames.slice(1, -1));
+  const missingStages = REQUIRED_MIDDLE_STAGES.filter(
+    (stageName) => !middleStageNames.has(normalizeStageName(stageName)),
+  );
+
+  if (missingStages.length > 0) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["stages"],
+      message: `Faltan etapas obligatorias en el flujo: ${missingStages.join(", ")}`,
+    });
+  }
+}
+
+// Edit form: the API schema plus the required stages rule once the user
+// changes the stages loaded with the job opening.
+export function getUpdateJobOpeningFormSchema(
+  initialStages: JobOpeningStage[],
+) {
+  return updateJobOpeningSchema.superRefine((data, ctx) => {
+    if (jobOpeningStagesChanged(initialStages, data.stages)) {
+      addRequiredStagesIssues(data.stages, ctx);
+    }
+  });
+}
