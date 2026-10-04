@@ -28,7 +28,7 @@ import { dndManager } from "../dnd-manager";
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
-import { Template } from "../utils";
+import { hasDuplicatedNames, Template } from "../utils";
 import { useState } from "react";
 
 const stageSchema = z.object({
@@ -94,6 +94,20 @@ export const jobOpeningFormSchema = z
         )
       ) {
         errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta");
+      }
+
+      if (
+        stages.some(
+          (stage) => stage.name.trim() === ""
+        )
+      ) {
+        errors.push("No se permiten etapas sin nombre")
+      }
+
+      if (
+        hasDuplicatedNames(stages)
+      ) {
+        errors.push("No se permiten etapas con mismo nombre")
       }
       if (errors.length) {
         ctx.addIssue({
