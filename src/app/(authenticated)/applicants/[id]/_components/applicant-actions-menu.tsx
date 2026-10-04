@@ -21,11 +21,13 @@ export function ApplicantActionsMenu({
   canUpdateApplicant,
   applicant,
   canDeleteApplicant,
+  canCreateApplication,
   defaultShow,
 }: {
   canUpdateApplicant: boolean;
   applicant: Applicant;
   canDeleteApplicant: boolean;
+  canCreateApplication: boolean;
   defaultShow: boolean;
 }) {
   const [showDialog, setShowDialog] = useState(defaultShow ?? false);
@@ -46,35 +48,38 @@ export function ApplicantActionsMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-64">
           {canUpdateApplicant && (
-            <>
-              <DropdownMenuItem
-                render={
-                  <Link href={`/applicants/${applicant.id}/edit-applicant`} />
-                }
-                className="gap-2"
-              >
-                <Pencil className="size-4" />
-                <span>Editar datos del candidato</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="gap-2"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setShowDialog(true);
-                }}
-                onSelect={(e) => {
-                  e.preventDefault();
-                  setShowDialog(true);
-                }}
-              >
-                <Briefcase className="size-4" />
-                <span>Postular a otra vacante</span>
-              </DropdownMenuItem>
-            </>
+            <DropdownMenuItem
+              render={
+                <Link href={`/applicants/${applicant.id}/edit-applicant`} />
+              }
+              className="gap-2"
+            >
+              <Pencil className="size-4" />
+              <span>Editar datos del candidato</span>
+            </DropdownMenuItem>
           )}
-          {canUpdateApplicant && canDeleteApplicant && (
-            <DropdownMenuSeparator />
+          {canCreateApplication && (
+            <DropdownMenuItem
+              className="gap-2"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowDialog(true);
+              }}
+              onSelect={(e) => {
+                e.preventDefault();
+                setShowDialog(true);
+              }}
+            >
+              <Briefcase className="size-4" />
+              <span>
+                {applicant._count.applications > 0
+                  ? "Postular a otra vacante"
+                  : "Postular a una vacante"}
+              </span>
+            </DropdownMenuItem>
           )}
+          {(canUpdateApplicant || canCreateApplication) &&
+            canDeleteApplicant && <DropdownMenuSeparator />}
           {canDeleteApplicant && (
             <DropdownMenuItem
               className={cn(
