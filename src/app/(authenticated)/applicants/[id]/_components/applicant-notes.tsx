@@ -1,9 +1,9 @@
 import type { JSONContent } from "@tiptap/react";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { NotesEditor } from "~/components/notes-editor";
 import { api } from "~/lib/trpc/server";
 import { auth } from "~/lib/auth";
+import { ApplicantNotesEditor } from "./applicant-notes-editor";
 
 type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
@@ -14,15 +14,21 @@ type ApplicantNotesProps = {
 export async function saveApplicantNote(
   applicantId: string,
   content: JSONContent,
+  { createEditActivity }: { createEditActivity: boolean },
 ) {
   "use server";
 
-  const result = await api.applicantNote.save({ applicantId, content });
+  const result = await api.applicantNote.save({
+    applicantId,
+    content,
+    createEditActivity,
+  });
   revalidatePath(`/applicants/${applicantId}`);
 
   return {
     lastModified: result.lastModified.toISOString(),
     lastModifiedBy: result.lastModifiedBy,
+    activityLogged: result.activityLogged,
   };
 }
 
@@ -44,7 +50,8 @@ export async function ApplicantNotes({
   const save = saveApplicantNote.bind(null, applicant.id);
 
   return (
-    <NotesEditor
+    <ApplicantNotesEditor
+      applicantId={applicant.id}
       content={note?.content ?? null}
       lastModifiedAt={note?.lastModified.toISOString() ?? null}
       lastModifiedBy={note?.lastModifiedBy ?? null}

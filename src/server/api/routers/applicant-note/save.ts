@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from "node:util";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { auth } from "~/lib/auth";
@@ -8,6 +9,8 @@ export const saveApplicantNoteProcedure = protectedProcedure
     z.object({
       applicantId: z.string().min(1),
       content: z.json().refine((value) => value !== null),
+      // True on the first save of an editing session: logs the edit once.
+      createEditActivity: z.boolean().default(false),
     }),
   )
   .mutation(async ({ input, ctx }) => {
@@ -60,11 +63,41 @@ export const saveApplicantNoteProcedure = protectedProcedure
       });
 
       if (createdCount === 0) {
-        return tx.applicantNote.update({
+        let editActivityLogged = false;
+
+        if (input.createEditActivity) {
+          // Lock the note so the comparison and the update below are based on
+          // the same persisted content, even with concurrent saves.
+          await tx.$queryRaw`
+            SELECT "id" FROM "applicant_note" WHERE "applicant_id" = ${input.applicantId} FOR UPDATE
+          `;
+
+          const previous = await tx.applicantNote.findUniqueOrThrow({
+            where: { applicantId: input.applicantId },
+            select: { content: true },
+          });
+
+          // Only a real content change is logged as an edit.
+          if (!isDeepStrictEqual(previous.content, input.content)) {
+            await tx.activity.create({
+              data: {
+                applicantId: input.applicantId,
+                jobOpeningId: null,
+                createdById: ctx.session.user.id,
+                description: "editó la nota del candidato",
+              },
+            });
+            editActivityLogged = true;
+          }
+        }
+
+        const note = await tx.applicantNote.update({
           where: { applicantId: input.applicantId },
           data,
           select,
         });
+
+        return { ...note, activityLogged: editActivityLogged };
       }
 
       await tx.activity.create({
@@ -76,9 +109,11 @@ export const saveApplicantNoteProcedure = protectedProcedure
         },
       });
 
-      return tx.applicantNote.findUniqueOrThrow({
+      const note = await tx.applicantNote.findUniqueOrThrow({
         where: { applicantId: input.applicantId },
         select,
       });
+
+      return { ...note, activityLogged: true };
     });
   });
