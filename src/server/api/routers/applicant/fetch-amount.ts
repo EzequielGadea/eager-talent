@@ -6,6 +6,7 @@ import { Prisma } from "~/generated/prisma/client";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
+import { getApplicantSearchWhere } from "./search-where";
 
 export const fetchAmount = protectedProcedure
   .input(
@@ -53,8 +54,9 @@ export const fetchAmount = protectedProcedure
             },
           },
         };
-
+     const searchWhere = getApplicantSearchWhere(input.search);
     const filtersWhere: Prisma.ApplicantWhereInput = {
+      ...searchWhere,
       ...(input.roleId.length > 0 && {
         roleId: {
           in: input.roleId,
@@ -89,28 +91,7 @@ export const fetchAmount = protectedProcedure
           },
         },
       }),
-      ...(input.search && {
-        OR: [
-          {
-            name: {
-              contains: input.search,
-              mode: "insensitive",
-            },
-          },
-          {
-            lastName: {
-              contains: input.search,
-              mode: "insensitive",
-            },
-          },
-          {
-            email: {
-              contains: input.search,
-              mode: "insensitive",
-            },
-          },
-        ],
-      }),
+      
       ...(input.source.length > 0 && {
         source: {
           in: input.source,
