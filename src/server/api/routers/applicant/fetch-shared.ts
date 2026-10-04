@@ -5,7 +5,7 @@ import { z } from "zod";
 import { Prisma } from "~/generated/prisma/client";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
-
+import { getApplicantSearchWhere } from "./search-where";
 export const fetchShared = protectedProcedure
   .input(
     z.object({
@@ -29,60 +29,35 @@ export const fetchShared = protectedProcedure
         message: "No tenés permiso para consultar candidatos compartidos",
       });
     }
-
+    const searchWhere = getApplicantSearchWhere(input.search);
     const where: Prisma.ApplicantWhereInput = {
-      AND: [
-        {
-          applicantHiringManagers: {
-            some: {
-              hiringManagerId: ctx.session.user.id,
-            },
-          },
+  AND: [
+    {
+      applicantHiringManagers: {
+        some: {
+          hiringManagerId: ctx.session.user.id,
         },
-        {
-          NOT: {
-            applications: {
-              some: {
-                active: true,
-                jobOpening: {
-                  hiringManagers: {
-                    some: {
-                      id: ctx.session.user.id,
-                    },
-                  },
+      },
+    },
+    {
+      NOT: {
+        applications: {
+          some: {
+            active: true,
+            jobOpening: {
+              hiringManagers: {
+                some: {
+                  id: ctx.session.user.id,
                 },
               },
             },
           },
         },
-        ...(input.search
-          ? [
-              {
-                OR: [
-                  {
-                    name: {
-                      contains: input.search,
-                      mode: Prisma.QueryMode.insensitive,
-                    },
-                  },
-                  {
-                    lastName: {
-                      contains: input.search,
-                      mode: Prisma.QueryMode.insensitive,
-                    },
-                  },
-                  {
-                    email: {
-                      contains: input.search,
-                      mode: Prisma.QueryMode.insensitive,
-                    },
-                  },
-                ],
-              } satisfies Prisma.ApplicantWhereInput,
-            ]
-          : []),
-      ],
-    };
+      },
+    },
+    searchWhere,
+  ],
+};
 
     try {
       const applicants = await ctx.db.applicant.findMany({

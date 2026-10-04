@@ -109,7 +109,7 @@ export function Filters({
       : []),
   ];
 
-  const [selectedFilters, setSelectedFilters] = useState<
+  const [ setSelectedFilters] = useState<
     Record<FilterKey, Set<string>>
   >(() => ({
     jobOpening: new Set(searchParams.getAll("jobOpening")),
@@ -125,18 +125,7 @@ export function Filters({
     value: string,
     checked: boolean,
   ) => {
-    setSelectedFilters((prev) => {
-      const next = new Set(prev[key]);
-      if (checked) {
-        next.add(value);
-      } else {
-        next.delete(value);
-      }
-      return {
-        ...prev,
-        [key]: next,
-      };
-    });
+    
     const params = new URLSearchParams(searchParams.toString());
     const selectedValues = new Set(params.getAll(key));
 
@@ -156,13 +145,7 @@ export function Filters({
   };
 
   const clearFilter = (key: FilterKey) => {
-    setSelectedFilters((prev) => {
-      const next = new Set();
-      return {
-        ...prev,
-        [key]: next,
-      };
-    });
+   
     const params = new URLSearchParams(searchParams.toString());
     params.delete(key);
     params.set("page", "1");
@@ -192,7 +175,7 @@ export function Filters({
       </div>
 
       {filterGroups.map((config) => {
-        const activeValues = new Set(selectedFilters[config.key]);
+        const activeValues = new Set(searchParams.getAll(config.key));
         const activeFilterCount = activeValues.size;
         const normalizedOptionSearch = optionSearch.trim().toLowerCase();
 
