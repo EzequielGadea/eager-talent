@@ -2,15 +2,38 @@ import { Suspense } from "react";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { api } from "~/lib/trpc/server";
 import NewJobOpeningForm from "./_components/new-job-opening-form";
 import NewJobOpeningFallback from "./_components/new-job-opening-fallback";
 
-const FORM_LOADING_DELAY_MS = 3000;
+// const FORM_LOADING_DELAY_MS = 3000;
+//const templateStages = api.templateStages.getDefault();
+/*const templateStages = {
+  id:"0",
+  stages: [
+    { key:"-1", name: "Aplicado", type:"Ninguna", label:"text", color:"#dddd"},
+    { key:"0", name: "Hardcodeado", type: "Entrevista", label: "text",color: "#ff6f"},
+    { key:"1", name: "en page.tsx", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"2", name: "cambiar por comentado", type: "Entrevista",label: "text",color: "#142f"},
+    { key:"3", name: "para traer de DB", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"4", name: "manzana", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"5", name: "Entrevista Técnica", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"6", name: "Entrevista HR", type: "Entrevista", label: "text",color: "#142f"},
+    { key:"7", name: "Oferta", type: "Oferta", label: "text",color: "#142f"},
+    { key:"8", name: "Contratado/a", type: "Ninguna", label: "text",color: "#142f"},
+  ]
+}*/
 
-async function DelayedNewJobOpeningForm() {
-  await new Promise((resolve) => setTimeout(resolve, FORM_LOADING_DELAY_MS));
+// async function DelayedNewJobOpeningForm() {
+//   await new Promise((resolve) => setTimeout(resolve, FORM_LOADING_DELAY_MS));
 
-  return <NewJobOpeningForm />;
+//   return <NewJobOpeningForm templateStages={ await templateStages } />;
+// }
+
+async function NewJobOpeningFormWithTemplateStages() {
+  const templateStages = await api.templateStages.getDefault();
+
+  return <NewJobOpeningForm templateStages={templateStages} />;
 }
 
 export default function newJobOpeningPage() {
@@ -41,7 +64,7 @@ async function ProtectedNewJobOpeningPage() {
         </h1>
         <Suspense fallback={<NewJobOpeningFallback />}>
           {/* Descomentar para probar fallback} <DelayedNewJobOpeningForm /> {*/}
-          <NewJobOpeningForm />
+          <NewJobOpeningFormWithTemplateStages />
         </Suspense>
       </div>
     </>
