@@ -10,6 +10,7 @@ import { ApplicantLogsSection } from "./_components/applicant-logs-section";
 import { ApplicantNotes } from "./_components/applicant-notes";
 import { ApplicantTags } from "./_components/applicant-tags";
 import { ApplicantOverview } from "./_components/applicant-overview";
+import { ApplicantProfileSessionProvider } from "./_components/applicant-profile-session";
 
 type ApplicantPageProps = {
   params: Promise<{
@@ -37,34 +38,36 @@ async function ApplicantPageContent({ params }: ApplicantPageProps) {
     });
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] selection:bg-tag-green-bg selection:text-tag-green-fg">
-      <div className="flex min-w-0 flex-col gap-4">
-        <Suspense fallback={<Loading />}>
-          <ApplicantOverview applicantPromise={applicantPromise} />
-        </Suspense>
+    <ApplicantProfileSessionProvider key={id}>
+      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] selection:bg-tag-green-bg selection:text-tag-green-fg">
+        <div className="flex min-w-0 flex-col gap-4">
+          <Suspense fallback={<Loading />}>
+            <ApplicantOverview applicantPromise={applicantPromise} />
+          </Suspense>
 
-        <Suspense fallback={<Loading />}>
-          <ApplicantInfoCards applicantPromise={applicantPromise} />
-        </Suspense>
+          <Suspense fallback={<Loading />}>
+            <ApplicantInfoCards applicantPromise={applicantPromise} />
+          </Suspense>
 
-        <Suspense fallback={<Loading />}>
-          <ApplicantApplications applicantPromise={applicantPromise} />
-        </Suspense>
+          <Suspense fallback={<Loading />}>
+            <ApplicantApplications applicantPromise={applicantPromise} />
+          </Suspense>
 
-        <Suspense fallback={<Loading />}>
-          <ApplicantLogsSection applicantPromise={applicantPromise} />
-        </Suspense>
+          <Suspense fallback={<Loading />}>
+            <ApplicantLogsSection applicantPromise={applicantPromise} />
+          </Suspense>
+        </div>
+
+        <aside className="flex min-w-0 flex-col gap-4">
+          <Suspense fallback={<Loading />}>
+            <ApplicantNotes applicantPromise={applicantPromise} />
+          </Suspense>
+
+          <Suspense fallback={<Loading />}>
+            <ApplicantTags applicantPromise={applicantPromise} />
+          </Suspense>
+        </aside>
       </div>
-
-      <aside className="flex min-w-0 flex-col gap-4">
-        <Suspense fallback={<Loading />}>
-          <ApplicantNotes applicantPromise={applicantPromise} />
-        </Suspense>
-
-        <Suspense fallback={<Loading />}>
-          <ApplicantTags applicantPromise={applicantPromise} />
-        </Suspense>
-      </aside>
-    </div>
+    </ApplicantProfileSessionProvider>
   );
 }

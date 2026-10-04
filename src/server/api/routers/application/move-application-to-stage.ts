@@ -102,23 +102,44 @@ export const moveApplicationToStage = protectedProcedure
       return application;
     }
 
-    const updatedApplication = await ctx.db.application.update({
-      where: {
-        applicantId_jobOpeningId: {
+    const fromStage = application.currentStage;
+
+    return ctx.db.$transaction(async (tx) => {
+      // Conditional update: only succeeds if the application is still active
+      // and still in the stage we read, so the activity logs the real change.
+      const { count } = await tx.application.updateMany({
+        where: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
+          currentStage: fromStage,
+          active: true,
         },
-      },
-      data: {
-        currentStage: input.targetStage,
-        stageEntryDate: new Date(),
-      },
-      select: {
-        applicantId: true,
-        jobOpeningId: true,
-        currentStage: true,
-      },
-    });
+        data: {
+          currentStage: input.targetStage,
+          stageEntryDate: new Date(),
+        },
+      });
 
-    return updatedApplication;
+      if (count !== 1) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Application stage has changed",
+        });
+      }
+
+      await tx.activity.create({
+        data: {
+          applicantId: input.applicantId,
+          jobOpeningId: input.jobOpeningId,
+          createdById: ctx.session.user.id,
+          description: `movió la postulación de "${fromStage}" a "${input.targetStage}"`,
+        },
+      });
+
+      return {
+        applicantId: input.applicantId,
+        jobOpeningId: input.jobOpeningId,
+        currentStage: input.targetStage,
+      };
+    });
   });

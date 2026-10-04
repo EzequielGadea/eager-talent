@@ -45,29 +45,42 @@ export const disqualifyApplication = protectedProcedure
     }
 
     return ctx.db.$transaction(async (tx) => {
-      const updated = await tx.application.update({
+      // Conditional update: only succeeds if the application is still active
+      // and still in the stage we read, so the activity logs the real stage.
+      const { count } = await tx.application.updateMany({
         where: {
-          applicantId_jobOpeningId: {
-            applicantId: input.applicantId,
-            jobOpeningId: input.jobOpeningId,
-          },
+          applicantId: input.applicantId,
+          jobOpeningId: input.jobOpeningId,
+          currentStage: application.currentStage,
+          active: true,
         },
         data: {
           active: false,
           disqualificationDate: new Date(),
           disqualificationReason: input.reason,
         },
-        select: { applicantId: true, jobOpeningId: true, active: true },
       });
+
+      if (count !== 1) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "La postulación fue modificada. Recargá e intentá de nuevo.",
+        });
+      }
 
       await tx.activity.create({
         data: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
-          description: `Descalificado desde "${application.currentStage}": ${input.reason}`,
+          createdById: ctx.session.user.id,
+          description: `descalificó la postulación desde "${application.currentStage}": ${input.reason}`,
         },
       });
 
-      return updated;
+      return {
+        applicantId: input.applicantId,
+        jobOpeningId: input.jobOpeningId,
+        active: false,
+      };
     });
   });
