@@ -5,6 +5,7 @@ import { updateApplicant } from "./update-applicant";
 import { fetchAll } from "./fetch-all";
 import { fetchAmount } from "./fetch-amount";
 import { getApplicantByIdProcedure } from "./get-by-id";
+import { fetchShared } from "./fetch-shared";
 
 export { getApplicantByIdProcedure };
 
@@ -18,4 +19,5 @@ export const applicantRouter = createTRPCRouter({
   updateApplicant,
   fetchAll,
   fetchAmount,
+  fetchShared,
 });

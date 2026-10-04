@@ -24,6 +24,7 @@ export function Filters({
   areaData,
   jobOpeningData,
   tagData,
+  isHiringManagerView,
 }: FiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -61,68 +62,58 @@ export function Filters({
         label: item.name,
       })),
     },
-    {
-      key: "role" as const,
-      label: "Todos los roles",
-      options: roleData.map((item) => ({ id: item.id, label: item.name })),
-    },
-    {
-      key: "seniority" as const,
-      label: "Seniority",
-      options: seniorityData.map((item) => ({ id: item.id, label: item.name })),
-    },
-    {
-      key: "area" as const,
-      label: "Área",
-      options: areaData.map((item) => ({ id: item.id, label: item.name })),
-    },
-    {
-      key: "source" as const,
-      label: "Fuente",
-      options: Object.values(Source).map((value) => ({
-        id: value,
-        label: value,
-      })),
-    },
-    {
-      key: "tag" as const,
-      label: "Etiquetas",
-      options: tagData.map((item) => ({
-        id: item.id,
-        label: item.name,
-        color: item.color,
-      })),
-    },
+    ...(!isHiringManagerView
+      ? [
+          {
+            key: "role" as const,
+            label: "Todos los roles",
+            options: roleData.map((item) => ({
+              id: item.id,
+              label: item.name,
+            })),
+          },
+          {
+            key: "seniority" as const,
+            label: "Seniority",
+            options: seniorityData.map((item) => ({
+              id: item.id,
+              label: item.name,
+            })),
+          },
+          {
+            key: "area" as const,
+            label: "Área",
+            options: areaData.map((item) => ({
+              id: item.id,
+              label: item.name,
+            })),
+          },
+          {
+            key: "source" as const,
+            label: "Fuente",
+            options: Object.values(Source).map((value) => ({
+              id: value,
+              label: value,
+            })),
+          },
+          {
+            key: "tag" as const,
+            label: "Etiquetas",
+            options: tagData.map((item) => ({
+              id: item.id,
+              label: item.name,
+              color: item.color,
+            })),
+          },
+        ]
+      : []),
   ];
-
-  const [selectedFilters, setSelectedFilters] = useState<
-    Record<FilterKey, Set<string>>
-  >(() => ({
-    jobOpening: new Set(searchParams.getAll("jobOpening")),
-    role: new Set(searchParams.getAll("role")),
-    seniority: new Set(searchParams.getAll("seniority")),
-    area: new Set(searchParams.getAll("area")),
-    source: new Set(searchParams.getAll("source")),
-    tag: new Set(searchParams.getAll("tag")),
-  }));
 
   const updateFilterValue = (
     key: FilterKey,
     value: string,
     checked: boolean,
   ) => {
-    setSelectedFilters((prev) => {
-      const next = new Set(prev[key]);
-      if (checked) {
-        next.add(value);
-      } else {
-        next.delete(value);
-      }
-      return {
-        ...prev,
-        [key]: next,
-      };
-    });
     const params = new URLSearchParams(searchParams.toString());
     const selectedValues = new Set(params.getAll(key));
 
@@ -142,13 +133,6 @@ export function Filters({
   };
 
   const clearFilter = (key: FilterKey) => {
-    setSelectedFilters((prev) => {
-      const next = new Set();
-      return {
-        ...prev,
-        [key]: next,
-      };
-    });
     const params = new URLSearchParams(searchParams.toString());
     params.delete(key);
     params.set("page", "1");
@@ -178,7 +162,7 @@ export function Filters({
       </div>
 
       {filterGroups.map((config) => {
-        const activeValues = new Set(selectedFilters[config.key]);
+        const activeValues = new Set(searchParams.getAll(config.key));
         const activeFilterCount = activeValues.size;
         const normalizedOptionSearch = optionSearch.trim().toLowerCase();
 

@@ -69,5 +69,18 @@ export const getApplicantByIdProcedure = protectedProcedure
       });
     }
 
+    if (!canReadAllResult.success) {
+      await ctx.db.applicantHiringManager.updateMany({
+        where: {
+          applicantId: input.id,
+          hiringManagerId: ctx.session.user.id,
+          viewed: false,
+        },
+        data: {
+          viewed: true,
+        },
+      });
+    }
+
     return applicant;
   });

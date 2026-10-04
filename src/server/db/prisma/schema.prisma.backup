@@ -29,7 +29,8 @@ model User {
   sentInvitations     Invitation[]    @relation("InvitationSender")
   publicLinks         PublicLink[]
   sessions            Session[]
-  sharedApplicants    Applicant[]     @relation("ApplicantHiringManagers")
+  applicantHiringManagers ApplicantHiringManager[] @relation("ApplicantHiringManager")
+  applicantsSharedByMe    ApplicantHiringManager[] @relation("ApplicantSharedBy")
   interviews          Interview[]     @relation("InterviewUsers")
   assignedJobOpenings JobOpening[]    @relation("JobOpeningHiringManagers")
 
@@ -112,6 +113,7 @@ model Applicant {
   role                Role           @relation(fields: [roleId], references: [id])
   seniority           Seniority?     @relation(fields: [seniorityId], references: [id], onDelete: Restrict)
   note                ApplicantNote?
+  applicantHiringManagers ApplicantHiringManager[]
   applications        Application[]
   interviews          Interview[]
   hiringManagers      User[]         @relation("ApplicantHiringManagers")
@@ -122,6 +124,22 @@ model Applicant {
   @@index([seniorityId])
   @@index([source])
   @@map("applicant")
+}
+
+model ApplicantHiringManager {
+  applicantId     String @map("applicant_id")
+  hiringManagerId String @map("hiring_manager_id")
+  sharedByUserId  String @map("shared_by_user_id")
+  viewed          Boolean @default(false)
+
+  applicant     Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  hiringManager User      @relation("ApplicantHiringManager", fields: [hiringManagerId], references: [id], onDelete: Cascade)
+  sharedBy      User      @relation("ApplicantSharedBy", fields: [sharedByUserId], references: [id], onDelete: Restrict)
+
+  @@id([applicantId, hiringManagerId])
+  @@index([hiringManagerId])
+  @@index([sharedByUserId])
+  @@map("applicant_hiring_manager")
 }
 
 model Role {

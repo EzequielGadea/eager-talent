@@ -5,7 +5,13 @@ export function isHiringManagerAssignedToApplicant(
 ): Prisma.ApplicantWhereInput {
   return {
     OR: [
-      { hiringManagers: { some: { id: userId } } },
+      {
+        applicantHiringManagers: {
+          some: {
+            hiringManagerId: userId,
+          },
+        },
+      },
       {
         applications: {
           some: {

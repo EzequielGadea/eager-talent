@@ -38,8 +38,8 @@ export const getInterviewsByApplicantIdProcedure = protectedProcedure
               OR: [
                 {
                   applicant: {
-                    hiringManagers: {
-                      some: { id: ctx.session.user.id },
+                    applicantHiringManagers: {
+                      some: { hiringManagerId: ctx.session.user.id },
                     },
                   },
                 },
