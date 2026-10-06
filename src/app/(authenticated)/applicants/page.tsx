@@ -119,18 +119,16 @@ async function ProtectedApplicantsPage(props: {
     }),
   );
 
- const sharedData = isHiringManagerView
-  ? normalized.then((params) =>
-      api.applicant.fetchShared({
-        search: params.search,
-        page: params.sharedPage,
-      }),
-    )
-  : null;
+  const sharedData = isHiringManagerView
+    ? normalized.then((params) =>
+        api.applicant.fetchShared({
+          search: params.search,
+          page: params.sharedPage,
+        }),
+      )
+    : null;
 
-const currentSharedPage = normalized.then(
-  (params) => params.sharedPage,
-);
+  const currentSharedPage = normalized.then((params) => params.sharedPage);
 
   const countApplicants = normalized.then((params) =>
     api.applicant.fetchAmount({
@@ -153,9 +151,7 @@ const currentSharedPage = normalized.then(
   return (
     <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 text-dashboard-text-primary">
       <Suspense
-        fallback={
-          <HeaderFallback isHiringManagerView={isHiringManagerView} />
-        }
+        fallback={<HeaderFallback isHiringManagerView={isHiringManagerView} />}
       >
         <ApplicantAwaiterHeader
           promiseCountApplicants={countApplicants}
@@ -194,15 +190,13 @@ const currentSharedPage = normalized.then(
                 }
               >
                 {isHiringManagerView ? (
-                  <HiringManagerApplicantTableHeader showSharedBy={false}  />
+                  <HiringManagerApplicantTableHeader showSharedBy={false} />
                 ) : (
                   <ApplicantTableHeader />
                 )}
 
                 <TableBody className="divide-y divide-dashboard-border">
-                  <TableFallback
-                    isHiringManagerView={isHiringManagerView}
-                  />
+                  <TableFallback isHiringManagerView={isHiringManagerView} />
                 </TableBody>
               </Table>
             </div>
@@ -217,30 +211,28 @@ const currentSharedPage = normalized.then(
         />
       </Suspense>
 
-     {isHiringManagerView && sharedData && (
-  <Suspense
-    fallback={
-      <div className="mt-4 w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-        <div className="w-full overflow-x-auto">
-          <Table className="min-w-200 table-fixed">
-            <HiringManagerApplicantTableHeader showSharedBy={true} />
+      {isHiringManagerView && sharedData && (
+        <Suspense
+          fallback={
+            <div className="mt-4 w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+              <div className="w-full overflow-x-auto">
+                <Table className="min-w-200 table-fixed">
+                  <HiringManagerApplicantTableHeader showSharedBy={true} />
 
-            <TableBody className="divide-y divide-dashboard-border">
-              <TableFallback isHiringManagerView showSharedBy />
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-    }
-  >
-    <SharedApplicantsAwaiter
-      promiseData={sharedData}
-      currentPage={currentSharedPage}
-    />
-  </Suspense>
-)}
-
-
+                  <TableBody className="divide-y divide-dashboard-border">
+                    <TableFallback isHiringManagerView showSharedBy />
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          }
+        >
+          <SharedApplicantsAwaiter
+            promiseData={sharedData}
+            currentPage={currentSharedPage}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

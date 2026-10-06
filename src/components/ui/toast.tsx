@@ -199,9 +199,7 @@ function ToastList() {
           </div>
           <ToastAction />
           <ToastClose
-            className={
-              isSuccess ? "text-white hover:text-white" : undefined
-            }
+            className={isSuccess ? "text-white hover:text-white" : undefined}
           />
         </ToastContent>
       </Toast>
