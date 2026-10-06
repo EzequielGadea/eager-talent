@@ -53,18 +53,6 @@ export async function PipelineColumn({
     <section
       className={`flex w-80 shrink-0 flex-col gap-3 border-t-4 pt-3 ${stageColor}`}
     >
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-text-primary">
-            {stage.name}
-          </h2>
-
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-            {data.total}
-          </span>
-        </div>
-      </header>
-
       <PipelineColumnClient
         jobOpeningId={jobOpeningId}
         stageName={stage.name}
