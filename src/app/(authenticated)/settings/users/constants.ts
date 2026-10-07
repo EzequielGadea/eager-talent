@@ -26,4 +26,8 @@ export const userRoleConfig = {
     label: "Hiring Manager",
     className: "bg-tag-gray-bg text-tag-gray-fg",
   },
+<<<<<<< HEAD
 } as const;
+=======
+} as const;
+>>>>>>> 44c65e8 (feat: consultar usuarios implementacion del backend y frontend)
