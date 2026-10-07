@@ -241,7 +241,7 @@ model Tag {
   deletedAt  DateTime?   @map("deleted_at")
   applicants Applicant[]
 
-  @@index([deletedAt])
+  @@index([deletedAt]) 
   @@map("tag")
 }
 
