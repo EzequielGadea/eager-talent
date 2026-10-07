@@ -141,9 +141,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
     onSuccess: () => {
       methods.reset();
-      setStages(
-        props.templateStages.stages.map((stage) => ({ ...stage })),
-      );
+      setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
       toast.add({
         title: "Vacante creada correctamente",
         type: "success",
@@ -171,9 +169,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
   }
   function handleCancel() {
     methods.reset();
-    setStages(
-      props.templateStages.stages.map((stage) => ({ ...stage })),
-    );
+    setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
     router.push("/job-openings");
   }
 

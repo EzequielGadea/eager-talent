@@ -111,7 +111,9 @@ export function ApplyToVacantDialog({
   const createApplicationMutation =
     api.application.createApplicationFromApplicant.useMutation({
       onSuccess: async () => {
-        await utils.jobOpening.getAllOpenJobOpenings.invalidate({ applicantId });
+        await utils.jobOpening.getAllOpenJobOpenings.invalidate({
+          applicantId,
+        });
         startTransition(() => {
           reset();
           setShowDialog(false);

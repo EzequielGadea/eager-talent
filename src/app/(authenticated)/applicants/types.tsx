@@ -41,7 +41,7 @@ export interface ApplicantInfo {
   email: string;
   currentStage: string | null;
   viewed: boolean | null;
- sharedBy: string | null;
+  sharedBy: string | null;
 }
 
 export type ApplicantsPromise = ReturnType<typeof api.applicant.fetchAll>;

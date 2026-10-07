@@ -81,9 +81,20 @@ export function PipelineColumnClient({
     [...optimisticallyRemovedIds].filter((id) => initialCandidateIds.has(id)),
   );
 
+  const allCandidateIds = new Set(
+    allCandidates.map((candidate) => candidate.applicantId),
+  );
+
+  // Una card con movimiento pendiente solo debe verse en su columna destino.
+  // Se oculta en cualquier otra columna donde el servidor todavía la tenga
+  // (la de origen o una intermedia si se movió más de una vez seguida).
   const movedOutIds = new Set(
     Object.entries(moves)
-      .filter(([, move]) => move.fromStage === stageName)
+      .filter(
+        ([applicantId, move]) =>
+          move.toStage !== stageName &&
+          (move.fromStage === stageName || allCandidateIds.has(applicantId)),
+      )
       .map(([applicantId]) => applicantId),
   );
 
@@ -98,10 +109,6 @@ export function PipelineColumnClient({
       );
     }
   }
-
-  const allCandidateIds = new Set(
-    allCandidates.map((candidate) => candidate.applicantId),
-  );
 
   const movedIn = Object.values(moves)
     .filter((move) => move.toStage === stageName)
@@ -187,33 +194,47 @@ export function PipelineColumnClient({
   }
 
   return (
-    <div
-      ref={setNodeRef}
-      className={`flex min-h-24 min-w-72 flex-1 flex-col gap-2 rounded-lg transition-colors ${
-        isOver ? "bg-accent" : ""
-      }`}
-    >
-      {candidates.map((candidate) => (
-        <CandidateCard
-          key={candidate.applicantId}
-          candidate={candidate}
-          jobOpeningId={jobOpeningId}
-          currentStage={stageName}
-          isLastStage={isLastStage}
-          onAdvanced={handleCandidateAdvanced}
-          canUpdateApplication={canUpdateApplication}
-          canCreateInterview={canCreateInterview}
-          canDeleteInterview={canDeleteInterview}
-        />
-      ))}
+    <>
+      <header className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-text-primary">
+            {stageName}
+          </h2>
 
-      {hasMore && (
-        <LoadMoreCandidates
-          remaining={remaining}
-          loading={fetchMore.isFetching}
-          onLoadMore={handleLoadMore}
-        />
-      )}
-    </div>
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+            {Math.max(0, effectiveTotal)}
+          </span>
+        </div>
+      </header>
+
+      <div
+        ref={setNodeRef}
+        className={`flex min-h-24 min-w-72 flex-1 flex-col gap-2 rounded-lg transition-colors ${
+          isOver ? "bg-accent" : ""
+        }`}
+      >
+        {candidates.map((candidate) => (
+          <CandidateCard
+            key={candidate.applicantId}
+            candidate={candidate}
+            jobOpeningId={jobOpeningId}
+            currentStage={stageName}
+            isLastStage={isLastStage}
+            onAdvanced={handleCandidateAdvanced}
+            canUpdateApplication={canUpdateApplication}
+            canCreateInterview={canCreateInterview}
+            canDeleteInterview={canDeleteInterview}
+          />
+        ))}
+
+        {hasMore && (
+          <LoadMoreCandidates
+            remaining={remaining}
+            loading={fetchMore.isFetching}
+            onLoadMore={handleLoadMore}
+          />
+        )}
+      </div>
+    </>
   );
 }

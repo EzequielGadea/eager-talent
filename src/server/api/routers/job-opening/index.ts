@@ -37,4 +37,3 @@ export const jobOpeningRouter = createTRPCRouter({
   listAssignableUsers,
   update: updateJobOpening,
 });
-
