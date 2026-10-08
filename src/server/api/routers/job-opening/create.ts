@@ -91,7 +91,7 @@ export const createJobOpening = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "No tenes permisos para crear una vacante",
+        message: "FORBIDDEN",
       });
     }
     try {
@@ -136,7 +136,7 @@ export const createJobOpening = protectedProcedure
       ) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "La vacante ya existe",
+          message: "CONFLICT",
         });
       }
 
@@ -146,7 +146,7 @@ export const createJobOpening = protectedProcedure
       ) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "El área, seniority o hiring manager indicado no existe",
+          message: "NOT_FOUND",
         });
       }
       throw error;

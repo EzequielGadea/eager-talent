@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { api } from "~/lib/trpc/server";
 import NewJobOpeningForm from "./_components/new-job-opening-form";
 import NewJobOpeningFallback from "./_components/new-job-opening-fallback";
+import { TRPCError } from "@trpc/server";
 
 // const FORM_LOADING_DELAY_MS = 3000;
 //const templateStages = api.templateStages.getDefault();
