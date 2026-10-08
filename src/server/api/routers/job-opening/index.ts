@@ -11,6 +11,7 @@ import { listAssignableUsers } from "./list-assignable-users";
 import { updateJobOpening } from "./update";
 import { updateStatus } from "./update-status";
 import { createJobOpening } from "./create";
+import { fetchDisqualifiedApplications } from "./fetch-disqualified-applications";
 
 export { fetchById };
 export { fetchPipelineCandidates };
@@ -23,6 +24,7 @@ export { listAssignableUsers };
 export { updateJobOpening };
 export { updateStatus };
 export { createJobOpening };
+export { fetchDisqualifiedApplications };
 
 export const jobOpeningRouter = createTRPCRouter({
   getAllJobOpenings,
@@ -32,6 +34,7 @@ export const jobOpeningRouter = createTRPCRouter({
   getJobOpeningHiringManagers,
   fetchById,
   fetchPipelineCandidates,
+  fetchDisqualifiedApplications,
   updateStatus,
   createJobOpening,
   listAssignableUsers,
