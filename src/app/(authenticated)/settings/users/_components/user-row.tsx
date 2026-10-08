@@ -1,5 +1,11 @@
 import type { inferRouterOutputs } from "@trpc/server";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, KeyRound, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 import { Button } from "~/components/ui/button";
 import { TableCell, TableRow } from "~/components/ui/table";
@@ -138,15 +144,26 @@ export function UserRow({ user }: Props) {
             Reenviar invitación
           </Button>
         ) : (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-8"
+          <DropdownMenu>
+          <DropdownMenuTrigger
+            className="flex size-8 items-center cursor-pointer justify-center rounded-md hover:bg-slate-200"
             aria-label={`Acciones de ${user.name} ${user.lastName}`}
           >
             <MoreHorizontal className="size-4" />
-          </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end" className="w-52">
+            <DropdownMenuItem>
+              <KeyRound className="size-4" />
+              Restablecer contraseña
+            </DropdownMenuItem>
+
+            <DropdownMenuItem className="text-danger focus:text-danger">
+              <Trash2 className="size-4" />
+              Eliminar usuario
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         )}
       </TableCell>
     </TableRow>
