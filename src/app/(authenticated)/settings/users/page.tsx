@@ -9,6 +9,8 @@ import { UsersTableSkeleton } from "./_components/users-table-skeleton";
 import { cn } from "~/lib/utils";
 
 async function UsersContent() {
+  
+  
   const users = await api.user.getAllUsers({});
 
   return <UsersTable users={users} />;
