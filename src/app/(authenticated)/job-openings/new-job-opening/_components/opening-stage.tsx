@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { GripVertical, X, Plus, ChevronDown } from "lucide-react";
 import { useDrag, useDrop } from "react-dnd";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { mandatoryStages, Stage, Stages } from "../utils";
+import { mandatoryStages, Stage, STAGE_TYPE_CLASS_NAMES, STAGE_TYPE_CLASS_STATIC, Stages } from "../utils";
 import { useForm } from "react-hook-form";
 import {
   Popover,
@@ -21,6 +21,7 @@ import {
   ColorPickerInput,
 } from "~/components/ui/color-picker";
 import { Input } from "~/components/ui/input";
+import { JobOpeningStageType } from "~/lib/validations/job-opening";
 
 const types = [
   { name: "Ninguna", key: 0 },
@@ -258,6 +259,30 @@ function IndividualStage(props: {
     }
   };
 
+  const recordType = ((name:string) => {
+    var newRecordType:JobOpeningStageType = "none";
+    switch(name) {
+      case "Ninguna": {
+        newRecordType = "none";
+        break;
+      }
+      case "Entrevista": {
+        newRecordType = "interview";
+        break;
+      }
+      case "Oferta": {
+        newRecordType = "offer";
+        break;
+      }
+      case "Contratado": {
+        
+        newRecordType = "hired"
+        break;
+      }
+    }
+    return newRecordType;
+  })
+
   return (
     <div
       ref={setRef}
@@ -331,9 +356,9 @@ function IndividualStage(props: {
             <PopoverTrigger
               className={cn(
                 "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors",
-                isEditable &&
-                  "hover:bg-dashboard-success-light hover:text-dashboard-success-text",
-                !isEditable && "bg-muted",
+                isEditable ?
+                  `hover:bg-dashboard-success-light hover:text-dashboard-success-text ${STAGE_TYPE_CLASS_NAMES[recordType(props.stage.type)]}` :
+                  STAGE_TYPE_CLASS_STATIC[recordType(props.stage.type)],
               )}
             >
               <span>{props.stage.type}</span>
