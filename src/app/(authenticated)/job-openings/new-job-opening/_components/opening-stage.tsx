@@ -260,7 +260,7 @@ function IndividualStage(props: {
   };
 
   const recordType = ((name:string) => {
-    var newRecordType:JobOpeningStageType = "none";
+    let newRecordType:JobOpeningStageType = "none";
     switch(name) {
       case "Ninguna": {
         newRecordType = "none";

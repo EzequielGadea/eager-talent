@@ -1,6 +1,5 @@
 "use client";
 
-import { TRPCError } from "@trpc/server";
 import { AlertCircle, RefreshCw } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
@@ -15,8 +14,8 @@ type JobOpeningErrorProps = {
 };
 
 export default function JobOpeningError({ reset, error }: JobOpeningErrorProps) {
-    var title = "Error inesperado"
-    var message = "Algo salio mal, intentalo nuevamente mas tarde."
+    let title = "Error inesperado"
+    let message = "Algo salio mal, intentalo nuevamente mas tarde."
     switch(error.message) {
         case "CONFLICT": {
             title = "No se pudo crear la vacante";
