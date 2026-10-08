@@ -37,7 +37,7 @@ export function DisqualifiedCard({ application }: DisqualifiedCardProps) {
   return (
     <Link href={`/applicants/${application.applicantId}`} className="block">
       {/* Borde izquierdo rojo"*/}
-      <Card className="rounded-xl border-border-default border-l-4 border-l-destructive bg-card p-3 shadow-none transition-colors hover:bg-accent">
+      <Card className="gap-0 rounded-xl border-border-default border-l-4 border-l-destructive bg-card p-3 shadow-none transition-colors hover:bg-accent">
         <div className="flex items-center gap-3">
           <Avatar className="size-9 shrink-0">
             <AvatarImage src={application.photo ?? undefined} alt={fullName} />
