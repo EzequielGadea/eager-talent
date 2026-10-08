@@ -1,5 +1,5 @@
-import { cn } from "~/lib/utils";
 import AreaSetting from "./_components/area-setting";
+import DefaultStageSetting from "./_components/default-stage-setting";
 import RoleSetting from "./_components/role-setting";
 
 export default function GeneralSettingsPage() {
@@ -13,6 +13,9 @@ export default function GeneralSettingsPage() {
       <div className="grid grid-cols-2 gap-4 ">
         <div className="flex flex-col gap-4">
           <AreaSetting /> <RoleSetting />
+        </div>
+        <div className="flex flex-col gap-4">
+          <DefaultStageSetting />
         </div>
       </div>
     </section>
