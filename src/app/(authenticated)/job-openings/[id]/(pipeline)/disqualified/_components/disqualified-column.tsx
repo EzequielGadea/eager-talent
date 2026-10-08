@@ -51,18 +51,12 @@ export function DisqualifiedColumn({
       </header>
 
       <div className="flex min-h-24 flex-col gap-2">
-        {applications.length === 0 ? (
-          <p className="text-xs text-text-secondary">
-            Sin postulaciones descalificadas en esta etapa.
-          </p>
-        ) : (
-          visibleApplications.map((application) => (
-            <DisqualifiedCard
-              key={application.applicantId}
-              application={application}
-            />
-          ))
-        )}
+        {visibleApplications.map((application) => (
+          <DisqualifiedCard
+            key={application.applicantId}
+            application={application}
+          />
+        ))}
 
         {/* "+ N candidatos más": muestra las siguientes. */}
         {remaining > 0 && (
