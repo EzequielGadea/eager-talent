@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { api } from "~/lib/trpc/server";
 import NewJobOpeningForm from "./_components/new-job-opening-form";
 import NewJobOpeningFallback from "./_components/new-job-opening-fallback";
@@ -54,7 +53,18 @@ async function ProtectedNewJobOpeningPage() {
     },
   });
   if (!permission.success) {
-    redirect("/dashboard");
+    return (
+      <main className="flex min-h-0 flex-1 items-center justify-center p-6">
+        <div className="text-center">
+          <h1 className="text-lg font-semibold text-text-primary">
+            No se puede crear la vacante
+          </h1>
+          <p className="mt-1 text-sm text-text-secondary">
+            No tenés permisos para crear una vacante.
+          </p>
+        </div>
+      </main>
+    );
   }
   return (
     <>
