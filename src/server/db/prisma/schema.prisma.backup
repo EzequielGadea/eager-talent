@@ -520,7 +520,7 @@ model Application {
   currentStage           String       @map("current_stage")
   stageEntryDate         DateTime     @default(now()) @map("stage_entry_date")
   disqualificationDate   DateTime?    @map("disqualification_date")
-  disqualificationReason String?      @map("disqualification_reason")
+  disqualificationDescription String?      @map("disqualification_reason")
   desiredSalary          String?      @map("desired_salary")
   availability           String?
   activities             Activity[]
