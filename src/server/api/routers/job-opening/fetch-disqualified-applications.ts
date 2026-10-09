@@ -65,7 +65,10 @@ export const fetchDisqualifiedApplications = protectedProcedure
         applicantId: true,
         currentStage: true,
         disqualificationDate: true,
-        disqualificationReason: true,
+        disqualificationDescription: true,
+        disqualificationMotive: {
+          select: { name: true },
+        },
         applicant: {
           select: {
             name: true,
@@ -85,7 +88,8 @@ export const fetchDisqualifiedApplications = protectedProcedure
       applicantId: application.applicantId,
       stage: application.currentStage,
       disqualificationDate: application.disqualificationDate!,
-      disqualificationReason: application.disqualificationReason,
+      disqualificationMotive: application.disqualificationMotive?.name ?? null,
+      disqualificationDescription: application.disqualificationDescription,
       name: application.applicant.name,
       lastName: application.applicant.lastName,
       photo: application.applicant.photo,
