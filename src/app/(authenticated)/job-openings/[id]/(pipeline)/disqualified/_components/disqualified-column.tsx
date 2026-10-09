@@ -1,9 +1,13 @@
 "use client";
 
-import { DisqualifiedApplication } from "./types";
 import { useState } from "react";
-import { LoadMoreCandidates } from "../../pipeline/_components/load-more-candidates";
+
+import { LoadMoreCandidates } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/load-more-candidates";
+
 import { DisqualifiedCard } from "./disqualified-card";
+import type { DisqualifiedApplication } from "../types";
+
+const PAGE_SIZE = 3;
 
 const stageColors = [
   "border-dashboard-sky-text",
@@ -15,8 +19,6 @@ const stageColors = [
   "border-tag-amber-fg",
 ];
 
-const PAGE_SIZE = 3;
-
 function getStageColor(stageName: string) {
   const hash = stageName
     .split("")
@@ -26,15 +28,20 @@ function getStageColor(stageName: string) {
 }
 
 type DisqualifiedColumnProps = {
+  jobOpeningId: string;
   stageName: string;
   applications: DisqualifiedApplication[];
+  canRequalify: boolean;
 };
 
 export function DisqualifiedColumn({
+  jobOpeningId,
   stageName,
   applications,
+  canRequalify,
 }: DisqualifiedColumnProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
   const visibleApplications = applications.slice(0, visibleCount);
   const remaining = applications.length - visibleApplications.length;
 
@@ -42,6 +49,7 @@ export function DisqualifiedColumn({
     <section
       className={`flex w-80 shrink-0 flex-col gap-3 border-t-4 pt-3 ${getStageColor(stageName)}`}
     >
+      {/* Nombre de la etapa a la izquierda y cantidad a la derecha. */}
       <header className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-text-primary">{stageName}</h2>
 
@@ -51,12 +59,20 @@ export function DisqualifiedColumn({
       </header>
 
       <div className="flex min-h-24 flex-col gap-2">
-        {visibleApplications.map((application) => (
-          <DisqualifiedCard
-            key={application.applicantId}
-            application={application}
-          />
-        ))}
+        {applications.length === 0 ? (
+          <p className="text-xs text-text-secondary">
+            Sin postulaciones descalificadas en esta etapa.
+          </p>
+        ) : (
+          visibleApplications.map((application) => (
+            <DisqualifiedCard
+              key={application.applicantId}
+              application={application}
+              jobOpeningId={jobOpeningId}
+              canRequalify={canRequalify}
+            />
+          ))
+        )}
 
         {/* "+ N candidatos más": muestra las siguientes. */}
         {remaining > 0 && (

@@ -370,6 +370,7 @@ export function CandidateCard({
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
+          stageName={currentStage}
           onSuccess={() => router.refresh()}
         />
       )}

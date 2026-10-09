@@ -65,7 +65,7 @@ const scheduleInterviewSchema = z
     }
   });
 
-// Fecha local de hoy (YYYY-MM-DD). toISOString() devuelve UTC, restar desfase con Uruguay.
+// Fecha local de hoy (YYYY-MM-DD). toISOString() devuelve UTC,  restar desfase con Uruguay.
 function getTodayLocalISO() {
   const now = new Date();
   const offsetMs = now.getTimezoneOffset() * 60_000;
@@ -80,6 +80,7 @@ type ScheduleInterviewDialogProps = {
   applicantId: string;
   jobOpeningId: string;
   candidateName: string;
+  stageName: string;
   onSuccess: () => void;
 };
 
@@ -104,6 +105,7 @@ export function ScheduleInterviewDialog({
   applicantId,
   jobOpeningId,
   candidateName,
+  stageName,
   onSuccess,
 }: ScheduleInterviewDialogProps) {
   const [search, setSearch] = useState("");
@@ -349,8 +351,6 @@ export function ScheduleInterviewDialog({
                                 <button
                                   key={interviewer.id}
                                   type="button"
-                                  // onMouseDown evita que el input pierda foco
-                                  // antes de registrar el click.
                                   onMouseDown={(event) => {
                                     event.preventDefault();
                                     field.onChange([
