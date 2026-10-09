@@ -73,7 +73,7 @@ export const jobOpeningFormSchema = z
         )
       ) {
         errors.push(
-          "Debe haber una etapa de 'Entrevista técnica' de tipo 'Entrevista",
+          "Debe haber una etapa de 'Entrevista técnica' de tipo 'Entrevista'",
         );
       }
 
@@ -84,7 +84,7 @@ export const jobOpeningFormSchema = z
         )
       ) {
         errors.push(
-          "Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista",
+          "Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista'",
         );
       }
 
@@ -93,7 +93,7 @@ export const jobOpeningFormSchema = z
           (stage) => stage.name === "Oferta" && stage.type === "Oferta",
         )
       ) {
-        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta");
+        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta'");
       }
 
       if (stages.some((stage) => stage.name.trim() === "")) {
