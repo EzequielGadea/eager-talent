@@ -188,6 +188,14 @@ model Tag {
   @@map("tag")
 }
 
+model DisqualificationMotive {
+  id           String        @id @default(cuid())
+  name         String
+  applications Application[]
+
+  @@map("disqualification_motive")
+}
+
 model JobOpening {
   id                String           @id @default(cuid())
   name              String
@@ -226,12 +234,14 @@ model Application {
   currentStage           String       @map("current_stage")
   stageEntryDate         DateTime     @default(now()) @map("stage_entry_date")
   disqualificationDate   DateTime?    @map("disqualification_date")
-  disqualificationReason String?      @map("disqualification_reason")
+  disqualificationDescription String?   @map("disqualification_description")
+  disqualificationMotiveId    String?   @map("disqualification_motive_id")
   desiredSalary          String?      @map("desired_salary")
   availability           String?
   activities             Activity[]
   applicant              Applicant    @relation(fields: [applicantId], references: [id])
   jobOpening             JobOpening   @relation(fields: [jobOpeningId], references: [id])
+  disqualificationMotive DisqualificationMotive? @relation(fields: [disqualificationMotiveId], references: [id], onDelete: Restrict)
   interviews             Interview[]
   publicLinks            PublicLink[]
 
