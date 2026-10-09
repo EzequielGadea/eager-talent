@@ -54,7 +54,8 @@ export const requalifyApplication = protectedProcedure
         data: {
           active: true,
           disqualificationDate: null,
-          disqualificationReason: null,
+          disqualificationDescription: null,
+          disqualificationMotiveId: null,
         },
       });
 
