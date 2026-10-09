@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, Loader2, RotateCcw } from "lucide-react";
+import { CircleAlert, Loader2, Plus, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -49,6 +49,7 @@ export function DisqualifiedCard({
 }: DisqualifiedCardProps) {
   const router = useRouter();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isCommentOpen, setIsCommentOpen] = useState(false);
 
   const requalifyMutation = api.application.requalifyApplication.useMutation({
     onSuccess: () => {
@@ -88,46 +89,83 @@ export function DisqualifiedCard({
           </div>
         </Link>
 
-        {/* Separador, motivo en rojo y tiempo transcurrido. */}
-        <div className="mt-3 flex flex-col gap-1 border-t border-border-default pt-3">
-          {application.disqualificationReason && (
-            <p className="flex items-start gap-1.5 text-sm text-destructive">
-              <CircleAlert className="mt-0.5 size-3.5 shrink-0" />
-              <span className="line-clamp-2">
-                {application.disqualificationReason}
-              </span>
-            </p>
+        {/* Separador, motivo en rojo, comentario opcional, fecha y acción. */}
+        <div className="mt-3 flex flex-col gap-2 border-t border-border-default pt-3">
+          {(application.disqualificationMotive ||
+            application.disqualificationDescription) && (
+            <div className="flex items-start justify-between gap-2">
+              <p className="flex min-w-0 items-start gap-1.5 text-sm font-medium text-destructive">
+                <CircleAlert className="mt-0.5 size-3.5 shrink-0" />
+                {application.disqualificationMotive && (
+                  <span className="line-clamp-2">
+                    {application.disqualificationMotive}
+                  </span>
+                )}
+              </p>
+
+              {/* Comentario opcional: solo un "+" que abre el diálogo. */}
+              {application.disqualificationDescription && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  aria-label="Ver comentario"
+                  title="Ver comentario"
+                  className="size-5 shrink-0 rounded-full p-0 text-text-secondary"
+                  onClick={() => setIsCommentOpen(true)}
+                >
+                  <Plus className="size-3" />
+                </Button>
+              )}
+            </div>
           )}
 
-          <div className="flex items-center justify-between gap-2">
-            {/* la fecha exacta al pasar el mouse. */}
-            <p
-              className="text-xs text-text-secondary"
-              title={format(disqualifiedAt, "d 'de' MMMM yyyy · HH:mm", {
-                locale: es,
-              })}
-            >
-              Descartado{" "}
-              {formatDistanceToNow(disqualifiedAt, {
-                locale: es,
-                addSuffix: true,
-              })}
-            </p>
+          {/* la fecha exacta al pasar el mouse. */}
+          <p
+            className="pl-5 text-xs text-text-secondary"
+            title={format(disqualifiedAt, "d 'de' MMMM yyyy · HH:mm", {
+              locale: es,
+            })}
+          >
+            Descartado{" "}
+            {formatDistanceToNow(disqualifiedAt, {
+              locale: es,
+              addSuffix: true,
+            })}
+          </p>
 
-            {canRequalify && (
-              <Button
-                type="button"
-                variant="outline"
-                className="h-7 shrink-0 rounded-full px-3 text-xs"
-                onClick={() => setIsConfirmOpen(true)}
-              >
-                <RotateCcw className="size-3" />
-                Volver a calificar
-              </Button>
-            )}
-          </div>
+          {canRequalify && (
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-1 h-8 w-full rounded-full text-xs"
+              onClick={() => setIsConfirmOpen(true)}
+            >
+              <RotateCcw className="size-3" />
+              Volver a calificar
+            </Button>
+          )}
         </div>
       </Card>
+
+      {application.disqualificationDescription && (
+        <Dialog open={isCommentOpen} onOpenChange={setIsCommentOpen}>
+          <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
+            <div className="border-b border-border-default px-6 py-5">
+              <DialogTitle className="text-lg font-semibold text-text-primary">
+                Comentario
+              </DialogTitle>
+
+              <DialogDescription className="mt-1 text-sm text-text-secondary">
+                {fullName} · {application.disqualificationMotive}
+              </DialogDescription>
+            </div>
+
+            <p className="max-h-80 overflow-y-auto whitespace-pre-wrap wrap-break-word px-6 py-5 text-sm text-text-primary">
+              {application.disqualificationDescription}
+            </p>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {canRequalify && (
         <Dialog

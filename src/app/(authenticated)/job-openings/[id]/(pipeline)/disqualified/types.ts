@@ -2,7 +2,8 @@ export type DisqualifiedApplication = {
   applicantId: string;
   stage: string;
   disqualificationDate: Date;
-  disqualificationReason: string | null;
+  disqualificationMotive: string | null;
+  disqualificationDescription: string | null;
   name: string;
   lastName: string;
   photo: string | null;
