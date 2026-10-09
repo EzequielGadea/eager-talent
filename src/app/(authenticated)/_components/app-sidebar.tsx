@@ -109,8 +109,9 @@ export function AppSidebar() {
           </p>
 
           <NavigationItem
-            icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
+            icon={<SettingsIcon className="size-4.5"  />}
             label="Configuración"
+            href="/settings"
           />
 
           <NavigationItem

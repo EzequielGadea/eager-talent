@@ -13,8 +13,7 @@ import type { AppRouter } from "~/server/api/root";
 
 import { userRoleConfig, userStatusConfig } from "../constants";
 
-export type User =
-  inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
+export type User = inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
 
 type Props = {
   user: User;
@@ -58,17 +57,13 @@ function formatLastAccess(lastAccess: string | null) {
   const diffInWeeks = Math.floor(diffInDays / 7);
 
   if (diffInDays < 30) {
-    return `Hace ${diffInWeeks} ${
-      diffInWeeks === 1 ? "semana" : "semanas"
-    }`;
+    return `Hace ${diffInWeeks} ${diffInWeeks === 1 ? "semana" : "semanas"}`;
   }
 
   const diffInMonths = Math.floor(diffInDays / 30);
 
   if (diffInDays < 365) {
-    return `Hace ${diffInMonths} ${
-      diffInMonths === 1 ? "mes" : "meses"
-    }`;
+    return `Hace ${diffInMonths} ${diffInMonths === 1 ? "mes" : "meses"}`;
   }
 
   const diffInYears = Math.floor(diffInDays / 365);
@@ -117,9 +112,7 @@ export function UserRow({ user }: Props) {
         </span>
       </TableCell>
 
-      <TableCell className="px-4 py-3 text-text-secondary">
-        {access}
-      </TableCell>
+      <TableCell className="px-4 py-3 text-text-secondary">{access}</TableCell>
 
       <TableCell className="px-4 py-3">
         <span
@@ -145,25 +138,25 @@ export function UserRow({ user }: Props) {
           </Button>
         ) : (
           <DropdownMenu>
-          <DropdownMenuTrigger
-            className="flex size-8 items-center cursor-pointer justify-center rounded-md hover:bg-slate-200"
-            aria-label={`Acciones de ${user.name} ${user.lastName}`}
-          >
-            <MoreHorizontal className="size-4" />
-          </DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              className="flex size-8 items-center cursor-pointer justify-center rounded-md hover:bg-slate-200"
+              aria-label={`Acciones de ${user.name} ${user.lastName}`}
+            >
+              <MoreHorizontal className="size-4" />
+            </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuItem>
-              <KeyRound className="size-4" />
-              Restablecer contraseña
-            </DropdownMenuItem>
+            <DropdownMenuContent align="end" className="w-52">
+              <DropdownMenuItem>
+                <KeyRound className="size-4" />
+                Restablecer contraseña
+              </DropdownMenuItem>
 
-            <DropdownMenuItem className="text-danger focus:text-danger">
-              <Trash2 className="size-4" />
-              Eliminar usuario
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuItem className="text-danger focus:text-danger">
+                <Trash2 className="size-4" />
+                Eliminar usuario
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </TableCell>
     </TableRow>

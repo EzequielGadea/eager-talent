@@ -1,21 +1,16 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 
 import { UserRow, type User } from "./user-row";
 import { UsersTableHeader } from "./users-table-header";
 
-type UsersTableProps= {
+type UsersTableProps = {
   users: User[];
-}
+};
 
 export function UsersTable({ users }: UsersTableProps) {
   return (
     <div className="overflow-hidden rounded-lg border border-border-default bg-surface-card">
-      <Table >
+      <Table>
         <UsersTableHeader />
 
         <TableBody>
