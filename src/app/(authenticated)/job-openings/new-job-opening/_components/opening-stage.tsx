@@ -127,7 +127,7 @@ export default function OpeningStage(props: {
   }, [props.stages, setValue, isSubmitted]);
 
   const countMandatory = (() => {
-    let counts:{[key:string]:number} = {}
+    const counts:{[key:string]:number} = {}
     props.stages.forEach((stage) => {
       if (mandatoryStages.some((word) => word == stage.name))
         counts[stage.name] = (counts[stage.name] || 0) + 1
