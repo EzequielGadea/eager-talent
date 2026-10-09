@@ -65,6 +65,7 @@ export function JobOpeningDetailsCard({
             className="text-sm font-medium text-text-primary"
           >
             Nombre de la vacante
+            <span className="ml-1 text-danger">*</span>
           </Label>
 
           <Input
@@ -81,6 +82,7 @@ export function JobOpeningDetailsCard({
             className="text-[13px] font-medium text-text-primary"
           >
             Area
+            <span className="ml-1 text-danger">*</span>
           </Label>
 
           <Controller
@@ -125,6 +127,7 @@ export function JobOpeningDetailsCard({
         <fieldset className="flex flex-col gap-1.5">
           <legend className="text-[13px] font-medium text-text-primary">
             Estado
+            <span className="ml-1 text-danger">*</span>
           </legend>
 
           <Controller
@@ -179,6 +182,7 @@ export function JobOpeningDetailsCard({
         <fieldset className="flex flex-col gap-2">
           <legend className="text-[13px] font-medium text-text-primary">
             Seniority
+            <span className="ml-1 text-danger">*</span>
             <span className="ml-1 font-normal text-text-tertiary">
               (uno o varios)
             </span>
@@ -227,7 +231,8 @@ export function JobOpeningDetailsCard({
 
         <fieldset className="flex flex-col gap-2">
           <legend className="text-[13px] font-medium text-text-primary">
-            Ubicacion
+            Ubicación
+            <span className="ml-1 text-danger">*</span>
           </legend>
 
           <Controller
