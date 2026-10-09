@@ -54,7 +54,7 @@ function buildApplicationSubtitle(application: ApplicationSummary) {
 
   return [
     application.currentStage,
-    application.disqualificationReason,
+    application.disqualificationDescription,
     `postuló ${dateLabel}`,
   ]
     .filter(Boolean)

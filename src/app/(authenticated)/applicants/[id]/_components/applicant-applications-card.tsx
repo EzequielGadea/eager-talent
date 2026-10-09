@@ -43,7 +43,7 @@ export type ApplicationSummary = {
   applicationDate: Date | string;
   currentStage: string;
   active: boolean;
-  disqualificationReason?: string | null;
+  disqualificationDescription?: string | null;
   desiredSalaryAmount?: string | null;
   desiredSalaryCurrency?: string | null;
   availability?: string | null;

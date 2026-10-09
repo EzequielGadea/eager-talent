@@ -57,7 +57,7 @@ export const disqualifyApplication = protectedProcedure
         data: {
           active: false,
           disqualificationDate: new Date(),
-          disqualificationReason: input.reason,
+          disqualificationDescription: input.reason,
         },
       });
 

@@ -213,6 +213,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     prisma.applicantNote.deleteMany(),
     prisma.interview.deleteMany(),
     prisma.application.deleteMany(),
+    prisma.disqualificationMotive.deleteMany(),
     prisma.applicantHiringManager.deleteMany(),
     prisma.applicant.deleteMany(),
     prisma.jobOpening.deleteMany(),
@@ -329,6 +330,21 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       data: { name: t.name, isSkill: false, color: t.color },
     });
     tags[t.name] = created;
+  }
+
+  const disqualificationMotiveDefs = [
+    "Falta de experiencia",
+    "Expectativa salarial",
+    "Inglés insuficiente",
+    "Perfil no alineado con la vacante",
+    "No responde",
+    "Rechazó la propuesta",
+  ];
+
+  for (const name of disqualificationMotiveDefs) {
+    await prisma.disqualificationMotive.create({
+      data: { name },
+    });
   }
 
   // ==========================================================================
