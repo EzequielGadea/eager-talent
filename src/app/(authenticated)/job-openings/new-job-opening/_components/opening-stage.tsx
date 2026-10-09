@@ -126,6 +126,15 @@ export default function OpeningStage(props: {
     setValue("stages", props.stages, { shouldValidate: isSubmitted });
   }, [props.stages, setValue, isSubmitted]);
 
+  const countMandatory = (() => {
+    let counts:{[key:string]:number} = {}
+    props.stages.forEach((stage) => {
+      if (mandatoryStages.some((word) => word == stage.name))
+        counts[stage.name] = (counts[stage.name] || 0) + 1
+    })
+    return counts
+  })
+
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
@@ -160,6 +169,7 @@ export default function OpeningStage(props: {
                 setOpenColor={setOpenColor}
                 openColor={openColor}
                 updateName={updateName}
+                isEditable={(!mandatoryStages.some((word) => word == stage.name)) || (mandatoryStages.some((word) => word == stage.name) && countMandatory()[stage.name] > 1)}
               />
             ))}
           </div>
@@ -195,11 +205,11 @@ function IndividualStage(props: {
   openColor: string | null;
   setOpenColor: (key: string | null) => void;
   updateName: (stageKey: string, name: string) => void;
+  isEditable: boolean;
 }) {
   const isDraggable = !(
     props.stage.key == props.startKey || props.stage.key == props.endKey
   );
-  const isEditable = !mandatoryStages.some((word) => word == props.stage.name);
   const ref = useRef<HTMLDivElement>(null);
 
   const [, drag, preview] = useDrag(
@@ -336,7 +346,7 @@ function IndividualStage(props: {
             <Input
               autoComplete="off"
               value={props.stage.name}
-              disabled={!isEditable}
+              disabled={!props.isEditable}
               onChange={(e) =>
                 props.updateName(props.stage.key, e.target.value)
               }
@@ -347,22 +357,22 @@ function IndividualStage(props: {
           {/*combobox type*/}
           <Popover
             key={props.stage.key}
-            open={isEditable && props.openType === props.stage.key}
+            open={props.isEditable && props.openType === props.stage.key}
             onOpenChange={(open) => {
-              if (!isEditable) return;
+              if (!props.isEditable) return;
               props.setOpenType(open ? props.stage.key : null);
             }}
           >
             <PopoverTrigger
               className={cn(
                 "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors",
-                isEditable ?
+                props.isEditable ?
                   `hover:bg-dashboard-success-light hover:text-dashboard-success-text ${STAGE_TYPE_CLASS_NAMES[recordType(props.stage.type)]}` :
                   STAGE_TYPE_CLASS_STATIC[recordType(props.stage.type)],
               )}
             >
               <span>{props.stage.type}</span>
-              {isEditable ? (
+              {props.isEditable ? (
                 <ChevronDown
                   size={14}
                   className={cn("text-dashboard-text-muted")}
@@ -387,7 +397,7 @@ function IndividualStage(props: {
               ))}
             </PopoverContent>
           </Popover>
-          {isEditable ? (
+          {props.isEditable ? (
             <button
               className="flex items-center justify-center rounded-md p-1 hover:bg-surface-sunken"
               onClick={() => {
