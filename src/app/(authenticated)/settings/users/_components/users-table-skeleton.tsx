@@ -1,17 +1,12 @@
 import { Skeleton } from "~/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 
 import { UsersTableHeader } from "./users-table-header";
 
 export function UsersTableSkeleton() {
   return (
     <div className="overflow-hidden rounded-lg border border-border-default bg-surface-card">
-      <Table >
+      <Table>
         <UsersTableHeader />
 
         <TableBody>

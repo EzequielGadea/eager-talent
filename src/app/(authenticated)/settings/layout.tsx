@@ -36,11 +36,7 @@ async function SettingsContent({ children }: { children: ReactNode }) {
   );
 }
 
-export default function SettingsLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function SettingsLayout({ children }: { children: ReactNode }) {
   return (
     <Suspense fallback={<SettingsLayoutSkeleton />}>
       <SettingsContent>{children}</SettingsContent>
