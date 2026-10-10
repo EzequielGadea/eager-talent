@@ -4,6 +4,7 @@ import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 
 import { auth } from "~/lib/auth";
+import { getInterviewName } from "~/lib/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const deleteInterviewProcedure = protectedProcedure
@@ -29,10 +30,14 @@ export const deleteInterviewProcedure = protectedProcedure
       where: { id: input.interviewId },
       select: {
         id: true,
-        name: true,
+        exploratoryName: true,
+        stageId: true,
         date: true,
         applicantId: true,
         jobOpeningId: true,
+        application: {
+          select: { jobOpening: { select: { stages: true } } },
+        },
       },
     });
 
@@ -42,6 +47,11 @@ export const deleteInterviewProcedure = protectedProcedure
         message: "Entrevista no encontrada",
       });
     }
+
+    const interviewName = getInterviewName(
+      interview,
+      interview.application?.jobOpening.stages,
+    );
 
     await ctx.db.$transaction([
       ctx.db.interview.delete({
@@ -53,8 +63,8 @@ export const deleteInterviewProcedure = protectedProcedure
           jobOpeningId: interview.jobOpeningId,
           createdById: ctx.session.user.id,
           description: interview.date
-            ? `eliminó la entrevista "${interview.name}" del ${format(new TZDate(interview.date, "America/Montevideo"), "dd/MM/yyyy 'a las' HH:mm")}`
-            : `eliminó la entrevista "${interview.name}"`,
+            ? `eliminó la entrevista "${interviewName}" del ${format(new TZDate(interview.date, "America/Montevideo"), "dd/MM/yyyy 'a las' HH:mm")}`
+            : `eliminó la entrevista "${interviewName}"`,
         },
       }),
     ]);

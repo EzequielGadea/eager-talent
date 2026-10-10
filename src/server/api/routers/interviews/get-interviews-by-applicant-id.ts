@@ -2,6 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
+import { getInterviewName } from "~/lib/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getInterviewsByApplicantIdProcedure = protectedProcedure
@@ -29,7 +30,7 @@ export const getInterviewsByApplicantIdProcedure = protectedProcedure
       });
     }
 
-    return ctx.db.interview.findMany({
+    const interviews = await ctx.db.interview.findMany({
       where: {
         applicantId: input.applicantId,
         ...(canReadAllResult.success
@@ -60,7 +61,8 @@ export const getInterviewsByApplicantIdProcedure = protectedProcedure
       },
       select: {
         id: true,
-        name: true,
+        exploratoryName: true,
+        stageId: true,
         duration: true,
         modality: true,
         date: true,
@@ -68,6 +70,9 @@ export const getInterviewsByApplicantIdProcedure = protectedProcedure
         summary: true,
         applicantId: true,
         jobOpeningId: true,
+        application: {
+          select: { jobOpening: { select: { stages: true } } },
+        },
         interviewers: {
           select: {
             id: true,
@@ -77,4 +82,9 @@ export const getInterviewsByApplicantIdProcedure = protectedProcedure
         },
       },
     });
+
+    return interviews.map(({ application, ...interview }) => ({
+      ...interview,
+      name: getInterviewName(interview, application?.jobOpening.stages),
+    }));
   });

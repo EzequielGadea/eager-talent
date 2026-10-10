@@ -304,7 +304,10 @@ model Application {
 
 model Interview {
   id           String          @id @default(cuid())
-  name         String
+  // Mutually exclusive: exploratoryName (no application) or stageId (with application), enforced by a CHECK constraint.
+  exploratoryName String?       @map("exploratory_name")
+  // Key of the JobOpening.stages entry (type "Entrevista") this interview belongs to.
+  stageId      String?         @map("stage_id")
   duration     Int
   modality     InterviewType
   date         DateTime?

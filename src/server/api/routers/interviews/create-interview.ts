@@ -11,19 +11,27 @@ import { parseStages, stageAllowsInterview } from "~/lib/interview-stages";
 
 export const createInterviewProcedure = protectedProcedure
   .input(
-    z.object({
-      applicantId: z.string(),
-      jobOpeningId: z.string().optional(),
-      name: z.string().trim().min(1, "El nombre es obligatorio."),
-      duration: z.number().int().positive(),
-      modality: z.enum(InterviewType),
-      date: z.coerce.date().refine((d) => d.getTime() > Date.now(), {
-        message: "La fecha y hora de la entrevista deben ser futuras.",
-      }),
-      interviewerIds: z
-        .array(z.string())
-        .min(1, "Seleccioná al menos un entrevistador."),
-    }),
+    z
+      .object({
+        applicantId: z.string(),
+        jobOpeningId: z.string().optional(),
+        exploratoryName: z.string().trim().min(1).optional(),
+        duration: z.number().int().positive(),
+        modality: z.enum(InterviewType),
+        date: z.coerce.date().refine((d) => d.getTime() > Date.now(), {
+          message: "La fecha y hora de la entrevista deben ser futuras.",
+        }),
+        interviewerIds: z
+          .array(z.string())
+          .min(1, "Seleccioná al menos un entrevistador."),
+      })
+      .refine(
+        (data) => Boolean(data.jobOpeningId) !== Boolean(data.exploratoryName),
+        {
+          message:
+            "Una entrevista lleva vacante (postulación) o nombre exploratorio, pero no ambos.",
+        },
+      ),
   )
   .mutation(async ({ ctx, input }) => {
     const permission = await auth.api.hasPermission({
@@ -46,6 +54,9 @@ export const createInterviewProcedure = protectedProcedure
         message: "Applicant not found",
       });
     }
+
+    let stageId: string | null = null;
+    let interviewName = input.exploratoryName ?? "";
 
     if (input.jobOpeningId) {
       const application = await ctx.db.application.findUnique({
@@ -81,12 +92,15 @@ export const createInterviewProcedure = protectedProcedure
         (stage) => stage.name === application.currentStage,
       );
 
-      if (!stageAllowsInterview(currentStage)) {
+      if (!currentStage || !stageAllowsInterview(currentStage)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Esta etapa no permite agendar entrevistas",
         });
       }
+
+      stageId = currentStage.key;
+      interviewName = currentStage.name;
     }
 
     const start = input.date;
@@ -127,7 +141,8 @@ export const createInterviewProcedure = protectedProcedure
     const [interview] = await ctx.db.$transaction([
       ctx.db.interview.create({
         data: {
-          name: input.name,
+          exploratoryName: input.exploratoryName,
+          stageId,
           duration: input.duration,
           modality: input.modality,
           date: input.date,
@@ -150,7 +165,7 @@ export const createInterviewProcedure = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `agendó la entrevista "${input.name}" el ${format(new TZDate(input.date, "America/Montevideo"), "dd/MM/yyyy 'a las' HH:mm")}`,
+          description: `agendó la entrevista "${interviewName}" el ${format(new TZDate(input.date, "America/Montevideo"), "dd/MM/yyyy 'a las' HH:mm")}`,
         },
       }),
     ]);

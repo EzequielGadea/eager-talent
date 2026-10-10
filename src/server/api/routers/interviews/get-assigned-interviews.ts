@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
+import { getInterviewName } from "~/lib/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getAssignedInterviews = protectedProcedure.query(
@@ -21,7 +22,7 @@ export const getAssignedInterviews = protectedProcedure.query(
       });
     }
 
-    return ctx.db.interview.findMany({
+    const interviews = await ctx.db.interview.findMany({
       where: {
         interviewers: {
           some: {
@@ -32,7 +33,8 @@ export const getAssignedInterviews = protectedProcedure.query(
 
       select: {
         id: true,
-        name: true,
+        exploratoryName: true,
+        stageId: true,
         date: true,
         status: true,
         modality: true,
@@ -52,6 +54,7 @@ export const getAssignedInterviews = protectedProcedure.query(
               select: {
                 id: true,
                 name: true,
+                stages: true,
               },
             },
           },
@@ -62,5 +65,13 @@ export const getAssignedInterviews = protectedProcedure.query(
         date: "asc",
       },
     });
+
+    return interviews.map(({ exploratoryName, stageId, ...interview }) => ({
+      ...interview,
+      name: getInterviewName(
+        { exploratoryName, stageId },
+        interview.application?.jobOpening.stages,
+      ),
+    }));
   },
 );
