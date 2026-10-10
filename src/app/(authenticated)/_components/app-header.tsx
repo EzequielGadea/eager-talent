@@ -3,11 +3,26 @@ import { Suspense } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { auth } from "~/lib/auth";
+import { api } from "~/lib/trpc/server";
 import { SettingsIcon } from "./app-icons";
 import { GlobalSearch } from "./global-search";
 import { UserMenu } from "./user-menu";
 
-function getInitials(name: string) {
+// "member" (and a missing membership) intentionally has no label.
+const roleLabels: Partial<Record<string, string>> = {
+  owner: "Recruiter",
+  admin: "Recruiter",
+  recruiter: "Recruiter",
+  hiringManager: "Hiring Manager",
+};
+
+export async function getCurrentUser() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  return session ? api.user.getCurrent() : null;
+}
+
+export function getInitials(name: string) {
   return name
     .split(/\s+/)
     .filter(Boolean)
@@ -29,33 +44,88 @@ export function CurrentUserPlaceholder() {
   );
 }
 
-export async function CurrentUser() {
-  const session = await auth.api.getSession({ headers: await headers() });
+type CurrentUserData = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>;
 
-  if (!session) {
-    return <CurrentUserPlaceholder />;
-  }
-
-  const { user } = session;
+function CurrentUserDetails({ user }: { user: CurrentUserData }) {
+  const fullName = `${user.name} ${user.lastName}`.trim();
+  const roleLabel = user.role ? roleLabels[user.role] : undefined;
 
   return (
     <div className="flex min-w-0 flex-1 items-center gap-2.5">
       <Avatar className="size-8.5">
         {user.image && <AvatarImage src={user.image} alt="" />}
         <AvatarFallback className="bg-tag-green-bg text-xs font-semibold text-tag-green-fg">
-          {getInitials(user.name)}
+          {getInitials(fullName)}
         </AvatarFallback>
       </Avatar>
 
       <div className="flex min-w-0 flex-col">
         <span className="truncate text-sm font-semibold text-text-primary">
-          {user.name}
+          {fullName}
         </span>
-        <span className="truncate text-xs text-text-secondary">
-          {user.email}
-        </span>
+        {roleLabel && (
+          <span className="truncate text-xs text-text-secondary">
+            {roleLabel}
+          </span>
+        )}
       </div>
     </div>
+  );
+}
+
+export async function CurrentUser() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return <CurrentUserPlaceholder />;
+  }
+
+  return <CurrentUserDetails user={user} />;
+}
+
+function HeaderUserAreaFallback() {
+  return (
+    <>
+      <div className="h-7 w-px bg-border-default" />
+
+      <div className="flex w-48 shrink-0 items-center p-1">
+        <CurrentUserPlaceholder />
+      </div>
+    </>
+  );
+}
+
+// Fetches the user once for both the settings button and the user block.
+async function HeaderUserArea() {
+  const user = await getCurrentUser();
+
+  return (
+    <>
+      {user?.role !== "hiringManager" && (
+        <button
+          type="button"
+          aria-label="Abrir configuración"
+          className="flex size-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-hover"
+        >
+          <SettingsIcon className="size-4.5" aria-hidden="true" />
+        </button>
+      )}
+
+      <div className="h-7 w-px bg-border-default" />
+
+      <div
+        className="flex w-48 shrink-0 items-center"
+        aria-label="Información del usuario"
+      >
+        <UserMenu side="bottom">
+          {user ? (
+            <CurrentUserDetails user={user} />
+          ) : (
+            <CurrentUserPlaceholder />
+          )}
+        </UserMenu>
+      </div>
+    </>
   );
 }
 
@@ -66,26 +136,9 @@ export function AppHeader() {
 
       <div className="flex-1" />
 
-      <button
-        type="button"
-        aria-label="Abrir configuración"
-        className="flex size-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-hover"
-      >
-        <SettingsIcon className="size-4.5" aria-hidden="true" />
-      </button>
-
-      <div className="h-7 w-px bg-border-default" />
-
-      <div
-        className="flex w-48 shrink-0 items-center"
-        aria-label="Información del usuario"
-      >
-        <UserMenu side="bottom">
-          <Suspense fallback={<CurrentUserPlaceholder />}>
-            <CurrentUser />
-          </Suspense>
-        </UserMenu>
-      </div>
+      <Suspense fallback={<HeaderUserAreaFallback />}>
+        <HeaderUserArea />
+      </Suspense>
     </header>
   );
 }
