@@ -5,6 +5,15 @@ import { ac, roles } from "~/lib/auth/permissions";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 
 import { prisma } from "~/lib/prisma";
+import nodemailer from "nodemailer";
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "pgrupo632@gmail.com",
+    pass: process.env.GOOGLE_APP_PASSWORD,
+  },
+});
 
 export const auth = betterAuth({
   baseURL: {
