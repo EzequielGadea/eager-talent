@@ -1,6 +1,7 @@
 import AreaSetting from "./_components/area-setting";
 import DefaultStageSetting from "./_components/default-stage-setting";
 import RoleSetting from "./_components/role-setting";
+import SenioritySetting from "./_components/seniority-setting";
 
 export default function GeneralSettingsPage() {
   return (
@@ -16,6 +17,7 @@ export default function GeneralSettingsPage() {
         </div>
         <div className="flex flex-col gap-4">
           <DefaultStageSetting />
+          <SenioritySetting />
         </div>
       </div>
     </section>
