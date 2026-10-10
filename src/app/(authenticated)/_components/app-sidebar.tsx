@@ -1,7 +1,9 @@
 import { ChevronUp, FileText, House, Users } from "lucide-react";
 import { Suspense } from "react";
+import { CurrentUser, CurrentUserPlaceholder } from "./app-header";
 import { MetricsIcon, SettingsIcon, VacanciesIcon } from "./app-icons";
 import { NavigationItem } from "./navigation-item";
+import { UserMenu } from "./user-menu";
 
 function EagerTalentBrand() {
   return (
@@ -15,8 +17,8 @@ function EagerTalentBrand() {
             x2="1"
             y2="0"
           >
-            <stop offset="0" stopColor="#8b5cf6" />
-            <stop offset="1" stopColor="#10b981" />
+            <stop offset="0" stopColor="var(--accent-purple)" />
+            <stop offset="1" stopColor="var(--accent-green)" />
           </linearGradient>
         </defs>
 
@@ -43,30 +45,32 @@ function EagerTalentBrand() {
   );
 }
 
-function SidebarUserPlaceholder() {
+function SidebarUser() {
   return (
-    <div className="flex items-center gap-2.5 border-t border-border-default p-3">
-      <div className="size-8.5 shrink-0 rounded-full bg-slate-200" />
+    <div className="border-t border-border-default p-2">
+      <UserMenu>
+        <Suspense fallback={<CurrentUserPlaceholder />}>
+          <CurrentUser />
+        </Suspense>
 
-      <div className="flex flex-1 flex-col gap-1.5">
-        <div className="h-3 w-24 rounded-full bg-slate-200" />
-        <div className="h-2.5 w-16 rounded-full bg-slate-100" />
-      </div>
-
-      <ChevronUp className="size-4 text-text-tertiary" aria-hidden="true" />
+        <ChevronUp
+          className="size-4 shrink-0 text-text-tertiary"
+          aria-hidden="true"
+        />
+      </UserMenu>
     </div>
   );
 }
 
 export function AppSidebar() {
   return (
-    <aside className="flex min-h-screen w-60 shrink-0 flex-col border-r border-border-default bg-white">
+    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-border-default bg-surface-card">
       <EagerTalentBrand />
 
       <Suspense fallback={null}>
         <nav
           aria-label="Navegación principal"
-          className="flex flex-1 flex-col px-3"
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3"
         >
           <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
             PRINCIPAL
@@ -112,16 +116,10 @@ export function AppSidebar() {
             icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
             label="Configuración"
           />
-
-          <NavigationItem
-            icon={<Users className="size-4.5" aria-hidden="true" />}
-            label="Perfil"
-            href="/profile"
-          />
         </nav>
       </Suspense>
 
-      <SidebarUserPlaceholder />
+      <SidebarUser />
     </aside>
   );
 }
