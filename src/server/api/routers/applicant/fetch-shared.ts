@@ -96,7 +96,7 @@ export const fetchShared = protectedProcedure
               hiringManagerId: ctx.session.user.id,
             },
             select: {
-              viewed: true,
+              viewedAt: true,
               sharedBy: {
                 select: {
                   id: true,
