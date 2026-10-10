@@ -54,7 +54,7 @@ export async function transformApplicants(
           linkedinUrl: applicant.linkedin ?? "-",
           email: applicant.email ?? "-",
 
-          viewed: sharedInfo?.viewed ?? null,
+          viewedAt: sharedInfo?.viewedAt ?? null,
           sharedBy: sharedInfo
             ? `${sharedInfo.sharedBy.name} ${sharedInfo.sharedBy.lastName}`.trim()
             : null,

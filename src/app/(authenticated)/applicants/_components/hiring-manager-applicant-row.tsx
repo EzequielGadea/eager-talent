@@ -91,7 +91,7 @@ export function HiringManagerApplicantRow({
       <TableCell className="px-4 py-3">
         {applicant.currentStage ? (
           <span className="...">{applicant.currentStage}</span>
-        ) : applicant.viewed ? (
+        ) : applicant.viewedAt ? (
           <span className="inline-flex rounded-full bg-tag-green-bg px-2.5 py-1 text-xs font-semibold text-tag-green-fg">
             Visto
           </span>
