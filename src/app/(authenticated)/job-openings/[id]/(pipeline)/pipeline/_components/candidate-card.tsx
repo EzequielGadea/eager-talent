@@ -359,6 +359,8 @@ export function CandidateCard({
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
+          candidateRole={candidate.role}
+          stageName={currentStage}
           onSuccess={() => router.refresh()}
         />
       )}
@@ -370,6 +372,7 @@ export function CandidateCard({
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
+          stageName={currentStage}
           onSuccess={() => router.refresh()}
         />
       )}

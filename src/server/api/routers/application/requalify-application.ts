@@ -5,13 +5,11 @@ import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const disqualifyApplication = protectedProcedure
+export const requalifyApplication = protectedProcedure
   .input(
     z.object({
       applicantId: z.string(),
       jobOpeningId: z.string(),
-      motiveId: z.string().min(1, "Seleccioná un motivo."),
-      description: z.string().trim().optional(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -38,40 +36,26 @@ export const disqualifyApplication = protectedProcedure
       throw new TRPCError({ code: "NOT_FOUND" });
     }
 
-    if (!application.active) {
+    if (application.active) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "La postulación ya está inactiva",
-      });
-    }
-
-    const motive = await ctx.db.disqualificationMotive.findUnique({
-      where: { id: input.motiveId },
-      select: { name: true },
-    });
-
-    if (!motive) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "El motivo seleccionado no existe",
+        message: "La postulación no está descalificada",
       });
     }
 
     return ctx.db.$transaction(async (tx) => {
-      // Conditional update: only succeeds if the application is still active
-      // and still in the stage we read, so the activity logs the real stage.
       const { count } = await tx.application.updateMany({
         where: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           currentStage: application.currentStage,
-          active: true,
+          active: false,
         },
         data: {
-          active: false,
-          disqualificationDate: new Date(),
-          disqualificationMotiveId: input.motiveId,
-          disqualificationDescription: input.description || null,
+          active: true,
+          disqualificationDate: null,
+          disqualificationDescription: null,
+          disqualificationMotiveId: null,
         },
       });
 
@@ -87,16 +71,14 @@ export const disqualifyApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `descalificó la postulación desde "${application.currentStage}": ${motive.name}${
-            input.description ? ` (${input.description})` : ""
-          }`,
+          description: `volvió a calificar la postulación en "${application.currentStage}"`,
         },
       });
 
       return {
         applicantId: input.applicantId,
         jobOpeningId: input.jobOpeningId,
-        active: false,
+        active: true,
       };
     });
   });
