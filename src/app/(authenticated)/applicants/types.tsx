@@ -40,7 +40,7 @@ export interface ApplicantInfo {
   linkedinUrl: string;
   email: string;
   currentStage: string | null;
-  viewed: boolean | null;
+  viewedAt: Date | null;
   sharedBy: string | null;
 }
 
