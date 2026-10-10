@@ -22,6 +22,7 @@ model User {
   lastName      String       @default("") @map("last_name")
   status        UserStatus   @default(Active)
   lastAccess    DateTime?    @map("last_access")
+  role          String?
   banned        Boolean      @default(false)
   banReason     String?
   banExpires    DateTime?
