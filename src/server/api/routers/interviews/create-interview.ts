@@ -137,6 +137,12 @@ export const createInterviewProcedure = protectedProcedure
           interviewers: {
             connect: input.interviewerIds.map((id) => ({ id })),
           },
+          assignments: {
+            create: input.interviewerIds.map((interviewerId) => ({
+              interviewerId,
+              assignedById: ctx.session.user.id,
+            })),
+          },
         },
       }),
       ctx.db.activity.create({

@@ -210,6 +210,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     prisma.invitation.deleteMany(),
     prisma.activity.deleteMany(),
     prisma.interviewNote.deleteMany(),
+    prisma.interviewAssignment.deleteMany(),
     prisma.applicantNote.deleteMany(),
     prisma.interview.deleteMany(),
     prisma.application.deleteMany(),
@@ -1631,6 +1632,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
       interviewers: { connect: [{ id: hm1.id }] },
+      assignments: {
+        create: [{ interviewerId: hm1.id, assignedById: admin1.id }],
+      },
     },
   });
 
