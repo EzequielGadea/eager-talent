@@ -1,7 +1,12 @@
 import { ChevronUp, FileText, House, Users } from "lucide-react";
 import { Suspense } from "react";
-import { CurrentUser, CurrentUserPlaceholder } from "./app-header";
+import {
+  CurrentUser,
+  CurrentUserPlaceholder,
+  getCurrentUser,
+} from "./app-header";
 import { MetricsIcon, SettingsIcon, VacanciesIcon } from "./app-icons";
+import { HiringManagerNavigation } from "./hiring-manager-navigation";
 import { NavigationItem } from "./navigation-item";
 import { UserMenu } from "./user-menu";
 
@@ -62,61 +67,81 @@ function SidebarUser() {
   );
 }
 
+function RecruiterNavigation() {
+  return (
+    <>
+      <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+        PRINCIPAL
+      </p>
+
+      <NavigationItem
+        icon={<House className="size-4.5" aria-hidden="true" />}
+        label="Dashboard"
+        href="/dashboard"
+      />
+
+      <NavigationItem
+        icon={<Users className="size-4.5" aria-hidden="true" />}
+        label="Candidatos"
+        href="/applicants"
+      />
+
+      <NavigationItem
+        icon={<VacanciesIcon className="size-4.5" aria-hidden="true" />}
+        label="Vacantes"
+        href="/job-openings"
+      />
+
+      <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+        ANÁLISIS
+      </p>
+
+      <NavigationItem
+        icon={<MetricsIcon className="size-4.5" aria-hidden="true" />}
+        label="Métricas"
+      />
+
+      <NavigationItem
+        icon={<FileText className="size-4.5" aria-hidden="true" />}
+        label="Reportes"
+      />
+
+      <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+        EMPRESA
+      </p>
+
+      <NavigationItem
+        icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
+        label="Configuración"
+      />
+    </>
+  );
+}
+
+async function SidebarNavigation() {
+  const user = await getCurrentUser();
+
+  return (
+    <nav
+      aria-label="Navegación principal"
+      className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3"
+    >
+      {user?.role === "hiringManager" ? (
+        <HiringManagerNavigation />
+      ) : (
+        <RecruiterNavigation />
+      )}
+    </nav>
+  );
+}
+
 export function AppSidebar() {
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-border-default bg-surface-card">
       <EagerTalentBrand />
 
-      <Suspense fallback={null}>
-        <nav
-          aria-label="Navegación principal"
-          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3"
-        >
-          <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-            PRINCIPAL
-          </p>
-
-          <NavigationItem
-            icon={<House className="size-4.5" aria-hidden="true" />}
-            label="Dashboard"
-            href="/dashboard"
-          />
-
-          <NavigationItem
-            icon={<Users className="size-4.5" aria-hidden="true" />}
-            label="Candidatos"
-            href="/applicants"
-          />
-
-          <NavigationItem
-            icon={<VacanciesIcon className="size-4.5" aria-hidden="true" />}
-            label="Vacantes"
-            href="/job-openings"
-          />
-
-          <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-            ANÁLISIS
-          </p>
-
-          <NavigationItem
-            icon={<MetricsIcon className="size-4.5" aria-hidden="true" />}
-            label="Métricas"
-          />
-
-          <NavigationItem
-            icon={<FileText className="size-4.5" aria-hidden="true" />}
-            label="Reportes"
-          />
-
-          <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-            EMPRESA
-          </p>
-
-          <NavigationItem
-            icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
-            label="Configuración"
-          />
-        </nav>
+      <Suspense fallback={<div className="flex-1" />}>
+        <SidebarNavigation />
       </Suspense>
 
       <SidebarUser />
