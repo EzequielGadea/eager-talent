@@ -151,7 +151,6 @@ export function ShareApplicationDialog({
 
   const {
     control,
-    register,
     handleSubmit,
     reset,
     setError,
@@ -459,14 +458,23 @@ export function ShareApplicationDialog({
             )}
 
             <div className="flex flex-col gap-2">
-              <Input
-                id="public-link-name"
-                label="Nombre del link"
-                placeholder="Entrevista técnica externa"
-                maxLength={100}
-                className="h-10 px-3"
-                errorMessage={errors.name?.message}
-                {...register("name")}
+              {/* Controlled so the value stays in sync after reset(): with the
+                  React Compiler, a memoized register() is not re-run and the
+                  field would stay unregistered after the first submit. */}
+              <Controller
+                control={control}
+                name="name"
+                render={({ field }) => (
+                  <Input
+                    id="public-link-name"
+                    label="Nombre del link"
+                    placeholder="Entrevista técnica externa"
+                    maxLength={100}
+                    className="h-10 px-3"
+                    errorMessage={errors.name?.message}
+                    {...field}
+                  />
+                )}
               />
               <p className="text-xs font-medium text-text-secondary">
                 El link siempre muestra el perfil completo y la postulación:
