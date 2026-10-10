@@ -222,23 +222,25 @@ export default function DefaultStageSetting() {
                     className="size-2.5 shrink-0 rounded-full"
                     style={{ backgroundColor: stage.color }}
                   />
-                  <Input
-                    aria-label={`Nombre de la etapa ${index + 1}`}
-                    placeholder="Nombre de la etapa"
-                    value={stage.name}
-                    readOnly={locked}
-                    maxLength={80}
-                    className="h-7 min-w-0 flex-1 border-transparent bg-transparent px-1 font-medium shadow-none"
-                    onChange={(event) => {
-                      const name = event.target.value;
-                      const requiredType = getRequiredStageType(name);
+                  <div className="min-w-0 flex-1">
+                    <Input
+                      aria-label={`Nombre de la etapa ${index + 1}`}
+                      placeholder="Nombre de la etapa"
+                      value={stage.name}
+                      readOnly={locked}
+                      maxLength={80}
+                      className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
+                      onChange={(event) => {
+                        const name = event.target.value;
+                        const requiredType = getRequiredStageType(name);
 
-                      updateStage(stage.key, {
-                        name,
-                        ...(requiredType ? { type: requiredType } : {}),
-                      });
-                    }}
-                  />
+                        updateStage(stage.key, {
+                          name,
+                          ...(requiredType ? { type: requiredType } : {}),
+                        });
+                      }}
+                    />
+                  </div>
                   <Select
                     value={stage.type || undefined}
                     items={STAGE_TYPE_OPTIONS}
