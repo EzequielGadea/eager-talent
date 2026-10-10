@@ -418,6 +418,7 @@ model PublicLink {
   includeSalary  Boolean     @default(false) @map("include_salary")
   creationDate   DateTime    @default(now()) @map("creation_date")
   expirationDate DateTime    @map("expiration_date")
+  revokedAt      DateTime?   @map("revoked_at")
   createdById    String      @map("created_by_id")
   applicantId    String      @map("applicant_id")
   jobOpeningId   String      @map("job_opening_id")
