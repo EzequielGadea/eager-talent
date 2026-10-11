@@ -230,8 +230,7 @@ export function ShareApplicationDialog({
               {jobOpeningName}
             </span>
             {" · "}
-            Todo link público muestra la misma información completa, salvo el
-            salario pretendido.
+            
           </DialogDescription>
         </DialogHeader>
 
@@ -476,11 +475,7 @@ export function ShareApplicationDialog({
                   />
                 )}
               />
-              <p className="text-xs font-medium text-text-secondary">
-                El link siempre muestra el perfil completo y la postulación:
-                datos de contacto, CV, historial de entrevistas con notas y
-                grabación.
-              </p>
+              
             </div>
 
             <Controller
@@ -506,10 +501,7 @@ export function ShareApplicationDialog({
                         Sensible
                       </span>
                     </div>
-                    <p className="text-xs text-tag-amber-fg">
-                      Único dato configurable — desmarcá para links pensados
-                      para entrevistadores.
-                    </p>
+                    
                   </div>
                   <Lock
                     className="size-4 shrink-0 text-tag-amber-fg"
