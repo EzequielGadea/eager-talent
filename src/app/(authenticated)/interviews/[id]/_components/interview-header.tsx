@@ -45,7 +45,7 @@ export async function InterviewHeader({
         </Avatar>
 
         <div className="min-w-0">
-          <h1 className="wrap-anywhere text-xl font-bold tracking-tight text-text-primary text-balance">
+          <h1 className="truncate text-xl font-bold tracking-tight text-text-primary">
             {interview.name}
           </h1>
           <p className="mt-0.5 wrap-anywhere text-xs text-text-secondary">

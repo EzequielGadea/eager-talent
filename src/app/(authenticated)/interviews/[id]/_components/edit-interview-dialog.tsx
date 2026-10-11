@@ -58,7 +58,11 @@ export type EditableInterview = {
 const createEditInterviewSchema = (isExploratory: boolean) =>
   z
     .object({
-      exploratoryName: z.string().trim().optional(),
+      exploratoryName: z
+        .string()
+        .trim()
+        .max(120, "El nombre de la entrevista no puede superar 120 caracteres")
+        .optional(),
       modality: z.string().min(1, "Seleccioná una modalidad."),
       duration: z
         .number({ message: "Ingresá la duración en minutos." })
@@ -234,6 +238,7 @@ export function EditInterviewDialog({
                 <Input
                   id="edit-interview-name"
                   placeholder="Ej. Entrevista técnica"
+                  maxLength={120}
                   className={fieldControl}
                   {...register("exploratoryName")}
                 />

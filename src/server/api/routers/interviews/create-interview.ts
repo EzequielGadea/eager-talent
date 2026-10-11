@@ -18,7 +18,15 @@ export const createInterviewProcedure = protectedProcedure
       .object({
         applicantId: z.string(),
         jobOpeningId: z.string().optional(),
-        exploratoryName: z.string().trim().min(1).optional(),
+        exploratoryName: z
+          .string()
+          .trim()
+          .min(1, "El nombre de la entrevista es obligatorio")
+          .max(
+            120,
+            "El nombre de la entrevista no puede superar 120 caracteres",
+          )
+          .optional(),
         duration: z.number().int().positive(),
         modality: z.enum(InterviewType),
         date: z.coerce.date().refine((d) => d.getTime() > Date.now(), {

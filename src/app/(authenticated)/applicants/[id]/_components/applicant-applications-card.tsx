@@ -351,7 +351,7 @@ export function ApplicantApplicationsCard({
                   }}
                 >
                   <TableCell className="w-1/3 py-4">
-                    <p className="font-bold text-text-primary">
+                    <p className="truncate font-bold text-text-primary">
                       {interview.name}
                     </p>
                     <p className="mt-0.5 text-xs text-text-tertiary">

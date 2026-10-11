@@ -12,7 +12,12 @@ export const updateInterviewProcedure = protectedProcedure
   .input(
     z.object({
       id: z.string().min(1),
-      exploratoryName: z.string().trim().min(1).optional(),
+      exploratoryName: z
+        .string()
+        .trim()
+        .min(1, "El nombre de la entrevista es obligatorio")
+        .max(120, "El nombre de la entrevista no puede superar 120 caracteres")
+        .optional(),
       duration: z.number().int().positive(),
       modality: z.enum(InterviewType),
       date: z.coerce.date(),
