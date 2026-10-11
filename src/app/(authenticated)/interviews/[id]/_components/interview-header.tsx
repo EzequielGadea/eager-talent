@@ -62,7 +62,7 @@ export async function InterviewHeader({
       {application && canUpdateApplication.success && (
         <Button
           size="sm"
-          className="h-8 shrink-0 gap-2 self-start rounded-full bg-surface-dark px-4 text-xs font-semibold text-text-on-dark hover:bg-surface-dark sm:self-auto"
+          className="h-8 shrink-0 gap-2 self-start rounded-full bg-dashboard-dark px-4 text-xs font-semibold text-text-on-dark hover:bg-dashboard-dark-hover sm:self-auto"
           style={{ touchAction: "manipulation" }}
         >
           <ArrowRight className="size-3.5" aria-hidden="true" />
