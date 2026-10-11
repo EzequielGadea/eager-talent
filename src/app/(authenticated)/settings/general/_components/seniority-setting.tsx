@@ -1,6 +1,7 @@
 "use client";
 
-import { GripVertical, Plus, X } from "lucide-react";
+import { create } from "domain";
+import { GripVertical, Plus, UtensilsIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -20,10 +21,42 @@ import { seniorityRouter } from "~/server/api/routers/seniority";
 
 export default function SenioritySetting() {
   const { data, isLoading } = api.seniority.getAllSeniorities.useQuery({});
-
+  const utils = api.useUtils();
   type Seniority = NonNullable<typeof data>[number];
+
+  // ---STATES---
   const [seniorities, setSeniorities] = useState<Seniority[]>([]);
   const [savedSeniorities, setSavedSeniorities] = useState<Seniority[]>([]);
+  const [isAddingSeniority, setIsAddingSeniority] = useState(false);
+  const [seniorityName, setSeniorityName] = useState("");
+
+  const createSeniority = api.seniority.createSeniority.useMutation({
+    onSuccess: async () => {
+      setIsAddingSeniority(false);
+      setSeniorityName("");
+      await utils.seniority.getAllSeniorities.invalidate();
+    },
+  });
+
+  function handleCreateSeniority(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const name = seniorityName.trim();
+
+    if (!name) {
+      return;
+    }
+    createSeniority.mutate({
+      name,
+      order: seniorities.length + 1,
+      color: "#000000",
+    });
+  }
+
+  function handleCancelSeniority() {
+    setIsAddingSeniority(false);
+    setSeniorityName("");
+  }
 
   useEffect(() => {
     if (!data) return;
@@ -85,9 +118,7 @@ export default function SenioritySetting() {
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-baseline gap-2">
-          <CardTitle className="text-sm font-semibold">
-            Motivos de descalificación
-          </CardTitle>
+          <CardTitle className="text-sm font-semibold">Seniorities</CardTitle>
         </div>
       </CardHeader>
 
@@ -140,14 +171,52 @@ export default function SenioritySetting() {
               </li>
             );
           })}
+          {isAddingSeniority && (
+            <form
+              className="flex items-end gap-3 border-b border-border-default
+                        py-4"
+              onSubmit={handleCreateSeniority}
+            >
+              <li className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2 w-full">
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    value={seniorityName}
+                    onChange={(event) => setSeniorityName(event.target.value)}
+                    placeholder="Nombre de seniority"
+                    autoFocus
+                  />
+                </div>{" "}
+                <Button
+                  type="submit"
+                  disabled={!seniorityName.trim() || createSeniority.isPending}
+                >
+                  {createSeniority.isPending
+                    ? "Guardando..."
+                    : "Crear seniority"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancelSeniority}
+                >
+                  Cancelar
+                </Button>
+              </li>
+            </form>
+          )}
         </ol>
-        <button
-          type="button"
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
-        >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          Agregar etapa
-        </button>
+
+        {!isAddingSeniority && (
+          <button
+            type="button"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            onClick={() => setIsAddingSeniority(true)}
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Agregar seniority
+          </button>
+        )}
         {hasChanges && (
           <div className="flex justify-end gap-2 border-t border-border-default pt-3">
             <Button onClick={handleCancel} disabled={updateOrder.isPending}>
