@@ -71,16 +71,6 @@ export const updateInterviewProcedure = protectedProcedure
       });
     }
 
-    // An unchanged date may already be in the past (e.g. a completed interview).
-    const dateChanged = interview.date?.getTime() !== input.date.getTime();
-
-    if (dateChanged && input.date.getTime() <= Date.now()) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "La fecha y hora de la entrevista deben ser futuras.",
-      });
-    }
-
     if (interview.status === "Scheduled") {
       const start = input.date;
       const end = new Date(start.getTime() + input.duration * 60_000);

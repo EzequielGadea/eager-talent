@@ -55,10 +55,7 @@ export type EditableInterview = {
   interviewers: Interviewer[];
 };
 
-const createEditInterviewSchema = (
-  unchangedSchedule: string | null,
-  isExploratory: boolean,
-) =>
+const createEditInterviewSchema = (isExploratory: boolean) =>
   z
     .object({
       exploratoryName: z.string().trim().optional(),
@@ -81,23 +78,6 @@ const createEditInterviewSchema = (
           message: "El nombre es obligatorio.",
         });
       }
-      if (!data.date || !TIME_REGEX.test(data.time)) return;
-
-      // The server accepts an unchanged date even if it is already in the past.
-      if (`${data.date}T${data.time}` === unchangedSchedule) return;
-
-      const scheduledAt = new Date(`${data.date}T${data.time}`);
-
-      if (
-        Number.isNaN(scheduledAt.getTime()) ||
-        scheduledAt.getTime() <= Date.now()
-      ) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["date"],
-          message: "La fecha y hora deben ser posteriores al momento actual.",
-        });
-      }
     });
 
 type EditInterviewFormValues = z.infer<
@@ -107,13 +87,6 @@ type EditInterviewFormValues = z.infer<
 const fieldLabel = "text-sm font-medium text-text-secondary";
 const fieldControl =
   "h-11 rounded-xl bg-surface-card focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20";
-
-// toISOString() is UTC, so subtract the timezone offset to get the local date.
-function getTodayLocalISO() {
-  const now = new Date();
-  const offsetMs = now.getTimezoneOffset() * 60_000;
-  return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
-}
 
 function getInitialValues(
   interview: EditableInterview,
@@ -171,15 +144,6 @@ export function EditInterviewDialog({
   });
 
   const initialValues = getInitialValues(interview);
-  const unchangedSchedule = interview.date
-    ? `${initialValues.date}T${initialValues.time}`
-    : null;
-  const todayISO = getTodayLocalISO();
-  // A past date of an existing interview must stay selectable.
-  const minDate =
-    initialValues.date && initialValues.date < todayISO
-      ? initialValues.date
-      : todayISO;
   const durationOptions = DURATION_OPTIONS.includes(initialValues.duration)
     ? DURATION_OPTIONS
     : [...DURATION_OPTIONS, initialValues.duration].sort((a, b) => a - b);
@@ -191,9 +155,7 @@ export function EditInterviewDialog({
     reset,
     formState: { errors },
   } = useForm<EditInterviewFormValues>({
-    resolver: zodResolver(
-      createEditInterviewSchema(unchangedSchedule, !interview.jobOpeningId),
-    ),
+    resolver: zodResolver(createEditInterviewSchema(!interview.jobOpeningId)),
     defaultValues: initialValues,
   });
 
@@ -292,7 +254,6 @@ export function EditInterviewDialog({
                   id="edit-interview-date"
                   type="date"
                   className={fieldControl}
-                  min={minDate}
                   {...register("date")}
                 />
               </div>
