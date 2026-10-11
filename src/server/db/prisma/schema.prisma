@@ -249,7 +249,7 @@ model Tag {
 
 model DisqualificationMotive {
   id           String        @id @default(cuid())
-  name         String
+  name         String        @unique
   applications Application[]
 
   @@map("disqualification_motive")
@@ -309,6 +309,7 @@ model Application {
 
   @@id([applicantId, jobOpeningId])
   @@index([jobOpeningId, active, currentStage])
+  @@index([disqualificationMotiveId])
   @@map("application")
 }
 
