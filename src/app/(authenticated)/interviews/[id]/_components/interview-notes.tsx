@@ -73,7 +73,7 @@ export async function InterviewNotes({
       }
       title="Notas del entrevistador"
       editorAriaLabel="Notas de la entrevista"
-      editorClassName="h-130 xl:h-[calc(100svh-24rem)] xl:min-h-130"
+      editorClassName="h-130"
       onSave={save}
     />
   );
