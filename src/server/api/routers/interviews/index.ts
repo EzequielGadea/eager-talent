@@ -3,12 +3,16 @@ import { getInterviewsByApplicantIdProcedure } from "./get-interviews-by-applica
 import { getAssignedInterviews } from "./get-assigned-interviews";
 import { createInterviewProcedure } from "./create-interview";
 import { deleteInterviewProcedure } from "./delete-interview";
+import { getInterviewByIdProcedure } from "./get-by-id";
+import { updateInterviewProcedure } from "./update-interview";
 
 export { getAssignedInterviews };
 
 export const interviewsRouter = createTRPCRouter({
   getAllByApplicantId: getInterviewsByApplicantIdProcedure,
   getAssignedInterviews,
+  getById: getInterviewByIdProcedure,
   create: createInterviewProcedure,
+  update: updateInterviewProcedure,
   delete: deleteInterviewProcedure,
 });
