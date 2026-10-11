@@ -89,9 +89,14 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
     (app) => app.jobOpeningId === jobOpeningId,
   );
   const firstRecord = (current - 1) * pageSize + 1;
-  const pages = [...new Set([1, current - 1, current, current + 1, totalPages])]
-    .filter((p) => p >= 1 && p <= totalPages)
-    .sort((a, b) => a - b);
+  const pages =
+    totalPages <= 5
+      ? Array.from({ length: totalPages }, (_, index) => index + 1)
+      : current <= 3
+        ? [1, 2, 3, 4, totalPages]
+        : current >= totalPages - 2
+          ? [1, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
+          : [1, current - 1, current, current + 1, totalPages];
 
   const setPageAndScroll = (newPage: number) => {
     flushSync(() => {
@@ -234,7 +239,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
       </CardContent>
 
       {(isLoading || data) && (
-        <CardFooter className="flex flex-wrap items-center justify-between gap-3">
+        <CardFooter className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
           {isLoading || !data ? (
             <>
               <Skeleton className="h-5 w-40" />
@@ -242,13 +247,13 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
             </>
           ) : (
             <>
-              <span>
+              <span className="min-w-0 wrap-anywhere text-sm">
                 {activities.length === 0
                   ? "No hay registros"
                   : `${firstRecord}–${firstRecord + activities.length - 1} de ${total} registros`}
               </span>
-              <Pagination className="mx-0 w-auto justify-end">
-                <PaginationContent>
+              <Pagination className="mx-0 w-full min-w-0 justify-center overflow-x-auto sm:w-auto sm:justify-end">
+                <PaginationContent className="w-max flex-nowrap">
                   <PaginationItem>
                     <PaginationPrevious
                       href="#"
@@ -264,7 +269,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
                     />
                   </PaginationItem>
                   {pages.map((p, i) => (
-                    <PaginationItem key={p}>
+                    <PaginationItem key={p} className="flex items-center">
                       {i > 0 && p - pages[i - 1] > 1 && <PaginationEllipsis />}
                       <PaginationLink
                         href="#"
