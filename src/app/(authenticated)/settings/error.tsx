@@ -4,12 +4,7 @@ import { AlertTriangle } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 
-type Props = {
-  error: Error & { digest?: string };
-  reset: () => void;
-};
-
-export default function SettingsError({ reset }: Props) {
+export default function SettingsError() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
       <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
@@ -28,7 +23,7 @@ export default function SettingsError({ reset }: Props) {
 
       <Button
         type="button"
-        onClick={() => reset()}
+        onClick={() => window.location.reload()}
         className="rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover"
       >
         Reintentar
