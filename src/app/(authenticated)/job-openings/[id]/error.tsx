@@ -24,7 +24,7 @@ export default function JobOpeningError({ reset }: JobOpeningErrorProps) {
             </h1>
 
             <p className="text-sm text-text-secondary">
-              No tenés permisos para acceder a esta información o ocurrió un
+              No tenés permisos para acceder a esta información u ocurrió un
               error inesperado.
             </p>
           </div>
