@@ -566,7 +566,7 @@ export function EditInterviewDialog({
             </Button>
             <Button
               type="submit"
-              className="rounded-full bg-surface-dark px-5 text-text-on-dark hover:bg-surface-dark"
+              className="rounded-full bg-dashboard-dark px-5 text-text-on-dark hover:bg-dashboard-dark-hover"
               disabled={isPending}
             >
               {isPending ? (
