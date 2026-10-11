@@ -4,9 +4,12 @@ import { getAllSeniorities } from "./get-all";
 
 import { updateOrderSeniority } from "./update-order";
 
-export { getAllSeniorities, updateOrderSeniority };
+import { createSeniority } from "./create-seniority";
+
+export { getAllSeniorities, updateOrderSeniority, createSeniority };
 
 export const seniorityRouter = createTRPCRouter({
   getAllSeniorities,
   updateOrderSeniority,
+  createSeniority,
 });
