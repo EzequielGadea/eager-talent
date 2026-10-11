@@ -32,8 +32,8 @@ export async function PipelineColumn({
 
   return (
     <section
-      className="flex w-80 shrink-0 flex-col gap-3 border-t-4 pt-3"
-      style={{ borderTopColor: stage.color }}
+      className="flex w-80 shrink-0 flex-col gap-3 border-t-4 border-border-default pt-3"
+      style={{ borderTopColor: stage.color || undefined }}
     >
       <PipelineColumnClient
         jobOpeningId={jobOpeningId}
