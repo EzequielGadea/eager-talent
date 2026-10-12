@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 import { auth } from "~/lib/auth";
 
-const authRoutes = ["/login", "/signup"];
+const authRoutes = ["/login", "/signup", "/accept-invite"];
 const publicRoutes = ["/", ...authRoutes];
 
 export async function proxy(request: NextRequest) {
@@ -12,11 +12,15 @@ export async function proxy(request: NextRequest) {
     headers: request.headers,
   });
 
-  if (!publicRoutes.includes(pathname) && !session) {
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isHome = pathname === "/";
+  const isPublic = isHome || isAuthRoute;
+
+  if (!isPublic && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (authRoutes.includes(pathname) && session) {
+  if (isAuthRoute && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
