@@ -190,7 +190,6 @@ export const auth = betterAuth({
   ],
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      console.log("[after hook] path:", ctx.path);
       if (ctx.path === "/admin/create-user") {
         await bootstrapNewUser(ctx);
         return;
