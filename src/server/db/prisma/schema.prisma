@@ -20,7 +20,7 @@ model User {
   members       Member[]
   invitations   Invitation[]
   lastName      String       @default("") @map("last_name")
-  status        UserStatus   @default(Active)
+  status        UserStatus   @default(PendingInvitation)
   lastAccess    DateTime?    @map("last_access")
   role          String?
   banned        Boolean      @default(false)
