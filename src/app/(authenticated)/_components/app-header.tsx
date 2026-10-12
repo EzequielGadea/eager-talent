@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import Link from "next/link";
 import { Suspense } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -102,13 +103,13 @@ async function HeaderUserArea() {
   return (
     <>
       {user?.role !== "hiringManager" && (
-        <button
-          type="button"
+        <Link
+          href="/settings"
           aria-label="Abrir configuración"
           className="flex size-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-hover"
         >
           <SettingsIcon className="size-4.5" aria-hidden="true" />
-        </button>
+        </Link>
       )}
 
       <div className="h-7 w-px bg-border-default" />
