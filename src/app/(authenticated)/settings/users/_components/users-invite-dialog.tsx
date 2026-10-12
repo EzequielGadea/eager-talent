@@ -23,9 +23,8 @@ import { authClient } from "~/lib/auth/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
-  name: z.string().min(1, "El nombre completo es requerido"),
   email: z.string().email("Ingresa un correo electrónico válido"),
-  role: z.enum(["recruiter", "hiring-manager"], { error: "Rol incorrecto" }),
+  role: z.enum(["recruiter", "hiringManager"], { error: "Rol incorrecto" }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -43,9 +42,8 @@ export function UsersInviteDialog() {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
       email: "",
-      role: "hiring-manager",
+      role: "hiringManager",
     },
   });
 
@@ -53,13 +51,10 @@ export function UsersInviteDialog() {
     try {
       setIsLoading(true);
 
-      // Mapeo de roles: recruiter -> admin | hiring-manager -> user
-      const mappedRole = values.role === "recruiter" ? "admin" : "user";
-
-      const { data: newUser, error } = await authClient.admin.createUser({
+      const { error } = await authClient.organization.inviteMember({
         email: values.email,
-        name: values.name,
-        role: mappedRole,
+        role: values.role,
+        resend: true,
       });
 
       if (error) {
@@ -67,7 +62,6 @@ export function UsersInviteDialog() {
         return;
       }
 
-      console.log("Usuario creado exitosamente:", newUser);
       reset();
       setOpen(false);
     } catch (err) {
@@ -93,7 +87,7 @@ export function UsersInviteDialog() {
         }
       />
 
-      <DialogContent className="max-w-[440px] p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl">
+      <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Header */}
           <DialogHeader className="flex flex-row items-center justify-between px-[22px] py-[18px] border-b space-y-0">
@@ -116,23 +110,6 @@ export function UsersInviteDialog() {
 
           {/* Body */}
           <div className="p-5.5 flex flex-col gap-4">
-            {/* Nombre completo */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-muted-foreground">
-                Nombre completo
-              </Label>
-              <Input
-                placeholder="Ej. Camila Torres"
-                className="h-10 px-3.25 text-sm bg-card border-input rounded-md focus-visible:ring-1"
-                {...register("name")}
-              />
-              {errors.name && (
-                <p className="text-xs text-destructive">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-
             {/* Email */}
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-muted-foreground">
@@ -193,13 +170,13 @@ export function UsersInviteDialog() {
                     <Label
                       htmlFor="role-hiring-manager"
                       className={`flex items-start gap-2.5 p-[11px_13px] border rounded-lg cursor-pointer transition-colors ${
-                        field.value === "hiring-manager"
+                        field.value === "hiringManager"
                           ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20"
                           : "border-border hover:bg-muted/50"
                       }`}
                     >
                       <RadioGroupItem
-                        value="hiring-manager"
+                        value="hiringManager"
                         id="role-hiring-manager"
                         className="mt-0.5"
                       />
