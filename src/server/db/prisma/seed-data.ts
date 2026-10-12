@@ -92,7 +92,7 @@ function getSeedAuth(prisma: PrismaClient) {
       transaction: true,
     }),
     emailAndPassword: { enabled: true, autoSignIn: false },
-    plugins: [organization()],
+    plugins: [organization(), admin()],
   });
 }
 
@@ -110,13 +110,18 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     });
 
     if (!existing) {
-      await seedAuth.api.signUpEmail({
+      await auth.api.createUser({
         body: {
           name: `${userDef.name} ${userDef.lastName}`,
           email: userDef.email,
           password: userDef.password,
+          role:
+            userDef.orgRole === "owner" || userDef.orgRole === "recruiter"
+              ? "admin"
+              : "user",
         },
       });
+
       await prisma.user.update({
         where: { email: userDef.email },
         data: {
