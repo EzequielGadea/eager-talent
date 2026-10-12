@@ -4,12 +4,6 @@ import { AlertTriangle } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 
-type Props = {
-  error: Error & { digest?: string };
-  reset: () => void;
-};
-
-export default function SettingsError({ reset }: Props) {
 export default function SettingsError() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
