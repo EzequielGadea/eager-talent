@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { toast } from "~/components/ui/toast";
 import { authClient } from "~/lib/auth/client";
 
 type UserMenuProps = {
@@ -21,16 +20,7 @@ type UserMenuProps = {
 
 export function UserMenu({ children, side = "top" }: UserMenuProps) {
   async function handleSignOut() {
-    const { error } = await authClient.signOut();
-
-    if (error) {
-      toast.add({
-        title: error.message ?? "No se pudo cerrar la sesión.",
-        type: "error",
-      });
-      return;
-    }
-
+    await authClient.signOut();
     window.location.replace("/login");
   }
 
