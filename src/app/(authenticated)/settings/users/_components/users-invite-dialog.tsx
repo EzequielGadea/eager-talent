@@ -54,7 +54,6 @@ export function UsersInviteDialog() {
       const { error } = await authClient.organization.inviteMember({
         email: values.email,
         role: values.role,
-        resend: true,
       });
 
       if (error) {
