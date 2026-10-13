@@ -9,7 +9,11 @@ export const getAllAreas = protectedProcedure
     const areas = await ctx.db.area.findMany({
       where: { deletedAt: null },
 
-      select: { id: true, name: true },
+      select: {
+        id: true,
+        name: true,
+        _count: { select: { applicants: true } },
+      },
     });
 
     if (!areas) {

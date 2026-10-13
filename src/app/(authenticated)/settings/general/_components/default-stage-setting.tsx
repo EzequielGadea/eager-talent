@@ -16,6 +16,7 @@ import {
 } from "~/components/ui/select";
 import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
+import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 
 type DefaultStage = {
   key: string;
@@ -85,6 +86,16 @@ export default function DefaultStageSetting() {
     setStages(nextStages);
     setSavedStages(nextStages);
   }, [data]);
+
+  if (isLoading) {
+    return (
+      <GeneralSettingsCardSkeleton
+        title="Flujo por defecto"
+        rows={3}
+        showActionButton={false}
+      />
+    );
+  }
 
   const hasChanges = JSON.stringify(stages) !== JSON.stringify(savedStages);
 

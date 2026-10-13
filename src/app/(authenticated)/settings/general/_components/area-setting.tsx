@@ -17,7 +17,7 @@ import { Trash2 } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 
-import { Pencil } from "lucide-react";
+import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 import {
   Dialog,
   DialogClose,
@@ -38,7 +38,8 @@ export default function AreaSetting() {
 
   const utils = api.useUtils();
 
-  const { data: areas } = api.area.getAllAreas.useQuery({});
+  const { data: areas, isLoading: isAreasLoading } =
+    api.area.getAllAreas.useQuery({});
 
   const createArea = api.area.createArea.useMutation({
     onSuccess: async () => {
@@ -94,6 +95,10 @@ export default function AreaSetting() {
     };
   }, [isAddingArea]);
 
+  if (isAreasLoading) {
+    return <GeneralSettingsCardSkeleton title="Áreas" rows={4} />;
+  }
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
@@ -101,38 +106,52 @@ export default function AreaSetting() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col">
-          {areas?.map((area) => (
-            <div
-              key={area.id}
-              className="flex items-center justify-between border-b border-border-default py-4"
-            >
-              <span className="text-sm font-medium text-text-primary">
-                {area.name}
-              </span>
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                      <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
-                    </Button>
-                  }
-                />
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    className={cn(
-                      "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
-                    )}
-                    onClick={() =>
-                      setAreaToDelete({ id: area.id, name: area.name })
+          {areas?.map((area) => {
+            const hasApplicants = area._count.applicants > 0;
+
+            return (
+              <div
+                key={area.id}
+                className="flex items-center justify-between border-b border-border-default py-4"
+              >
+                <span className="text-sm font-medium text-text-primary">
+                  {area.name}
+                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
+                      </Button>
                     }
-                  >
-                    <Trash2 className="size-4" />
-                    <span>Eliminar</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ))}
+                  />
+                  <DropdownMenuContent>
+                    <span
+                      className="block"
+                      title={
+                        hasApplicants
+                          ? "No se puede eliminar porque tiene candidatos asignados"
+                          : undefined
+                      }
+                    >
+                      <DropdownMenuItem
+                        className={cn(
+                          "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
+                        )}
+                        disabled={hasApplicants}
+                        onClick={() =>
+                          setAreaToDelete({ id: area.id, name: area.name })
+                        }
+                      >
+                        <Trash2 className="size-4" />
+                        <span>Eliminar</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            );
+          })}
 
           {isAddingArea && (
             <form

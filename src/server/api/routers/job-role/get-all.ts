@@ -9,7 +9,11 @@ export const getAllRoles = protectedProcedure
     const roles = await ctx.db.jobRole.findMany({
       where: { deletedAt: null },
 
-      select: { id: true, name: true },
+      select: {
+        id: true,
+        name: true,
+        _count: { select: { applicants: true } },
+      },
     });
 
     if (!roles) {

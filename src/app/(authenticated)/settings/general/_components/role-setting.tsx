@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 
 export default function RoleSetting() {
   const [isAddingRole, setIsAddingRole] = useState(false);
@@ -32,7 +33,8 @@ export default function RoleSetting() {
     name: string;
   } | null>(null);
 
-  const { data: roles } = api.role.getAllRoles.useQuery({});
+  const { data: roles, isLoading: isRolesLoading } =
+    api.role.getAllRoles.useQuery({});
 
   const utils = api.useUtils();
 
@@ -90,6 +92,10 @@ export default function RoleSetting() {
     };
   }, [isAddingRole]);
 
+  if (isRolesLoading) {
+    return <GeneralSettingsCardSkeleton title="Roles de candidato" rows={4} />;
+  }
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
@@ -99,37 +105,51 @@ export default function RoleSetting() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col">
-          {roles?.map((role) => (
-            <div
-              key={role.id}
-              className="flex items-center justify-between border-b border-border-default py-4"
-            >
-              <span className="text-sm font-medium text-text-primary">
-                {role.name}
-              </span>
+          {roles?.map((role) => {
+            const hasApplicants = role._count.applicants > 0;
 
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost" size="icon" className="h-6 w-6">
-                      <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
-                    </Button>
-                  }
-                />
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    className="gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg"
-                    onClick={() =>
-                      setRoleToDelete({ id: role.id, name: role.name })
+            return (
+              <div
+                key={role.id}
+                className="flex items-center justify-between border-b border-border-default py-4"
+              >
+                <span className="text-sm font-medium text-text-primary">
+                  {role.name}
+                </span>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
+                      </Button>
                     }
-                  >
-                    <Trash2 className="size-4" />
-                    <span>Eliminar</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ))}
+                  />
+                  <DropdownMenuContent>
+                    <span
+                      className="block"
+                      title={
+                        hasApplicants
+                          ? "No se puede eliminar porque tiene candidatos asignados"
+                          : undefined
+                      }
+                    >
+                      <DropdownMenuItem
+                        className="gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg"
+                        disabled={hasApplicants}
+                        onClick={() =>
+                          setRoleToDelete({ id: role.id, name: role.name })
+                        }
+                      >
+                        <Trash2 className="size-4" />
+                        <span>Eliminar</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            );
+          })}
           {isAddingRole && (
             <form
               onSubmit={handleCreateRole}
