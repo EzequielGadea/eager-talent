@@ -211,26 +211,6 @@ export const auth = betterAuth({
       },
     }),
     admin(),
-    // magicLink({
-    //   sendMagicLink: async ({ email, url }) => {
-    //     render(
-    //       createElement(ConfirmEmail, { url, companyName: "Eager Talent" }),
-    //     )
-    //       .then((emailHtml) => {
-    //         transporter.sendMail({
-    //           from: '"Eager Talent?" <pgrupo632@gmail.com>',
-    //           to: email,
-    //           subject: "Accedé a tu cuenta de Eager Talent",
-    //           html: emailHtml,
-    //           textEncoding: "base64",
-    //         });
-    //         console.log(`Magic link successfully sent to ${email}`);
-    //       })
-    //       .catch((err) => {
-    //         console.log(`Error sending Magic Link to ${email}, error: ${err}`);
-    //       });
-    //   },
-    // }),
     nextCookies(),
   ],
   hooks: {
