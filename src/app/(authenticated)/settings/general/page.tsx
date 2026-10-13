@@ -2,6 +2,7 @@ import AreaSetting from "./_components/area-setting";
 import DefaultStageSetting from "./_components/default-stage-setting";
 import RoleSetting from "./_components/role-setting";
 import SenioritySetting from "./_components/seniority-setting";
+import DescalificationMotiveSetting from "./_components/descalification-motive-setting";
 
 export default function GeneralSettingsPage() {
   return (
@@ -13,7 +14,7 @@ export default function GeneralSettingsPage() {
       </div>
       <div className="grid grid-cols-2 gap-4 ">
         <div className="flex flex-col gap-4">
-          <AreaSetting /> <RoleSetting />
+          <AreaSetting /> <RoleSetting /> <DescalificationMotiveSetting />
         </div>
         <div className="flex flex-col gap-4">
           <DefaultStageSetting />
