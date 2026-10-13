@@ -10,7 +10,6 @@ import {
   Heading,
   Html,
   Img,
-  Link,
   Preview,
   Row,
   Section,
@@ -41,14 +40,14 @@ export const PasswordResetEmail = ({
 
       <Body className="bg-bg-2 m-0 text-center font-sans">
         <Preview>Restablece tu contraseña</Preview>
-        <Container className="mobile:mt-0 mx-auto mt-8 w-full max-w-[640px]">
+        <Container className="mobile:mt-0 mx-auto mt-8 w-full max-w-160">
           <Section>
             <Section className="bg-bg mobile:px-2 px-6 py-4">
               <Section className="mb-3 px-6">
                 <Row>
-                  <Column className="w-1/2 py-[7px] align-middle">
+                  <Column className="w-1/2 py-1.75 align-middle">
                     <Row>
-                      <Column className="w-[32px] align-middle">
+                      <Column className="w-8 align-middle">
                         <Img
                           src={`${baseUrl}/static/shared/logo-black.png`}
                           alt=""
@@ -58,7 +57,7 @@ export const PasswordResetEmail = ({
                       </Column>
                     </Row>
                   </Column>
-                  <Column align="right" className="w-1/2 py-[7px] align-middle">
+                  <Column align="right" className="w-1/2 py-1.75 align-middle">
                     <Text className="font-13 m-0 text-right font-sans">
                       <span className="text-fg-3">{companyName}</span>
                     </Text>
@@ -66,7 +65,7 @@ export const PasswordResetEmail = ({
                 </Row>
               </Section>
 
-              <Section className="bg-bg-2 mobile:px-6 mobile:py-12 rounded-[8px] px-[40px] py-[64px] text-center">
+              <Section className="bg-bg-2 mobile:px-6 mobile:py-12 rounded-[8px] px-10 py-16 text-center">
                 <Section className="mb-3">
                   <Img
                     src={`${baseUrl}/static/shared/logo-black.png`}
@@ -79,7 +78,7 @@ export const PasswordResetEmail = ({
                   </Heading>
                 </Section>
 
-                <Text className="font-16 text-fg-2 mx-auto mt-0 mb-8 max-w-[380px] text-center font-sans">
+                <Text className="font-16 text-fg-2 mx-auto mt-0 mb-8 max-w-95 text-center font-sans">
                   Alguien decidió enviarte este corre para restablecer tu contraseña, para hacerlo hace
                   click en el botón de abajo.
                 </Text>
@@ -93,7 +92,7 @@ export const PasswordResetEmail = ({
                   </Button>
                 </Section>
 
-                <Text className="font-13 text-fg-3 mx-auto mt-8 mb-0 max-w-[400px] text-center font-sans">
+                <Text className="font-13 text-fg-3 mx-auto mt-8 mb-0 max-w-100 text-center font-sans">
                   Si no solicitaste este corre, ignoralo.
                   Tu contraseña solo cambia si entrás al
                   botón de arriba.
