@@ -1,12 +1,8 @@
 "use client";
 
-import { create } from "domain";
-
-import { GripVertical, Plus, UtensilsIcon, X } from "lucide-react";
+import { GripVertical, Plus, X } from "lucide-react";
 
 import { useEffect, useState } from "react";
-
-import { string } from "zod";
 
 import { Button } from "~/components/ui/button";
 
@@ -14,20 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-
 import { toast } from "~/components/ui/toast";
 
 import { api } from "~/lib/trpc/react";
-
-import { seniorityRouter } from "~/server/api/routers/seniority";
+import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 
 import {
   Dialog,
@@ -53,6 +39,7 @@ export default function SenioritySetting() {
     id: string;
     name: string;
   } | null>(null);
+
   const createSeniority = api.seniority.createSeniority.useMutation({
     onSuccess: async () => {
       setIsAddingSeniority(false);
@@ -147,6 +134,10 @@ export default function SenioritySetting() {
     });
   }
 
+  if (isLoading) {
+    return <GeneralSettingsCardSkeleton title="Seniorities" rows={4} />;
+  }
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
@@ -204,19 +195,29 @@ export default function SenioritySetting() {
                     {seniority.name}
                   </span>
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  onClick={() =>
-                    setSeniorityToDel({
-                      id: seniority.id,
-                      name: seniority.name,
-                    })
+                <span
+                  className="flex"
+                  title={
+                    seniority._count.applicants > 0
+                      ? "No se puede eliminar porque tiene candidatos asignados"
+                      : undefined
                   }
                 >
-                  <X aria-hidden="true" />
-                </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    disabled={seniority._count.applicants > 0}
+                    onClick={() =>
+                      setSeniorityToDel({
+                        id: seniority.id,
+                        name: seniority.name,
+                      })
+                    }
+                  >
+                    <X aria-hidden="true" />
+                  </Button>
+                </span>
               </li>
             );
           })}
