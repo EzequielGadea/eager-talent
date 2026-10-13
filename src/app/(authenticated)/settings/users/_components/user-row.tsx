@@ -7,13 +7,15 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 
-import { Button } from "~/components/ui/button";
 import { TableCell, TableRow } from "~/components/ui/table";
 import type { AppRouter } from "~/server/api/root";
 
 import { userRoleConfig, userStatusConfig } from "../constants";
+import { ResendInviteButton } from "./resend-invite-button";
 
 export type User = inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
+
+type InviteRole = "recruiter" | "hiringManager";
 
 type Props = {
   user: User;
@@ -129,13 +131,10 @@ export function UserRow({ user }: Props) {
 
       <TableCell className="px-4 py-3 text-right">
         {user.status === "PendingInvitation" ? (
-          <Button
-            type="button"
-            variant="ghost"
-            className="h-8 px-2 text-xs font-medium text-text-link"
-          >
-            Reenviar invitación
-          </Button>
+          <ResendInviteButton
+            email={user.email}
+            role={user.role as InviteRole}
+          />
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger
