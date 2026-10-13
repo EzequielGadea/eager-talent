@@ -14,6 +14,7 @@ import { tagRouter } from "./routers/tag";
 import { userRouter } from "./routers/user";
 import { usersRouter } from "./routers/users";
 import { templateStagesRouter } from "./routers/template-stages";
+import { descalificationMotiveRouter } from "./routers/descalification-motive";
 
 export const appRouter = createTRPCRouter({
   applicant: applicantRouter,
@@ -31,6 +32,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   users: usersRouter,
   templateStages: templateStagesRouter,
+  descalificationMotive: descalificationMotiveRouter,
 });
 
 export type AppRouter = typeof appRouter;
