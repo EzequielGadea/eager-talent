@@ -1,11 +1,7 @@
 import { Suspense } from "react";
 import { Plus } from "lucide-react";
 
-<<<<<<< HEAD
 import { buttonVariants } from "~/components/ui/button";
-=======
-import {Button, buttonVariants } from "~/components/ui/button";
->>>>>>> 44c65e8 (feat: consultar usuarios implementacion del backend y frontend)
 import { api } from "~/lib/trpc/server";
 import Link from "next/link";
 import { UsersTable } from "./_components/users-table";
@@ -26,7 +22,6 @@ export default function UsersPage() {
           Gestioná los usuarios con acceso a EagerTalent
         </p>
 
-<<<<<<< HEAD
         <Link
           href="/settings/users/new"
           className={cn(
@@ -37,18 +32,6 @@ export default function UsersPage() {
           <Plus size={16} />
           Agregar usuario
         </Link>
-=======
-       <Link
-  href="/settings/users/new"
-  className={cn(
-    buttonVariants({ size: "sm" }),
-    "gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover",
-  )}
->
-  <Plus size={16} />
-  Agregar usuario
-</Link>
->>>>>>> 44c65e8 (feat: consultar usuarios implementacion del backend y frontend)
       </div>
 
       <Suspense fallback={<UsersTableSkeleton />}>
@@ -56,8 +39,4 @@ export default function UsersPage() {
       </Suspense>
     </section>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 44c65e8 (feat: consultar usuarios implementacion del backend y frontend)
