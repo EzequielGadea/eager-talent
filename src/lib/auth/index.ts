@@ -33,6 +33,17 @@ const transporter = nodemailer.createTransport({
 export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 128;
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const inviteSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(EMAIL_REGEX, "Correo electrónico inválido"),
+  role: z.enum(["recruiter", "hiringManager"]),
+});
+
 export const passwordSchema = z
   .string()
   .min(
@@ -190,20 +201,37 @@ export const auth = betterAuth({
       ac,
       roles,
       async sendInvitationEmail(data, request) {
-        console.log(
-          "Intentando enviar invitation email ",
-          JSON.stringify(data),
-        );
-        await auth.api.createUser({
-          body: {
-            email: data.email,
-            role: data.role === "recruiter" ? "admin" : "user",
-            name: "",
-          },
-        });
+        const ctx = await auth.$context;
+        const parsedInviteData = inviteSchema.safeParse(data);
+        if (!parsedInviteData.success) {
+          const issues = parsedInviteData.error.issues.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+          }));
+
+          throw new APIError("BAD_REQUEST", {
+            message: issues.map((i) => `${i.field}: ${i.message}`).join("; "),
+            code: "INVALID_INVITE_DATA",
+            issues,
+          });
+        }
+
+        const { email, role } = parsedInviteData.data;
+        const existingUser = await ctx.internalAdapter.findUserByEmail(email);
+
+        if (!existingUser) {
+          await auth.api.createUser({
+            body: {
+              email,
+              role: role === "recruiter" ? "admin" : "user",
+              name: "",
+            },
+          });
+        }
+
         await auth.api.requestPasswordReset({
           body: {
-            email: data.email,
+            email,
             redirectTo: `/accept-invite/${data.id}`,
           },
           ...(request ? { request } : await headers()),
