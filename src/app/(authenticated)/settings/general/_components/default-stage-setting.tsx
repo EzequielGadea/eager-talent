@@ -136,6 +136,26 @@ export default function DefaultStageSetting() {
 
   function handleSave() {
     if (!data || !hasChanges) return;
+
+    if (stages.some((stage) => !stage.name.trim())) {
+      toast.add({
+        title: "Todas las etapas deben tener un nombre.",
+        type: "error",
+      });
+      return;
+    }
+
+    const normalizedNames = stages.map((stage) =>
+      stage.name.trim().toLocaleLowerCase("es"),
+    );
+    if (new Set(normalizedNames).size !== normalizedNames.length) {
+      toast.add({
+        title: "No puede haber etapas con el mismo nombre.",
+        type: "error",
+      });
+      return;
+    }
+
     updateDefault.mutate({ id: data.id, stages });
   }
 
