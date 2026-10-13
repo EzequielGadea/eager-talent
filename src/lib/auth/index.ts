@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, APIError } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { magicLink, organization, admin } from "better-auth/plugins";
 import { ac, roles } from "~/lib/auth/permissions";
@@ -14,6 +14,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { headers } from "next/headers";
 import { UserStatus } from "~/generated/prisma/enums";
 import { Prisma } from "~/generated/prisma/client";
+import { z } from "zod";
 
 const INVITATION_EXPIRATION = 60 * 60 * 24; // Un dia
 
@@ -29,25 +30,71 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function setUserAsActive(ctx: AuthHookContext) {
-  const session = ctx.context.newSession;
-  if (!session) return;
+export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MAX_LENGTH = 128;
 
-  try {
-    await prisma.user.update({
-      where: {
-        id: session.user.id,
-        status: UserStatus.PendingInvitation,
-      },
-      data: { status: UserStatus.Active },
-    });
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "2025")
-      return;
+export const passwordSchema = z
+  .string()
+  .min(
+    PASSWORD_MIN_LENGTH,
+    `Debe tener al menos ${PASSWORD_MIN_LENGTH} caracteres`,
+  )
+  .max(
+    PASSWORD_MAX_LENGTH,
+    `No puede superar los ${PASSWORD_MAX_LENGTH} caracteres`,
+  )
+  .regex(/\p{Lu}/u, "Debe incluir al menos una letra mayúscula")
+  .regex(/\p{Ll}/u, "Debe incluir al menos una letra minúscula")
+  .regex(/\p{N}/u, "Debe incluir al menos un número")
+  .regex(
+    /[^\p{L}\p{N}\s]/u,
+    "Debe incluir al menos un símbolo (por ejemplo ! @ # $ %)",
+  );
 
-    console.log(`Unable to update user ${session.user.id} state.`);
+const PASSWORD_FIELD_BY_PATH: Record<string, string> = {
+  "/sign-up/email": "password",
+  "/reset-password": "newPassword",
+  "/change-password": "newPassword",
+  "/set-password": "newPassword",
+  "/admin/create-user": "password",
+  "/admin/set-user-password": "newPassword",
+};
+
+const OPTIONAL_PASSWORD_PATHS = new Set(["/admin/create-user"]);
+
+export const validatePasswordHook = createAuthMiddleware(async (ctx) => {
+  const field = PASSWORD_FIELD_BY_PATH[ctx.path];
+  if (!field) return;
+
+  const value = (ctx.body as Record<string, unknown> | undefined)?.[field];
+
+  if (
+    OPTIONAL_PASSWORD_PATHS.has(ctx.path) &&
+    (value === undefined || value === null || value === "")
+  ) {
+    return;
   }
-}
+
+  const result = passwordSchema.safeParse(value);
+  if (result.success) return;
+
+  if (result.error.issues.some((i) => i.code === "invalid_type")) {
+    throw new APIError("BAD_REQUEST", {
+      message: "La contraseña es obligatoria",
+      code: "PASSWORD_REQUIRED",
+    });
+  }
+
+  const issues = result.error.issues.map((i) => i.message);
+
+  throw new APIError("BAD_REQUEST", {
+    message: `La contraseña no cumple los requisitos: ${issues
+      .map((m) => m.charAt(0).toLowerCase() + m.slice(1))
+      .join("; ")}`,
+    code: "PASSWORD_POLICY_VIOLATION",
+    issues,
+  });
+});
 
 export const auth = betterAuth({
   baseURL: {
@@ -186,18 +233,9 @@ export const auth = betterAuth({
     // }),
     nextCookies(),
   ],
-  // hooks: {
-  //   after: createAuthMiddleware(async (ctx) => {
-  //     if (ctx.path === "/admin/create-user") {
-  //       await bootstrapNewUser(ctx);
-  //       return;
-  //     }
-  //     if (ctx.path === "/magic-link/verify") {
-  //       await setUserAsActive(ctx);
-  //       return;
-  //     }
-  //   }),
-  // },
+  hooks: {
+    before: validatePasswordHook,
+  },
   databaseHooks: {
     session: {
       create: {
