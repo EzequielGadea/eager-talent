@@ -13,11 +13,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
 import { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 export default function RoleSetting() {
   const [isAddingRole, setIsAddingRole] = useState(false);
 
   const [roleName, setRoleName] = useState("");
+  const [roleToDelete, setRoleToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const { data: roles } = api.role.getAllRoles.useQuery({});
 
@@ -33,6 +46,7 @@ export default function RoleSetting() {
 
   const deleteRole = api.role.deleteRole.useMutation({
     onSuccess: async () => {
+      setRoleToDelete(null);
       await utils.role.getAllRoles.invalidate();
     },
   });
@@ -103,13 +117,11 @@ export default function RoleSetting() {
                   }
                 />
                 <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <Pencil className="size-4" />
-                    <span>Editar</span>
-                  </DropdownMenuItem>
                   <DropdownMenuItem
                     className="gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg"
-                    onClick={() => handleDeleteRole(role.id)}
+                    onClick={() =>
+                      setRoleToDelete({ id: role.id, name: role.name })
+                    }
                   >
                     <Trash2 className="size-4" />
                     <span>Eliminar</span>
@@ -160,6 +172,43 @@ export default function RoleSetting() {
           </button>
         )}
       </CardContent>
+      <Dialog
+        open={roleToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteRole.isPending) {
+            setRoleToDelete(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Eliminar el rol “{roleToDelete?.name}”?</DialogTitle>
+            <DialogDescription>
+              Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="outline" disabled={deleteRole.isPending} />
+              }
+            >
+              Cancelar
+            </DialogClose>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (roleToDelete) {
+                  handleDeleteRole(roleToDelete.id);
+                }
+              }}
+              disabled={deleteRole.isPending}
+            >
+              {deleteRole.isPending ? "Eliminando..." : "Eliminar rol"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

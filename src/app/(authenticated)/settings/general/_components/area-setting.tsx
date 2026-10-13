@@ -18,10 +18,23 @@ import { Trash2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
 import { Pencil } from "lucide-react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 export default function AreaSetting() {
   const [isAddingArea, setIsAddingArea] = useState(false);
   const [areaName, setAreaName] = useState("");
+  const [areaToDelete, setAreaToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const utils = api.useUtils();
 
@@ -37,6 +50,7 @@ export default function AreaSetting() {
 
   const deleteArea = api.area.deleteArea.useMutation({
     onSuccess: async () => {
+      setAreaToDelete(null);
       await utils.area.getAllAreas.invalidate();
     },
   });
@@ -104,15 +118,13 @@ export default function AreaSetting() {
                   }
                 />
                 <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <Pencil className="size-4" />
-                    <span>Editar</span>
-                  </DropdownMenuItem>
                   <DropdownMenuItem
                     className={cn(
                       "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
                     )}
-                    onClick={() => handleDeleteArea(area.id)}
+                    onClick={() =>
+                      setAreaToDelete({ id: area.id, name: area.name })
+                    }
                   >
                     <Trash2 className="size-4" />
                     <span>Eliminar</span>
@@ -164,6 +176,43 @@ export default function AreaSetting() {
           </button>
         )}
       </CardContent>
+      <Dialog
+        open={areaToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteArea.isPending) {
+            setAreaToDelete(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Eliminar el área “{areaToDelete?.name}”?</DialogTitle>
+            <DialogDescription>
+              Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="outline" disabled={deleteArea.isPending} />
+              }
+            >
+              Cancelar
+            </DialogClose>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (areaToDelete) {
+                  handleDeleteArea(areaToDelete.id);
+                }
+              }}
+              disabled={deleteArea.isPending}
+            >
+              {deleteArea.isPending ? "Eliminando..." : "Eliminar área"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

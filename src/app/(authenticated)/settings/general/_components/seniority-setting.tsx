@@ -1,12 +1,19 @@
 "use client";
 
 import { create } from "domain";
+
 import { GripVertical, Plus, UtensilsIcon, X } from "lucide-react";
+
 import { useEffect, useState } from "react";
 
+import { string } from "zod";
+
 import { Button } from "~/components/ui/button";
+
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+
 import { Input } from "~/components/ui/input";
+
 import {
   Select,
   SelectContent,
@@ -15,9 +22,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+
 import { toast } from "~/components/ui/toast";
+
 import { api } from "~/lib/trpc/react";
+
 import { seniorityRouter } from "~/server/api/routers/seniority";
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 export default function SenioritySetting() {
   const { data, isLoading } = api.seniority.getAllSeniorities.useQuery({});
@@ -29,11 +49,20 @@ export default function SenioritySetting() {
   const [savedSeniorities, setSavedSeniorities] = useState<Seniority[]>([]);
   const [isAddingSeniority, setIsAddingSeniority] = useState(false);
   const [seniorityName, setSeniorityName] = useState("");
-
+  const [seniorityToDel, setSeniorityToDel] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const createSeniority = api.seniority.createSeniority.useMutation({
     onSuccess: async () => {
       setIsAddingSeniority(false);
       setSeniorityName("");
+      await utils.seniority.getAllSeniorities.invalidate();
+    },
+  });
+
+  const deleteSeniority = api.seniority.deleteSeniority.useMutation({
+    onSuccess: async () => {
       await utils.seniority.getAllSeniorities.invalidate();
     },
   });
@@ -51,6 +80,10 @@ export default function SenioritySetting() {
       order: seniorities.length + 1,
       color: "#000000",
     });
+  }
+
+  function handleDeleteSeniority(id: string) {
+    deleteSeniority.mutate({ id });
   }
 
   function handleCancelSeniority() {
@@ -130,10 +163,11 @@ export default function SenioritySetting() {
                 key={seniority.id}
                 className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2 w-full"
                 onDragOver={(event) => {
-                  event.preventDefault();
+                  if (!isAddingSeniority) event.preventDefault();
                 }}
                 onDrop={(event) => {
                   event.preventDefault();
+                  if (isAddingSeniority) return;
                   moveSeniority(
                     Number(event.dataTransfer.getData("text/plain")),
                     index,
@@ -144,8 +178,13 @@ export default function SenioritySetting() {
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  draggable={true}
+                  draggable={!isAddingSeniority}
+                  disabled={isAddingSeniority}
                   onDragStart={(event) => {
+                    if (isAddingSeniority) {
+                      event.preventDefault();
+                      return;
+                    }
                     event.dataTransfer.effectAllowed = "move";
                     event.dataTransfer.setData("text/plain", String(index));
                   }}
@@ -165,7 +204,17 @@ export default function SenioritySetting() {
                     {seniority.name}
                   </span>
                 </div>
-                <Button type="button" variant="ghost" size="icon-sm">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() =>
+                    setSeniorityToDel({
+                      id: seniority.id,
+                      name: seniority.name,
+                    })
+                  }
+                >
                   <X aria-hidden="true" />
                 </Button>
               </li>
@@ -207,7 +256,7 @@ export default function SenioritySetting() {
           )}
         </ol>
 
-        {!isAddingSeniority && (
+        {!isAddingSeniority && !hasChanges && (
           <button
             type="button"
             className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
@@ -219,7 +268,11 @@ export default function SenioritySetting() {
         )}
         {hasChanges && (
           <div className="flex justify-end gap-2 border-t border-border-default pt-3">
-            <Button onClick={handleCancel} disabled={updateOrder.isPending}>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={updateOrder.isPending}
+            >
               Cancelar
             </Button>
             <Button onClick={handleSave} disabled={updateOrder.isPending}>
@@ -228,6 +281,50 @@ export default function SenioritySetting() {
           </div>
         )}
       </CardContent>
+      <Dialog
+        open={seniorityToDel !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteSeniority.isPending) {
+            setSeniorityToDel(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              ¿Eliminar seniority "{seniorityToDel?.name}"?
+            </DialogTitle>
+            <DialogDescription>
+              Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button
+                  variant="outline"
+                  disabled={deleteSeniority.isPending}
+                />
+              }
+            >
+              Cancelar
+            </DialogClose>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (seniorityToDel) {
+                  handleDeleteSeniority(seniorityToDel.id);
+                }
+              }}
+              disabled={deleteSeniority.isPending}
+            >
+              {deleteSeniority.isPending
+                ? "Eliminando..."
+                : "Eliminar seniority"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
