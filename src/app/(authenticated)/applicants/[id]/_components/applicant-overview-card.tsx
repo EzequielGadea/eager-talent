@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
 import {
   Card,
@@ -9,7 +9,7 @@ import {
   CardContent,
 } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
-import { Button } from "~/components/ui/button";
+import { ShareWithHiringManagerDialog } from "./share-with-hiring-manager-dialog";
 import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
@@ -33,6 +33,7 @@ export function ApplicantOverviewCard({
   canCreateApplication,
 }: ApplicantOverviewCardProps) {
   const {
+    id,
     name,
     lastName,
     photo,
@@ -42,6 +43,7 @@ export function ApplicantOverviewCard({
     linkedin,
     source,
     englishLevel,
+    title,
     role,
     seniority,
   } = applicant;
@@ -112,13 +114,11 @@ export function ApplicantOverviewCard({
         {(canShareWithHiringManager || canShowActions) && (
           <CardAction className="flex flex-wrap items-center gap-2.5">
             {canShareWithHiringManager && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="max-w-full gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
-              >
-                <UserRound className="size-3.5 shrink-0" /> Compartir con un HM
-              </Button>
+              <ShareWithHiringManagerDialog
+                applicantId={id}
+                applicantName={`${name} ${lastName}`.trim()}
+                applicantRole={title ?? role.name}
+              />
             )}
 
             {canShowActions && (

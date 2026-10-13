@@ -75,10 +75,10 @@ export const getApplicantByIdProcedure = protectedProcedure
         where: {
           applicantId: input.id,
           hiringManagerId: ctx.session.user.id,
-          viewed: false,
+          viewedAt: null,
         },
         data: {
-          viewed: true,
+          viewedAt: new Date(),
         },
       });
     }
