@@ -1,6 +1,6 @@
 import { betterAuth, APIError } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
-import { magicLink, organization, admin } from "better-auth/plugins";
+import { organization, admin } from "better-auth/plugins";
 import { ac, roles } from "~/lib/auth/permissions";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 
@@ -12,15 +12,9 @@ import { PasswordResetEmail } from "~/emails/password-reset";
 import { createElement } from "react";
 import { createAuthMiddleware } from "better-auth/api";
 import { headers } from "next/headers";
-import { UserStatus } from "~/generated/prisma/enums";
-import { Prisma } from "~/generated/prisma/client";
 import { z } from "zod";
 
 const INVITATION_EXPIRATION = 60 * 60 * 24; // Un dia
-
-type AuthHookContext = Parameters<
-  Parameters<typeof createAuthMiddleware>[0]
->[0];
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
