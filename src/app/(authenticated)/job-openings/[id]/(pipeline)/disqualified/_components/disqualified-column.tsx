@@ -5,31 +5,12 @@ import { useState } from "react";
 import { LoadMoreCandidates } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/load-more-candidates";
 
 import { DisqualifiedCard } from "./disqualified-card";
-import type { DisqualifiedApplication } from "../types";
-
-const PAGE_SIZE = 3;
-
-const stageColors = [
-  "border-dashboard-sky-text",
-  "border-dashboard-purple-text",
-  "border-dashboard-orange-text",
-  "border-dashboard-success-text",
-  "border-tag-gray-fg",
-  "border-tag-blue-fg",
-  "border-tag-amber-fg",
-];
-
-function getStageColor(stageName: string) {
-  const hash = stageName
-    .split("")
-    .reduce((total, character) => total + character.charCodeAt(0), 0);
-
-  return stageColors[hash % stageColors.length];
-}
+import { DISQUALIFIED_PAGE_SIZE, type DisqualifiedApplication } from "../types";
 
 type DisqualifiedColumnProps = {
   jobOpeningId: string;
   stageName: string;
+  stageColor: string;
   applications: DisqualifiedApplication[];
   canRequalify: boolean;
 };
@@ -37,17 +18,19 @@ type DisqualifiedColumnProps = {
 export function DisqualifiedColumn({
   jobOpeningId,
   stageName,
+  stageColor,
   applications,
   canRequalify,
 }: DisqualifiedColumnProps) {
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [visibleCount, setVisibleCount] = useState(DISQUALIFIED_PAGE_SIZE);
 
   const visibleApplications = applications.slice(0, visibleCount);
   const remaining = applications.length - visibleApplications.length;
 
   return (
     <section
-      className={`flex w-80 shrink-0 flex-col gap-3 border-t-4 pt-3 ${getStageColor(stageName)}`}
+      className="flex w-80 shrink-0 flex-col gap-3 border-t-4 pt-3"
+      style={{ borderTopColor: stageColor }}
     >
       {/* Nombre de la etapa a la izquierda y cantidad a la derecha. */}
       <header className="flex items-center justify-between">
@@ -73,7 +56,9 @@ export function DisqualifiedColumn({
           <LoadMoreCandidates
             remaining={remaining}
             loading={false}
-            onLoadMore={() => setVisibleCount((count) => count + PAGE_SIZE)}
+            onLoadMore={() =>
+              setVisibleCount((count) => count + DISQUALIFIED_PAGE_SIZE)
+            }
           />
         )}
       </div>

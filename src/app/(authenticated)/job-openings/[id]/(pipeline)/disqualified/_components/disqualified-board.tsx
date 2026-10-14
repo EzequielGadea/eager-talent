@@ -2,7 +2,7 @@ import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import type { PipelineStage } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/types";
 
 import { DisqualifiedColumn } from "./disqualified-column";
-import type { DisqualifiedApplication } from "../types";
+import { DEFAULT_STAGE_COLOR, type DisqualifiedApplication } from "../types";
 
 type DisqualifiedBoardProps = {
   jobOpeningId: string;
@@ -32,6 +32,7 @@ export function DisqualifiedBoard({
               key={stage.name}
               jobOpeningId={jobOpeningId}
               stageName={stage.name}
+              stageColor={stage.color || DEFAULT_STAGE_COLOR}
               canRequalify={canRequalify}
               applications={applications.filter(
                 (application) => application.stage === stage.name,

@@ -58,8 +58,6 @@ export function DisqualifiedCard({
     },
   });
 
-  const disqualifiedAt = new Date(application.disqualificationDate);
-
   const fullName = `${application.name} ${application.lastName}`;
   const initials =
     `${application.name.charAt(0)}${application.lastName.charAt(0)}`.toUpperCase();
@@ -122,12 +120,16 @@ export function DisqualifiedCard({
           {/* la fecha exacta al pasar el mouse. */}
           <p
             className="pl-5 text-xs text-text-secondary"
-            title={format(disqualifiedAt, "d 'de' MMMM yyyy · HH:mm", {
-              locale: es,
-            })}
+            title={format(
+              application.disqualificationDate,
+              "d 'de' MMMM yyyy · HH:mm",
+              {
+                locale: es,
+              },
+            )}
           >
             Descartado{" "}
-            {formatDistanceToNow(disqualifiedAt, {
+            {formatDistanceToNow(application.disqualificationDate, {
               locale: es,
               addSuffix: true,
             })}
