@@ -251,7 +251,7 @@ export function EditInterviewDialog({
             )}
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-2">
+              <div className="grid content-start gap-2">
                 <label htmlFor="edit-interview-date" className={fieldLabel}>
                   Fecha
                 </label>
@@ -261,9 +261,12 @@ export function EditInterviewDialog({
                   className={fieldControl}
                   {...register("date")}
                 />
+                {errors.date && (
+                  <p className="text-xs text-danger">{errors.date.message}</p>
+                )}
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid content-start gap-2">
                 <label htmlFor="edit-interview-time" className={fieldLabel}>
                   Hora
                 </label>
@@ -287,13 +290,10 @@ export function EditInterviewDialog({
                     />
                   )}
                 />
+                {errors.time && (
+                  <p className="text-xs text-danger">{errors.time.message}</p>
+                )}
               </div>
-
-              {(errors.date || errors.time) && (
-                <p className="col-span-2 text-xs text-danger">
-                  {errors.date?.message ?? errors.time?.message}
-                </p>
-              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
