@@ -9,6 +9,7 @@ import { fetchShared } from "./fetch-shared";
 import { getSharingData } from "./get-sharing-data";
 import { revokeHiringManagerAccess } from "./revoke-hiring-manager-access";
 import { shareWithHiringManagers } from "./share-with-hiring-managers";
+import { updateApplicantTags } from "./update-applicant-tags";
 
 export { getApplicantByIdProcedure };
 
@@ -26,4 +27,5 @@ export const applicantRouter = createTRPCRouter({
   getSharingData,
   shareWithHiringManagers,
   revokeHiringManagerAccess,
+  updateApplicantTags,
 });
