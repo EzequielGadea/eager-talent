@@ -4,6 +4,9 @@ import { z } from "zod";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
+// Values written by better-auth's organization plugin
+type InvitationStatus = "pending" | "accepted" | "rejected" | "canceled";
+
 export const getAllUsers = protectedProcedure
   .input(z.object({}))
   .query(async ({ ctx }) => {
@@ -32,46 +35,70 @@ export const getAllUsers = protectedProcedure
       });
     }
 
-    const members = await ctx.db.member.findMany({
+    const invitations = await ctx.db.invitation.findMany({
+      where: { organizationId },
+      orderBy: { createdAt: "desc" },
+      select: { email: true, role: true, status: true },
+    });
+
+    const latestInvitationByEmail = new Map<string, (typeof invitations)[0]>();
+
+    for (const invitation of invitations) {
+      const email = invitation.email.toLowerCase();
+
+      if (!latestInvitationByEmail.has(email)) {
+        latestInvitationByEmail.set(email, invitation);
+      }
+    }
+
+    const pendingInvitationEmails = invitations
+      .filter((invitation) => invitation.status === "pending")
+      .map((invitation) => invitation.email);
+
+    const users = await ctx.db.user.findMany({
       where: {
-        organizationId,
-        userId: {
+        id: {
           not: ctx.session.user.id,
         },
+        OR: [
+          { members: { some: { organizationId } } },
+          { email: { in: pendingInvitationEmails } },
+        ],
       },
       select: {
-        role: true,
-        user: {
+        id: true,
+        name: true,
+        lastName: true,
+        email: true,
+        lastAccess: true,
+        members: {
+          where: { organizationId },
+          select: { role: true },
+        },
+        _count: {
           select: {
-            id: true,
-            name: true,
-            lastName: true,
-            email: true,
-            status: true,
-            lastAccess: true,
-            _count: {
-              select: {
-                assignedJobOpenings: true,
-              },
-            },
+            assignedJobOpenings: true,
           },
         },
       },
       orderBy: {
-        user: {
-          name: "asc",
-        },
+        name: "asc",
       },
     });
 
-    return members.map((member) => ({
-      id: member.user.id,
-      name: member.user.name,
-      lastName: member.user.lastName,
-      email: member.user.email,
-      role: member.role,
-      status: member.user.status,
-      lastAccess: member.user.lastAccess?.toISOString() ?? null,
-      assignedJobOpeningsCount: member.user._count.assignedJobOpenings,
-    }));
+    return users.map((user) => {
+      const invitation = latestInvitationByEmail.get(user.email.toLowerCase());
+
+      return {
+        id: user.id,
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.members[0]?.role ?? invitation?.role ?? null,
+        // Users without an invitation (e.g. seeded or owners) are already active members
+        status: (invitation?.status ?? "accepted") as InvitationStatus,
+        lastAccess: user.lastAccess?.toISOString() ?? null,
+        assignedJobOpeningsCount: user._count.assignedJobOpenings,
+      };
+    });
   });

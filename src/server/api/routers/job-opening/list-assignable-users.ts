@@ -37,7 +37,6 @@ export const listAssignableUsers = protectedProcedure
         organizationId,
         role: "hiringManager",
         user: {
-          status: "Active",
           banned: false,
         },
       },

@@ -130,7 +130,7 @@ export function UserRow({ user }: Props) {
       </TableCell>
 
       <TableCell className="px-4 py-3 text-right">
-        {user.status === "PendingInvitation" ? (
+        {user.status === "pending" ? (
           <ResendInviteButton
             email={user.email}
             role={user.role as InviteRole}

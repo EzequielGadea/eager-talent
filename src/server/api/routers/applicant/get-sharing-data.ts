@@ -67,7 +67,6 @@ export const getSharingData = protectedProcedure
           organizationId,
           role: "hiringManager",
           user: {
-            status: "Active",
             banned: false,
           },
         },

@@ -234,7 +234,6 @@ export const updateJobOpening = protectedProcedure
             in: input.hiringManagerIds,
           },
           user: {
-            status: "Active",
             banned: false,
           },
         },
