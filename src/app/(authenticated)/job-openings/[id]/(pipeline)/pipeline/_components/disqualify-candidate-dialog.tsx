@@ -80,9 +80,9 @@ export function DisqualifyCandidateDialog({
         onOpenChange(nextOpen);
       }}
     >
-      <DialogContent className="w-full gap-0 overflow-hidden rounded-2xl p-0 sm:max-w-[540px]">
+      <DialogContent className="flex max-h-[90vh] w-full min-w-0 flex-col gap-0 overflow-hidden rounded-2xl p-0 sm:max-w-[540px]">
         {/* Header: ícono rojo, título y contexto del candidato. */}
-        <div className="flex items-start gap-3 border-b border-border-default px-[22px] py-5 pr-12">
+        <div className="flex shrink-0 items-start gap-3 border-b border-border-default px-[22px] py-5 pr-12">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#fcf2f2] text-[#ca3a31]">
             <CircleX className="size-4" />
           </div>
@@ -108,7 +108,7 @@ export function DisqualifyCandidateDialog({
           </div>
         </div>
 
-        <div className="flex flex-col gap-5 px-[22px] py-5">
+        <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 overflow-x-hidden overflow-y-auto px-[22px] py-5">
           {/* Motivo: opciones tipo radio en dos columnas. */}
           <div className="flex flex-col gap-2">
             <p
@@ -173,7 +173,7 @@ export function DisqualifyCandidateDialog({
           </div>
 
           {/* Comentario opcional. */}
-          <div className="flex flex-col gap-2">
+          <div className="flex w-full min-w-0 flex-col gap-2">
             <label
               htmlFor={commentId}
               className="text-xs font-semibold text-text-primary"
@@ -190,7 +190,7 @@ export function DisqualifyCandidateDialog({
               onChange={(event) => setDescription(event.target.value)}
               placeholder="Escribí un detalle para el equipo..."
               rows={3}
-              className="min-h-[78px] resize-none text-[13px]"
+              className="h-[120px] w-full min-w-0 max-w-full resize-none overflow-x-hidden overflow-y-auto text-[13px] whitespace-pre-wrap [field-sizing:fixed] [overflow-wrap:anywhere]"
             />
           </div>
 
@@ -201,7 +201,7 @@ export function DisqualifyCandidateDialog({
           )}
         </div>
 
-        <div className="flex justify-end gap-2 border-t border-border-default px-[22px] py-4">
+        <div className="flex w-full min-w-0 shrink-0 justify-end gap-2 border-t border-border-default px-[22px] py-4">
           <Button
             type="button"
             variant="outline"

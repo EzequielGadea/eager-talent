@@ -4,7 +4,7 @@ import { CircleAlert, Loader2, Plus, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistance } from "date-fns";
 import { es } from "date-fns/locale";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -40,12 +40,14 @@ type DisqualifiedCardProps = {
   application: DisqualifiedApplication;
   jobOpeningId: string;
   canRequalify: boolean;
+  now: number;
 };
 
 export function DisqualifiedCard({
   application,
   jobOpeningId,
   canRequalify,
+  now,
 }: DisqualifiedCardProps) {
   const router = useRouter();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -120,6 +122,7 @@ export function DisqualifiedCard({
           {/* la fecha exacta al pasar el mouse. */}
           <p
             className="pl-5 text-xs text-text-secondary"
+            suppressHydrationWarning
             title={format(
               application.disqualificationDate,
               "d 'de' MMMM yyyy · HH:mm",
@@ -129,7 +132,7 @@ export function DisqualifiedCard({
             )}
           >
             Descartado{" "}
-            {formatDistanceToNow(application.disqualificationDate, {
+            {formatDistance(application.disqualificationDate, now, {
               locale: es,
               addSuffix: true,
             })}
