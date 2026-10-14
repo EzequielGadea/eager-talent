@@ -1,14 +1,13 @@
 import { headers } from "next/headers";
-import { ArrowRight } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
 import { auth } from "~/lib/auth";
-import type { api } from "~/lib/trpc/server";
+import { api } from "~/lib/trpc/server";
 import {
   NO_APPLICATION_LABEL,
   formatInterviewDate,
 } from "../_lib/interview-date";
+import { AdvanceStageButton } from "./advance-stage-button";
 
 type Interview = Awaited<ReturnType<typeof api.interview.getById>>;
 
@@ -26,6 +25,10 @@ export async function InterviewHeader({
   });
 
   const { applicant, application, date } = interview;
+  const currentStage =
+    canUpdateApplication.success && interview.jobOpeningId
+      ? await api.interview.checkCurrentStage({ interviewId: interview.id })
+      : null;
   const applicantName = `${applicant.name} ${applicant.lastName}`;
   const initials =
     `${applicant.name.charAt(0)}${applicant.lastName.charAt(0)}`.toUpperCase();
@@ -58,17 +61,15 @@ export async function InterviewHeader({
         </div>
       </div>
 
-      {/* TODO: wire up stage advancement. */}
-      {application && canUpdateApplication.success && (
-        <Button
-          size="sm"
-          className="h-8 shrink-0 gap-2 self-start rounded-full bg-dashboard-dark px-4 text-xs font-semibold text-text-on-dark hover:bg-dashboard-dark-hover sm:self-auto"
-          style={{ touchAction: "manipulation" }}
-        >
-          <ArrowRight className="size-3.5" aria-hidden="true" />
-          Avanzar de etapa
-        </Button>
-      )}
+      {currentStage?.isCurrentStage &&
+        currentStage.jobOpeningId &&
+        currentStage.currentStageId && (
+          <AdvanceStageButton
+            applicantId={currentStage.applicantId}
+            jobOpeningId={currentStage.jobOpeningId}
+            currentStageId={currentStage.currentStageId}
+          />
+        )}
     </header>
   );
 }
