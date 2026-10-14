@@ -20,7 +20,6 @@ model User {
   members       Member[]
   invitations   Invitation[]
   lastName      String       @default("") @map("last_name")
-  status        UserStatus   @default(PendingInvitation)
   lastAccess    DateTime?    @map("last_access")
   role          String?
   banned        Boolean      @default(false)
@@ -92,12 +91,6 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
-}
-
-enum UserStatus {
-  Active
-  PendingInvitation
-  Inactive
 }
 
 enum EnglishLevel {

@@ -125,7 +125,6 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         data: {
           name: userDef.name,
           lastName: userDef.lastName,
-          status: "Active",
           emailVerified: true,
         },
       });
@@ -139,7 +138,6 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         data: {
           name: userDef.name,
           lastName: userDef.lastName,
-          status: "Active",
           emailVerified: true,
         },
       });

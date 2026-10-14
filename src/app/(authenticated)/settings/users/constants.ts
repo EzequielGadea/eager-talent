@@ -1,14 +1,18 @@
 export const userStatusConfig = {
-  Active: {
+  accepted: {
     label: "Activo",
     className: "bg-success-bg text-success",
   },
-  PendingInvitation: {
+  pending: {
     label: "Invitación pendiente",
     className: "bg-warning-bg text-warning",
   },
-  Inactive: {
-    label: "Inactivo",
+  rejected: {
+    label: "Invitación rechazada",
+    className: "bg-tag-gray-bg text-tag-gray-fg",
+  },
+  canceled: {
+    label: "Invitación cancelada",
     className: "bg-tag-gray-bg text-tag-gray-fg",
   },
 } as const;

@@ -16,8 +16,9 @@ export const listInterviewers = protectedProcedure.query(async ({ ctx }) => {
 
   return ctx.db.user.findMany({
     where: {
-      status: "Active",
       banned: false,
+      // Only users who already accepted their invitation have a membership
+      members: { some: {} },
     },
     orderBy: [{ name: "asc" }, { lastName: "asc" }],
     select: {
