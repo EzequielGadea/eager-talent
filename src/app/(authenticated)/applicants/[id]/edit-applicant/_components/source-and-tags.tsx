@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
-import { TagSelector } from "./tag-selector";
+import { TagSelector } from "../../../new-applicant/_components/tag-selector";
 import { Label } from "~/components/ui/label";
 import { api } from "~/lib/trpc/react";
 import {
