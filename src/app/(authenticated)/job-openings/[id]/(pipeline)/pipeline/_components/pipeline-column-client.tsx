@@ -222,7 +222,7 @@ export function PipelineColumnClient({
             jobOpeningId={jobOpeningId}
             currentStageId={stageId}
             isLastStage={isLastStage}
-            onAdvanced={handleCandidateAdvanced}
+            onAdvancedAction={handleCandidateAdvanced}
             canUpdateApplication={canUpdateApplication}
             canCreateInterview={canCreateInterview}
             canDeleteInterview={canDeleteInterview}
