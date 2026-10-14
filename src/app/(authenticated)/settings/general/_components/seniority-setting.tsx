@@ -2,7 +2,8 @@
 
 import { GripVertical, Plus, X } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import type { inferRouterOutputs } from "@trpc/server";
 
 import { Button } from "~/components/ui/button";
 
@@ -13,6 +14,7 @@ import { Input } from "~/components/ui/input";
 import { toast } from "~/components/ui/toast";
 
 import { api } from "~/lib/trpc/react";
+import type { AppRouter } from "~/server/api/root";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 
 import {
@@ -25,14 +27,31 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 
+type Seniority = NonNullable<
+  inferRouterOutputs<AppRouter>["seniority"]["getAllSeniorities"]
+>[number];
+
 export default function SenioritySetting() {
   const { data, isLoading } = api.seniority.getAllSeniorities.useQuery({});
+
+  if (isLoading) {
+    return <GeneralSettingsCardSkeleton title="Seniorities" rows={4} />;
+  }
+
+  if (!data) return null;
+
+  return <SeniorityEditor key={JSON.stringify(data)} data={data} />;
+}
+
+function SeniorityEditor({ data }: { data: Seniority[] }) {
   const utils = api.useUtils();
-  type Seniority = NonNullable<typeof data>[number];
 
   // ---STATES---
-  const [seniorities, setSeniorities] = useState<Seniority[]>([]);
-  const [savedSeniorities, setSavedSeniorities] = useState<Seniority[]>([]);
+  const initialSeniorities = data.map((seniority) => ({ ...seniority }));
+  const [seniorities, setSeniorities] =
+    useState<Seniority[]>(initialSeniorities);
+  const [savedSeniorities, setSavedSeniorities] =
+    useState<Seniority[]>(initialSeniorities);
   const [isAddingSeniority, setIsAddingSeniority] = useState(false);
   const [seniorityName, setSeniorityName] = useState("");
   const [seniorityToDel, setSeniorityToDel] = useState<{
@@ -78,16 +97,6 @@ export default function SenioritySetting() {
     setSeniorityName("");
   }
 
-  useEffect(() => {
-    if (!data) return;
-
-    const nextSeniorities = data.map((seniority) => ({
-      ...seniority,
-    }));
-    setSeniorities(nextSeniorities);
-    setSavedSeniorities(nextSeniorities);
-  }, [data]);
-
   const hasChanges =
     JSON.stringify(seniorities.map((seniority) => seniority.id)) !==
     JSON.stringify(savedSeniorities.map((seniority) => seniority.id));
@@ -132,10 +141,6 @@ export default function SenioritySetting() {
         order: index + 1,
       })),
     });
-  }
-
-  if (isLoading) {
-    return <GeneralSettingsCardSkeleton title="Seniorities" rows={4} />;
   }
 
   return (
@@ -293,7 +298,7 @@ export default function SenioritySetting() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              ¿Eliminar seniority "{seniorityToDel?.name}"?
+              ¿Eliminar seniority &quot;{seniorityToDel?.name}&quot;?
             </DialogTitle>
             <DialogDescription>
               Esta acción no se puede deshacer.

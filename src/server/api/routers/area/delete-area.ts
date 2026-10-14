@@ -18,7 +18,7 @@ export const deleteArea = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
-    const area = await ctx.db.area.update({
+    await ctx.db.area.update({
       where: { id: input.id },
       data: { deletedAt: new Date() },
     });

@@ -1,7 +1,7 @@
 "use client";
 
 import { GripVertical, Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -66,26 +66,6 @@ function getRequiredStageType(name: string) {
 
 export default function DefaultStageSetting() {
   const { data, isLoading } = api.templateStages.getDefault.useQuery();
-  const [stages, setStages] = useState<DefaultStage[]>([]);
-  const [savedStages, setSavedStages] = useState<DefaultStage[]>([]);
-
-  const updateDefault = api.templateStages.updateDefault.useMutation({
-    onSuccess: () => {
-      setSavedStages(stages.map((stage) => ({ ...stage })));
-      toast.add({ title: "Flujo predeterminado actualizado", type: "success" });
-    },
-    onError: (error) => {
-      toast.add({ title: error.message, type: "error" });
-    },
-  });
-
-  useEffect(() => {
-    if (!data) return;
-
-    const nextStages = data.stages.map((stage) => ({ ...stage }));
-    setStages(nextStages);
-    setSavedStages(nextStages);
-  }, [data]);
 
   if (isLoading) {
     return (
@@ -96,6 +76,30 @@ export default function DefaultStageSetting() {
       />
     );
   }
+
+  if (!data) return null;
+
+  return <DefaultStageEditor key={JSON.stringify(data.stages)} data={data} />;
+}
+
+function DefaultStageEditor({
+  data,
+}: {
+  data: { id: string; stages: DefaultStage[] };
+}) {
+  const initialStages = data.stages.map((stage) => ({ ...stage }));
+  const [stages, setStages] = useState<DefaultStage[]>(initialStages);
+  const [savedStages, setSavedStages] = useState<DefaultStage[]>(initialStages);
+
+  const updateDefault = api.templateStages.updateDefault.useMutation({
+    onSuccess: () => {
+      setSavedStages(stages.map((stage) => ({ ...stage })));
+      toast.add({ title: "Flujo predeterminado actualizado", type: "success" });
+    },
+    onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
+    },
+  });
 
   const hasChanges = JSON.stringify(stages) !== JSON.stringify(savedStages);
 
@@ -188,138 +192,131 @@ export default function DefaultStageSetting() {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-2">
-        {isLoading && (
-          <p className="py-4 text-sm text-text-tertiary">Cargando etapas...</p>
-        )}
+        <ol aria-live="polite" className="flex flex-col gap-2">
+          {stages.map((stage, index) => {
+            const locked = isBoundaryStage(index, stages.length);
+            const normalizedStageName = normalizeStageName(stage.name);
+            const isRequired = REQUIRED_MIDDLE_STAGES.some(
+              (requiredStage) =>
+                normalizeStageName(requiredStage) === normalizedStageName,
+            );
 
-        {!isLoading && (
-          <ol aria-live="polite" className="flex flex-col gap-2">
-            {stages.map((stage, index) => {
-              const locked = isBoundaryStage(index, stages.length);
-              const normalizedStageName = normalizeStageName(stage.name);
-              const isRequired = REQUIRED_MIDDLE_STAGES.some(
-                (requiredStage) =>
-                  normalizeStageName(requiredStage) === normalizedStageName,
-              );
-
-              return (
-                <li
-                  key={stage.key}
-                  className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2"
-                  onDragOver={(event) => {
-                    if (!locked) event.preventDefault();
+            return (
+              <li
+                key={stage.key}
+                className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2"
+                onDragOver={(event) => {
+                  if (!locked) event.preventDefault();
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  moveStage(
+                    Number(event.dataTransfer.getData("text/plain")),
+                    index,
+                  );
+                }}
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  draggable={!locked}
+                  disabled={locked}
+                  aria-label={
+                    locked
+                      ? `${stage.name} es una etapa fija`
+                      : `Reordenar etapa ${stage.name}`
+                  }
+                  onDragStart={(event) => {
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", String(index));
                   }}
-                  onDrop={(event) => {
-                    event.preventDefault();
-                    moveStage(
-                      Number(event.dataTransfer.getData("text/plain")),
-                      index,
-                    );
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowUp") {
+                      event.preventDefault();
+                      moveStage(index, index - 1);
+                    }
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      moveStage(index, index + 1);
+                    }
                   }}
                 >
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    draggable={!locked}
-                    disabled={locked}
-                    aria-label={
-                      locked
-                        ? `${stage.name} es una etapa fija`
-                        : `Reordenar etapa ${stage.name}`
-                    }
-                    onDragStart={(event) => {
-                      event.dataTransfer.effectAllowed = "move";
-                      event.dataTransfer.setData("text/plain", String(index));
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === "ArrowUp") {
-                        event.preventDefault();
-                        moveStage(index, index - 1);
-                      }
-                      if (event.key === "ArrowDown") {
-                        event.preventDefault();
-                        moveStage(index, index + 1);
-                      }
-                    }}
-                  >
-                    <GripVertical aria-hidden="true" />
-                  </Button>
-                  <span className="w-3.5 text-center font-mono text-[11px] text-text-tertiary">
-                    {index + 1}
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="size-2.5 shrink-0 rounded-full"
-                    style={{ backgroundColor: stage.color }}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <Input
-                      aria-label={`Nombre de la etapa ${index + 1}`}
-                      placeholder="Nombre de la etapa"
-                      value={stage.name}
-                      readOnly={locked}
-                      maxLength={80}
-                      className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
-                      onChange={(event) => {
-                        const name = event.target.value;
-                        const requiredType = getRequiredStageType(name);
+                  <GripVertical aria-hidden="true" />
+                </Button>
+                <span className="w-3.5 text-center font-mono text-[11px] text-text-tertiary">
+                  {index + 1}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="size-2.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: stage.color }}
+                />
+                <div className="min-w-0 flex-1">
+                  <Input
+                    aria-label={`Nombre de la etapa ${index + 1}`}
+                    placeholder="Nombre de la etapa"
+                    value={stage.name}
+                    readOnly={locked}
+                    maxLength={80}
+                    className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
+                    onChange={(event) => {
+                      const name = event.target.value;
+                      const requiredType = getRequiredStageType(name);
 
-                        updateStage(stage.key, {
-                          name,
-                          ...(requiredType ? { type: requiredType } : {}),
-                        });
-                      }}
-                    />
-                  </div>
-                  <Select
-                    value={stage.type || undefined}
-                    items={STAGE_TYPE_OPTIONS}
-                    disabled={locked || isRequired}
-                    onValueChange={(value: string | null) => {
-                      if (value) updateStage(stage.key, { type: value });
+                      updateStage(stage.key, {
+                        name,
+                        ...(requiredType ? { type: requiredType } : {}),
+                      });
                     }}
+                  />
+                </div>
+                <Select
+                  value={stage.type || undefined}
+                  items={STAGE_TYPE_OPTIONS}
+                  disabled={locked || isRequired}
+                  onValueChange={(value: string | null) => {
+                    if (value) updateStage(stage.key, { type: value });
+                  }}
+                >
+                  <SelectTrigger
+                    size="sm"
+                    aria-label={`Tipo de etapa de ${stage.name}`}
+                    className="w-28 rounded-full text-xs"
                   >
-                    <SelectTrigger
-                      size="sm"
-                      aria-label={`Tipo de etapa de ${stage.name}`}
-                      className="w-28 rounded-full text-xs"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent align="end">
-                      <SelectGroup>
-                        {STAGE_TYPE_OPTIONS.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    disabled={locked || isRequired}
-                    aria-label={
-                      locked || isRequired
-                        ? `No se puede eliminar la etapa ${stage.name}`
-                        : `Eliminar etapa ${stage.name}`
-                    }
-                    onClick={() => removeStage(stage.key)}
-                  >
-                    <X aria-hidden="true" />
-                  </Button>
-                </li>
-              );
-            })}
-          </ol>
-        )}
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    <SelectGroup>
+                      {STAGE_TYPE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  disabled={locked || isRequired}
+                  aria-label={
+                    locked || isRequired
+                      ? `No se puede eliminar la etapa ${stage.name}`
+                      : `Eliminar etapa ${stage.name}`
+                  }
+                  onClick={() => removeStage(stage.key)}
+                >
+                  <X aria-hidden="true" />
+                </Button>
+              </li>
+            );
+          })}
+        </ol>
 
         <button
           type="button"
-          disabled={isLoading}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
           onClick={addStage}
         >

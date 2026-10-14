@@ -28,7 +28,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 
-export default function descalificationMotiveSetting() {
+export default function DescalificationMotiveSetting() {
   const [isAddingMotive, setIsAddingMotive] = useState(false);
   const [motiveName, setMotiveName] = useState("");
   const [motiveToDelete, setMotiveToDelete] = useState<{

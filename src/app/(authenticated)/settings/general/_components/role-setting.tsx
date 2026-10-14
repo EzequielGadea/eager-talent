@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { Input } from "~/components/ui/input";
 import {
   DropdownMenu,
@@ -11,7 +11,6 @@ import {
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "~/lib/trpc/react";
-import { cn } from "~/lib/utils";
 import { useState, useEffect } from "react";
 import {
   Dialog,

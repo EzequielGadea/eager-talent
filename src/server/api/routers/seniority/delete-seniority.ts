@@ -18,7 +18,7 @@ export const deleteSeniority = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
-    const seniority = await ctx.db.seniority.update({
+    await ctx.db.seniority.update({
       where: { id: input.id },
       data: { deletedAt: new Date() },
     });

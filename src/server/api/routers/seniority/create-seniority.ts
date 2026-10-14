@@ -27,4 +27,5 @@ export const createSeniority = protectedProcedure
         color: input.color,
       },
     });
+    return seniority;
   });
