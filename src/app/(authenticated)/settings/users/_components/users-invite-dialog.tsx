@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as z from "zod";
-import { X, ArrowRight, Loader2, Plus } from "lucide-react";
+import { ArrowRight, Loader2, Plus } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { buttonVariants } from "~/components/ui/button";
 
@@ -89,22 +89,10 @@ export function UsersInviteDialog() {
       <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl">
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Header */}
-          <DialogHeader className="flex flex-row items-center justify-between px-[22px] py-[18px] border-b space-y-0">
+          <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
             <DialogTitle className="text-base font-bold tracking-tight m-0">
               Agregar usuario
             </DialogTitle>
-            <DialogClose
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="w-7 h-7 rounded-lg text-muted-foreground hover:bg-muted"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              }
-            />
           </DialogHeader>
 
           {/* Body */}
