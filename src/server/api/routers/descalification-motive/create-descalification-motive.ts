@@ -1,7 +1,7 @@
-import { headers } from "next/headers";
+//import { headers } from "next/headers";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import { auth } from "~/lib/auth";
+//import { TRPCError } from "@trpc/server";
+//import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const createDescalificationMotive = protectedProcedure
