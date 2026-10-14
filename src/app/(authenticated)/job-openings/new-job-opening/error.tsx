@@ -10,29 +10,33 @@ type JobOpeningErrorProps = {
   error: Error & {
     digest?: string;
     code?: string;
-  }
+  };
 };
 
-export default function JobOpeningError({ reset, error }: JobOpeningErrorProps) {
-    let title = "Error inesperado"
-    let message = "Algo salio mal, intentalo nuevamente mas tarde."
-    switch(error.message) {
-        case "CONFLICT": {
-            title = "No se pudo crear la vacante";
-            message = "Ya existía la vacante";
-            break;
-        }
-        case "NOT_FOUND": {
-            title = "No se pudo crear la vacante";
-            message = "El área, seniority o hiring manager indicado no existe";
-            break;
-        }
-        case "FORBIDDEN": {
-            title = "No tienes permiso para crear vacantes";
-            message = "Ingresa con tu usuario de recruiter para acceder a esta función.";
-            break;
-        }
+export default function JobOpeningError({
+  reset,
+  error,
+}: JobOpeningErrorProps) {
+  let title = "Error inesperado";
+  let message = "Algo salio mal, intentalo nuevamente mas tarde.";
+  switch (error.message) {
+    case "CONFLICT": {
+      title = "No se pudo crear la vacante";
+      message = "Ya existía la vacante";
+      break;
     }
+    case "NOT_FOUND": {
+      title = "No se pudo crear la vacante";
+      message = "El área, seniority o hiring manager indicado no existe";
+      break;
+    }
+    case "FORBIDDEN": {
+      title = "No tienes permiso para crear vacantes";
+      message =
+        "Ingresa con tu usuario de recruiter para acceder a esta función.";
+      break;
+    }
+  }
   return (
     <main className="flex min-h-0 flex-1 items-center justify-center p-6">
       <Card className="w-full max-w-md">
@@ -42,13 +46,9 @@ export default function JobOpeningError({ reset, error }: JobOpeningErrorProps) 
           </div>
 
           <div className="space-y-1">
-            <h1 className="text-lg font-semibold text-text-primary">
-              {title}
-            </h1>
+            <h1 className="text-lg font-semibold text-text-primary">{title}</h1>
 
-            <p className="text-sm text-text-secondary">
-              {message}
-            </p>
+            <p className="text-sm text-text-secondary">{message}</p>
           </div>
 
           <Button type="button" onClick={reset}>

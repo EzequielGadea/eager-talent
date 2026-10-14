@@ -86,7 +86,6 @@ type ScheduleInterviewDialogProps = {
   applicantId: string;
   jobOpeningId: string;
   candidateName: string;
-  stageName: string;
   onSuccess: () => void;
 };
 
@@ -111,7 +110,6 @@ export function ScheduleInterviewDialog({
   applicantId,
   jobOpeningId,
   candidateName,
-  stageName,
   onSuccess,
 }: ScheduleInterviewDialogProps) {
   const [search, setSearch] = useState("");

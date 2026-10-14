@@ -230,7 +230,6 @@ export function ShareApplicationDialog({
               {jobOpeningName}
             </span>
             {" · "}
-            
           </DialogDescription>
         </DialogHeader>
 
@@ -475,7 +474,6 @@ export function ShareApplicationDialog({
                   />
                 )}
               />
-              
             </div>
 
             <Controller
@@ -501,7 +499,6 @@ export function ShareApplicationDialog({
                         Sensible
                       </span>
                     </div>
-                    
                   </div>
                   <Lock
                     className="size-4 shrink-0 text-tag-amber-fg"
