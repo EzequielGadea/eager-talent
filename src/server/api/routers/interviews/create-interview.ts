@@ -10,7 +10,7 @@ import { protectedProcedure } from "~/server/api/trpc";
 import {
   parseStages,
   stageAllowsInterview,
-} from "~/lib/validations/interview-stages";
+} from "~/lib/validations/job-opening";
 
 export const createInterviewProcedure = protectedProcedure
   .input(

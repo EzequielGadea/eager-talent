@@ -1,14 +1,11 @@
-import { JobOpeningStageType } from "~/lib/validations/job-opening";
+import {
+  JobOpeningStageType,
+  PersistedStage,
+} from "~/lib/validations/job-opening";
 
 export type Stages = Stage[];
 
-export type Stage = {
-  key: string;
-  name: string;
-  type: string;
-  label: string;
-  color: string;
-};
+export type Stage = PersistedStage;
 
 export type Template = { id: string; stages: Stages };
 

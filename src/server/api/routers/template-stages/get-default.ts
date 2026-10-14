@@ -1,15 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { persistedStageSchema } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
-
-const stageSchema = z.object({
-  key: z.string(),
-  name: z.string(),
-  type: z.string(),
-  label: z.string(),
-  color: z.string(),
-});
 
 export const getDefault = protectedProcedure.query(async ({ ctx }) => {
   const template = await ctx.db.stageTemplate.findFirst({
@@ -19,6 +12,6 @@ export const getDefault = protectedProcedure.query(async ({ ctx }) => {
   if (!template) {
     throw new TRPCError({ code: "NOT_FOUND" });
   }
-  const stages = z.array(stageSchema).parse(template.stages);
+  const stages = z.array(persistedStageSchema).parse(template.stages);
   return { id: template?.id, stages };
 });

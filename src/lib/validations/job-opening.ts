@@ -11,6 +11,61 @@ export const jobOpeningStageTypeSchema = z.enum([
 
 export type JobOpeningStageType = z.infer<typeof jobOpeningStageTypeSchema>;
 
+// Stage types as stored in JobOpening.stages.
+export const persistedStageTypeSchema = z.enum([
+  "Ninguna",
+  "Entrevista",
+  "Oferta",
+  "Contratado",
+]);
+
+export type PersistedStageType = z.infer<typeof persistedStageTypeSchema>;
+
+// Stage format stored in JobOpening.stages (and StageTemplate.stages).
+export const persistedStageSchema = z.object({
+  key: z.string().min(1),
+  name: z.string(),
+  type: persistedStageTypeSchema,
+  color: z.string(),
+  label: z.string(),
+});
+
+export type PersistedStage = z.infer<typeof persistedStageSchema>;
+
+export const PERSISTED_TO_FORM_STAGE_TYPE: Record<
+  PersistedStageType,
+  JobOpeningStageType
+> = {
+  Ninguna: "none",
+  Entrevista: "interview",
+  Oferta: "offer",
+  Contratado: "hired",
+};
+
+export const FORM_TO_PERSISTED_STAGE_TYPE: Record<
+  JobOpeningStageType,
+  PersistedStageType
+> = {
+  none: "Ninguna",
+  interview: "Entrevista",
+  offer: "Oferta",
+  hired: "Contratado",
+};
+
+export const INTERVIEW_STAGE_TYPE = "Entrevista" satisfies PersistedStageType;
+
+export function stageAllowsInterview(
+  stage: Pick<PersistedStage, "type"> | null | undefined,
+) {
+  return stage?.type === INTERVIEW_STAGE_TYPE;
+}
+
+// Parses the JobOpening.stages Json; returns [] if it doesn't match the schema.
+export function parseStages(json: unknown): PersistedStage[] {
+  const result = z.array(persistedStageSchema).safeParse(json);
+  return result.success ? result.data : [];
+}
+
 export const jobOpeningStageSchema = z.object({
   id: z.string().min(1, "La etapa debe tener un identificador"),
 

@@ -1,4 +1,4 @@
-import { parseStages } from "~/lib/validations/interview-stages";
+import { parseStages } from "~/lib/validations/job-opening";
 
 import { getSourceIcon } from "./_components/source-icon";
 import { ApplicantsPromise, SharedApplicantsPromise } from "./types";

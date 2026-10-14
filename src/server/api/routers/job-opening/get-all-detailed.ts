@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
-import { parseStages } from "~/lib/validations/interview-stages";
+import { parseStages } from "~/lib/validations/job-opening";
 import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 import {

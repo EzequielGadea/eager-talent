@@ -3,7 +3,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
-import { parseStages } from "~/lib/validations/interview-stages";
+import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const disqualifyApplication = protectedProcedure

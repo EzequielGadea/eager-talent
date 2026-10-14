@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
-import { getInterviewName } from "~/lib/validations/interview-stages";
+import { getInterviewName } from "~/lib/get-interview-name";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const fetchPipelineCandidates = protectedProcedure

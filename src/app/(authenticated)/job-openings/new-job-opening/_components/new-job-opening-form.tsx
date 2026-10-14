@@ -29,15 +29,8 @@ import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
+import { persistedStageSchema } from "~/lib/validations/job-opening";
 import { useState } from "react";
-
-const stageSchema = z.object({
-  key: z.string(),
-  name: z.string(),
-  type: z.string(),
-  color: z.string(),
-  label: z.string(),
-});
 
 export const jobOpeningFormSchema = z
   .object({
@@ -51,7 +44,7 @@ export const jobOpeningFormSchema = z
     openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
     closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
     hiringManagerIds: z.array(z.string()),
-    stages: z.array(stageSchema).superRefine((stages, ctx) => {
+    stages: z.array(persistedStageSchema).superRefine((stages, ctx) => {
       const errors: string[] = [];
       if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
         errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'");
@@ -59,10 +52,10 @@ export const jobOpeningFormSchema = z
 
       if (
         stages[stages.length - 1]?.name !== "Contratado/a" ||
-        stages[stages.length - 1]?.type !== "Ninguna"
+        stages[stages.length - 1]?.type !== "Contratado"
       ) {
         errors.push(
-          "La última etapa debe ser 'Contratado/a' de tipo 'Ninguna'",
+          "La última etapa debe ser 'Contratado/a' de tipo 'Contratado'",
         );
       }
 

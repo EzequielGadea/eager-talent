@@ -1,6 +1,6 @@
-import type { JobOpeningStage } from "~/lib/validations/interview-stages";
+import type { PersistedStage } from "~/lib/validations/job-opening";
 
-export type PipelineStage = JobOpeningStage;
+export type PipelineStage = PersistedStage;
 
 export type PipelineCandidate = {
   applicantId: string;

@@ -1,5 +1,5 @@
 import { api } from "~/lib/trpc/server";
-import { stageAllowsInterview } from "~/lib/validations/interview-stages";
+import { stageAllowsInterview } from "~/lib/validations/job-opening";
 
 import { PipelineColumnClient } from "./pipeline-column-client";
 import type { PipelineStage } from "./types";

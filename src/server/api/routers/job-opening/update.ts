@@ -4,10 +4,13 @@ import { z } from "zod";
 import { auth } from "~/lib/auth";
 import {
   addRequiredStagesIssues,
+  FORM_TO_PERSISTED_STAGE_TYPE,
   isRequiredStageName,
   jobOpeningStagesChanged,
   jobOpeningStageSchema,
   jobOpeningStageTypeSchema,
+  PERSISTED_TO_FORM_STAGE_TYPE,
+  persistedStageTypeSchema,
   updateJobOpeningSchema,
   type JobOpeningStageType,
 } from "~/lib/validations/job-opening";
@@ -17,22 +20,6 @@ type CurrentStage = {
   id: string;
   name: string;
   type: JobOpeningStageType;
-};
-
-// JobOpening.stages keeps the format read by the pipeline and interviews:
-// { key, name, type: "Ninguna" | "Entrevista" | "Oferta", color, label }.
-const PERSISTED_STAGE_TYPES: Record<string, JobOpeningStageType> = {
-  Ninguna: "none",
-  Entrevista: "interview",
-  Oferta: "offer",
-};
-
-const FORM_TO_PERSISTED_STAGE_TYPE: Record<JobOpeningStageType, string> = {
-  none: "Ninguna",
-  interview: "Entrevista",
-  offer: "Oferta",
-  // "Contratado/a" is stored with type "Ninguna".
-  hired: "Ninguna",
 };
 
 // Neutral color for stages added from the edit form (same as "Aplicado").
@@ -88,13 +75,16 @@ function getCurrentStages(value: unknown): CurrentStage[] {
     }
 
     const name = stageRecord.name.trim();
+    const parsedPersistedType = persistedStageTypeSchema.safeParse(
+      stageRecord.type,
+    );
     const parsedType = jobOpeningStageTypeSchema.safeParse(stageRecord.type);
 
-    const type =
-      (typeof stageRecord.type === "string"
-        ? PERSISTED_STAGE_TYPES[stageRecord.type]
-        : undefined) ??
-      (parsedType.success ? parsedType.data : inferStageType(name));
+    const type = parsedPersistedType.success
+      ? PERSISTED_TO_FORM_STAGE_TYPE[parsedPersistedType.data]
+      : parsedType.success
+        ? parsedType.data
+        : inferStageType(name);
 
     return [
       {

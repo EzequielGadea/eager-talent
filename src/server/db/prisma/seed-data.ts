@@ -397,7 +397,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     {
       key: "98721",
       name: "Contratado/a",
-      type: "Ninguna",
+      type: "Contratado",
       color: "#059669",
       label: "Contratado",
     },
