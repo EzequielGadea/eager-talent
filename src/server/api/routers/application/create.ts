@@ -85,7 +85,7 @@ export const createApplicationProcedure = protectedProcedure
       });
     }
 
-    const stages = jobOpening.stages as Array<{ name: string }>;
+    const stages = jobOpening.stages as Array<{ key: string }>;
 
     const application = await ctx.db.application.create({
       data: {
@@ -94,7 +94,7 @@ export const createApplicationProcedure = protectedProcedure
         desiredSalaryAmount: input.desiredSalary,
         desiredSalaryCurrency: input.currency,
         availability: input.availability,
-        currentStage: stages[0]?.name,
+        currentStageId: stages[0]?.key,
       },
     });
 

@@ -78,7 +78,7 @@ export function PipelineDndProvider({
   function enqueueMove(variables: {
     applicantId: string;
     jobOpeningId: string;
-    targetStage: string;
+    targetStageId: string;
   }) {
     pendingRef.current += 1;
 
@@ -106,15 +106,15 @@ export function PipelineDndProvider({
 
   function handleDragEnd(event: DragEndEvent) {
     const data = event.active.data.current as
-      { candidate: PipelineCandidate; stage: string } | undefined;
+      { candidate: PipelineCandidate; stageId: string } | undefined;
 
-    const targetStage = event.over ? String(event.over.id) : null;
+    const targetStageId = event.over ? String(event.over.id) : null;
 
-    if (!data || !targetStage) {
+    if (!data || !targetStageId) {
       return;
     }
 
-    if (targetStage === data.stage) {
+    if (targetStageId === data.stageId) {
       return;
     }
 
@@ -125,15 +125,16 @@ export function PipelineDndProvider({
         // Si ya había un movimiento pendiente, conservamos la columna de
         // origen real (la del servidor). Si la pisamos, la columna original
         // deja de ocultar la card y aparece duplicada.
-        fromStage: current[data.candidate.applicantId]?.fromStage ?? data.stage,
-        toStage: targetStage,
+        fromStageId:
+          current[data.candidate.applicantId]?.fromStageId ?? data.stageId,
+        toStageId: targetStageId,
       },
     }));
 
     enqueueMove({
       applicantId: data.candidate.applicantId,
       jobOpeningId,
-      targetStage,
+      targetStageId,
     });
   }
 

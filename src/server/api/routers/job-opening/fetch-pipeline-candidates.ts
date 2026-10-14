@@ -2,14 +2,14 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
-import { getInterviewName } from "~/lib/interview-stages";
+import { getInterviewName } from "~/lib/validations/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const fetchPipelineCandidates = protectedProcedure
   .input(
     z.object({
       jobOpeningId: z.string(),
-      stageName: z.string(),
+      stageId: z.string(),
       limit: z.number().int().positive().max(50).default(3),
       offset: z.number().int().nonnegative().default(0),
     }),
@@ -42,7 +42,7 @@ export const fetchPipelineCandidates = protectedProcedure
 
     const where = {
       jobOpeningId: input.jobOpeningId,
-      currentStage: input.stageName,
+      currentStageId: input.stageId,
       active: true,
       ...(canReadAll.success
         ? {}

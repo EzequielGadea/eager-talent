@@ -7,7 +7,10 @@ import { format } from "date-fns";
 import { InterviewType } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
-import { parseStages, stageAllowsInterview } from "~/lib/interview-stages";
+import {
+  parseStages,
+  stageAllowsInterview,
+} from "~/lib/validations/interview-stages";
 
 export const createInterviewProcedure = protectedProcedure
   .input(
@@ -66,7 +69,7 @@ export const createInterviewProcedure = protectedProcedure
             jobOpeningId: input.jobOpeningId,
           },
         },
-        select: { applicantId: true, currentStage: true },
+        select: { applicantId: true, currentStageId: true },
       });
 
       if (!application) {
@@ -89,7 +92,7 @@ export const createInterviewProcedure = protectedProcedure
       }
 
       const currentStage = parseStages(jobOpening.stages).find(
-        (stage) => stage.name === application.currentStage,
+        (stage) => stage.key === application.currentStageId,
       );
 
       if (!currentStage || !stageAllowsInterview(currentStage)) {

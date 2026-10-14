@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
-import { getInterviewName } from "~/lib/interview-stages";
+import { getInterviewName } from "~/lib/validations/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getAssignedInterviews = protectedProcedure.query(

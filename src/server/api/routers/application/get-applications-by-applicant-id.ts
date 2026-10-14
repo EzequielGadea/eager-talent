@@ -2,6 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
+import { parseStages } from "~/lib/validations/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getApplicationsByApplicantIdProcedure = protectedProcedure
@@ -46,7 +47,7 @@ export const getApplicationsByApplicantIdProcedure = protectedProcedure
         jobOpeningId: true,
         applicationDate: true,
         active: true,
-        currentStage: true,
+        currentStageId: true,
         disqualificationDescription: true,
         desiredSalaryAmount: true,
         desiredSalaryCurrency: true,
@@ -55,13 +56,19 @@ export const getApplicationsByApplicantIdProcedure = protectedProcedure
           select: {
             id: true,
             name: true,
+            stages: true,
           },
         },
       },
     });
 
-    return applications.map((application) => ({
+    return applications.map(({ jobOpening, ...application }) => ({
       ...application,
+      currentStageName:
+        parseStages(jobOpening.stages).find(
+          (stage) => stage.key === application.currentStageId,
+        )?.name ?? application.currentStageId,
+      jobOpening: { id: jobOpening.id, name: jobOpening.name },
       desiredSalaryAmount: application.desiredSalaryAmount?.toString() ?? null,
     }));
   });

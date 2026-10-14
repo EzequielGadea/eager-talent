@@ -403,6 +403,16 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   ];
 
+  const stageKey = (name: string) => {
+    const stage = defaultStages.find((candidate) => candidate.name === name);
+
+    if (!stage) {
+      throw new Error(`Seed stage not found: ${name}`);
+    }
+
+    return stage.key;
+  };
+
   await prisma.stageTemplate.create({
     data: {
       stages: defaultStages,
@@ -566,7 +576,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista técnica",
+      currentStageId: stageKey("Entrevista técnica"),
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4500,
       desiredSalaryCurrency: "USD",
@@ -580,7 +590,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening2.id,
       applicationDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Aplicado",
+      currentStageId: stageKey("Aplicado"),
       stageEntryDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4200,
       desiredSalaryCurrency: "USD",
@@ -734,7 +744,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening3.id,
       applicationDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Aplicado",
+      currentStageId: stageKey("Aplicado"),
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3200,
       desiredSalaryCurrency: "USD",
@@ -842,7 +852,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening2.id,
       applicationDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista técnica",
+      currentStageId: stageKey("Entrevista técnica"),
       stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3800,
       desiredSalaryCurrency: "USD",
@@ -910,7 +920,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening2.id,
       applicationDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión de perfil",
+      currentStageId: stageKey("Revisión de perfil"),
       stageEntryDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3500,
       desiredSalaryCurrency: "USD",
@@ -987,7 +997,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista HR",
+      currentStageId: stageKey("Entrevista HR"),
       stageEntryDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 6000,
       desiredSalaryCurrency: "USD",
@@ -1064,7 +1074,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening5.id,
       applicationDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Aplicado",
+      currentStageId: stageKey("Aplicado"),
       stageEntryDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3400,
       desiredSalaryCurrency: "USD",
@@ -1121,7 +1131,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista técnica",
+      currentStageId: stageKey("Entrevista técnica"),
       stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4300,
       desiredSalaryCurrency: "USD",
@@ -1178,7 +1188,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening4.id,
       applicationDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión de perfil",
+      currentStageId: stageKey("Revisión de perfil"),
       stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4800,
       desiredSalaryCurrency: "USD",
@@ -1243,7 +1253,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Aplicado",
+      currentStageId: stageKey("Aplicado"),
       stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3600,
       desiredSalaryCurrency: "USD",
@@ -1309,7 +1319,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening5.id,
       applicationDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista técnica",
+      currentStageId: stageKey("Entrevista técnica"),
       stageEntryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3200,
       desiredSalaryCurrency: "USD",
@@ -1386,7 +1396,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening3.id,
       applicationDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Revisión de perfil",
+      currentStageId: stageKey("Revisión de perfil"),
       stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3500,
       desiredSalaryCurrency: "USD",
@@ -1463,7 +1473,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening1.id,
       applicationDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Oferta",
+      currentStageId: stageKey("Oferta"),
       stageEntryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 7000,
       desiredSalaryCurrency: "USD",
@@ -1541,7 +1551,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening6.id,
       applicationDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Entrevista HR",
+      currentStageId: stageKey("Entrevista HR"),
       stageEntryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4000,
       desiredSalaryCurrency: "USD",
@@ -1616,7 +1626,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOpeningId: jobOpening4.id,
       applicationDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
       active: true,
-      currentStage: "Aplicado",
+      currentStageId: stageKey("Aplicado"),
       stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4800,
       desiredSalaryCurrency: "USD",

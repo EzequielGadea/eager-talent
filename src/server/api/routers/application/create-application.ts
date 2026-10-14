@@ -119,9 +119,9 @@ export const createApplication = protectedProcedure
       typeof firstStage !== "object" ||
       firstStage === null ||
       Array.isArray(firstStage) ||
-      !("name" in firstStage) ||
-      typeof firstStage.name !== "string" ||
-      firstStage.name.trim() === ""
+      !("key" in firstStage) ||
+      typeof firstStage.key !== "string" ||
+      firstStage.key.trim() === ""
     ) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -129,7 +129,7 @@ export const createApplication = protectedProcedure
       });
     }
     const now = new Date();
-    const firstStageName = firstStage.name;
+    const firstStageId = firstStage.key;
     try {
       return await ctx.db.$transaction(async (tx) => {
         const application = await tx.application.create({
@@ -137,7 +137,7 @@ export const createApplication = protectedProcedure
             applicantId: input.applicantId,
             jobOpeningId: input.jobOpeningId,
             applicationDate: now,
-            currentStage: firstStageName,
+            currentStageId: firstStageId,
             active: true,
             stageEntryDate: now,
             desiredSalaryAmount: input.desiredSalaryAmount,
@@ -147,7 +147,7 @@ export const createApplication = protectedProcedure
           select: {
             applicantId: true,
             jobOpeningId: true,
-            currentStage: true,
+            currentStageId: true,
           },
         });
 

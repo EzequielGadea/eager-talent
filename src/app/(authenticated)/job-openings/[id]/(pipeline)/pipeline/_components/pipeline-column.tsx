@@ -1,5 +1,5 @@
 import { api } from "~/lib/trpc/server";
-import { stageAllowsInterview } from "~/lib/interview-stages";
+import { stageAllowsInterview } from "~/lib/validations/interview-stages";
 
 import { PipelineColumnClient } from "./pipeline-column-client";
 import type { PipelineStage } from "./types";
@@ -23,7 +23,7 @@ export async function PipelineColumn({
 }: PipelineColumnProps) {
   const data = await api.jobOpening.fetchPipelineCandidates({
     jobOpeningId,
-    stageName: stage.name,
+    stageId: stage.key,
     limit: 3,
     offset: 0,
   });
@@ -37,6 +37,7 @@ export async function PipelineColumn({
     >
       <PipelineColumnClient
         jobOpeningId={jobOpeningId}
+        stageId={stage.key}
         stageName={stage.name}
         initialCandidates={data.candidates}
         total={data.total}

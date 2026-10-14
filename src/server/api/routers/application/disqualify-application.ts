@@ -3,6 +3,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
+import { parseStages } from "~/lib/validations/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const disqualifyApplication = protectedProcedure
@@ -30,7 +31,11 @@ export const disqualifyApplication = protectedProcedure
           jobOpeningId: input.jobOpeningId,
         },
       },
-      select: { active: true, currentStage: true },
+      select: {
+        active: true,
+        currentStageId: true,
+        jobOpening: { select: { stages: true } },
+      },
     });
 
     if (!application) {
@@ -44,6 +49,11 @@ export const disqualifyApplication = protectedProcedure
       });
     }
 
+    const currentStageName =
+      parseStages(application.jobOpening.stages).find(
+        (stage) => stage.key === application.currentStageId,
+      )?.name ?? application.currentStageId;
+
     return ctx.db.$transaction(async (tx) => {
       // Conditional update: only succeeds if the application is still active
       // and still in the stage we read, so the activity logs the real stage.
@@ -51,7 +61,7 @@ export const disqualifyApplication = protectedProcedure
         where: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
-          currentStage: application.currentStage,
+          currentStageId: application.currentStageId,
           active: true,
         },
         data: {
@@ -73,7 +83,7 @@ export const disqualifyApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `descalificó la postulación desde "${application.currentStage}": ${input.reason}`,
+          description: `descalificó la postulación desde "${currentStageName}": ${input.reason}`,
         },
       });
 

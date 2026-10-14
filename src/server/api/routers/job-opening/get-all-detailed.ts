@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { parseStages } from "~/lib/validations/interview-stages";
 import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 import {
@@ -20,6 +21,7 @@ const jobOpeningSelect = {
   name: true,
   status: true,
   openingDate: true,
+  stages: true,
 
   area: {
     select: {
@@ -41,7 +43,7 @@ const jobOpeningSelect = {
       active: true,
     },
     select: {
-      currentStage: true,
+      currentStageId: true,
     },
   },
 } as const;
@@ -147,7 +149,14 @@ export const getAllJobOpeningsDetailed = protectedProcedure
     }
 
     return jobOpenings.map((jobOpening) => {
-      const { applications, ...jobOpeningData } = jobOpening;
+      const { applications, stages, ...jobOpeningData } = jobOpening;
+      const parsedStages = parseStages(stages);
+      const technicalStageId = parsedStages.find(
+        (stage) => stage.name === "Entrevista Técnica",
+      )?.key;
+      const offerStageId = parsedStages.find(
+        (stage) => stage.name === "Oferta",
+      )?.key;
 
       return {
         ...jobOpeningData,
@@ -155,11 +164,11 @@ export const getAllJobOpeningsDetailed = protectedProcedure
         applicants: applications.length,
 
         technicalInterviewApplicants: applications.filter(
-          (application) => application.currentStage === "Entrevista Técnica",
+          (application) => application.currentStageId === technicalStageId,
         ).length,
 
         offeredApplicants: applications.filter(
-          (application) => application.currentStage === "Oferta",
+          (application) => application.currentStageId === offerStageId,
         ).length,
       };
     });

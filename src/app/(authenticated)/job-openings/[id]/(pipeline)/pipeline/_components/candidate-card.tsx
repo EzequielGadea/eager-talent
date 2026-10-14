@@ -64,7 +64,7 @@ function formatInterviewDateTime(date: Date) {
 type CandidateCardProps = {
   candidate: PipelineCandidate;
   jobOpeningId: string;
-  currentStage: string;
+  currentStageId: string;
   isLastStage: boolean;
   onAdvanced: (applicantId: string) => void;
   canUpdateApplication: boolean;
@@ -75,7 +75,7 @@ type CandidateCardProps = {
 export function CandidateCard({
   candidate,
   jobOpeningId,
-  currentStage,
+  currentStageId,
   isLastStage,
   onAdvanced,
   canUpdateApplication,
@@ -91,7 +91,7 @@ export function CandidateCard({
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: candidate.applicantId,
-    data: { candidate, stage: currentStage },
+    data: { candidate, stageId: currentStageId },
     disabled: !canUpdateApplication,
   });
 
@@ -133,7 +133,7 @@ export function CandidateCard({
     advanceApplicationStageMutation.mutate({
       applicantId: candidate.applicantId,
       jobOpeningId,
-      currentStage,
+      currentStageId,
     });
   };
 
