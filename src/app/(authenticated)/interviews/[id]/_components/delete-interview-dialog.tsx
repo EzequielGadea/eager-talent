@@ -43,8 +43,10 @@ export function DeleteInterviewDialog({
       });
 
       // The interview page no longer exists, so go back to the applicant.
+      onOpenChange(false);
       startTransition(() => {
         router.push(`/applicants/${applicantId}`);
+        router.refresh();
       });
     },
   });
