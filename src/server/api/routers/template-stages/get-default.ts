@@ -1,7 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
-import { persistedStageSchema } from "~/lib/validations/job-opening";
+import { persistedStagesSchema } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getDefault = protectedProcedure.query(async ({ ctx }) => {
@@ -12,6 +11,6 @@ export const getDefault = protectedProcedure.query(async ({ ctx }) => {
   if (!template) {
     throw new TRPCError({ code: "NOT_FOUND" });
   }
-  const stages = z.array(persistedStageSchema).parse(template.stages);
+  const stages = persistedStagesSchema.parse(template.stages);
   return { id: template?.id, stages };
 });

@@ -4,7 +4,7 @@ import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { TRPCError } from "@trpc/server";
-import { persistedStageSchema } from "~/lib/validations/job-opening";
+import { persistedStagesSchema } from "~/lib/validations/job-opening";
 
 export const createJobOpening = protectedProcedure
   .input(
@@ -17,7 +17,7 @@ export const createJobOpening = protectedProcedure
       location: z.string(),
       openingDate: z.coerce.date(),
       closingDate: z.coerce.date(),
-      stages: z.array(persistedStageSchema).superRefine((stages) => {
+      stages: persistedStagesSchema.superRefine((stages) => {
         const errors: string[] = [];
         if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
           errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'");

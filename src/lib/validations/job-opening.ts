@@ -30,6 +30,20 @@ export const persistedStageSchema = z.object({
   label: z.string(),
 });
 
+export const persistedStagesSchema = z
+  .array(persistedStageSchema)
+  .superRefine((stages, ctx) => {
+    const stageKeys = stages.map((stage) => stage.key);
+
+    if (new Set(stageKeys).size !== stageKeys.length) {
+      ctx.addIssue({
+        code: "custom",
+        path: [],
+        message: "Las etapas no pueden tener identificadores repetidos",
+      });
+    }
+  });
+
 export type PersistedStage = z.infer<typeof persistedStageSchema>;
 
 export const PERSISTED_TO_FORM_STAGE_TYPE: Record<
@@ -62,7 +76,7 @@ export function stageAllowsInterview(
 
 // Parses the JobOpening.stages Json; returns [] if it doesn't match the schema.
 export function parseStages(json: unknown): PersistedStage[] {
-  const result = z.array(persistedStageSchema).safeParse(json);
+  const result = persistedStagesSchema.safeParse(json);
   return result.success ? result.data : [];
 }
 
