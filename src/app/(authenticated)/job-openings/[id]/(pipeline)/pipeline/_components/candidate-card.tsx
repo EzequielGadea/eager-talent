@@ -66,7 +66,7 @@ type CandidateCardProps = {
   jobOpeningId: string;
   currentStageId: string;
   isLastStage: boolean;
-  onAdvanced: (applicantId: string) => void;
+  onAdvancedAction: (applicantId: string) => void;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
   canDeleteInterview: boolean;
@@ -77,7 +77,7 @@ export function CandidateCard({
   jobOpeningId,
   currentStageId,
   isLastStage,
-  onAdvanced,
+  onAdvancedAction,
   canUpdateApplication,
   canCreateInterview,
   canDeleteInterview,
@@ -88,6 +88,10 @@ export function CandidateCard({
   const [isScheduleInterviewDialogOpen, setIsScheduleInterviewDialogOpen] =
     useState(false);
   const [isInterviewsDialogOpen, setIsInterviewsDialogOpen] = useState(false);
+  const [interviewToDelete, setInterviewToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: candidate.applicantId,
@@ -100,7 +104,7 @@ export function CandidateCard({
   const advanceApplicationStageMutation =
     api.application.advanceApplicationStage.useMutation({
       onSuccess: () => {
-        onAdvanced(candidate.applicantId);
+        onAdvancedAction(candidate.applicantId);
         router.refresh();
       },
       onError: (error) => {
@@ -114,6 +118,7 @@ export function CandidateCard({
         setIsInterviewsDialogOpen(false);
       }
 
+      setInterviewToDelete(null);
       router.refresh();
     },
     onError: (error) => {
@@ -329,25 +334,72 @@ export function CandidateCard({
                       variant="ghost"
                       aria-label={`Eliminar entrevista ${interview.name}`}
                       className="size-8 shrink-0 p-0 text-text-secondary hover:text-destructive"
-                      disabled={deleteInterviewMutation.isPending}
                       onClick={() =>
-                        deleteInterviewMutation.mutate({
-                          interviewId: interview.id,
+                        setInterviewToDelete({
+                          id: interview.id,
+                          name: interview.name,
                         })
                       }
                     >
-                      {deleteInterviewMutation.isPending &&
-                      deleteInterviewMutation.variables?.interviewId ===
-                        interview.id ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="size-4" />
-                      )}
+                      <Trash2 className="size-4" />
                     </Button>
                   )}
                 </li>
               ))}
             </ul>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {canDeleteInterview && (
+        <Dialog
+          open={interviewToDelete !== null}
+          onOpenChange={(open) => {
+            if (!open && !deleteInterviewMutation.isPending) {
+              setInterviewToDelete(null);
+            }
+          }}
+        >
+          <DialogContent className="w-full max-w-md">
+            <DialogTitle className="text-lg font-semibold text-text-primary">
+              ¿Eliminar entrevista?
+            </DialogTitle>
+
+            <DialogDescription className="text-sm text-text-secondary">
+              Vas a eliminar la entrevista “{interviewToDelete?.name}” de{" "}
+              {candidate.name} {candidate.lastName}. Esta acción no se puede
+              deshacer.
+            </DialogDescription>
+
+            <div className="mt-4 flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={deleteInterviewMutation.isPending}
+                onClick={() => setInterviewToDelete(null)}
+              >
+                Cancelar
+              </Button>
+
+              <Button
+                type="button"
+                variant="destructive"
+                disabled={deleteInterviewMutation.isPending}
+                onClick={() => {
+                  if (interviewToDelete) {
+                    deleteInterviewMutation.mutate({
+                      interviewId: interviewToDelete.id,
+                    });
+                  }
+                }}
+              >
+                {deleteInterviewMutation.isPending ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  "Sí, eliminar"
+                )}
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       )}
