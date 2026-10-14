@@ -106,7 +106,9 @@ export function ApplicantApplicationsCard({
   const [showApplyDialog, setShowApplyDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const effectiveSelection =
-    selection ?? getInitialSelection(applications, explorationInterviews);
+    selection?.type === "exploration" && explorationInterviews.length === 0
+      ? getInitialSelection(applications, explorationInterviews)
+      : (selection ?? getInitialSelection(applications, explorationInterviews));
 
   const isExploration = effectiveSelection?.type === "exploration";
   const app =
