@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { LoadMoreCandidates } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/load-more-candidates";
 
@@ -13,6 +13,7 @@ type DisqualifiedColumnProps = {
   stageColor: string;
   applications: DisqualifiedApplication[];
   canRequalify: boolean;
+  now: number;
 };
 
 export function DisqualifiedColumn({
@@ -21,8 +22,13 @@ export function DisqualifiedColumn({
   stageColor,
   applications,
   canRequalify,
+  now,
 }: DisqualifiedColumnProps) {
   const [visibleCount, setVisibleCount] = useState(DISQUALIFIED_PAGE_SIZE);
+
+  useEffect(() => {
+    return () => setVisibleCount(DISQUALIFIED_PAGE_SIZE);
+  }, []);
 
   const visibleApplications = applications.slice(0, visibleCount);
   const remaining = applications.length - visibleApplications.length;
@@ -48,6 +54,7 @@ export function DisqualifiedColumn({
             application={application}
             jobOpeningId={jobOpeningId}
             canRequalify={canRequalify}
+            now={now}
           />
         ))}
 
