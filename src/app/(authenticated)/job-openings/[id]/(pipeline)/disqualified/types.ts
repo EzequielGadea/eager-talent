@@ -9,3 +9,6 @@ export type DisqualifiedApplication = {
   photo: string | null;
   role: string;
 };
+
+export const DISQUALIFIED_PAGE_SIZE = 3;
+export const DEFAULT_STAGE_COLOR = "var(--muted-foreground)"; // default color if its undefined

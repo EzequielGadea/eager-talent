@@ -87,9 +87,7 @@ export const disqualifyApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `descalificó la postulación desde "${application.currentStage}": ${motive.name}${
-            input.description ? ` (${input.description})` : ""
-          }`,
+          description: `descalificó postulación desde "${application.currentStage}": ${motive.name}`,
         },
       });
 
