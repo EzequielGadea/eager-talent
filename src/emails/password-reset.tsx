@@ -79,7 +79,7 @@ export const PasswordResetEmail = ({
                 </Section>
 
                 <Text className="font-16 text-fg-2 mx-auto mt-0 mb-8 max-w-95 text-center font-sans">
-                  Alguien decidió enviarte este corre para restablecer tu contraseña, para hacerlo hace
+                  Alguien solicitó restablecer tu contraseña. Para hacerlo, haz
                   click en el botón de abajo.
                 </Text>
 
@@ -93,8 +93,8 @@ export const PasswordResetEmail = ({
                 </Section>
 
                 <Text className="font-13 text-fg-3 mx-auto mt-8 mb-0 max-w-100 text-center font-sans">
-                  Si no solicitaste este corre, ignoralo.
-                  Tu contraseña solo cambia si entrás al
+                  Si no solicitaste este correo, ignóralo.
+                  Tu contraseña solo cambia si hacés click en el
                   botón de arriba.
                 </Text>
               </Section>

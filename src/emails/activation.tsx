@@ -9,7 +9,6 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Preview,
   Row,
   Section,
@@ -18,7 +17,6 @@ import {
 } from "react-email";
 import { barebonesBoxedTailwindConfig } from "./theme";
 import { BarebonesFonts } from "./theme-fonts";
-import { EagerTalentBrand } from "~/app/(authenticated)/_components/app-sidebar";
 
 interface ConfirmEmailProps {
   companyName: string;
@@ -63,7 +61,7 @@ export const ConfirmEmail = ({ companyName, url }: ConfirmEmailProps) => (
                 </Section>
 
                 <Text className="font-16 text-fg-2 mx-auto mt-0 mb-8 max-w-95 text-center font-sans">
-                  Para acceder solo tenés que hacer click en el botón de abajo.
+                  Para acceder, solo tenés que hacer click en el botón de abajo.
                 </Text>
 
                 <Section className="mb-6 text-center">
@@ -76,9 +74,9 @@ export const ConfirmEmail = ({ companyName, url }: ConfirmEmailProps) => (
                 </Section>
 
                 <Text className="font-13 text-fg-3 mx-auto mt-8 mb-0 max-w-100 text-center font-sans">
-                  Si no solicitaste acceso
+                  Si no solicitaste acceso,
                   <br />
-                  por favor ignora este correo.
+                  ignora este correo.
                 </Text>
               </Section>
             </Section>
