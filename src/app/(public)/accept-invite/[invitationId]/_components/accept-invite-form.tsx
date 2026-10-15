@@ -66,7 +66,7 @@ export function AcceptInviteForm({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { password: "", confirmPassword: "" },
+    defaultValues: { name: "", password: "", confirmPassword: "" },
     mode: "onTouched",
   });
 
