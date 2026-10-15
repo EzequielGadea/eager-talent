@@ -133,7 +133,7 @@ export function UsersInviteDialog() {
               </Label>
               <Input
                 placeholder="camila.torres@eagerworks.com"
-                className="h-10 px-3.25 text-sm bg-card border-input rounded-md focus-visible:ring-1"
+                className="h-10 px-3.25 text-sm bg-card border-input rounded-md focus-visible:border-border-focus! focus-visible:ring-1! focus-visible:ring-accent-green/30!"
                 {...register("email")}
               />
               {errors.email && (
@@ -162,14 +162,14 @@ export function UsersInviteDialog() {
                       htmlFor="role-recruiter"
                       className={`flex items-start gap-2.5 p-[11px_13px] border rounded-lg cursor-pointer transition-colors ${
                         field.value === "recruiter"
-                          ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20"
+                          ? "border-accent-green bg-success-bg"
                           : "border-border hover:bg-muted/50"
                       }`}
                     >
                       <RadioGroupItem
                         value="recruiter"
                         id="role-recruiter"
-                        className="mt-0.5"
+                        className="mt-0.5 data-checked:border-2 data-checked:border-accent-green data-checked:bg-accent-green"
                       />
                       <div className="grid gap-0.5">
                         <span className="text-[13px] font-semibold">
@@ -187,14 +187,14 @@ export function UsersInviteDialog() {
                       htmlFor="role-hiring-manager"
                       className={`flex items-start gap-2.5 p-[11px_13px] border rounded-lg cursor-pointer transition-colors ${
                         field.value === "hiringManager"
-                          ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20"
+                          ? "border-accent-green bg-success-bg"
                           : "border-border hover:bg-muted/50"
                       }`}
                     >
                       <RadioGroupItem
                         value="hiringManager"
                         id="role-hiring-manager"
-                        className="mt-0.5"
+                        className="mt-0.5 data-checked:border-2 data-checked:border-accent-green data-checked:bg-accent-green"
                       />
                       <div className="grid gap-0.5">
                         <span className="text-[13px] font-semibold">
