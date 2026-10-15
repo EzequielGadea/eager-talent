@@ -27,9 +27,12 @@ import {
   ColorPickerInput,
 } from "~/components/ui/color-picker";
 import { Input } from "~/components/ui/input";
-import { JobOpeningStageType } from "~/lib/validations/job-opening";
+import {
+  PERSISTED_TO_FORM_STAGE_TYPE,
+  type PersistedStageType,
+} from "~/lib/validations/job-opening";
 
-const types = [
+const types: { name: PersistedStageType; key: number }[] = [
   { name: "Ninguna", key: 0 },
   { name: "Entrevista", key: 1 },
   { name: "Oferta", key: 2 },
@@ -77,7 +80,7 @@ export default function OpeningStage(props: {
 
   function newStage() {
     const key = crypto.randomUUID();
-    const added = {
+    const added: Stage = {
       key: key,
       name: "nueva etapa",
       type: "Ninguna",
@@ -279,28 +282,8 @@ function IndividualStage(props: {
     }
   };
 
-  const recordType = (name: string) => {
-    let newRecordType: JobOpeningStageType = "none";
-    switch (name) {
-      case "Ninguna": {
-        newRecordType = "none";
-        break;
-      }
-      case "Entrevista": {
-        newRecordType = "interview";
-        break;
-      }
-      case "Oferta": {
-        newRecordType = "offer";
-        break;
-      }
-      case "Contratado": {
-        newRecordType = "hired";
-        break;
-      }
-    }
-    return newRecordType;
-  };
+  const recordType = (type: PersistedStageType) =>
+    PERSISTED_TO_FORM_STAGE_TYPE[type];
 
   return (
     <div

@@ -13,6 +13,7 @@ import type { PipelineCandidate } from "./types";
 
 type PipelineColumnClientProps = {
   jobOpeningId: string;
+  stageId: string;
   stageName: string;
   initialCandidates: PipelineCandidate[];
   total: number;
@@ -24,6 +25,7 @@ type PipelineColumnClientProps = {
 
 export function PipelineColumnClient({
   jobOpeningId,
+  stageId,
   stageName,
   initialCandidates,
   total,
@@ -33,7 +35,7 @@ export function PipelineColumnClient({
   canDeleteInterview,
 }: PipelineColumnClientProps) {
   const { setNodeRef, isOver } = useDroppable({
-    id: stageName,
+    id: stageId,
   });
 
   const { moves, clearMove } = usePipelineMoves();
@@ -92,8 +94,8 @@ export function PipelineColumnClient({
     Object.entries(moves)
       .filter(
         ([applicantId, move]) =>
-          move.toStage !== stageName &&
-          (move.fromStage === stageName || allCandidateIds.has(applicantId)),
+          move.toStageId !== stageId &&
+          (move.fromStageId === stageId || allCandidateIds.has(applicantId)),
       )
       .map(([applicantId]) => applicantId),
   );
@@ -111,7 +113,7 @@ export function PipelineColumnClient({
   }
 
   const movedIn = Object.values(moves)
-    .filter((move) => move.toStage === stageName)
+    .filter((move) => move.toStageId === stageId)
     .map((move) => move.candidate)
     .filter((candidate) => !allCandidateIds.has(candidate.applicantId));
 
@@ -139,7 +141,7 @@ export function PipelineColumnClient({
   useEffect(() => {
     for (const move of Object.values(moves)) {
       if (
-        move.toStage === stageName &&
+        move.toStageId === stageId &&
         initialCandidates.some(
           (candidate) => candidate.applicantId === move.candidate.applicantId,
         )
@@ -147,12 +149,12 @@ export function PipelineColumnClient({
         clearMove(move.candidate.applicantId);
       }
     }
-  }, [initialCandidates, moves, stageName, clearMove]);
+  }, [initialCandidates, moves, stageId, clearMove]);
 
   const fetchMore = api.jobOpening.fetchPipelineCandidates.useQuery(
     {
       jobOpeningId,
-      stageName,
+      stageId,
       limit: 3,
       offset: loadedCount,
     },
@@ -218,7 +220,7 @@ export function PipelineColumnClient({
             key={candidate.applicantId}
             candidate={candidate}
             jobOpeningId={jobOpeningId}
-            currentStage={stageName}
+            currentStageId={stageId}
             isLastStage={isLastStage}
             onAdvancedAction={handleCandidateAdvanced}
             canUpdateApplication={canUpdateApplication}

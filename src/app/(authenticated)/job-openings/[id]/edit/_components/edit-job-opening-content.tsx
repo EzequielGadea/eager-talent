@@ -1,5 +1,7 @@
 import {
   jobOpeningStageTypeSchema,
+  PERSISTED_TO_FORM_STAGE_TYPE,
+  persistedStageTypeSchema,
   type JobOpeningStageType,
   type UpdateJobOpeningInput,
 } from "~/lib/validations/job-opening";
@@ -34,13 +36,6 @@ function normalizeLocation(
 
   return "Indiferente";
 }
-
-// Types stored in JobOpening.stages (read by the pipeline) → form values.
-const PERSISTED_STAGE_TYPES: Record<string, JobOpeningStageType> = {
-  Ninguna: "none",
-  Entrevista: "interview",
-  Oferta: "offer",
-};
 
 function inferStageType(name: string): JobOpeningStageType {
   const normalizedName = name.toLocaleLowerCase("es");
@@ -80,13 +75,14 @@ function normalizeStages(value: unknown): UpdateJobOpeningInput["stages"] {
     }
 
     const name = stageRecord.name.trim();
-    const parsedType = jobOpeningStageTypeSchema.safeParse(stageRecord.type);
+    const persistedType = persistedStageTypeSchema.safeParse(stageRecord.type);
+    const formType = jobOpeningStageTypeSchema.safeParse(stageRecord.type);
 
-    const type =
-      (typeof stageRecord.type === "string"
-        ? PERSISTED_STAGE_TYPES[stageRecord.type]
-        : undefined) ??
-      (parsedType.success ? parsedType.data : inferStageType(name));
+    const type = persistedType.success
+      ? PERSISTED_TO_FORM_STAGE_TYPE[persistedType.data]
+      : formType.success
+        ? formType.data
+        : inferStageType(name);
 
     return [
       {

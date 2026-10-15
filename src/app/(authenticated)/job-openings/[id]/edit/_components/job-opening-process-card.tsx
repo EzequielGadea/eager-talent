@@ -52,6 +52,7 @@ const STAGE_TYPE_OPTIONS: Array<{
   { value: "none", label: "Ninguna" },
   { value: "interview", label: "Entrevista" },
   { value: "offer", label: "Oferta" },
+  { value: "hired", label: "Contratado" },
 ];
 
 function isBoundaryStage(index: number, totalStages: number) {

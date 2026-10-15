@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const moveApplicationToStage = protectedProcedure
@@ -11,7 +12,7 @@ export const moveApplicationToStage = protectedProcedure
     z.object({
       applicantId: z.string(),
       jobOpeningId: z.string(),
-      targetStage: z.string(),
+      targetStageId: z.string(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -42,7 +43,7 @@ export const moveApplicationToStage = protectedProcedure
         select: {
           applicantId: true,
           jobOpeningId: true,
-          currentStage: true,
+          currentStageId: true,
           active: true,
         },
       }),
@@ -79,30 +80,26 @@ export const moveApplicationToStage = protectedProcedure
       });
     }
 
-    const stages = Array.isArray(jobOpening.stages) ? jobOpening.stages : [];
+    const stages = parseStages(jobOpening.stages);
 
-    const targetStageExists = stages.some(
-      (stage) =>
-        typeof stage === "object" &&
-        stage !== null &&
-        !Array.isArray(stage) &&
-        "name" in stage &&
-        typeof stage.name === "string" &&
-        stage.name === input.targetStage,
+    const targetStage = stages.find(
+      (stage) => stage.key === input.targetStageId,
     );
 
-    if (!targetStageExists) {
+    if (!targetStage) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Target stage was not found",
       });
     }
 
-    if (application.currentStage === input.targetStage) {
+    if (application.currentStageId === input.targetStageId) {
       return application;
     }
 
-    const fromStage = application.currentStage;
+    const fromStageId = application.currentStageId;
+    const fromStageName =
+      stages.find((stage) => stage.key === fromStageId)?.name ?? fromStageId;
 
     return ctx.db.$transaction(async (tx) => {
       // Conditional update: only succeeds if the application is still active
@@ -111,11 +108,11 @@ export const moveApplicationToStage = protectedProcedure
         where: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
-          currentStage: fromStage,
+          currentStageId: fromStageId,
           active: true,
         },
         data: {
-          currentStage: input.targetStage,
+          currentStageId: targetStage.key,
           stageEntryDate: new Date(),
         },
       });
@@ -132,14 +129,14 @@ export const moveApplicationToStage = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `movió la postulación de "${fromStage}" a "${input.targetStage}"`,
+          description: `movió la postulación de "${fromStageName}" a "${targetStage.name}"`,
         },
       });
 
       return {
         applicantId: input.applicantId,
         jobOpeningId: input.jobOpeningId,
-        currentStage: input.targetStage,
+        currentStageId: targetStage.key,
       };
     });
   });

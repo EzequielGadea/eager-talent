@@ -126,6 +126,7 @@ export const fetchShared = protectedProcedure
                 select: {
                   id: true,
                   name: true,
+                  stages: true,
                 },
               },
             },

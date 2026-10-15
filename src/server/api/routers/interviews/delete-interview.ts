@@ -4,7 +4,7 @@ import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 
 import { auth } from "~/lib/auth";
-import { getInterviewName } from "~/lib/interview-stages";
+import { getInterviewName } from "~/lib/get-interview-name";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const deleteInterviewProcedure = protectedProcedure

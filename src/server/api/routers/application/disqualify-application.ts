@@ -3,6 +3,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
+import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const disqualifyApplication = protectedProcedure
@@ -31,7 +32,11 @@ export const disqualifyApplication = protectedProcedure
           jobOpeningId: input.jobOpeningId,
         },
       },
-      select: { active: true, currentStage: true },
+      select: {
+        active: true,
+        currentStageId: true,
+        jobOpening: { select: { stages: true } },
+      },
     });
 
     if (!application) {
@@ -56,6 +61,10 @@ export const disqualifyApplication = protectedProcedure
         message: "El motivo seleccionado no existe",
       });
     }
+    const currentStageName =
+      parseStages(application.jobOpening.stages).find(
+        (stage) => stage.key === application.currentStageId,
+      )?.name ?? application.currentStageId;
 
     return ctx.db.$transaction(async (tx) => {
       // Conditional update: only succeeds if the application is still active
@@ -64,7 +73,7 @@ export const disqualifyApplication = protectedProcedure
         where: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
-          currentStage: application.currentStage,
+          currentStageId: application.currentStageId,
           active: true,
         },
         data: {
@@ -87,7 +96,7 @@ export const disqualifyApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `descalificó postulación desde "${application.currentStage}": ${motive.name}`,
+          description: `descalificó postulación desde "${currentStageName}": ${motive.name}`,
         },
       });
 

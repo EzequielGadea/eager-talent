@@ -143,6 +143,7 @@ export const fetchAll = protectedProcedure
                 select: {
                   id: true,
                   name: true,
+                  stages: true,
                 },
               },
             },

@@ -1,15 +1,16 @@
-import { randomUUID } from "node:crypto";
-
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
 import {
   addRequiredStagesIssues,
+  FORM_TO_PERSISTED_STAGE_TYPE,
   isRequiredStageName,
   jobOpeningStagesChanged,
   jobOpeningStageSchema,
   jobOpeningStageTypeSchema,
+  PERSISTED_TO_FORM_STAGE_TYPE,
+  persistedStageTypeSchema,
   updateJobOpeningSchema,
   type JobOpeningStageType,
 } from "~/lib/validations/job-opening";
@@ -19,22 +20,6 @@ type CurrentStage = {
   id: string;
   name: string;
   type: JobOpeningStageType;
-};
-
-// JobOpening.stages keeps the format read by the pipeline and interviews:
-// { key, name, type: "Ninguna" | "Entrevista" | "Oferta", color, label }.
-const PERSISTED_STAGE_TYPES: Record<string, JobOpeningStageType> = {
-  Ninguna: "none",
-  Entrevista: "interview",
-  Oferta: "offer",
-};
-
-const FORM_TO_PERSISTED_STAGE_TYPE: Record<JobOpeningStageType, string> = {
-  none: "Ninguna",
-  interview: "Entrevista",
-  offer: "Oferta",
-  // "Contratado/a" is stored with type "Ninguna".
-  hired: "Ninguna",
 };
 
 // Neutral color for stages added from the edit form (same as "Aplicado").
@@ -90,13 +75,16 @@ function getCurrentStages(value: unknown): CurrentStage[] {
     }
 
     const name = stageRecord.name.trim();
+    const parsedPersistedType = persistedStageTypeSchema.safeParse(
+      stageRecord.type,
+    );
     const parsedType = jobOpeningStageTypeSchema.safeParse(stageRecord.type);
 
-    const type =
-      (typeof stageRecord.type === "string"
-        ? PERSISTED_STAGE_TYPES[stageRecord.type]
-        : undefined) ??
-      (parsedType.success ? parsedType.data : inferStageType(name));
+    const type = parsedPersistedType.success
+      ? PERSISTED_TO_FORM_STAGE_TYPE[parsedPersistedType.data]
+      : parsedType.success
+        ? parsedType.data
+        : inferStageType(name);
 
     return [
       {
@@ -213,7 +201,7 @@ export const updateJobOpening = protectedProcedure
           stages: true,
           applications: {
             select: {
-              currentStage: true,
+              currentStageId: true,
             },
           },
         },
@@ -331,14 +319,14 @@ export const updateJobOpening = protectedProcedure
       input.stages.map((stage) => [stage.id, stage]),
     );
 
-    const removedStageNames = new Set(
+    const removedStageIds = new Set(
       currentStages
         .filter((stage) => !nextStagesById.has(stage.id))
-        .map((stage) => stage.name),
+        .map((stage) => stage.id),
     );
 
     const occupiedRemovedStage = currentJobOpening.applications.find(
-      (application) => removedStageNames.has(application.currentStage),
+      (application) => removedStageIds.has(application.currentStageId),
     );
 
     if (occupiedRemovedStage) {
@@ -349,89 +337,45 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
-    const renamedStages = currentStages.flatMap((currentStage) => {
-      const nextStage = nextStagesById.get(currentStage.id);
+    return ctx.db.jobOpening.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        name: input.name,
+        status: input.status,
+        hasBeenOpened: hasBeenOpened || input.status === "Open",
+        location: input.location,
+        openingDate: new Date(`${input.openingDate}T00:00:00.000Z`),
+        targetClosingDate: new Date(`${input.targetClosingDate}T00:00:00.000Z`),
 
-      if (!nextStage || nextStage.name === currentStage.name) {
-        return [];
-      }
+        // Unchanged stages are not rewritten.
+        ...(stagesChanged
+          ? {
+              stages: input.stages.map((stage) =>
+                toPersistedStage(stage, persistedStagesById.get(stage.id)),
+              ),
+            }
+          : {}),
 
-      return [
-        {
-          previousName: currentStage.name,
-          nextName: nextStage.name,
-          temporaryName: `__stage_migration_${randomUUID()}`,
-        },
-      ];
-    });
-
-    return ctx.db.$transaction(async (transaction) => {
-      for (const renamedStage of renamedStages) {
-        await transaction.application.updateMany({
-          where: {
-            jobOpeningId: input.id,
-            currentStage: renamedStage.previousName,
-          },
-          data: {
-            currentStage: renamedStage.temporaryName,
-          },
-        });
-      }
-
-      for (const renamedStage of renamedStages) {
-        await transaction.application.updateMany({
-          where: {
-            jobOpeningId: input.id,
-            currentStage: renamedStage.temporaryName,
-          },
-          data: {
-            currentStage: renamedStage.nextName,
-          },
-        });
-      }
-
-      return transaction.jobOpening.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          name: input.name,
-          status: input.status,
-          hasBeenOpened: hasBeenOpened || input.status === "Open",
-          location: input.location,
-          openingDate: new Date(`${input.openingDate}T00:00:00.000Z`),
-          targetClosingDate: new Date(
-            `${input.targetClosingDate}T00:00:00.000Z`,
-          ),
-
-          // Unchanged stages are not rewritten.
-          ...(stagesChanged
-            ? {
-                stages: input.stages.map((stage) =>
-                  toPersistedStage(stage, persistedStagesById.get(stage.id)),
-                ),
-              }
-            : {}),
-
-          area: {
-            connect: {
-              id: input.areaId,
-            },
-          },
-
-          seniorities: {
-            set: input.seniorityIds.map((id) => ({ id })),
-          },
-
-          hiringManagers: {
-            set: input.hiringManagerIds.map((id) => ({ id })),
+        area: {
+          connect: {
+            id: input.areaId,
           },
         },
-        select: {
-          id: true,
-          name: true,
-          status: true,
+
+        seniorities: {
+          set: input.seniorityIds.map((id) => ({ id })),
         },
-      });
+
+        hiringManagers: {
+          set: input.hiringManagerIds.map((id) => ({ id })),
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+      },
     });
   });
