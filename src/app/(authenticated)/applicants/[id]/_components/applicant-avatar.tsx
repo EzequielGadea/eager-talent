@@ -1,9 +1,12 @@
 "use client";
 
 import Image from "next/image";
+
 import { useState } from "react";
 
 import { getSafeExternalUrl } from "../_lib/external-url";
+
+import getAvatar from "~/lib/avatar";
 
 type ApplicantAvatarProps = {
   name: string;
@@ -17,12 +20,14 @@ export function ApplicantAvatar({
   photo,
 }: ApplicantAvatarProps) {
   const photoUrl = getSafeExternalUrl(photo);
+  const avatar = getAvatar(name, lastName);
   const [failedPhoto, setFailedPhoto] = useState<string | null>(null);
-  const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   const fullName = `${name} ${lastName}`;
 
   return (
-    <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-xl font-semibold text-tag-green-fg">
+    <div
+      className={`flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl ${avatar.colorClass} text-xl font-semibold`}
+    >
       {photoUrl && photoUrl !== failedPhoto ? (
         <Image
           src={photoUrl}
@@ -35,7 +40,7 @@ export function ApplicantAvatar({
         />
       ) : (
         <span role="img" aria-label={fullName}>
-          {initials}
+          {avatar.initials}
         </span>
       )}
     </div>

@@ -38,6 +38,8 @@ import type { PipelineCandidate } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
 
+import getAvatar from "~/lib/avatar";
+
 const modalityLabels: Record<string, string> = {
   VideoCall: "Videollamada",
   InPerson: "Presencial",
@@ -154,18 +156,10 @@ export function CandidateCard({
     "bg-tag-amber-bg text-tag-amber-fg",
   ];
 
-  function getAvatarColor(id: string) {
-    const hash = id
-      .split("")
-      .reduce((total, character) => total + character.charCodeAt(0), 0);
+  const avatar = getAvatar(candidate.name, candidate.lastName);
 
-    return avatarColors[hash % avatarColors.length];
-  }
-
-  const initials =
-    `${candidate.name.charAt(0)}${candidate.lastName.charAt(0)}`.toUpperCase();
-
-  const avatarColor = getAvatarColor(candidate.applicantId);
+  const initials = avatar.initials;
+  const avatarColor = avatar.colorClass;
 
   return (
     <>

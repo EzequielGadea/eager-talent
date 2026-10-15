@@ -9,6 +9,8 @@ import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
+import getAvatar from "~/lib/avatar";
+
 export default function AssignedInterviews() {
   const router = useRouter();
 
@@ -55,10 +57,6 @@ export default function AssignedInterviews() {
       ) : (
         <div className="flex flex-col divide-y divide-dashboard-border">
           {interviews.map((interview) => {
-            const applicantName = `${interview.applicant.name} ${interview.applicant.lastName}`;
-            const applicantInitials =
-              `${interview.applicant.name.charAt(0)}${interview.applicant.lastName.charAt(0)}`.toUpperCase();
-
             const jobOpeningName =
               interview.application?.jobOpening.name ??
               "Entrevista exploratoria";
@@ -72,6 +70,11 @@ export default function AssignedInterviews() {
                   minute: "2-digit",
                 }).format(new Date(interview.date))
               : "Sin fecha definida";
+            const applicantName = `${interview.applicant.name} ${interview.applicant.lastName}`;
+            const avatar = getAvatar(
+              interview.applicant.name,
+              interview.applicant.lastName,
+            );
 
             return (
               <div
@@ -91,8 +94,10 @@ export default function AssignedInterviews() {
                         className="object-cover"
                       />
 
-                      <AvatarFallback className="bg-dashboard-purple-avatar text-xs font-semibold text-dashboard-purple-text">
-                        {applicantInitials}
+                      <AvatarFallback
+                        className={` text-xs font-semibold ${avatar.colorClass} `}
+                      >
+                        {avatar.initials}
                       </AvatarFallback>
                     </Avatar>
 
