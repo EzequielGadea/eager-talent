@@ -1,8 +1,9 @@
 "use client";
 
 import { useTransition } from "react";
+import { Mail } from "lucide-react";
 import { toast } from "~/components/ui/toast";
-import { Button } from "~/components/ui/button";
+import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
 import { authClient } from "~/lib/auth/client";
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   role: "recruiter" | "hiringManager";
 };
 
-export function ResendInviteButton({ email, role }: Props) {
+export function ResendInviteMenuItem({ email, role }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleClick = () => {
@@ -40,14 +41,13 @@ export function ResendInviteButton({ email, role }: Props) {
   };
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      className="h-8 px-2 text-xs font-medium text-text-link"
+    <DropdownMenuItem
+      className="text-info! hover:text-info! focus:text-info! data-highlighted:text-info! [&_svg]:text-info! hover:[&_svg]:text-info! focus:[&_svg]:text-info! data-highlighted:[&_svg]:text-info!"
       onClick={handleClick}
       disabled={isPending}
     >
+      <Mail className="size-4" />
       {isPending ? "Enviando..." : "Reenviar invitación"}
-    </Button>
+    </DropdownMenuItem>
   );
 }
