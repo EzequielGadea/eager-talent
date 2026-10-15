@@ -1,9 +1,10 @@
-import { Shell, TriangleAlert } from "lucide-react";
+import { TriangleAlert } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { InviteShell } from "./invite-shell";
 
 export function InvalidToken() {
   return (
-    <Shell>
+    <InviteShell>
       <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-red-50 text-red-600">
         <TriangleAlert className="size-5" />
       </div>
@@ -17,6 +18,6 @@ export function InvalidToken() {
       <Button variant="outline" className="mt-6 h-11 w-full rounded-full">
         <a href="/login">Ir a iniciar sesión</a>
       </Button>
-    </Shell>
+    </InviteShell>
   );
 }
