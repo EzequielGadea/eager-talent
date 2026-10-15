@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import * as z from "zod";
 import { ArrowRight, Loader2, Plus } from "lucide-react";
@@ -30,6 +31,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export function UsersInviteDialog() {
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -61,6 +63,7 @@ export function UsersInviteDialog() {
         return;
       }
 
+      router.refresh();
       reset();
       setOpen(false);
     } catch (err) {

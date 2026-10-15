@@ -4,30 +4,13 @@ import spanishStrings from "react-timeago/lib/language-strings/es";
 import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import {
-  CircleX,
-  KeyRound,
-  LockKeyhole,
-  LockOpen,
-  MoreHorizontal,
-  Trash2,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-
 import { TableCell, TableRow } from "~/components/ui/table";
 import type { AppRouter } from "~/server/api/root";
 
 import { userRoleConfig, userStatusConfig } from "../constants";
-import { ResendInviteMenuItem } from "./resend-invite-button";
+import { UserActionsMenu } from "./user-actions-menu";
 
 export type User = inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
-
-type InviteRole = "recruiter" | "hiringManager";
 
 type Props = {
   user: User;
@@ -136,77 +119,7 @@ export function UserRow({ user }: Props) {
       </TableCell>
 
       <TableCell className="px-4 py-3 text-right">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            className="flex size-8 cursor-pointer items-center justify-center rounded-md hover:bg-slate-200"
-            aria-label={`Acciones de ${user.name} ${user.lastName}`}
-          >
-            <MoreHorizontal className="size-4" />
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent align="end" className="w-56">
-            {user.status === "Active" && (
-              <>
-                <DropdownMenuItem>
-                  <KeyRound className="size-4" />
-                  Restablecer contraseña
-                </DropdownMenuItem>
-
-                <DropdownMenuItem className="text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!">
-                  <LockKeyhole className="size-4" />
-                  Banear usuario
-                </DropdownMenuItem>
-
-                <DropdownMenuItem className="text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!">
-                  <Trash2 className="size-4" />
-                  Eliminar usuario
-                </DropdownMenuItem>
-              </>
-            )}
-
-            {user.status === "Banned" && (
-              <>
-                <DropdownMenuItem className="text-success! hover:text-success! focus:text-success! data-highlighted:text-success! [&_svg]:text-success! hover:[&_svg]:text-success! focus:[&_svg]:text-success! data-highlighted:[&_svg]:text-success!">
-                  <LockOpen className="size-4" />
-                  Desbanear usuario
-                </DropdownMenuItem>
-
-                <DropdownMenuItem className="text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!">
-                  <Trash2 className="size-4" />
-                  Eliminar usuario
-                </DropdownMenuItem>
-              </>
-            )}
-
-            {user.status === "Inactive" && (
-              <>
-                <ResendInviteMenuItem
-                  email={user.email}
-                  role={user.role as InviteRole}
-                />
-
-                <DropdownMenuItem className="text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!">
-                  <Trash2 className="size-4" />
-                  Eliminar usuario
-                </DropdownMenuItem>
-              </>
-            )}
-
-            {user.status === "PendingInvitation" && (
-              <>
-                <ResendInviteMenuItem
-                  email={user.email}
-                  role={user.role as InviteRole}
-                />
-
-                <DropdownMenuItem className="text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!">
-                  <CircleX className="size-4" />
-                  Cancelar invitación
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <UserActionsMenu user={user} />
       </TableCell>
     </TableRow>
   );
