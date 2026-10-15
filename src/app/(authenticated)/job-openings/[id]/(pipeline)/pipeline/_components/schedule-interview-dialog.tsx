@@ -43,7 +43,13 @@ const scheduleInterviewSchema = z
       .int()
       .positive("La duración debe ser mayor a 0."),
     date: z.string().min(1, "Seleccioná una fecha."),
-    time: z.string().regex(TIME_REGEX, "Formato: HH:MM"),
+    time: z
+      .string()
+      .min(1, "Ingresá la hora.")
+      .regex(
+        TIME_REGEX,
+        "Ingresá una hora válida en formato 24 h, por ejemplo 14:30.",
+      ),
     interviewerIds: z
       .array(z.string())
       .min(1, "Seleccioná al menos un entrevistador."),
@@ -65,7 +71,7 @@ const scheduleInterviewSchema = z
     }
   });
 
-// Fecha local de hoy (YYYY-MM-DD). toISOString() devuelve UTC, restar desfase con Uruguay.
+// Fecha local de hoy (YYYY-MM-DD). toISOString() devuelve UTC,  restar desfase con Uruguay.
 function getTodayLocalISO() {
   const now = new Date();
   const offsetMs = now.getTimezoneOffset() * 60_000;
@@ -183,7 +189,7 @@ export function ScheduleInterviewDialog({
           <div className="flex flex-col gap-5 px-6 py-5">
             {/* Fecha y hora */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-2">
+              <div className="grid content-start gap-2">
                 <label htmlFor="interview-date" className={fieldLabel}>
                   Fecha
                 </label>
@@ -194,9 +200,12 @@ export function ScheduleInterviewDialog({
                   min={getTodayLocalISO()}
                   {...register("date")}
                 />
+                {errors.date && (
+                  <p className="text-xs text-danger">{errors.date.message}</p>
+                )}
               </div>
 
-              <div className="grid gap-2">
+              <div className="grid content-start gap-2">
                 <label htmlFor="interview-time" className={fieldLabel}>
                   Hora
                 </label>
@@ -220,13 +229,10 @@ export function ScheduleInterviewDialog({
                     />
                   )}
                 />
+                {errors.time && (
+                  <p className="text-xs text-danger">{errors.time.message}</p>
+                )}
               </div>
-
-              {(errors.date || errors.time) && (
-                <p className="col-span-2 text-xs text-danger">
-                  {errors.date?.message ?? errors.time?.message}
-                </p>
-              )}
             </div>
 
             {/* Duración y modalidad */}
@@ -349,8 +355,6 @@ export function ScheduleInterviewDialog({
                                 <button
                                   key={interviewer.id}
                                   type="button"
-                                  // onMouseDown evita que el input pierda foco
-                                  // antes de registrar el click.
                                   onMouseDown={(event) => {
                                     event.preventDefault();
                                     field.onChange([

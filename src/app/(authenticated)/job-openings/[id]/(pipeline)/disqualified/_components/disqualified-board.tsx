@@ -1,0 +1,73 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
+import type { PipelineStage } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/types";
+
+import { DisqualifiedColumn } from "./disqualified-column";
+import { DEFAULT_STAGE_COLOR, type DisqualifiedApplication } from "../types";
+
+const CLOCK_INTERVAL_MS = 60_000;
+
+function useNow() {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const tick = () => setNow(Date.now());
+    const timeoutId = setTimeout(tick, 0);
+    const intervalId = setInterval(tick, CLOCK_INTERVAL_MS);
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  return now;
+}
+
+type DisqualifiedBoardProps = {
+  jobOpeningId: string;
+  stages: PipelineStage[];
+  applications: DisqualifiedApplication[];
+  canRequalify: boolean;
+};
+
+export function DisqualifiedBoard({
+  jobOpeningId,
+  stages,
+  applications,
+  canRequalify,
+}: DisqualifiedBoardProps) {
+  const now = useNow();
+  return (
+    <div className="flex flex-col gap-4">
+      {applications.length === 0 && (
+        <p className="text-sm text-text-secondary">
+          Todavía no hay postulaciones descalificadas en esta vacante.
+        </p>
+      )}
+
+      <ScrollArea className="w-full">
+        <div className="flex min-w-max gap-4 pb-4">
+          {stages.map((stage) => (
+            <DisqualifiedColumn
+              key={stage.name}
+              jobOpeningId={jobOpeningId}
+              stageName={stage.name}
+              stageColor={stage.color || DEFAULT_STAGE_COLOR}
+              canRequalify={canRequalify}
+              now={now}
+              applications={applications.filter(
+                (application) => application.stage === stage.key,
+              )}
+            />
+          ))}
+        </div>
+
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </div>
+  );
+}

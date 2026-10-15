@@ -11,7 +11,8 @@ export const disqualifyApplication = protectedProcedure
     z.object({
       applicantId: z.string(),
       jobOpeningId: z.string(),
-      reason: z.string().trim().min(1, "Ingresá un motivo."),
+      motiveId: z.string().min(1, "Seleccioná un motivo."),
+      description: z.string().trim().optional(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -49,10 +50,28 @@ export const disqualifyApplication = protectedProcedure
       });
     }
 
+    const motive = await ctx.db.disqualificationMotive.findUnique({
+      where: { id: input.motiveId },
+      select: { name: true },
+    });
+
+    if (!motive) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "El motivo seleccionado no existe",
+      });
+    }
     const currentStageName =
       parseStages(application.jobOpening.stages).find(
         (stage) => stage.key === application.currentStageId,
       )?.name ?? application.currentStageId;
+
+    if (!motive) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "El motivo seleccionado no existe",
+      });
+    }
 
     return ctx.db.$transaction(async (tx) => {
       // Conditional update: only succeeds if the application is still active
@@ -67,7 +86,8 @@ export const disqualifyApplication = protectedProcedure
         data: {
           active: false,
           disqualificationDate: new Date(),
-          disqualificationDescription: input.reason,
+          disqualificationMotiveId: input.motiveId,
+          disqualificationDescription: input.description || null,
         },
       });
 
@@ -83,7 +103,7 @@ export const disqualifyApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `descalificó la postulación desde "${currentStageName}": ${input.reason}`,
+          description: `descalificó la postulación desde "${currentStageName}": ${motive.name}`,
         },
       });
 
