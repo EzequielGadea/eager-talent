@@ -1,4 +1,9 @@
 import type { inferRouterOutputs } from "@trpc/server";
+import TimeAgo from "react-timeago";
+import spanishStrings from "react-timeago/lib/language-strings/es";
+import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import {
   CircleX,
   KeyRound,
@@ -28,56 +33,50 @@ type Props = {
   user: User;
 };
 
+const baseSpanishFormatter = buildFormatter(spanishStrings);
+
+const spanishFormatter: typeof baseSpanishFormatter = (
+  value,
+  unit,
+  suffix,
+  epochMilliseconds,
+  nextFormatter,
+  now,
+) => {
+  if (unit === "second") return "ahora mismo";
+  return baseSpanishFormatter(
+    value,
+    unit,
+    suffix === "from now" ? "ago" : suffix,
+    epochMilliseconds,
+    nextFormatter,
+    now,
+  );
+};
+
 function getInitials(name: string, lastName: string) {
   return `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 }
 
-function formatLastAccess(lastAccess: string | null) {
+function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
   if (!lastAccess) {
-    return "—";
+    return <span>—</span>;
   }
 
-  const lastAccessDate = new Date(lastAccess);
-  const now = new Date();
-
-  const diffInMilliseconds = now.getTime() - lastAccessDate.getTime();
-  const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-
-  if (diffInMinutes < 1) {
-    return "Ahora";
+  const date = new Date(lastAccess);
+  if (Number.isNaN(date.getTime())) {
+    return <span>—</span>;
   }
 
-  if (diffInMinutes < 60) {
-    return `Hace ${diffInMinutes} min`;
-  }
-
-  const diffInHours = Math.floor(diffInMinutes / 60);
-
-  if (diffInHours < 24) {
-    return `Hace ${diffInHours} ${diffInHours === 1 ? "hora" : "horas"}`;
-  }
-
-  const diffInDays = Math.floor(diffInHours / 24);
-
-  if (diffInDays < 7) {
-    return `Hace ${diffInDays} ${diffInDays === 1 ? "día" : "días"}`;
-  }
-
-  const diffInWeeks = Math.floor(diffInDays / 7);
-
-  if (diffInDays < 30) {
-    return `Hace ${diffInWeeks} ${diffInWeeks === 1 ? "semana" : "semanas"}`;
-  }
-
-  const diffInMonths = Math.floor(diffInDays / 30);
-
-  if (diffInDays < 365) {
-    return `Hace ${diffInMonths} ${diffInMonths === 1 ? "mes" : "meses"}`;
-  }
-
-  const diffInYears = Math.floor(diffInDays / 365);
-
-  return `Hace ${diffInYears} ${diffInYears === 1 ? "año" : "años"}`;
+  return (
+    <TimeAgo
+      date={date}
+      formatter={spanishFormatter}
+      title={format(date, "d MMM yyyy, HH:mm", { locale: es })}
+      minPeriod={60}
+      component={(props) => <time {...props} suppressHydrationWarning />}
+    />
+  );
 }
 
 export function UserRow({ user }: Props) {
@@ -133,7 +132,7 @@ export function UserRow({ user }: Props) {
       </TableCell>
 
       <TableCell className="px-4 py-3 text-text-secondary">
-        {formatLastAccess(user.lastAccess)}
+        <LastAccessText lastAccess={user.lastAccess} />
       </TableCell>
 
       <TableCell className="px-4 py-3 text-right">
