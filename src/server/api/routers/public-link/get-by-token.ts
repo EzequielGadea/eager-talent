@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { getInterviewName } from "~/lib/get-interview-name";
+import { parseStages } from "~/lib/validations/job-opening";
 import { publicProcedure } from "~/server/api/trpc";
 import { getPublicLinkStatus } from "~/server/public-link/validity";
 
@@ -27,7 +29,7 @@ export const getByToken = publicProcedure
         application: {
           select: {
             active: true,
-            currentStage: true,
+            currentStageId: true,
             availability: true,
             desiredSalaryAmount: true,
             desiredSalaryCurrency: true,
@@ -35,6 +37,7 @@ export const getByToken = publicProcedure
               select: {
                 id: true,
                 name: true,
+                stages: true,
                 location: true,
                 area: {
                   select: {
@@ -75,7 +78,8 @@ export const getByToken = publicProcedure
               },
               select: {
                 id: true,
-                name: true,
+                exploratoryName: true,
+                stageId: true,
                 duration: true,
                 modality: true,
                 date: true,
@@ -112,6 +116,11 @@ export const getByToken = publicProcedure
     const applicant = application.applicant;
     const jobOpening = application.jobOpening;
 
+    const stages = parseStages(jobOpening.stages);
+    const currentStageName =
+      stages.find((stage) => stage.key === application.currentStageId)?.name ??
+      application.currentStageId;
+
     let formattedSalary: string | null = null;
     if (link.includeSalary && application.desiredSalaryAmount) {
       const currency = application.desiredSalaryCurrency ?? "USD";
@@ -140,7 +149,7 @@ export const getByToken = publicProcedure
       application: {
         active: application.active,
         jobOpeningName: jobOpening.name,
-        currentStage: application.currentStage,
+        currentStage: currentStageName,
         areaName: jobOpening.area?.name ?? null,
         availability: application.availability,
         location: jobOpening.location,
@@ -149,7 +158,7 @@ export const getByToken = publicProcedure
       },
       interviews: application.interviews.map((interview) => ({
         id: interview.id,
-        name: interview.name,
+        name: getInterviewName(interview, jobOpening.stages),
         duration: interview.duration,
         modality:
           interview.modality === "VideoCall"
@@ -161,7 +170,57 @@ export const getByToken = publicProcedure
         interviewers: interview.interviewers.map((user) =>
           `${user.name} ${user.lastName}`.trim(),
         ),
-        note: interview.note?.content ?? null,
+        note: extractNoteText(interview.note?.content),
       })),
     };
   });
+
+function extractNoteText(content: unknown): string | null {
+  if (content == null) return null;
+  if (typeof content === "string") {
+    const trimmed = content.trim();
+    return trimmed || null;
+  }
+  if (typeof content === "object") {
+    const lines: string[] = [];
+
+    function extractText(node: unknown): string {
+      if (!node || typeof node !== "object") return "";
+      const obj = node as Record<string, unknown>;
+      if (typeof obj.text === "string") {
+        return obj.text;
+      }
+      if (Array.isArray(obj.content)) {
+        return obj.content.map(extractText).join("");
+      }
+      return "";
+    }
+
+    function walkBlocks(node: unknown) {
+      if (!node || typeof node !== "object") return;
+      if (Array.isArray(node)) {
+        for (const item of node) walkBlocks(item);
+        return;
+      }
+      const obj = node as Record<string, unknown>;
+      if (
+        obj.type === "paragraph" ||
+        obj.type === "heading" ||
+        obj.type === "listItem"
+      ) {
+        const text = extractText(obj).trim();
+        if (text) lines.push(text);
+      } else if (Array.isArray(obj.content)) {
+        for (const child of obj.content) walkBlocks(child);
+      }
+    }
+
+    walkBlocks(content);
+    if (lines.length > 0) return lines.join("\n");
+
+    const fallbackText = extractText(content).trim();
+    return fallbackText || null;
+  }
+  return String(content);
+}
+
