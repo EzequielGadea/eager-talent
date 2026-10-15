@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 import { auth } from "~/lib/auth";
 import { prisma } from "~/lib/prisma";
 
-const authRoutes = ["/login", "/signup", "/accept-invite"];
+const authRoutes = ["/login", "/signup", "/accept-invite", "/reset-password"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

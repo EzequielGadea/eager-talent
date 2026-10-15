@@ -23,6 +23,7 @@ import { authClient } from "~/lib/auth/client";
 import { BanUserDialog } from "./ban-user-dialog";
 import { DeleteUserDialog } from "./delete-user-dialog";
 import { ResendInviteMenuItem } from "./resend-invite-button";
+import { ResetPasswordDialog } from "./reset-password-dialog";
 import type { User } from "./user-row";
 
 type Props = {
@@ -40,7 +41,7 @@ const successItemClassName =
 export function UserActionsMenu({ user }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [dialog, setDialog] = useState<"ban" | "delete" | null>(null);
+  const [dialog, setDialog] = useState<"ban" | "delete" | "reset" | null>(null);
 
   const fullName = `${user.name} ${user.lastName}`;
 
@@ -119,7 +120,7 @@ export function UserActionsMenu({ user }: Props) {
         <DropdownMenuContent align="end" className="w-56">
           {user.status === "Active" && (
             <>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDialog("reset")}>
                 <KeyRound className="size-4" />
                 Restablecer contraseña
               </DropdownMenuItem>
@@ -181,6 +182,13 @@ export function UserActionsMenu({ user }: Props) {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <ResetPasswordDialog
+        open={dialog === "reset"}
+        onOpenChange={(open) => setDialog(open ? "reset" : null)}
+        userId={user.id}
+        userEmail={user.email}
+      />
 
       <BanUserDialog
         open={dialog === "ban"}
