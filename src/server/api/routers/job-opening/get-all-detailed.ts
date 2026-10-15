@@ -31,6 +31,7 @@ const jobOpeningSelect = {
   },
 
   hiringManagers: {
+    where: { deletedAt: null },
     select: {
       id: true,
       name: true,

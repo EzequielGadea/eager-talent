@@ -36,7 +36,13 @@ export const getAllUsers = protectedProcedure
     const invitations = await ctx.db.invitation.findMany({
       where: { organizationId },
       orderBy: { createdAt: "desc" },
-      select: { email: true, role: true, status: true, expiresAt: true },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        status: true,
+        expiresAt: true,
+      },
     });
 
     const invitationsByEmail = new Map<string, typeof invitations>();
@@ -54,6 +60,7 @@ export const getAllUsers = protectedProcedure
         id: {
           not: ctx.session.user.id,
         },
+        deletedAt: null,
         OR: [
           { members: { some: { organizationId } } },
           { email: { in: invitations.map((invitation) => invitation.email) } },
@@ -100,6 +107,11 @@ export const getAllUsers = protectedProcedure
           now,
         }),
         lastAccess: user.lastAccess?.toISOString() ?? null,
+        pendingInvitationId:
+          userInvitations.find(
+            (invitation) =>
+              invitation.status === "pending" && invitation.expiresAt > now,
+          )?.id ?? null,
         assignedJobOpeningsCount: user._count.assignedJobOpenings,
       };
     });

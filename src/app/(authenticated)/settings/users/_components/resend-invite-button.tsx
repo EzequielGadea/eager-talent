@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { Mail } from "lucide-react";
 import { toast } from "~/components/ui/toast";
@@ -12,6 +13,7 @@ type Props = {
 };
 
 export function ResendInviteMenuItem({ email, role }: Props) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const handleClick = () => {
@@ -32,6 +34,7 @@ export function ResendInviteMenuItem({ email, role }: Props) {
         return;
       }
 
+      router.refresh();
       toast.add({
         type: "success",
         title: "Invitación reenviada",
