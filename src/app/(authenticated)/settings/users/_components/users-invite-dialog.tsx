@@ -21,6 +21,7 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { authClient } from "~/lib/auth/client";
+import { toast } from "~/components/ui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
@@ -29,6 +30,23 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+function getInvitationErrorMessage(code?: string) {
+  switch (code) {
+    case "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION":
+      return "Este correo ya pertenece a un usuario de la organización.";
+    case "USER_IS_ALREADY_INVITED_TO_THIS_ORGANIZATION":
+      return "Este correo ya tiene una invitación pendiente.";
+    case "YOU_ARE_NOT_ALLOWED_TO_INVITE_USERS_TO_THIS_ORGANIZATION":
+      return "No tenés permisos para invitar usuarios a esta organización.";
+    case "YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE":
+      return "No tenés permisos para invitar usuarios con este rol.";
+    case "INVITATION_LIMIT_REACHED":
+      return "Se alcanzó el límite de invitaciones. Intentá nuevamente más tarde.";
+    default:
+      return "No se pudo enviar la invitación. Intentá nuevamente.";
+  }
+}
 
 export function UsersInviteDialog() {
   const router = useRouter();
@@ -59,15 +77,23 @@ export function UsersInviteDialog() {
       });
 
       if (error) {
-        console.log("Error al crear el usuario:", error);
+        toast.add({
+          type: "error",
+          title: "No se pudo enviar la invitación",
+          description: getInvitationErrorMessage(error.code),
+        });
         return;
       }
 
       router.refresh();
       reset();
       setOpen(false);
-    } catch (err) {
-      console.log("Error inesperado:", err);
+    } catch {
+      toast.add({
+        type: "error",
+        title: "Error inesperado",
+        description: "No se pudo enviar la invitación. Intentá nuevamente.",
+      });
     } finally {
       setIsLoading(false);
     }
