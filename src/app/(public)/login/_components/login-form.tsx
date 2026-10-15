@@ -110,8 +110,22 @@ export function LoginForm() {
         });
         return;
       }
+      const { data: activeMember, error: memberError } =
+        await authClient.organization.getActiveMember();
 
-      router.replace("/dashboard");
+      if (memberError || !activeMember) {
+        setError("root", {
+          message: "No pudimos obtener tu rol en la organización.",
+        });
+        return;
+      }
+
+      if (activeMember.role === "hiringManager") {
+        router.replace("/job-openings");
+      } else {
+        router.replace("/dashboard");
+      }
+
       router.refresh();
     } catch {
       setError("root", {
