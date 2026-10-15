@@ -41,7 +41,6 @@ export function DisqualifiedBoard({
   canRequalify,
 }: DisqualifiedBoardProps) {
   const now = useNow();
-  console.log(stages);
   return (
     <div className="flex flex-col gap-4">
       {applications.length === 0 && (

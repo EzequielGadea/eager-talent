@@ -50,14 +50,21 @@ export const disqualifyApplication = protectedProcedure
       });
     }
 
-    const currentStageName =
-      parseStages(application.jobOpening.stages).find(
-        (stage) => stage.key === application.currentStageId,
-      )?.name ?? application.currentStageId;
     const motive = await ctx.db.disqualificationMotive.findUnique({
       where: { id: input.motiveId },
       select: { name: true },
     });
+
+    if (!motive) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "El motivo seleccionado no existe",
+      });
+    }
+    const currentStageName =
+      parseStages(application.jobOpening.stages).find(
+        (stage) => stage.key === application.currentStageId,
+      )?.name ?? application.currentStageId;
 
     if (!motive) {
       throw new TRPCError({
