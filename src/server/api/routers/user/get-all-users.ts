@@ -2,10 +2,8 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { getUserStatus } from "~/server/api/procedures/get-user-status";
 import { protectedProcedure } from "~/server/api/trpc";
-
-// Values written by better-auth's organization plugin
-type InvitationStatus = "pending" | "accepted" | "rejected" | "canceled";
 
 export const getAllUsers = protectedProcedure
   .input(z.object({}))
@@ -38,22 +36,18 @@ export const getAllUsers = protectedProcedure
     const invitations = await ctx.db.invitation.findMany({
       where: { organizationId },
       orderBy: { createdAt: "desc" },
-      select: { email: true, role: true, status: true },
+      select: { email: true, role: true, status: true, expiresAt: true },
     });
 
-    const latestInvitationByEmail = new Map<string, (typeof invitations)[0]>();
+    const invitationsByEmail = new Map<string, typeof invitations>();
 
     for (const invitation of invitations) {
       const email = invitation.email.toLowerCase();
-
-      if (!latestInvitationByEmail.has(email)) {
-        latestInvitationByEmail.set(email, invitation);
-      }
+      invitationsByEmail.set(email, [
+        ...(invitationsByEmail.get(email) ?? []),
+        invitation,
+      ]);
     }
-
-    const pendingInvitationEmails = invitations
-      .filter((invitation) => invitation.status === "pending")
-      .map((invitation) => invitation.email);
 
     const users = await ctx.db.user.findMany({
       where: {
@@ -62,7 +56,7 @@ export const getAllUsers = protectedProcedure
         },
         OR: [
           { members: { some: { organizationId } } },
-          { email: { in: pendingInvitationEmails } },
+          { email: { in: invitations.map((invitation) => invitation.email) } },
         ],
       },
       select: {
@@ -70,6 +64,7 @@ export const getAllUsers = protectedProcedure
         name: true,
         lastName: true,
         email: true,
+        banned: true,
         lastAccess: true,
         members: {
           where: { organizationId },
@@ -86,17 +81,24 @@ export const getAllUsers = protectedProcedure
       },
     });
 
+    const now = new Date();
+
     return users.map((user) => {
-      const invitation = latestInvitationByEmail.get(user.email.toLowerCase());
+      const userInvitations =
+        invitationsByEmail.get(user.email.toLowerCase()) ?? [];
 
       return {
         id: user.id,
         name: user.name,
         lastName: user.lastName,
         email: user.email,
-        role: user.members[0]?.role ?? invitation?.role ?? null,
-        // Users without an invitation (e.g. seeded or owners) are already active members
-        status: (invitation?.status ?? "accepted") as InvitationStatus,
+        role: user.members[0]?.role ?? userInvitations[0]?.role ?? null,
+        status: getUserStatus({
+          banned: user.banned,
+          isMember: user.members.length > 0,
+          invitations: userInvitations,
+          now,
+        }),
         lastAccess: user.lastAccess?.toISOString() ?? null,
         assignedJobOpeningsCount: user._count.assignedJobOpenings,
       };
