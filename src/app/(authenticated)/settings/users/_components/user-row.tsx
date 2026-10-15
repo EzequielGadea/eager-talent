@@ -96,7 +96,7 @@ export function UserRow({ user }: Props) {
 
   return (
     <TableRow className="border-b border-border-default last:border-b-0">
-      <TableCell className="px-4 py-3">
+      <TableCell className="px-4 py-3 pl-6">
         <div className="flex items-center gap-3">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-tag-purple-bg text-xs font-semibold text-tag-purple-fg">
             {getInitials(user.name, user.lastName)}
