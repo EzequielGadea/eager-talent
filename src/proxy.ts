@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 import { auth } from "~/lib/auth";
 import { prisma } from "~/lib/prisma";
+import { PUBLIC_LINK_BASE_PATH } from "~/lib/public-link-url";
 
 const authRoutes = ["/login", "/signup"];
 const publicRoutes = ["/", ...authRoutes];
@@ -14,7 +15,11 @@ export async function proxy(request: NextRequest) {
     headers: request.headers,
   });
 
-  if (!publicRoutes.includes(pathname) && !session) {
+  const isPublicRoute =
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith(`${PUBLIC_LINK_BASE_PATH}/`);
+
+  if (!isPublicRoute && !session) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
