@@ -160,28 +160,33 @@ export const auth = betterAuth({
             );
           });
       } else {
-        render(
-          createElement(PasswordResetEmail, {
-            url,
-            companyName: "Eager Talent",
-          }),
-        )
-          .then((emailHtml) => {
-            transporter.sendMail({
-              from: '"Eager Talent" <pgrupo632@gmail.com>',
-              to: user.email,
-              subject: "Restablecé tu contraseña",
-              html: emailHtml,
-              textEncoding: "base64",
-            });
+        try {
+          const emailHtml = await render(
+            createElement(PasswordResetEmail, {
+              url,
+              companyName: "Eager Talent",
+            }),
+          );
 
-            console.log(`Password reset successfully sent to ${user.email}`);
-          })
-          .catch((err) => {
-            console.log(
-              `Error while sending password reset to ${user.email}, error: ${err}`,
-            );
+          await transporter.sendMail({
+            from: '"Eager Talent" <pgrupo632@gmail.com>',
+            to: user.email,
+            subject: "Restablecé tu contraseña",
+            html: emailHtml,
+            textEncoding: "base64",
           });
+
+          console.log(`Password reset successfully sent to ${user.email}`);
+        } catch (err) {
+          console.log(
+            `Error while sending password reset to ${user.email}, error: ${err}`,
+          );
+
+          // Better Auth swallows errors thrown here, so callers detect the failure by the missing token
+          await prisma.verification.deleteMany({
+            where: { identifier: `reset-password:${token}` },
+          });
+        }
       }
     },
     onPasswordReset: async ({ user }) => {
