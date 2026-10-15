@@ -20,6 +20,8 @@ import {
 
 import { api } from "~/lib/trpc/react";
 
+import getAvatar from "~/lib/avatar";
+
 function getInitials(name: string, lastName?: string | null) {
   return `${name.charAt(0)}${lastName?.charAt(0) ?? ""}`.toUpperCase();
 }
@@ -58,46 +60,52 @@ export default function OpeningHiring() {
             return (
               <div className="space-y-5">
                 <div className="flex flex-wrap gap-2">
-                  {selectedManagers?.map((manager) => (
-                    <Badge
-                      key={manager.id}
-                      variant="outline"
-                      className="h-8 rounded-full border border-border-default bg-surface-hover px-4 text-[13px] font-medium text-text-secondary transition-all"
-                    >
-                      {manager.image ? (
-                        <Image
-                          src={manager.image}
-                          alt=""
-                          width={24}
-                          height={24}
-                          className="size-6 shrink-0 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-tag-purple-bg text-xs text-tag-purple-fg">
-                          {getInitials(manager.name, manager.lastName)}
-                        </span>
-                      )}
+                  {selectedManagers?.map((manager) => {
+                    const avatar = getAvatar(manager.name, manager.lastName);
 
-                      <span>
-                        {manager.name} {manager.lastName}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          field.onChange(
-                            field.value.filter(
-                              (managerId) => managerId !== manager.id,
-                            ),
-                          );
-                        }}
-                        className="ml-1 cursor-pointer"
-                        aria-label={`Quitar a ${manager.name}`}
+                    return (
+                      <Badge
+                        key={manager.id}
+                        variant="outline"
+                        className="h-8 rounded-full border border-border-default bg-surface-hover px-4 text-[13px] font-medium text-text-secondary transition-all"
                       >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
+                        {manager.image ? (
+                          <Image
+                            src={manager.image}
+                            alt=""
+                            width={24}
+                            height={24}
+                            className="size-6 shrink-0 rounded-full object-cover"
+                          />
+                        ) : (
+                          <span
+                            className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${avatar.colorClass}`}
+                          >
+                            {avatar.initials}
+                          </span>
+                        )}
+
+                        <span>
+                          {manager.name} {manager.lastName}
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            field.onChange(
+                              field.value.filter(
+                                (managerId) => managerId !== manager.id,
+                              ),
+                            );
+                          }}
+                          className="ml-1 cursor-pointer"
+                          aria-label={`Quitar a ${manager.name}`}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    );
+                  })}
                 </div>
 
                 <div className="w-1/2">
@@ -134,41 +142,47 @@ export default function OpeningHiring() {
                             USUARIOS DEL SISTEMA
                           </ComboboxLabel>
 
-                          {filteredManagers?.map((manager) => (
-                            <ComboboxItem
-                              key={manager.id}
-                              value={manager.id}
-                              className="flex items-center justify-between"
-                            >
-                              <span className="flex min-w-0 items-center gap-2">
-                                {manager.image ? (
-                                  <Image
-                                    src={manager.image}
-                                    alt=""
-                                    width={24}
-                                    height={24}
-                                    className="size-6 shrink-0 rounded-full object-cover"
-                                  />
-                                ) : (
-                                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface-sunken text-xs text-text-secondary">
-                                    {getInitials(
-                                      manager.name,
-                                      manager.lastName,
-                                    )}
+                          {filteredManagers?.map((manager) => {
+                            const avatar = getAvatar(
+                              manager.name,
+                              manager.lastName,
+                            );
+
+                            return (
+                              <ComboboxItem
+                                key={manager.id}
+                                value={manager.id}
+                                className="flex items-center justify-between"
+                              >
+                                <span className="flex min-w-0 items-center gap-2">
+                                  {manager.image ? (
+                                    <Image
+                                      src={manager.image}
+                                      alt=""
+                                      width={24}
+                                      height={24}
+                                      className="size-6 shrink-0 rounded-full object-cover"
+                                    />
+                                  ) : (
+                                    <span
+                                      className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${avatar.colorClass}`}
+                                    >
+                                      {avatar.initials}
+                                    </span>
+                                  )}
+                                  <span className="truncate">
+                                    {manager.name} {manager.lastName}
                                   </span>
-                                )}
-                                <span className="truncate">
-                                  {manager.name} {manager.lastName}
                                 </span>
-                              </span>
-                              <span className="ml-4 shrink-0 text-xs text-text-tertiary">
-                                {manager._count.assignedJobOpenings}{" "}
-                                {manager._count.assignedJobOpenings === 1
-                                  ? "vacante"
-                                  : "vacantes"}
-                              </span>
-                            </ComboboxItem>
-                          ))}
+                                <span className="ml-4 shrink-0 text-xs text-text-tertiary">
+                                  {manager._count.assignedJobOpenings}{" "}
+                                  {manager._count.assignedJobOpenings === 1
+                                    ? "vacante"
+                                    : "vacantes"}
+                                </span>
+                              </ComboboxItem>
+                            );
+                          })}
                           {filteredManagers?.length === 0 && (
                             <div className="px-4 py-3 text-sm text-muted-foreground">
                               No hay hiring managers.
