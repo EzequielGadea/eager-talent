@@ -33,7 +33,8 @@ import { InviteShell } from "./invite-shell";
 
 const formSchema = z
   .object({
-    name: z.string().min(2, "Ingresá tu nombre y apellido"),
+    name: z.string().trim().min(1, "Ingresá tu nombre"),
+    lastName: z.string().trim().min(1, "Ingresá tu apellido"),
     password: z
       .string()
       .max(128, "Usá como máximo 128 caracteres")
@@ -66,7 +67,12 @@ export function AcceptInviteForm({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: "", password: "", confirmPassword: "" },
+    defaultValues: {
+      name: "",
+      lastName: "",
+      password: "",
+      confirmPassword: "",
+    },
     mode: "onTouched",
   });
 
@@ -109,6 +115,7 @@ export function AcceptInviteForm({
 
     const { error: updateError } = await authClient.updateUser({
       name: values.name,
+      lastName: values.lastName,
     });
 
     if (updateError) {
@@ -162,26 +169,51 @@ export function AcceptInviteForm({
 
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-6" noValidate>
         <FieldGroup>
-          <Controller
-            control={form.control}
-            name="name"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="name">Nombre y apellido</FieldLabel>
-                <Input
-                  {...field}
-                  id="name"
-                  type="text"
-                  placeholder="Tu nombre completo"
-                  aria-invalid={fieldState.invalid}
-                  className="h-11 rounded-xl"
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Controller
+              control={form.control}
+              name="name"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="name">Nombre</FieldLabel>
+                  <Input
+                    {...field}
+                    id="name"
+                    type="text"
+                    autoComplete="given-name"
+                    placeholder="Tu nombre"
+                    aria-invalid={fieldState.invalid}
+                    className="h-11 rounded-xl"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name="lastName"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="lastName">Apellido</FieldLabel>
+                  <Input
+                    {...field}
+                    id="lastName"
+                    type="text"
+                    autoComplete="family-name"
+                    placeholder="Tu apellido"
+                    aria-invalid={fieldState.invalid}
+                    className="h-11 rounded-xl"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </div>
 
           <Controller
             control={form.control}
