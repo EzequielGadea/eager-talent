@@ -221,6 +221,7 @@ export function PipelineColumnClient({
             candidate={candidate}
             jobOpeningId={jobOpeningId}
             currentStageId={stageId}
+            currentStageName={stageName}
             isLastStage={isLastStage}
             onAdvancedAction={handleCandidateAdvanced}
             canUpdateApplication={canUpdateApplication}

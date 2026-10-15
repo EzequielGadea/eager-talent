@@ -63,7 +63,7 @@ export const fetchDisqualifiedApplications = protectedProcedure
       ],
       select: {
         applicantId: true,
-        currentStage: true,
+        currentStageId: true,
         disqualificationDate: true,
         disqualificationDescription: true,
         disqualificationMotive: {
@@ -86,7 +86,7 @@ export const fetchDisqualifiedApplications = protectedProcedure
 
     return applications.map((application) => ({
       applicantId: application.applicantId,
-      stage: application.currentStage,
+      stage: application.currentStageId,
       disqualificationDate: application.disqualificationDate!,
       disqualificationMotive: application.disqualificationMotive?.name ?? null,
       disqualificationDescription: application.disqualificationDescription,

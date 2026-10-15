@@ -65,6 +65,7 @@ type CandidateCardProps = {
   candidate: PipelineCandidate;
   jobOpeningId: string;
   currentStageId: string;
+  currentStageName: string;
   isLastStage: boolean;
   onAdvancedAction: (applicantId: string) => void;
   canUpdateApplication: boolean;
@@ -76,6 +77,7 @@ export function CandidateCard({
   candidate,
   jobOpeningId,
   currentStageId,
+  currentStageName,
   isLastStage,
   onAdvancedAction,
   canUpdateApplication,
@@ -412,7 +414,7 @@ export function CandidateCard({
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
           candidateRole={candidate.role}
-          stageName={currentStage}
+          stageName={currentStageName}
           onSuccess={() => router.refresh()}
         />
       )}

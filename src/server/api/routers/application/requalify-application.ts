@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-
+import { parseStages } from "~/lib/validations/job-opening";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -29,7 +29,11 @@ export const requalifyApplication = protectedProcedure
           jobOpeningId: input.jobOpeningId,
         },
       },
-      select: { active: true, currentStage: true },
+      select: {
+        active: true,
+        currentStageId: true,
+        jobOpening: { select: { stages: true } },
+      },
     });
 
     if (!application) {
@@ -48,7 +52,7 @@ export const requalifyApplication = protectedProcedure
         where: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
-          currentStage: application.currentStage,
+          currentStageId: application.currentStageId,
           active: false,
         },
         data: {
@@ -66,12 +70,17 @@ export const requalifyApplication = protectedProcedure
         });
       }
 
+      const currentStageName =
+        parseStages(application.jobOpening.stages).find(
+          (stage) => stage.key === application.currentStageId,
+        )?.name ?? application.currentStageId;
+
       await tx.activity.create({
         data: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `volvió a calificar la postulación en "${application.currentStage}"`,
+          description: `volvió a calificar la postulación en "${currentStageName}"`,
         },
       });
 
