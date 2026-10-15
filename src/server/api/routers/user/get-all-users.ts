@@ -99,7 +99,10 @@ export const getAllUsers = protectedProcedure
         name: user.name,
         lastName: user.lastName,
         email: user.email,
-        role: user.members[0]?.role ?? userInvitations[0]?.role ?? null,
+        role:
+          user.members[0]?.role === "owner"
+            ? "recruiter"
+            : (user.members[0]?.role ?? userInvitations[0]?.role ?? null),
         status: getUserStatus({
           banned: user.banned,
           isMember: user.members.length > 0,
