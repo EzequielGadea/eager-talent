@@ -47,7 +47,7 @@ export const getApplicationsByApplicantIdProcedure = protectedProcedure
         applicationDate: true,
         active: true,
         currentStage: true,
-        disqualificationReason: true,
+        disqualificationDescription: true,
         desiredSalaryAmount: true,
         desiredSalaryCurrency: true,
         availability: true,

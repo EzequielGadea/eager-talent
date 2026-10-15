@@ -84,12 +84,15 @@
   /* Etiquetas (tags) */
   --tag-green-bg: var(--emerald-100);
   --tag-green-fg: var(--emerald-700);
+  --tag-green-blocked: color-mix(in srgb, var(--tag-green-bg), black 8%);
   --tag-purple-bg: var(--violet-100);
   --tag-purple-fg: var(--violet-600);
   --tag-blue-bg: var(--blue-50);
   --tag-blue-fg: var(--blue-600);
+  --tag-blue-blocked: color-mix(in srgb, var(--tag-blue-bg), black 8%);
   --tag-amber-bg: var(--amber-100);
   --tag-amber-fg: var(--amber-600);
+  --tag-amber-blocked: color-mix(in srgb, var(--tag-amber-bg), black 8%);
   --tag-red-bg: var(--red-100);
   --tag-red-fg: var(--red-600);
   --tag-gray-bg: var(--slate-100);

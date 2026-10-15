@@ -137,12 +137,15 @@
   /* --- nueva capa: tags --- */
   --color-tag-green-bg: var(--tag-green-bg);
   --color-tag-green-fg: var(--tag-green-fg);
+  --color-tag-green-blocked: var(--tag-green-blocked);
   --color-tag-purple-bg: var(--tag-purple-bg);
   --color-tag-purple-fg: var(--tag-purple-fg);
   --color-tag-blue-bg: var(--tag-blue-bg);
   --color-tag-blue-fg: var(--tag-blue-fg);
+  --color-tag-blue-blocked: var(--tag-blue-blocked);
   --color-tag-amber-bg: var(--tag-amber-bg);
   --color-tag-amber-fg: var(--tag-amber-fg);
+  --color-tag-amber-blocked: var(--tag-amber-blocked);
   --color-tag-red-bg: var(--tag-red-bg);
   --color-tag-red-fg: var(--tag-red-fg);
   --color-tag-gray-bg: var(--tag-gray-bg);

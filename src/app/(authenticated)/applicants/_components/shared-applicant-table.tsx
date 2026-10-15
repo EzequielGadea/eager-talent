@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import { Share2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 
@@ -20,6 +20,18 @@ export function SharedApplicantsTable(props: {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const hasAlreadyBeenVisible = useRef(false);
+
+  useEffect(() => {
+    if (!hasAlreadyBeenVisible.current) {
+      hasAlreadyBeenVisible.current = true;
+      return;
+    }
+
+    startTransition(() => {
+      router.refresh();
+    });
+  }, [router]);
 
   function updatePage(page: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -34,7 +46,7 @@ export function SharedApplicantsTable(props: {
   }
 
   return (
-    <div className="w-full">
+    <div className="mt-4 w-full">
       <div className="rounded-t-xl border border-dashboard-border bg-tag-purple-bg px-4 py-2">
         <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.06em] text-tag-purple-fg">
           <Share2 className="size-3.5 shrink-0" />

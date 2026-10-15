@@ -210,9 +210,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     prisma.invitation.deleteMany(),
     prisma.activity.deleteMany(),
     prisma.interviewNote.deleteMany(),
+    prisma.interviewAssignment.deleteMany(),
     prisma.applicantNote.deleteMany(),
     prisma.interview.deleteMany(),
     prisma.application.deleteMany(),
+    prisma.disqualificationMotive.deleteMany(),
     prisma.applicantHiringManager.deleteMany(),
     prisma.applicant.deleteMany(),
     prisma.jobOpening.deleteMany(),
@@ -329,6 +331,21 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       data: { name: t.name, isSkill: false, color: t.color },
     });
     tags[t.name] = created;
+  }
+
+  const disqualificationMotiveDefs = [
+    "Falta de experiencia",
+    "Expectativa salarial",
+    "Inglés insuficiente",
+    "Perfil no alineado con la vacante",
+    "No responde",
+    "Rechazó la propuesta",
+  ];
+
+  for (const name of disqualificationMotiveDefs) {
+    await prisma.disqualificationMotive.create({
+      data: { name },
+    });
   }
 
   // ==========================================================================
@@ -629,7 +646,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       jobOp: null,
     },
     {
-      desc: `agendó la entrevista "Evaluación Técnica de Arquitectura Ruby on Rails" el ${fedeInterviewDateLabel}`,
+      desc: `agendó la entrevista "Entrevista técnica" el ${fedeInterviewDateLabel}`,
       daysAgo: 14,
       jobOp: jobOpening1.id,
     },
@@ -1622,7 +1639,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   // ==========================================================================
   await prisma.interview.create({
     data: {
-      name: "Evaluación Técnica de Arquitectura Ruby on Rails",
+      stageId: "83412", // "Entrevista técnica" in defaultStages
       duration: 60,
       modality: "VideoCall" as InterviewType,
       date: fedeInterviewDate,
@@ -1631,6 +1648,24 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
       interviewers: { connect: [{ id: hm1.id }] },
+      assignments: {
+        create: [{ interviewerId: hm1.id, assignedById: admin1.id }],
+      },
+    },
+  });
+
+  await prisma.interview.create({
+    data: {
+      exploratoryName: "Charla exploratoria",
+      duration: 30,
+      modality: "VideoCall" as InterviewType,
+      date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      status: "Scheduled" as InterviewStatus,
+      applicantId: muslera.id,
+      interviewers: { connect: [{ id: hm1.id }] },
+      assignments: {
+        create: [{ interviewerId: hm1.id, assignedById: admin1.id }],
+      },
     },
   });
 

@@ -21,6 +21,7 @@ import {
 import { Separator } from "~/components/ui/separator";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
+import { ShareApplicationDialog } from "./share-application-dialog";
 import {
   ApplicantApplicationDropdown,
   type ApplicationSelection,
@@ -43,7 +44,7 @@ export type ApplicationSummary = {
   applicationDate: Date | string;
   currentStage: string;
   active: boolean;
-  disqualificationReason?: string | null;
+  disqualificationDescription?: string | null;
   desiredSalaryAmount?: string | null;
   desiredSalaryCurrency?: string | null;
   availability?: string | null;
@@ -100,6 +101,7 @@ export function ApplicantApplicationsCard({
     () => getInitialSelection(applications, explorationInterviews),
   );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
   const effectiveSelection =
     selection ?? getInitialSelection(applications, explorationInterviews);
 
@@ -228,6 +230,7 @@ export function ApplicantApplicationsCard({
                 variant="outline"
                 size="sm"
                 className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
+                onClick={() => setShowShareDialog(true)}
               >
                 <Share2 className="h-3.5 w-3.5" /> Compartir
               </Button>
@@ -272,6 +275,18 @@ export function ApplicantApplicationsCard({
           showDialog={showApplyDialog}
           setShowDialog={setShowApplyDialog}
           applicantId={applicantId}
+        />
+      )}
+
+      {canCreatePublicLink && app && (
+        <ShareApplicationDialog
+          key={app.jobOpeningId}
+          open={showShareDialog}
+          onOpenChange={setShowShareDialog}
+          applicantId={app.applicantId}
+          jobOpeningId={app.jobOpeningId}
+          applicantName={applicantName}
+          jobOpeningName={app.jobOpening.name}
         />
       )}
 

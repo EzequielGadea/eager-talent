@@ -37,7 +37,6 @@ const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 const scheduleInterviewSchema = z
   .object({
-    name: z.string().trim().min(1, "El nombre es obligatorio."),
     modality: z.string().min(1, "Seleccioná una modalidad."),
     duration: z
       .number({ message: "Ingresá la duración en minutos." })
@@ -123,7 +122,6 @@ export function ScheduleInterviewDialog({
   } = useForm<ScheduleInterviewFormValues>({
     resolver: zodResolver(scheduleInterviewSchema),
     defaultValues: {
-      name: "",
       modality: "VideoCall",
       duration: 45,
       date: "",
@@ -150,7 +148,6 @@ export function ScheduleInterviewDialog({
     createInterviewMutation.mutate({
       applicantId,
       jobOpeningId,
-      name: data.name.trim(),
       modality: data.modality as InterviewType,
       duration: data.duration,
       date: new Date(`${data.date}T${data.time}`),
@@ -184,22 +181,6 @@ export function ScheduleInterviewDialog({
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <div className="flex flex-col gap-5 px-6 py-5">
-            {/* Nombre */}
-            <div className="grid gap-2">
-              <label htmlFor="interview-name" className={fieldLabel}>
-                Nombre
-              </label>
-              <Input
-                id="interview-name"
-                placeholder="Ej. Entrevista técnica"
-                className={fieldControl}
-                {...register("name")}
-              />
-              {errors.name && (
-                <p className="text-xs text-danger">{errors.name.message}</p>
-              )}
-            </div>
-
             {/* Fecha y hora */}
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-2">

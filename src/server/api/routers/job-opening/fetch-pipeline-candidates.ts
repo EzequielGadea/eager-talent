@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { getInterviewName } from "~/lib/interview-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const fetchPipelineCandidates = protectedProcedure
@@ -75,6 +76,11 @@ export const fetchPipelineCandidates = protectedProcedure
         select: {
           applicantId: true,
           jobOpeningId: true,
+          jobOpening: {
+            select: {
+              stages: true,
+            },
+          },
           applicant: {
             select: {
               name: true,
@@ -96,7 +102,8 @@ export const fetchPipelineCandidates = protectedProcedure
                 },
                 select: {
                   id: true,
-                  name: true,
+                  exploratoryName: true,
+                  stageId: true,
                   modality: true,
                   duration: true,
                   date: true,
@@ -134,7 +141,7 @@ export const fetchPipelineCandidates = protectedProcedure
         nextInterview: nextInterview ? { date: nextInterview.date! } : null,
         scheduledInterviews: interviews.map((interview) => ({
           id: interview.id,
-          name: interview.name,
+          name: getInterviewName(interview, application.jobOpening.stages),
           modality: interview.modality,
           duration: interview.duration,
           interviewers: interview.interviewers,
