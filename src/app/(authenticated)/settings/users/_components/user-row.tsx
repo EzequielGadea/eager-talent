@@ -1,3 +1,5 @@
+"use client";
+
 import type { inferRouterOutputs } from "@trpc/server";
 import TimeAgo from "react-timeago";
 import spanishStrings from "react-timeago/lib/language-strings/es";
