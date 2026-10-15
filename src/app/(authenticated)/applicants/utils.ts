@@ -1,3 +1,5 @@
+import { parseStages } from "~/lib/validations/job-opening";
+
 import { getSourceIcon } from "./_components/source-icon";
 import { ApplicantsPromise, SharedApplicantsPromise } from "./types";
 import { avatarPalette } from "./constants";
@@ -20,7 +22,12 @@ export async function transformApplicants(
               .map((application) => application.jobOpening.name)
           : [];
 
-        const currentStage = applicant.applications[0]?.currentStage;
+        const firstApplication = applicant.applications[0];
+        const currentStage = firstApplication
+          ? parseStages(firstApplication.jobOpening.stages).find(
+              (stage) => stage.key === firstApplication.currentStageId,
+            )?.name
+          : undefined;
 
         return {
           id: applicant.id,

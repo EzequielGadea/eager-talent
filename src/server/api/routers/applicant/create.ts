@@ -61,7 +61,7 @@ export const createApplicant = protectedProcedure
       });
     }
     try {
-      let firstStage: string | undefined;
+      let firstStageId: string | undefined;
       let jobOpeningName: string | undefined;
 
       // Si se seleccionó una vacante, buscamos su primera stage
@@ -83,19 +83,17 @@ export const createApplicant = protectedProcedure
           });
         }
 
-        const stages = jobOpening.stages as Array<{ name: string }>;
+        const stages = jobOpening.stages as Array<{ key: string }>;
 
         jobOpeningName = jobOpening.name;
-        firstStage = stages[0]?.name;
+        firstStageId = stages[0]?.key;
 
-        if (!firstStage) {
+        if (!firstStageId) {
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: "La vacante seleccionada no tiene stages configuradas",
           });
         }
-
-        console.log("PRIMERA STAGE:", firstStage);
       }
 
       // Primero creamos el candidato
@@ -160,12 +158,16 @@ export const createApplicant = protectedProcedure
           },
         });
 
-        if (input.jobOpeningId && firstStage && jobOpeningName !== undefined) {
+        if (
+          input.jobOpeningId &&
+          firstStageId &&
+          jobOpeningName !== undefined
+        ) {
           await tx.application.create({
             data: {
               applicantId: applicant.id,
               jobOpeningId: input.jobOpeningId,
-              currentStage: firstStage,
+              currentStageId: firstStageId,
               //Cambiar cuando cambie la base
               desiredSalaryAmount: input.desiredSalary,
               desiredSalaryCurrency: input.currency,

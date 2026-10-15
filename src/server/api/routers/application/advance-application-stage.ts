@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const advanceApplicationStage = protectedProcedure
@@ -11,7 +12,7 @@ export const advanceApplicationStage = protectedProcedure
     z.object({
       applicantId: z.string(),
       jobOpeningId: z.string(),
-      currentStage: z.string(),
+      currentStageId: z.string(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -41,7 +42,7 @@ export const advanceApplicationStage = protectedProcedure
         select: {
           applicantId: true,
           jobOpeningId: true,
-          currentStage: true,
+          currentStageId: true,
           active: true,
         },
       }),
@@ -78,23 +79,17 @@ export const advanceApplicationStage = protectedProcedure
       });
     }
 
-    if (application.currentStage !== input.currentStage) {
+    if (application.currentStageId !== input.currentStageId) {
       throw new TRPCError({
         code: "CONFLICT",
         message: "Application stage has changed",
       });
     }
 
-    const stages = Array.isArray(jobOpening.stages) ? jobOpening.stages : [];
+    const stages = parseStages(jobOpening.stages);
 
     const stageIndex = stages.findIndex(
-      (stage) =>
-        typeof stage === "object" &&
-        stage !== null &&
-        !Array.isArray(stage) &&
-        "name" in stage &&
-        typeof stage.name === "string" &&
-        stage.name === input.currentStage,
+      (stage) => stage.key === input.currentStageId,
     );
 
     if (stageIndex === -1) {
@@ -104,23 +99,15 @@ export const advanceApplicationStage = protectedProcedure
       });
     }
 
+    const currentStage = stages[stageIndex]!;
     const nextStage = stages[stageIndex + 1];
 
-    if (
-      typeof nextStage !== "object" ||
-      nextStage === null ||
-      Array.isArray(nextStage) ||
-      !("name" in nextStage) ||
-      typeof nextStage.name !== "string" ||
-      nextStage.name.trim() === ""
-    ) {
+    if (!nextStage) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Application is already in the last stage",
       });
     }
-
-    const nextStageName = nextStage.name;
 
     return ctx.db.$transaction(async (tx) => {
       // Conditional update: only succeeds if the application is still active
@@ -129,11 +116,11 @@ export const advanceApplicationStage = protectedProcedure
         where: {
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
-          currentStage: input.currentStage,
+          currentStageId: input.currentStageId,
           active: true,
         },
         data: {
-          currentStage: nextStageName,
+          currentStageId: nextStage.key,
           stageEntryDate: new Date(),
         },
       });
@@ -150,14 +137,14 @@ export const advanceApplicationStage = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
           createdById: ctx.session.user.id,
-          description: `movió la postulación de "${input.currentStage}" a "${nextStageName}"`,
+          description: `movió la postulación de "${currentStage.name}" a "${nextStage.name}"`,
         },
       });
 
       return {
         applicantId: input.applicantId,
         jobOpeningId: input.jobOpeningId,
-        currentStage: nextStageName,
+        currentStageId: nextStage.key,
       };
     });
   });

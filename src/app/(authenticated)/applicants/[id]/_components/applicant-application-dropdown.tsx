@@ -53,7 +53,7 @@ function buildApplicationSubtitle(application: ApplicationSummary) {
     : "—";
 
   return [
-    application.currentStage,
+    application.currentStageName,
     application.disqualificationDescription,
     `postuló ${dateLabel}`,
   ]

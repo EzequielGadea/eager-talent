@@ -42,7 +42,8 @@ export type ApplicationSummary = {
   applicantId: string;
   jobOpeningId: string;
   applicationDate: Date | string;
-  currentStage: string;
+  currentStageId: string;
+  currentStageName: string;
   active: boolean;
   disqualificationDescription?: string | null;
   desiredSalaryAmount?: string | null;
@@ -159,7 +160,7 @@ export function ApplicantApplicationsCard({
 
   const details = app
     ? [
-        { label: "Etapa actual", value: app.currentStage },
+        { label: "Etapa actual", value: app.currentStageName },
         {
           label: "Postuló",
           value: app.applicationDate

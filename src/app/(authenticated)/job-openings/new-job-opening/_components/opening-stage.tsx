@@ -6,7 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { GripVertical, X, Plus, ChevronDown } from "lucide-react";
 import { useDrag, useDrop } from "react-dnd";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { mandatoryStages, Stage, STAGE_TYPE_CLASS_NAMES, STAGE_TYPE_CLASS_STATIC, Stages } from "../utils";
+import {
+  mandatoryStages,
+  Stage,
+  STAGE_TYPE_CLASS_NAMES,
+  STAGE_TYPE_CLASS_STATIC,
+  Stages,
+} from "../utils";
 import { useForm } from "react-hook-form";
 import {
   Popover,
@@ -21,9 +27,12 @@ import {
   ColorPickerInput,
 } from "~/components/ui/color-picker";
 import { Input } from "~/components/ui/input";
-import { JobOpeningStageType } from "~/lib/validations/job-opening";
+import {
+  PERSISTED_TO_FORM_STAGE_TYPE,
+  type PersistedStageType,
+} from "~/lib/validations/job-opening";
 
-const types = [
+const types: { name: PersistedStageType; key: number }[] = [
   { name: "Ninguna", key: 0 },
   { name: "Entrevista", key: 1 },
   { name: "Oferta", key: 2 },
@@ -71,7 +80,7 @@ export default function OpeningStage(props: {
 
   function newStage() {
     const key = crypto.randomUUID();
-    const added = {
+    const added: Stage = {
       key: key,
       name: "nueva etapa",
       type: "Ninguna",
@@ -126,14 +135,14 @@ export default function OpeningStage(props: {
     setValue("stages", props.stages, { shouldValidate: isSubmitted });
   }, [props.stages, setValue, isSubmitted]);
 
-  const countMandatory = (() => {
-    const counts:{[key:string]:number} = {}
+  const countMandatory = () => {
+    const counts: { [key: string]: number } = {};
     props.stages.forEach((stage) => {
       if (mandatoryStages.some((word) => word == stage.name))
-        counts[stage.name] = (counts[stage.name] || 0) + 1
-    })
-    return counts
-  })
+        counts[stage.name] = (counts[stage.name] || 0) + 1;
+    });
+    return counts;
+  };
 
   return (
     <Card className="w-full rounded-x1 shadow-sm">
@@ -169,7 +178,11 @@ export default function OpeningStage(props: {
                 setOpenColor={setOpenColor}
                 openColor={openColor}
                 updateName={updateName}
-                isEditable={(!mandatoryStages.some((word) => word == stage.name)) || (mandatoryStages.some((word) => word == stage.name) && countMandatory()[stage.name] > 1)}
+                isEditable={
+                  !mandatoryStages.some((word) => word == stage.name) ||
+                  (mandatoryStages.some((word) => word == stage.name) &&
+                    countMandatory()[stage.name] > 1)
+                }
               />
             ))}
           </div>
@@ -269,29 +282,8 @@ function IndividualStage(props: {
     }
   };
 
-  const recordType = ((name:string) => {
-    let newRecordType:JobOpeningStageType = "none";
-    switch(name) {
-      case "Ninguna": {
-        newRecordType = "none";
-        break;
-      }
-      case "Entrevista": {
-        newRecordType = "interview";
-        break;
-      }
-      case "Oferta": {
-        newRecordType = "offer";
-        break;
-      }
-      case "Contratado": {
-        
-        newRecordType = "hired"
-        break;
-      }
-    }
-    return newRecordType;
-  })
+  const recordType = (type: PersistedStageType) =>
+    PERSISTED_TO_FORM_STAGE_TYPE[type];
 
   return (
     <div
@@ -366,9 +358,9 @@ function IndividualStage(props: {
             <PopoverTrigger
               className={cn(
                 "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors",
-                props.isEditable ?
-                  `hover:bg-dashboard-success-light hover:text-dashboard-success-text ${STAGE_TYPE_CLASS_NAMES[recordType(props.stage.type)]}` :
-                  STAGE_TYPE_CLASS_STATIC[recordType(props.stage.type)],
+                props.isEditable
+                  ? `hover:bg-dashboard-success-light hover:text-dashboard-success-text ${STAGE_TYPE_CLASS_NAMES[recordType(props.stage.type)]}`
+                  : STAGE_TYPE_CLASS_STATIC[recordType(props.stage.type)],
               )}
             >
               <span>{props.stage.type}</span>

@@ -293,7 +293,8 @@ model Application {
   jobOpeningId           String          @map("job_opening_id")
   applicationDate        DateTime        @default(now()) @map("application_date")
   active                 Boolean         @default(true)
-  currentStage           String          @map("current_stage")
+  // Key of the JobOpening.stages entry the application is currently in.
+  currentStageId         String          @map("current_stage_id")
   stageEntryDate         DateTime        @default(now()) @map("stage_entry_date")
   disqualificationDate   DateTime?       @map("disqualification_date")
   disqualificationDescription String?   @map("disqualification_description")
@@ -309,7 +310,7 @@ model Application {
   publicLinks            PublicLink[]
 
   @@id([applicantId, jobOpeningId])
-  @@index([jobOpeningId, active, currentStage])
+  @@index([jobOpeningId, active, currentStageId])
   @@index([disqualificationMotiveId])
   @@map("application")
 }
