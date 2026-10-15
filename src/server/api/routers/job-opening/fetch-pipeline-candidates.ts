@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { auth } from "~/lib/auth";
 import { getInterviewName } from "~/lib/get-interview-name";
+import { getApplicantSearchWhere } from "~/server/api/procedures/get-applicant-search-where";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const fetchPipelineCandidates = protectedProcedure
@@ -12,6 +13,7 @@ export const fetchPipelineCandidates = protectedProcedure
       stageId: z.string(),
       limit: z.number().int().positive().max(50).default(3),
       offset: z.number().int().nonnegative().default(0),
+      search: z.string().optional(),
     }),
   )
   .query(async ({ ctx, input }) => {
@@ -44,6 +46,7 @@ export const fetchPipelineCandidates = protectedProcedure
       jobOpeningId: input.jobOpeningId,
       currentStageId: input.stageId,
       active: true,
+      applicant: getApplicantSearchWhere(input.search),
       ...(canReadAll.success
         ? {}
         : {

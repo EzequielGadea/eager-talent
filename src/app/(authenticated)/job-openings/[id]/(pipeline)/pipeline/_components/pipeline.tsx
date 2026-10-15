@@ -12,9 +12,10 @@ import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
 type PipelineProps = {
   jobOpeningId: string;
   stages: PipelineStage[];
+  search?: string;
 };
 
-export async function Pipeline({ jobOpeningId, stages }: PipelineProps) {
+export async function Pipeline({ jobOpeningId, stages, search }: PipelineProps) {
   const requestHeaders = await headers();
 
   const [canUpdateApplication, canCreateInterview, canDeleteInterview] =
@@ -55,6 +56,7 @@ export async function Pipeline({ jobOpeningId, stages }: PipelineProps) {
                 jobOpeningId={jobOpeningId}
                 stage={stage}
                 isLastStage={index === stages.length - 1}
+                search={search}
                 canUpdateApplication={canUpdateApplication.success}
                 canCreateInterview={canCreateInterview.success}
                 canDeleteInterview={canDeleteInterview.success}

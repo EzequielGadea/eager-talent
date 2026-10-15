@@ -2,11 +2,13 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
+import { getApplicantSearchWhere } from "~/server/api/procedures/get-applicant-search-where";
 
 export const fetchDisqualifiedApplications = protectedProcedure
   .input(
     z.object({
       jobOpeningId: z.string(),
+      search: z.string().optional(),
     }),
   )
   .query(async ({ ctx, input }) => {
@@ -41,6 +43,7 @@ export const fetchDisqualifiedApplications = protectedProcedure
         jobOpeningId: input.jobOpeningId,
         active: false,
         disqualificationDate: { not: null },
+        applicant: getApplicantSearchWhere(input.search),
         ...(canReadAll.success
           ? {}
           : {
