@@ -3,16 +3,16 @@ import { Clock } from "lucide-react";
 function InterviewPlaceholder() {
   return (
     <div className="flex items-center gap-3.5 border-b border-border-default py-3 last:border-b-0">
-      <div className="h-3 w-10 shrink-0 rounded-full bg-slate-200" />
+      <div className="h-3 w-10 shrink-0 rounded-full bg-border-default" />
 
-      <div className="size-8.5 shrink-0 rounded-full bg-slate-200" />
+      <div className="size-8.5 shrink-0 rounded-full bg-border-default" />
 
       <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <div className="h-3.5 w-32 max-w-full rounded-full bg-slate-200" />
-        <div className="h-3 w-44 max-w-full rounded-full bg-slate-100" />
+        <div className="h-3.5 w-32 max-w-full rounded-full bg-border-default" />
+        <div className="h-3 w-44 max-w-full rounded-full bg-surface-sunken" />
       </div>
 
-      <div className="h-5 w-14 shrink-0 rounded-full bg-slate-100" />
+      <div className="h-5 w-14 shrink-0 rounded-full bg-surface-sunken" />
     </div>
   );
 }

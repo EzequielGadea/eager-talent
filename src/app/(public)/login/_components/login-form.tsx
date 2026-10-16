@@ -121,10 +121,10 @@ export function LoginForm() {
   });
 
   return (
-    <section className="relative z-10 mx-4 w-full max-w-100 rounded-xl border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.12)] sm:p-9">
+    <section className="relative z-10 mx-4 w-full max-w-100 rounded-xl border border-border-default bg-surface-card p-6 shadow-[0_16px_40px_rgba(15,23,42,0.12)] sm:p-9">
       <EagerTalentLogo />
 
-      <p className="mt-2 mb-7 text-sm text-slate-500">
+      <p className="mt-2 mb-7 text-sm text-text-secondary">
         Ingresá para gestionar tus candidatos y vacantes.
       </p>
 
@@ -139,7 +139,7 @@ export function LoginForm() {
           label="Correo electrónico"
           autoComplete="email"
           errorMessage={errors.email?.message}
-          className="h-9.5 rounded-md border-slate-200 px-3 focus-visible:border-emerald-500 focus-visible:ring-emerald-500/20"
+          className="h-9.5 rounded-md border-border-default px-3 focus-visible:border-border-focus focus-visible:ring-border-focus/20"
           {...register("email")}
         />
 
@@ -157,7 +157,7 @@ export function LoginForm() {
                 showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
               }
               aria-pressed={showPassword}
-              className="flex size-8 items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
+              className="flex size-8 items-center justify-center text-text-tertiary transition-colors hover:text-text-secondary"
             >
               {showPassword ? (
                 <EyeOff aria-hidden="true" className="size-4" />
@@ -166,7 +166,7 @@ export function LoginForm() {
               )}
             </button>
           }
-          className="h-9.5 rounded-md border-slate-200 px-3 focus-visible:border-emerald-500 focus-visible:ring-emerald-500/20"
+          className="h-9.5 rounded-md border-border-default px-3 focus-visible:border-border-focus focus-visible:ring-border-focus/20"
           {...register("password")}
         />
 
@@ -174,7 +174,7 @@ export function LoginForm() {
           <p
             role="alert"
             aria-live="polite"
-            className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-600"
+            className="rounded-md bg-danger-bg px-3 py-2 text-sm text-danger"
           >
             {errors.root.message}
           </p>
@@ -183,7 +183,7 @@ export function LoginForm() {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="mt-1 h-10 w-full rounded-full border-slate-900 bg-slate-900 px-4.5 text-sm text-white hover:bg-slate-800"
+          className="mt-1 h-10 w-full rounded-full border-primary bg-primary px-4.5 text-sm text-primary-foreground hover:bg-primary/90"
         >
           {isSubmitting ? (
             "Ingresando…"
@@ -196,7 +196,7 @@ export function LoginForm() {
         </Button>
       </form>
 
-      <p className="mt-5.5 text-center text-xs leading-5 text-slate-400">
+      <p className="mt-5.5 text-center text-xs leading-5 text-text-tertiary">
         ¿No podés ingresar? Contactá a tu recruiter para restablecer tu acceso.
       </p>
     </section>

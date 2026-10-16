@@ -276,7 +276,7 @@ export function ScheduleInterviewDialog({
                     <div
                       role="radiogroup"
                       aria-label="Modalidad"
-                      className="flex h-11 w-full items-stretch gap-1 rounded-xl border border-border-default bg-slate-50 p-1"
+                      className="flex h-11 w-full items-stretch gap-1 rounded-xl border border-border-default bg-surface-subtle p-1"
                     >
                       {MODALITY_OPTIONS.map((option) => {
                         const selected = field.value === option.value;
@@ -363,9 +363,9 @@ export function ScheduleInterviewDialog({
                                     ]);
                                     setSearch("");
                                   }}
-                                  className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-slate-50"
+                                  className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-hover"
                                 >
-                                  <span className="flex size-7 items-center justify-center rounded-full bg-violet-100 text-[11px] font-semibold text-violet-700">
+                                  <span className="flex size-7 items-center justify-center rounded-full bg-dashboard-purple-avatar text-[11px] font-semibold text-dashboard-purple-text">
                                     {initialsOf(
                                       interviewer.name,
                                       interviewer.lastName,
@@ -398,9 +398,9 @@ export function ScheduleInterviewDialog({
                           {selected.map((interviewer) => (
                             <li
                               key={interviewer.id}
-                              className="flex items-center gap-2 rounded-full border border-border-default bg-slate-50 py-1 pr-1 pl-1"
+                              className="flex items-center gap-2 rounded-full border border-border-default bg-surface-subtle py-1 pr-1 pl-1"
                             >
-                              <span className="flex size-6 items-center justify-center rounded-full bg-violet-100 text-[10px] font-semibold text-violet-700">
+                              <span className="flex size-6 items-center justify-center rounded-full bg-dashboard-purple-avatar text-[10px] font-semibold text-dashboard-purple-text">
                                 {initialsOf(
                                   interviewer.name,
                                   interviewer.lastName,
@@ -419,7 +419,7 @@ export function ScheduleInterviewDialog({
                                     ),
                                   )
                                 }
-                                className="flex size-6 items-center justify-center rounded-full text-text-secondary hover:bg-slate-200 hover:text-text-primary"
+                                className="flex size-6 items-center justify-center rounded-full text-text-secondary hover:bg-surface-sunken hover:text-text-primary"
                               >
                                 <X className="size-3.5" />
                               </button>
@@ -449,7 +449,7 @@ export function ScheduleInterviewDialog({
           </div>
 
           {/* Pie */}
-          <div className="flex justify-end gap-2 rounded-b-2xl border-t border-border-default bg-slate-50 px-6 py-4">
+          <div className="flex justify-end gap-2 rounded-b-2xl border-t border-border-default bg-surface-subtle px-6 py-4">
             <Button
               type="button"
               variant="outline"
@@ -461,7 +461,7 @@ export function ScheduleInterviewDialog({
             </Button>
             <Button
               type="submit"
-              className="rounded-full bg-slate-900 px-5 text-white hover:bg-slate-800"
+              className="rounded-full bg-primary px-5 text-primary-foreground hover:bg-primary/90"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

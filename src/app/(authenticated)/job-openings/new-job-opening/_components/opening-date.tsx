@@ -63,7 +63,7 @@ export default function OpeningDate() {
             <div className="space-y-2">
               <Label
                 htmlFor="openingDate"
-                className="body text-[13px] text-slate-600 --text-primary"
+                className="body text-[13px] text-text-secondary"
               >
                 Fecha de apertura <span className="text-danger">*</span>
               </Label>
@@ -84,7 +84,7 @@ export default function OpeningDate() {
             <div className="space-y-2">
               <Label
                 htmlFor="closingDate"
-                className="body text-[13px] text-slate-600 --text-primary"
+                className="body text-[13px] text-text-secondary"
               >
                 Fecha objetivo de cierre <span className="text-danger">*</span>
               </Label>

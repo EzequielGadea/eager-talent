@@ -139,7 +139,7 @@ export function UserRow({ user }: Props) {
         ) : (
           <DropdownMenu>
             <DropdownMenuTrigger
-              className="flex size-8 items-center cursor-pointer justify-center rounded-md hover:bg-slate-200"
+              className="flex size-8 items-center cursor-pointer justify-center rounded-md hover:bg-surface-sunken"
               aria-label={`Acciones de ${user.name} ${user.lastName}`}
             >
               <MoreHorizontal className="size-4" />
