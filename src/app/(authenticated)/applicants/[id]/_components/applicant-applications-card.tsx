@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight, Plus, Share2, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
+import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -45,6 +47,7 @@ export type ApplicationSummary = {
   currentStageId: string;
   currentStageName: string;
   active: boolean;
+  canScheduleInterview: boolean;
   disqualificationDescription?: string | null;
   desiredSalaryAmount?: string | null;
   desiredSalaryCurrency?: string | null;
@@ -80,12 +83,11 @@ function getHeaderApplicationStatus(application: { active: boolean }) {
 
 function getInitialSelection(
   applications: ApplicationSummary[],
-  explorationInterviews: Interview[],
-): ApplicationSelection | undefined {
+): ApplicationSelection {
   if (applications[0]) {
     return { type: "application", jobOpeningId: applications[0].jobOpeningId };
   }
-  return explorationInterviews.length > 0 ? { type: "exploration" } : undefined;
+  return { type: "exploration" };
 }
 
 export function ApplicantApplicationsCard({
@@ -98,13 +100,15 @@ export function ApplicantApplicationsCard({
   canCreateInterview,
   canCreateApplication,
 }: ApplicantApplicationsCardProps) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
-    () => getInitialSelection(applications, explorationInterviews),
+    () => getInitialSelection(applications),
   );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
-  const effectiveSelection =
-    selection ?? getInitialSelection(applications, explorationInterviews);
+  const [showInterviewDialog, setShowInterviewDialog] = useState(false);
+  const effectiveSelection = selection ?? getInitialSelection(applications);
 
   const isExploration = effectiveSelection?.type === "exploration";
   const app =
@@ -150,6 +154,8 @@ export function ApplicantApplicationsCard({
   const interviews = isExploration
     ? explorationInterviews
     : (app?.interviews ?? []);
+  const canScheduleInterview =
+    canCreateInterview && (isExploration || Boolean(app?.canScheduleInterview));
   const jobOpening = app?.jobOpening;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
   const desiredSalary = app
@@ -298,17 +304,45 @@ export function ApplicantApplicationsCard({
           <h3 className="min-w-0 text-base font-bold text-text-primary">
             Historial de entrevistas
           </h3>
-          {canCreateInterview && (
+          {canScheduleInterview && (
             <Button
+              type="button"
               variant="outline"
               size="sm"
               className="min-w-0 max-w-full gap-1.5 overflow-hidden rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg sm:w-auto"
+              onClick={() => setShowInterviewDialog(true)}
             >
               <Plus className="h-3.5 w-3.5 shrink-0 text-tag-gray-fg" />
               <span className="truncate">Agregar entrevista</span>
             </Button>
           )}
         </div>
+        {canCreateInterview && app && !app.canScheduleInterview && (
+          <p className="mb-4 text-sm text-text-tertiary">
+            Solo se pueden agendar entrevistas cuando la etapa actual es de tipo
+            entrevista.
+          </p>
+        )}
+
+        {canScheduleInterview && (
+          <ScheduleInterviewDialog
+            key={
+              effectiveSelection?.type === "application"
+                ? effectiveSelection.jobOpeningId
+                : "exploration"
+            }
+            open={showInterviewDialog}
+            onOpenChange={setShowInterviewDialog}
+            applicantId={applicantId}
+            jobOpeningId={isExploration ? undefined : app?.jobOpeningId}
+            candidateName={applicantName}
+            onSuccess={() =>
+              startTransition(() => {
+                router.refresh();
+              })
+            }
+          />
+        )}
 
         {interviews.length === 0 ? (
           <div className="py-6 text-sm text-text-tertiary">
