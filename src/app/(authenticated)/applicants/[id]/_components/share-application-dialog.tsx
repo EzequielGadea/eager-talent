@@ -304,14 +304,23 @@ export function ShareApplicationDialog({
                     </div>
 
                     <div className="flex shrink-0 items-center gap-1.5">
-                      {/* The public page is implemented in a later task. */}
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
                         className="rounded-full px-3 font-semibold"
-                        disabled
-                        title="Disponible cuando exista la página pública"
+                        disabled={!link.token}
+                        onClick={() => {
+                          if (link.token) {
+                            window.open(
+                              getPublicLinkUrl(
+                                link.token,
+                                window.location.origin,
+                              ),
+                              "_blank",
+                            );
+                          }
+                        }}
                       >
                         Ver
                       </Button>
