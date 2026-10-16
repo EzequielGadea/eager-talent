@@ -188,7 +188,7 @@ export function DisqualifiedCard({
               )}
             </div>
 
-            <div className="flex justify-end gap-2 border-t border-border-default bg-slate-50 px-6 py-4">
+            <div className="flex justify-end gap-2 border-t border-border-default bg-surface-subtle px-6 py-4">
               <Button
                 type="button"
                 variant="outline"
@@ -201,7 +201,7 @@ export function DisqualifiedCard({
 
               <Button
                 type="button"
-                className="rounded-full bg-slate-900 px-5 text-white hover:bg-slate-800"
+                className="rounded-full bg-primary px-5 text-primary-foreground hover:bg-primary/90"
                 disabled={requalifyMutation.isPending}
                 onClick={() =>
                   requalifyMutation.mutate({

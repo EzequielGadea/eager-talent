@@ -6,7 +6,7 @@ export function DashboardHeader() {
       </h1>
 
       <div
-        className="mt-2 h-3.5 w-48 rounded-full bg-slate-200"
+        className="mt-2 h-3.5 w-48 rounded-full bg-border-default"
         aria-label="Fecha pendiente de cargar"
       />
     </header>
