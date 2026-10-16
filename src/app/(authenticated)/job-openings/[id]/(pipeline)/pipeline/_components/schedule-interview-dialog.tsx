@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { toast } from "~/components/ui/toast";
 
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120];
 
@@ -35,41 +36,52 @@ const MODALITY_OPTIONS = [
 
 const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
-const scheduleInterviewSchema = z
-  .object({
-    modality: z.string().min(1, "Seleccioná una modalidad."),
-    duration: z
-      .number({ message: "Ingresá la duración en minutos." })
-      .int()
-      .positive("La duración debe ser mayor a 0."),
-    date: z.string().min(1, "Seleccioná una fecha."),
-    time: z
-      .string()
-      .min(1, "Ingresá la hora.")
-      .regex(
-        TIME_REGEX,
-        "Ingresá una hora válida en formato 24 h, por ejemplo 14:30.",
-      ),
-    interviewerIds: z
-      .array(z.string())
-      .min(1, "Seleccioná al menos un entrevistador."),
-  })
-  .superRefine((data, ctx) => {
-    if (!data.date || !TIME_REGEX.test(data.time)) return;
+function createScheduleInterviewSchema(requiresExploratoryName: boolean) {
+  return z
+    .object({
+      exploratoryName: z.string().trim().optional(),
+      modality: z.string().min(1, "Seleccioná una modalidad."),
+      duration: z
+        .number({ message: "Ingresá la duración en minutos." })
+        .int()
+        .positive("La duración debe ser mayor a 0."),
+      date: z.string().min(1, "Seleccioná una fecha."),
+      time: z
+        .string()
+        .min(1, "Ingresá la hora.")
+        .regex(
+          TIME_REGEX,
+          "Ingresá una hora válida en formato 24 h, por ejemplo 14:30.",
+        ),
+      interviewerIds: z
+        .array(z.string())
+        .min(1, "Seleccioná al menos un entrevistador."),
+    })
+    .superRefine((data, ctx) => {
+      if (requiresExploratoryName && !data.exploratoryName) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["exploratoryName"],
+          message: "El nombre es obligatorio para entrevistas sin postulación.",
+        });
+      }
 
-    const scheduledAt = new Date(`${data.date}T${data.time}`);
+      if (!data.date || !TIME_REGEX.test(data.time)) return;
 
-    if (
-      Number.isNaN(scheduledAt.getTime()) ||
-      scheduledAt.getTime() <= Date.now()
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["date"],
-        message: "La fecha y hora deben ser posteriores al momento actual.",
-      });
-    }
-  });
+      const scheduledAt = new Date(`${data.date}T${data.time}`);
+
+      if (
+        Number.isNaN(scheduledAt.getTime()) ||
+        scheduledAt.getTime() <= Date.now()
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["date"],
+          message: "La fecha y hora deben ser posteriores al momento actual.",
+        });
+      }
+    });
+}
 
 // Fecha local de hoy (YYYY-MM-DD). toISOString() devuelve UTC,  restar desfase con Uruguay.
 function getTodayLocalISO() {
@@ -78,13 +90,15 @@ function getTodayLocalISO() {
   return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
 }
 
-type ScheduleInterviewFormValues = z.infer<typeof scheduleInterviewSchema>;
+type ScheduleInterviewFormValues = z.infer<
+  ReturnType<typeof createScheduleInterviewSchema>
+>;
 
 type ScheduleInterviewDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   applicantId: string;
-  jobOpeningId: string;
+  jobOpeningId?: string;
   candidateName: string;
   onSuccess: () => void;
 };
@@ -126,8 +140,9 @@ export function ScheduleInterviewDialog({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<ScheduleInterviewFormValues>({
-    resolver: zodResolver(scheduleInterviewSchema),
+    resolver: zodResolver(createScheduleInterviewSchema(!jobOpeningId)),
     defaultValues: {
+      exploratoryName: "",
       modality: "VideoCall",
       duration: 45,
       date: "",
@@ -145,15 +160,18 @@ export function ScheduleInterviewDialog({
   const createInterviewMutation = api.interview.create.useMutation({
     onSuccess: () => {
       resetAll();
+      toast.add({ title: "Entrevista creada correctamente", type: "success" });
       onOpenChange(false);
       onSuccess();
     },
   });
+  const isPending = isSubmitting || createInterviewMutation.isPending;
 
   function onSubmit(data: ScheduleInterviewFormValues) {
     createInterviewMutation.mutate({
       applicantId,
       jobOpeningId,
+      exploratoryName: jobOpeningId ? undefined : data.exploratoryName?.trim(),
       modality: data.modality as InterviewType,
       duration: data.duration,
       date: new Date(`${data.date}T${data.time}`),
@@ -187,6 +205,29 @@ export function ScheduleInterviewDialog({
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <div className="flex flex-col gap-5 px-6 py-5">
+            {!jobOpeningId && (
+              <div className="grid gap-2">
+                <label
+                  htmlFor="exploratory-interview-name"
+                  className={fieldLabel}
+                >
+                  Nombre de la entrevista
+                </label>
+                <Input
+                  id="exploratory-interview-name"
+                  autoComplete="off"
+                  placeholder="Ej. Entrevista inicial"
+                  className={fieldControl}
+                  {...register("exploratoryName")}
+                />
+                {errors.exploratoryName && (
+                  <p className="text-xs text-danger">
+                    {errors.exploratoryName.message}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Fecha y hora */}
             <div className="grid grid-cols-2 gap-3">
               <div className="grid content-start gap-2">
@@ -337,18 +378,22 @@ export function ScheduleInterviewDialog({
                         {showList && (
                           <div className="absolute right-0 bottom-full left-0 z-20 mb-2 max-h-56 overflow-y-auto rounded-xl border border-border-default bg-white p-2 shadow-lg">
                             <p className="px-2 pt-1 pb-2 text-xs font-medium text-text-secondary">
-                              Usuarios del sistema
+                              Hiring Managers del sistema
                             </p>
 
                             {interviewersQuery.isLoading ? (
                               <div className="flex justify-center py-3">
                                 <Loader2 className="size-4 animate-spin text-text-secondary" />
                               </div>
+                            ) : interviewersQuery.isError ? (
+                              <p className="px-2 py-2 text-sm text-danger">
+                                No se pudieron cargar los entrevistadores.
+                              </p>
                             ) : matches.length === 0 ? (
                               <p className="px-2 py-2 text-sm text-text-secondary">
                                 {term
                                   ? "Sin resultados."
-                                  : "No hay más usuarios disponibles."}
+                                  : "No hay más Hiring Managers disponibles."}
                               </p>
                             ) : (
                               matches.map((interviewer) => (
@@ -455,16 +500,16 @@ export function ScheduleInterviewDialog({
               variant="outline"
               className="rounded-full px-5"
               onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
+              disabled={isPending}
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="rounded-full bg-primary px-5 text-primary-foreground hover:bg-primary/90"
-              disabled={isSubmitting}
+              className="rounded-full bg-slate-900 px-5 text-white hover:bg-slate-800"
+              disabled={isPending}
             >
-              {isSubmitting ? (
+              {isPending ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
                 <Plus className="size-4" />
