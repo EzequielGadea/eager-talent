@@ -55,6 +55,7 @@ export function DisqualifiedColumn({
             jobOpeningId={jobOpeningId}
             canRequalify={canRequalify}
             now={now}
+            stageName={stageName}
           />
         ))}
 

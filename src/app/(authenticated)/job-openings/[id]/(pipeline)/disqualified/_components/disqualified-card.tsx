@@ -41,6 +41,7 @@ type DisqualifiedCardProps = {
   jobOpeningId: string;
   canRequalify: boolean;
   now: number;
+  stageName: string;
 };
 
 export function DisqualifiedCard({
@@ -48,6 +49,7 @@ export function DisqualifiedCard({
   jobOpeningId,
   canRequalify,
   now,
+  stageName,
 }: DisqualifiedCardProps) {
   const router = useRouter();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -190,8 +192,8 @@ export function DisqualifiedCard({
               </DialogTitle>
 
               <DialogDescription className="mt-1 text-sm text-text-secondary">
-                {fullName} vuelve al pipeline en la etapa «{application.stage}»
-                y se elimina el motivo de descarte.
+                {fullName} vuelve al pipeline en la etapa «{stageName}» y se
+                elimina el motivo de descarte.
               </DialogDescription>
 
               {requalifyMutation.isError && (
