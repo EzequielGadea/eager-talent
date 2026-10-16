@@ -51,6 +51,7 @@ export async function InterviewDetails({
   const canEdit = canUpdateInterview.success || canCreateInterview.success;
 
   const rows = [
+    { label: "Instancia", value: interview.name },
     {
       label: "Fecha",
       value: interview.date
