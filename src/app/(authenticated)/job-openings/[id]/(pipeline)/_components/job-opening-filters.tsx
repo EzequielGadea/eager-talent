@@ -1,8 +1,8 @@
 "use client";
 
-import { Filter, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useTransition, useState, useEffect } from "react";
+import { useState, useTransition } from "react";
 
 import { useDebouncedCallback } from "use-debounce";
 
