@@ -18,7 +18,7 @@ export const createDescalificationMotive = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }*/
-    const motive = await ctx.db.area.create({
+    const motive = await ctx.db.disqualificationMotive.create({
       data: {
         name: input.name,
       },
