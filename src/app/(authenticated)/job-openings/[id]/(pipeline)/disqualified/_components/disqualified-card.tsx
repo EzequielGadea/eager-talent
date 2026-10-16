@@ -175,8 +175,8 @@ export function DisqualifiedCard({
               </DialogTitle>
 
               <DialogDescription className="mt-1 text-sm text-text-secondary">
-                {fullName} vuelve al pipeline en la etapa «{stageName}»
-                y se elimina el motivo de descarte.
+                {fullName} vuelve al pipeline en la etapa «{stageName}» y se
+                elimina el motivo de descarte.
               </DialogDescription>
 
               {requalifyMutation.isError && (
