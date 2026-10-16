@@ -15,6 +15,8 @@ import { userRoleConfig, userStatusConfig } from "../constants";
 
 export type User = inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
 
+import getAvatar from "~/lib/avatar";
+
 type Props = {
   user: User;
 };
@@ -86,12 +88,16 @@ export function UserRow({ user }: Props) {
           user.assignedJobOpeningsCount === 1 ? "vacante" : "vacantes"
         }`;
 
+  const avatar = getAvatar(user.name, user.lastName);
+
   return (
     <TableRow className="border-b border-border-default last:border-b-0">
       <TableCell className="px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-tag-purple-bg text-xs font-semibold text-tag-purple-fg">
-            {getInitials(user.name, user.lastName)}
+          <div
+            className={`flex size-9 shrink-0 items-center justify-center rounded-full  text-xs font-semibold ${avatar.colorClass}`}
+          >
+            {avatar.initials}
           </div>
 
           <span className="font-semibold text-text-primary">
