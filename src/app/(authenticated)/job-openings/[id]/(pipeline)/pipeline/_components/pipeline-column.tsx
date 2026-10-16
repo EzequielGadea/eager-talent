@@ -48,6 +48,7 @@ export async function PipelineColumn({
         canUpdateApplication={canUpdateApplication}
         canCreateInterview={canCreateInterview && canScheduleInterviewInStage}
         canDeleteInterview={canDeleteInterview}
+        search={search}
       />
     </section>
   );

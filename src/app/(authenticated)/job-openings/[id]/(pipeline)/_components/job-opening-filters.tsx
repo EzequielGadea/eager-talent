@@ -6,14 +6,13 @@ import { useState, useTransition } from "react";
 
 import { useDebouncedCallback } from "use-debounce";
 
-import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 
 export function JobOpeningFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const currentSearch = searchParams?.get("search") ?? "";
   const [value, setValue] = useState(currentSearch);

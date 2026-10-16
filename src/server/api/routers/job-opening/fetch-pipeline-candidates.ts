@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { auth } from "~/lib/auth";
 import { getInterviewName } from "~/lib/get-interview-name";
-import { getApplicantSearchWhere } from "~/server/api/procedures/get-applicant-search-where";
+import { getApplicantByKeywordWhere } from "~/server/api/procedures/get-applicant-search-where";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const fetchPipelineCandidates = protectedProcedure
@@ -46,7 +46,7 @@ export const fetchPipelineCandidates = protectedProcedure
       jobOpeningId: input.jobOpeningId,
       currentStageId: input.stageId,
       active: true,
-      applicant: getApplicantSearchWhere(input.search),
+      applicant: getApplicantByKeywordWhere(input.search),
       ...(canReadAll.success
         ? {}
         : {

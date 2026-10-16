@@ -1,6 +1,6 @@
 import type { Prisma } from "~/generated/prisma/client";
 
-export function getApplicantSearchWhere(
+export function getApplicantByKeywordWhere(
   query?: string,
 ): Prisma.ApplicantWhereInput {
   if (!query) return {};

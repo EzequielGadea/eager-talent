@@ -10,7 +10,7 @@ import { DisqualifiedBoard } from "./_components/disqualified-board";
 
 type DisqualifiedPageProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ search?: string }>;
+  searchParams: Promise<{ search?: string | string[] }>;
 };
 
 export default function DisqualifiedPage({ params, searchParams }: DisqualifiedPageProps) {
@@ -24,7 +24,8 @@ export default function DisqualifiedPage({ params, searchParams }: DisqualifiedP
 
 async function DisqualifiedContent({ params, searchParams }: DisqualifiedPageProps) {
   const { id } = await params;
-  const { search } = await searchParams;
+  const { search: rawSearch } = await searchParams;
+  const search = typeof rawSearch === "string" ? rawSearch : undefined;
 
   const requestHeaders = await headers();
 
