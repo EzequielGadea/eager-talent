@@ -4,8 +4,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { ArrowRight, KeyRound, Loader2 } from "lucide-react";
-import { cn } from "~/lib/utils";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -165,16 +164,10 @@ export function ChangePasswordDialog() {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
-          <button
-            type="button"
-            className={cn(
-              buttonVariants({ size: "sm" }),
-              "gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover cursor-pointer",
-            )}
-          >
+          <Button type="button" variant="outline" className="w-full">
             <KeyRound size={16} />
             Cambiar contraseña
-          </button>
+          </Button>
         }
       />
 
