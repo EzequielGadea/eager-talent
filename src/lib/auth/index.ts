@@ -21,10 +21,12 @@ import {
 
 const INVITATION_EXPIRATION = 60 * 60 * 24; // Un dia
 
+// No hay nada más permanente que una solución temporal.
+//                                  - Confucio, 500 a.C.
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "pgrupo632@gmail.com",
+    user: process.env.GOOGLE_EMAIL,
     pass: process.env.GOOGLE_APP_PASSWORD,
   },
 });
