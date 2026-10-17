@@ -45,6 +45,7 @@ import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import { cn } from "~/lib/utils";
+import getAvatar from "~/lib/avatar";
 
 type ShareWithHiringManagerDialogProps = {
   applicantId: string;
@@ -64,31 +65,8 @@ type HiringManagerWithAccess = HiringManagerOption & {
   viewedAt: string | null;
 };
 
-const AVATAR_CLASS_NAMES = [
-  "bg-tag-purple-bg text-tag-purple-fg",
-  "bg-tag-green-bg text-tag-green-fg",
-  "bg-tag-amber-bg text-tag-amber-fg",
-  "bg-tag-blue-bg text-tag-blue-fg",
-];
-
 function getFullName(manager: HiringManagerOption) {
   return `${manager.name} ${manager.lastName}`.trim();
-}
-
-function getInitials(manager: HiringManagerOption) {
-  return `${manager.name.charAt(0)}${manager.lastName.charAt(0)}`.toUpperCase();
-}
-
-function getAvatarClassName(managerId: string) {
-  const hash = Array.from(managerId).reduce(
-    (total, character) => total + character.charCodeAt(0),
-    0,
-  );
-
-  return (
-    AVATAR_CLASS_NAMES[hash % AVATAR_CLASS_NAMES.length] ??
-    "bg-tag-gray-bg text-tag-gray-fg"
-  );
 }
 
 function getAccessDescription(manager: HiringManagerWithAccess) {
@@ -117,12 +95,14 @@ function HiringManagerAvatar({
   manager: HiringManagerOption;
   size?: "default" | "sm" | "lg";
 }) {
+  const avatar = getAvatar(manager.name, manager.lastName);
+
   return (
     <Avatar size={size}>
       {manager.image && <AvatarImage src={manager.image} alt="" />}
 
-      <AvatarFallback className={getAvatarClassName(manager.id)}>
-        {getInitials(manager)}
+      <AvatarFallback className={avatar.colorClass}>
+        {avatar.initials}
       </AvatarFallback>
     </Avatar>
   );

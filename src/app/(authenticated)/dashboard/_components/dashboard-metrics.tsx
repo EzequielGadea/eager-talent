@@ -21,11 +21,11 @@ function MetricCard({ icon, label, iconContainerClassName }: MetricCardProps) {
         <h2 className="text-[13px] font-normal text-text-secondary">{label}</h2>
 
         <div
-          className="mt-2 h-8 w-16 rounded-md bg-slate-200"
+          className="mt-2 h-8 w-16 rounded-md bg-border-default"
           aria-label={`${label}: dato pendiente de cargar`}
         />
 
-        <div className="mt-2 h-3 w-32 rounded-full bg-slate-100" />
+        <div className="mt-2 h-3 w-32 rounded-full bg-surface-sunken" />
       </div>
     </article>
   );

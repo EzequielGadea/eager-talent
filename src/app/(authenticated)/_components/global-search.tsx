@@ -176,7 +176,7 @@ export function GlobalSearch() {
           onBlur={() => setIsFocused(false)}
           aria-label="Buscar"
           placeholder="Buscar candidatos, vacantes o etiquetas…"
-          className="h-9.5 w-full rounded-md border border-border-default bg-slate-50 py-2 pr-14 pl-9 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-focus"
+          className="h-9.5 w-full rounded-md border border-border-default bg-surface-subtle py-2 pr-14 pl-9 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-focus"
         />
 
         <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-border-default bg-white px-1.5 py-0.5 text-xs text-text-tertiary">
@@ -266,7 +266,7 @@ export function GlobalSearch() {
               )}
             </CommandList>
 
-            <div className="flex items-center justify-between gap-3 border-t border-border-default bg-slate-50 px-3 py-2 text-xs text-text-tertiary">
+            <div className="flex items-center justify-between gap-3 border-t border-border-default bg-surface-subtle px-3 py-2 text-xs text-text-tertiary">
               <span className="flex items-center gap-3">
                 <KeyHint keys="↑↓" label="navegar" />
                 <KeyHint keys="↵" label="abrir" />

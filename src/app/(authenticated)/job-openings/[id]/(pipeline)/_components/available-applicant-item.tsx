@@ -2,19 +2,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 import type { AvailableApplicant } from "./add-applicant-types";
 
+import getAvatar from "~/lib/avatar";
+
 type AvailableApplicantItemProps = {
   applicant: AvailableApplicant;
   onSelect: (applicant: AvailableApplicant) => void;
 };
 
-function getInitials(applicant: AvailableApplicant) {
-  return `${applicant.name.charAt(0)}${applicant.lastName.charAt(0)}`.toUpperCase();
-}
-
 export function AvailableApplicantItem({
   applicant,
   onSelect,
 }: AvailableApplicantItemProps) {
+  const avatar = getAvatar(applicant.name, applicant.lastName);
   return (
     <button
       type="button"
@@ -27,8 +26,8 @@ export function AvailableApplicantItem({
           alt={`${applicant.name} ${applicant.lastName}`}
         />
 
-        <AvatarFallback className="bg-muted text-muted-foreground">
-          {getInitials(applicant)}
+        <AvatarFallback className={`${avatar.colorClass}`}>
+          {avatar.initials}
         </AvatarFallback>
       </Avatar>
 

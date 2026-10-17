@@ -187,7 +187,7 @@ export function NotesEditor({
     editorProps: {
       attributes: {
         "aria-label": editorAriaLabel,
-        class: `h-130 overflow-y-auto text-base leading-relaxed ${canEditNotes ? "text-text-primary" : "text-text-tertiary"} caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-slate-200 outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2`,
+        class: `h-130 overflow-y-auto text-base leading-relaxed ${canEditNotes ? "text-text-primary" : "text-text-tertiary"} caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-surface-sunken outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2`,
       },
     },
     onUpdate: ({ editor }) => {

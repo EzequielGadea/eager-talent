@@ -5,6 +5,8 @@ import { getInitials } from "./app-header";
 import { VacanciesIcon } from "./app-icons";
 import { NavigationItem } from "./navigation-item";
 
+import getAvatar from "~/lib/avatar";
+
 export async function HiringManagerNavigation() {
   const [jobOpeningsAmount, applicantsAmount, assignedJobOpenings] =
     await Promise.all([
@@ -48,7 +50,7 @@ export async function HiringManagerNavigation() {
             key={jobOpening.id}
             icon={
               <span
-                className="flex size-5 shrink-0 items-center justify-center rounded-md bg-tag-purple-bg text-[10px] font-semibold text-tag-purple-fg"
+                className={`flex size-5 shrink-0 items-center justify-center rounded-md  text-[10px] ${getAvatar(jobOpening.name, "").colorClass}`}
                 aria-hidden="true"
               >
                 {getInitials(jobOpening.name)}

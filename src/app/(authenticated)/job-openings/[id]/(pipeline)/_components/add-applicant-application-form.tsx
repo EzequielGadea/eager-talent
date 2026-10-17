@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
+import getAvatar from "~/lib/avatar";
+
 import type { AvailableApplicant } from "./add-applicant-types";
 
 const addApplicantApplicationSchema = z.object({
@@ -65,7 +67,7 @@ export function AddApplicantApplicationForm({
       availability: "",
     },
   });
-
+  const avatar = getAvatar(applicant.name, applicant.lastName);
   const {
     control,
     register,
@@ -143,8 +145,8 @@ export function AddApplicantApplicationForm({
               alt={`${applicant.name} ${applicant.lastName}`}
             />
 
-            <AvatarFallback className="bg-muted text-muted-foreground">
-              {getInitials(applicant)}
+            <AvatarFallback className={`${avatar.colorClass}`}>
+              {avatar.initials}
             </AvatarFallback>
           </Avatar>
 
