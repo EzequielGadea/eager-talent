@@ -14,6 +14,7 @@ export default function ProfilePage() {
       </Suspense>
 
       <LogoutButton />
+      
     </div>
   );
 }
