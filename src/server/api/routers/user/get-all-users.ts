@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { getUserStatus } from "~/server/api/procedures/get-user-status";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getAllUsers = protectedProcedure
@@ -32,46 +33,89 @@ export const getAllUsers = protectedProcedure
       });
     }
 
-    const members = await ctx.db.member.findMany({
+    const invitations = await ctx.db.invitation.findMany({
+      where: { organizationId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        status: true,
+        expiresAt: true,
+      },
+    });
+
+    const invitationsByEmail = new Map<string, typeof invitations>();
+
+    for (const invitation of invitations) {
+      const email = invitation.email.toLowerCase();
+      invitationsByEmail.set(email, [
+        ...(invitationsByEmail.get(email) ?? []),
+        invitation,
+      ]);
+    }
+
+    const users = await ctx.db.user.findMany({
       where: {
-        organizationId,
-        userId: {
+        id: {
           not: ctx.session.user.id,
         },
+        deletedAt: null,
+        OR: [
+          { members: { some: { organizationId } } },
+          { email: { in: invitations.map((invitation) => invitation.email) } },
+        ],
       },
       select: {
-        role: true,
-        user: {
+        id: true,
+        name: true,
+        lastName: true,
+        email: true,
+        banned: true,
+        lastAccess: true,
+        members: {
+          where: { organizationId },
+          select: { role: true },
+        },
+        _count: {
           select: {
-            id: true,
-            name: true,
-            lastName: true,
-            email: true,
-            status: true,
-            lastAccess: true,
-            _count: {
-              select: {
-                assignedJobOpenings: true,
-              },
-            },
+            assignedJobOpenings: true,
           },
         },
       },
       orderBy: {
-        user: {
-          name: "asc",
-        },
+        name: "asc",
       },
     });
 
-    return members.map((member) => ({
-      id: member.user.id,
-      name: member.user.name,
-      lastName: member.user.lastName,
-      email: member.user.email,
-      role: member.role,
-      status: member.user.status,
-      lastAccess: member.user.lastAccess?.toISOString() ?? null,
-      assignedJobOpeningsCount: member.user._count.assignedJobOpenings,
-    }));
+    const now = new Date();
+
+    return users.map((user) => {
+      const userInvitations =
+        invitationsByEmail.get(user.email.toLowerCase()) ?? [];
+
+      return {
+        id: user.id,
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        role:
+          user.members[0]?.role === "owner"
+            ? "recruiter"
+            : (user.members[0]?.role ?? userInvitations[0]?.role ?? null),
+        status: getUserStatus({
+          banned: user.banned,
+          isMember: user.members.length > 0,
+          invitations: userInvitations,
+          now,
+        }),
+        lastAccess: user.lastAccess?.toISOString() ?? null,
+        pendingInvitationId:
+          userInvitations.find(
+            (invitation) =>
+              invitation.status === "pending" && invitation.expiresAt > now,
+          )?.id ?? null,
+        assignedJobOpeningsCount: user._count.assignedJobOpenings,
+      };
+    });
   });

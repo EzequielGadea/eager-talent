@@ -62,6 +62,7 @@ export const fetchById = protectedProcedure
           },
         },
         hiringManagers: {
+          where: { deletedAt: null },
           select: {
             id: true,
             name: true,

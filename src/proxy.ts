@@ -4,8 +4,7 @@ import type { NextRequest } from "next/server";
 import { auth } from "~/lib/auth";
 import { prisma } from "~/lib/prisma";
 
-const authRoutes = ["/login", "/signup"];
-const publicRoutes = ["/", ...authRoutes];
+const authRoutes = ["/login", "/signup", "/accept-invite", "/reset-password"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -14,34 +13,40 @@ export async function proxy(request: NextRequest) {
     headers: request.headers,
   });
 
-  if (!publicRoutes.includes(pathname) && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isHome = pathname === "/";
+  const isPublic = isHome || isAuthRoute;
+
+  if (!session) {
+    return isPublic
+      ? NextResponse.next()
+      : NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (authRoutes.includes(pathname) && session) {
-    const organizationId = session.session.activeOrganizationId;
-    //si por alguna razón no tiene organización activa que deberia hacer?
-    if (!organizationId) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+  if (!authRoutes.includes(pathname)) return NextResponse.next();
 
-    const membership = await prisma.member.findFirst({
-      where: {
-        userId: session.user.id,
-        organizationId,
-      },
-      select: {
-        role: true,
-      },
-    });
+  const organizationId = session.session.activeOrganizationId;
 
-    const destination =
-      membership?.role === "hiringManager" ? "/job-openings" : "/dashboard";
-
-    return NextResponse.redirect(new URL(destination, request.url));
+  // Esto no deberia suceder, ya que hay un database hook en la configuracion
+  // de Better Auth que establece la Active Organization al iniciar sesion.
+  if (!organizationId) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  return NextResponse.next();
+  const membership = await prisma.member.findFirst({
+    where: {
+      userId: session.user.id,
+      organizationId,
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  const destination =
+    membership?.role === "hiringManager" ? "/job-openings" : "/dashboard";
+
+  return NextResponse.redirect(new URL(destination, request.url));
 }
 
 export const config = {
