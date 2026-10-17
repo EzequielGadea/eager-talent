@@ -13,6 +13,11 @@ import { createElement } from "react";
 import { createAuthMiddleware } from "better-auth/api";
 import { headers } from "next/headers";
 import { z } from "zod";
+import {
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  passwordSchema,
+} from "./password";
 
 const INVITATION_EXPIRATION = 60 * 60 * 24; // Un dia
 
@@ -24,9 +29,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const PASSWORD_MIN_LENGTH = 8;
-export const PASSWORD_MAX_LENGTH = 128;
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const inviteSchema = z.object({
@@ -37,24 +39,6 @@ const inviteSchema = z.object({
     .regex(EMAIL_REGEX, "Correo electrónico inválido"),
   role: z.enum(["recruiter", "hiringManager"]),
 });
-
-export const passwordSchema = z
-  .string()
-  .min(
-    PASSWORD_MIN_LENGTH,
-    `Debe tener al menos ${PASSWORD_MIN_LENGTH} caracteres`,
-  )
-  .max(
-    PASSWORD_MAX_LENGTH,
-    `No puede superar los ${PASSWORD_MAX_LENGTH} caracteres`,
-  )
-  .regex(/\p{Lu}/u, "Debe incluir al menos una letra mayúscula")
-  .regex(/\p{Ll}/u, "Debe incluir al menos una letra minúscula")
-  .regex(/\p{N}/u, "Debe incluir al menos un número")
-  .regex(
-    /[^\p{L}\p{N}\s]/u,
-    "Debe incluir al menos un símbolo (por ejemplo ! @ # $ %)",
-  );
 
 const PASSWORD_FIELD_BY_PATH: Record<string, string> = {
   "/sign-up/email": "password",
@@ -125,6 +109,8 @@ export const auth = betterAuth({
     enabled: true,
     revokeSessionsOnPasswordReset: true,
     resetPasswordTokenExpiresIn: INVITATION_EXPIRATION,
+    minPasswordLength: PASSWORD_MIN_LENGTH,
+    maxPasswordLength: PASSWORD_MAX_LENGTH,
     customSyntheticUser: ({ coreFields, additionalFields, id }) => ({
       ...coreFields,
       role: "user",
