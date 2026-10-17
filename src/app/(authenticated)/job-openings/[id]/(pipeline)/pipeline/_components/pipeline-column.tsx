@@ -8,6 +8,7 @@ type PipelineColumnProps = {
   jobOpeningId: string;
   stage: PipelineStage;
   isLastStage: boolean;
+  search?: string;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
   canDeleteInterview: boolean;
@@ -17,6 +18,7 @@ export async function PipelineColumn({
   jobOpeningId,
   stage,
   isLastStage,
+  search,
   canUpdateApplication,
   canCreateInterview,
   canDeleteInterview,
@@ -26,6 +28,7 @@ export async function PipelineColumn({
     stageId: stage.key,
     limit: 3,
     offset: 0,
+    search,
   });
 
   const canScheduleInterviewInStage = stageAllowsInterview(stage);
@@ -45,6 +48,7 @@ export async function PipelineColumn({
         canUpdateApplication={canUpdateApplication}
         canCreateInterview={canCreateInterview && canScheduleInterviewInStage}
         canDeleteInterview={canDeleteInterview}
+        search={search}
       />
     </section>
   );

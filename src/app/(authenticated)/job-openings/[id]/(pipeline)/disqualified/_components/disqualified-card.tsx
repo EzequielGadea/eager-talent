@@ -39,6 +39,7 @@ function getAvatarColor(id: string) {
 type DisqualifiedCardProps = {
   application: DisqualifiedApplication;
   jobOpeningId: string;
+  stageName: string;
   canRequalify: boolean;
   now: number;
 };
@@ -46,6 +47,7 @@ type DisqualifiedCardProps = {
 export function DisqualifiedCard({
   application,
   jobOpeningId,
+  stageName,
   canRequalify,
   now,
 }: DisqualifiedCardProps) {
@@ -190,7 +192,7 @@ export function DisqualifiedCard({
               </DialogTitle>
 
               <DialogDescription className="mt-1 text-sm text-text-secondary">
-                {fullName} vuelve al pipeline en la etapa «{application.stage}»
+                {fullName} vuelve al pipeline en la etapa «{stageName}»
                 y se elimina el motivo de descarte.
               </DialogDescription>
 

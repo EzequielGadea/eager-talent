@@ -53,6 +53,7 @@ export function DisqualifiedColumn({
             key={application.applicantId}
             application={application}
             jobOpeningId={jobOpeningId}
+            stageName={stageName}
             canRequalify={canRequalify}
             now={now}
           />
