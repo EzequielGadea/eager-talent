@@ -1,0 +1,241 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { MoreHorizontal, Plus } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { api } from "~/lib/trpc/react";
+import { cn } from "~/lib/utils";
+
+import { Trash2 } from "lucide-react";
+
+import { Button } from "~/components/ui/button";
+
+import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+
+export default function DescalificationMotiveSetting() {
+  const [isAddingMotive, setIsAddingMotive] = useState(false);
+  const [motiveName, setMotiveName] = useState("");
+  const [motiveToDelete, setMotiveToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  const utils = api.useUtils();
+
+  const { data: motives, isLoading: isMotiveLoading } =
+    api.descalificationMotive.getAllDescalificationMotive.useQuery({});
+
+  const createMotive =
+    api.descalificationMotive.createDescalificationMotive.useMutation({
+      onSuccess: async () => {
+        setMotiveName("");
+        setIsAddingMotive(false);
+        await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+      },
+    });
+
+  const deleteMotive =
+    api.descalificationMotive.deleteDescalificationMotive.useMutation({
+      onSuccess: async () => {
+        setMotiveToDelete(null);
+        await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+      },
+    });
+
+  function handleCreateMotive(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const name = motiveName.trim();
+
+    if (!name) {
+      return;
+    }
+
+    createMotive.mutate({ name });
+  }
+
+  function handleDeleteMotive(id: string) {
+    deleteMotive.mutate({ id });
+  }
+
+  function handleCancelMotive() {
+    setIsAddingMotive(false);
+    setMotiveName("");
+  }
+
+  useEffect(() => {
+    if (!isAddingMotive) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        handleCancelMotive();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isAddingMotive]);
+
+  if (isMotiveLoading) {
+    return (
+      <GeneralSettingsCardSkeleton
+        title="Motivos de descalificación"
+        rows={4}
+      />
+    );
+  }
+
+  return (
+    <Card className="w-full rounded-xl shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-semibold">
+          Motivos de descalificación
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col">
+          {motives?.map((motive) => {
+            return (
+              <div
+                key={motive.id}
+                className="flex items-center justify-between border-b border-border-default py-4"
+              >
+                <span className="text-sm font-medium text-text-primary">
+                  {motive.name}
+                </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon" className="h-6 w-6">
+                        <MoreHorizontal className="h-4 w-4 text-text-tertiary" />
+                      </Button>
+                    }
+                  />
+                  <DropdownMenuContent>
+                    <span className="block">
+                      <DropdownMenuItem
+                        className={cn(
+                          "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
+                        )}
+                        onClick={() =>
+                          setMotiveToDelete({
+                            id: motive.id,
+                            name: motive.name,
+                          })
+                        }
+                      >
+                        <Trash2 className="size-4" />
+                        <span>Eliminar</span>
+                      </DropdownMenuItem>
+                    </span>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            );
+          })}
+
+          {isAddingMotive && (
+            <form
+              onSubmit={handleCreateMotive}
+              className="flex items-end gap-3 border-b border-border-default
+              py-4"
+            >
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  value={motiveName}
+                  onChange={(event) => setMotiveName(event.target.value)}
+                  placeholder="Motivo de descalificación"
+                  autoFocus
+                />
+              </div>{" "}
+              <Button
+                type="submit"
+                disabled={!motiveName.trim() || createMotive.isPending}
+              >
+                {createMotive.isPending ? "Guardando..." : "Crear motivo"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleCancelMotive}
+              >
+                Cancelar
+              </Button>
+            </form>
+          )}
+        </div>
+        {!isAddingMotive && (
+          <button
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            type="button"
+            onClick={() => setIsAddingMotive(true)}
+          >
+            <Plus className="h-4 w-4" />
+            Agregar motivo
+          </button>
+        )}
+      </CardContent>
+      <Dialog
+        open={motiveToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteMotive.isPending) {
+            setMotiveToDelete(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              ¿Eliminar el motivo “{motiveToDelete?.name}”?
+            </DialogTitle>
+            <DialogDescription>
+              Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button variant="outline" disabled={deleteMotive.isPending} />
+              }
+            >
+              Cancelar
+            </DialogClose>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (motiveToDelete) {
+                  handleDeleteMotive(motiveToDelete.id);
+                }
+              }}
+              disabled={deleteMotive.isPending}
+            >
+              {deleteMotive.isPending ? "Eliminando..." : "Eliminar motivo"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Card>
+  );
+}
