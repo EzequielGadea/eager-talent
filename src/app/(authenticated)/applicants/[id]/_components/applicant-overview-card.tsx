@@ -64,8 +64,8 @@ export function ApplicantOverviewCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <CardTitle className="wrap-anywhere text-xl font-bold tracking-tight">
-              <h1>
+            <CardTitle className="min-w-0 text-xl font-bold tracking-tight">
+              <h1 className="truncate" title={`${name} ${lastName}`}>
                 {name} {lastName}
               </h1>
             </CardTitle>

@@ -18,6 +18,12 @@ const linkSchema = z
   .string()
   .trim()
   .min(1, "La URL no puede estar vacía")
+  .refine((val) => !/\s/.test(val), "URL inválida")
+  .refine(
+    (val) =>
+      !/^[a-z][a-z\d+.-]*:\/\//i.test(val) || /^https?:\/\//i.test(val),
+    "URL inválida",
+  )
   .transform((val) => (/^https?:\/\//i.test(val) ? val : `https://${val}`))
   .refine((val) => {
     try {

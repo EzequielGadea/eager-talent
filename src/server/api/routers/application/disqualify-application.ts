@@ -61,17 +61,11 @@ export const disqualifyApplication = protectedProcedure
         message: "El motivo seleccionado no existe",
       });
     }
+
     const currentStageName =
       parseStages(application.jobOpening.stages).find(
         (stage) => stage.key === application.currentStageId,
       )?.name ?? application.currentStageId;
-
-    if (!motive) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "El motivo seleccionado no existe",
-      });
-    }
 
     return ctx.db.$transaction(async (tx) => {
       // Conditional update: only succeeds if the application is still active

@@ -4,6 +4,7 @@ import { applicantRouter } from "./routers/applicant";
 import { applicantNoteRouter } from "./routers/applicant-note";
 import { applicationRouter } from "./routers/application";
 import { interviewsRouter } from "./routers/interviews";
+import { interviewNoteRouter } from "./routers/interview-note";
 import { areaRouter } from "./routers/area";
 import { jobOpeningRouter } from "./routers/job-opening";
 import { publicLinkRouter } from "./routers/public-link";
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   applicantNote: applicantNoteRouter,
   application: applicationRouter,
   interview: interviewsRouter,
+  interviewNote: interviewNoteRouter,
   area: areaRouter,
   role: roleRouter,
   seniority: seniorityRouter,
