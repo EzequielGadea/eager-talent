@@ -1,6 +1,6 @@
 import { AppHeader } from "./_components/app-header";
 import { AppSidebar } from "./_components/app-sidebar";
-
+import { ActivityTracker } from "./_components/activity-tracker";
 type AuthenticatedLayoutProps = {
   children: React.ReactNode;
 };
@@ -10,6 +10,7 @@ export default function AuthenticatedLayout({
 }: AuthenticatedLayoutProps) {
   return (
     <div className="flex min-h-screen flex-1 bg-surface-subtle">
+      <ActivityTracker />
       <AppSidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
