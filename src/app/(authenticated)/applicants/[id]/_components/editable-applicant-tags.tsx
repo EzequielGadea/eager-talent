@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import type { CSSProperties } from "react";
-import { X } from "lucide-react";
-
 import { api } from "~/lib/trpc/react";
 import { Badge } from "~/components/ui/badge";
 import { TagSelector } from "../../new-applicant/_components/tag-selector";
+import { getTagStyles } from "~/lib/tags/get-tag-styles";
 
 type Tag = {
   id: string;
@@ -74,15 +72,13 @@ export function EditableApplicantTags({
       <div className="space-y-2">
         <div
           className={
-            updateTags.isPending
-              ? "pointer-events-none opacity-60"
-              : undefined
+            updateTags.isPending ? "pointer-events-none opacity-60" : undefined
           }
         >
           <TagSelector
             tags={allTags.map((tag) => ({
               ...tag,
-              color: tag.color ?? "#808080",
+              color: tag.color ?? "gray",
             }))}
             value={selectedIds}
             onChange={(ids) => void handleChange(ids)}
@@ -110,20 +106,12 @@ export function EditableApplicantTags({
       )}
 
       {initialTags.map((tag) => {
-        const tagColor = tag.color ?? "var(--muted-foreground)";
-
         return (
           <Badge
             key={tag.id}
             variant="tag"
             className="h-auto max-w-full whitespace-normal"
-            style={
-              {
-                "--badge-background": `color-mix(in srgb, ${tagColor} 16%, transparent)`,
-                "--badge-border": `color-mix(in srgb, ${tagColor} 44%, transparent)`,
-                "--badge-foreground": `color-mix(in srgb, ${tagColor} 35%, var(--card-foreground))`,
-              } as CSSProperties
-            }
+            style={getTagStyles(tag.color ?? "gray")}
           >
             <span className="min-w-0 wrap-break-word">{tag.name}</span>
           </Badge>
