@@ -7,6 +7,7 @@ import {
 } from "./app-header";
 import { MetricsIcon, SettingsIcon, VacanciesIcon } from "./app-icons";
 import { HiringManagerNavigation } from "./hiring-manager-navigation";
+import { ResponsiveSidebar } from "./mobile-navigation";
 import { NavigationItem } from "./navigation-item";
 import { UserMenu } from "./user-menu";
 
@@ -106,15 +107,18 @@ function RecruiterNavigation() {
         label="Reportes"
       />
 
-      <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-        EMPRESA
-      </p>
+      {/* On mobile, settings is reached from the header instead. */}
+      <div data-sidebar-only className="contents">
+        <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+          EMPRESA
+        </p>
 
-      <NavigationItem
-        icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
-        label="Configuración"
-        href="/settings"
-      />
+        <NavigationItem
+          icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
+          label="Configuración"
+          href="/settings"
+        />
+      </div>
     </>
   );
 }
@@ -138,14 +142,14 @@ async function SidebarNavigation() {
 
 export function AppSidebar() {
   return (
-    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-border-default bg-surface-card">
-      <EagerTalentBrand />
-
-      <Suspense fallback={<div className="flex-1" />}>
-        <SidebarNavigation />
-      </Suspense>
-
-      <SidebarUser />
-    </aside>
+    <ResponsiveSidebar
+      brand={<EagerTalentBrand />}
+      navigation={
+        <Suspense fallback={<div className="flex-1" />}>
+          <SidebarNavigation />
+        </Suspense>
+      }
+      footer={<SidebarUser />}
+    />
   );
 }
