@@ -138,7 +138,7 @@ export const auth = betterAuth({
         )
           .then((emailHtml) => {
             transporter.sendMail({
-              from: '"Eager Talent?" <pgrupo632@gmail.com>',
+              from: `"Eager Talent?" <${process.env.GOOGLE_EMAIL}>`,
               to: user.email,
               subject: "Bienvenido a Eager Talent",
               html: emailHtml,
@@ -161,7 +161,7 @@ export const auth = betterAuth({
           );
 
           await transporter.sendMail({
-            from: '"Eager Talent" <pgrupo632@gmail.com>',
+            from: `"Eager Talent" <${process.env.GOOGLE_EMAIL}>`,
             to: user.email,
             subject: "Restablecé tu contraseña",
             html: emailHtml,
