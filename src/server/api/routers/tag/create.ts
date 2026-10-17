@@ -3,12 +3,12 @@ import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
+import { getTagColor } from "~/lib/tags/get-tag-color";
 
 export const createTag = protectedProcedure
   .input(
     z.object({
       name: z.string().trim().min(1),
-      color: z.string(),
       isSkill: z.boolean().default(false),
     }),
   )
@@ -30,6 +30,9 @@ export const createTag = protectedProcedure
     }
 
     return ctx.db.tag.create({
-      data: input,
+      data: {
+        ...input,
+        color: getTagColor(input.name),
+      },
     });
   });
