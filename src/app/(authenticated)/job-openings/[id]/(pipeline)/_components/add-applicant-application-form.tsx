@@ -22,17 +22,34 @@ import {
 
 import type { AvailableApplicant } from "./add-applicant-types";
 
-const addApplicantApplicationSchema = z.object({
-  desiredSalary: z
-    .number()
-    .positive("El salario debe ser mayor a 0.")
-    .optional()
-    .or(z.literal("")),
+const addApplicantApplicationSchema = z
+  .object({
+    desiredSalary: z
+      .number()
+      .positive("El salario debe ser mayor a 0.")
+      .optional(),
 
-  currency: z.union([z.enum(SalaryCurrency), z.literal("")]),
+    currency: z.enum(SalaryCurrency).optional(),
 
-  availability: z.string(),
-});
+    availability: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.desiredSalary !== undefined && data.currency === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["currency"],
+        message: "Seleccioná una moneda.",
+      });
+    }
+
+    if (data.currency !== undefined && data.desiredSalary === undefined) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["desiredSalary"],
+        message: "Ingresá el salario deseado.",
+      });
+    }
+  });
 
 type AddApplicantApplicationFormValues = z.infer<
   typeof addApplicantApplicationSchema
@@ -60,8 +77,6 @@ export function AddApplicantApplicationForm({
   const methods = useForm<AddApplicantApplicationFormValues>({
     resolver: zodResolver(addApplicantApplicationSchema),
     defaultValues: {
-      desiredSalary: "",
-      currency: "",
       availability: "",
     },
   });
@@ -80,6 +95,15 @@ export function AddApplicantApplicationForm({
         onSuccess();
       },
       onError: (error) => {
+        if (error.data?.code === "PRECONDITION_FAILED") {
+          methods.setError("root", {
+            type: "server",
+            message: error.message,
+          });
+
+          return;
+        }
+
         if (error.data?.code === "CONFLICT") {
           methods.setError("root", {
             type: "server",
@@ -100,15 +124,18 @@ export function AddApplicantApplicationForm({
     await createApplicationMutation.mutateAsync({
       applicantId: applicant.id,
       jobOpeningId,
-      desiredSalaryAmount:
-        data.desiredSalary === "" ? undefined : data.desiredSalary,
-      desiredSalaryCurrency: data.currency === "" ? undefined : data.currency,
+      desiredSalaryAmount: data.desiredSalary,
+      desiredSalaryCurrency: data.currency,
       availability: data.availability.trim() || undefined,
     });
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      className="flex flex-col"
+    >
       <div className="border-b border-border-default px-6 py-5">
         <div className="flex items-center gap-2">
           <Button
@@ -172,11 +199,12 @@ export function AddApplicantApplicationForm({
               <Input
                 id="desired-salary"
                 type="number"
-                min="0"
                 step="0.01"
                 placeholder="Ej. 85000"
+                aria-invalid={!!errors.desiredSalary}
                 {...register("desiredSalary", {
-                  setValueAs: (value) => (value === "" ? "" : Number(value)),
+                  setValueAs: (value) =>
+                    value === "" ? undefined : Number(value),
                 })}
               />
 
@@ -187,25 +215,33 @@ export function AddApplicantApplicationForm({
               )}
             </div>
 
-            <Controller
-              control={control}
-              name="currency"
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={(value) => field.onChange(value ?? "")}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Moneda" />
-                  </SelectTrigger>
+            <div className="grid gap-1">
+              <Controller
+                control={control}
+                name="currency"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={(value) =>
+                      field.onChange(value ?? undefined)
+                    }
+                  >
+                    <SelectTrigger aria-invalid={!!errors.currency}>
+                      <SelectValue placeholder="Moneda" />
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    <SelectItem value="USD">USD</SelectItem>
-                    <SelectItem value="UYU">UYU</SelectItem>
-                  </SelectContent>
-                </Select>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="UYU">UYU</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+
+              {errors.currency && (
+                <p className="text-xs text-danger">{errors.currency.message}</p>
               )}
-            />
+            </div>
           </div>
         </div>
 
@@ -220,8 +256,13 @@ export function AddApplicantApplicationForm({
           <Input
             id="availability"
             placeholder="Ej. Inmediata, 15 días, 1 mes"
+            aria-invalid={!!errors.availability}
             {...register("availability")}
           />
+
+          {errors.availability && (
+            <p className="text-xs text-danger">{errors.availability.message}</p>
+          )}
         </div>
 
         {errors.root?.message && (
