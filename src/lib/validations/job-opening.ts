@@ -104,7 +104,8 @@ export const updateJobOpeningSchema = z
       .min(1, "El nombre de la vacante es obligatorio")
       .max(160, "El nombre no puede superar 160 caracteres"),
 
-    status: z.enum(JobOpeningStatus),
+    // Opcional: si no se envía, la vacante conserva su estado actual.
+    status: z.enum(JobOpeningStatus).optional(),
 
     areaId: z.string().min(1, "El área es obligatoria"),
 
@@ -112,7 +113,8 @@ export const updateJobOpeningSchema = z
       .array(z.string().min(1))
       .min(1, "Seleccioná al menos un seniority"),
 
-    location: z.enum(["Uruguay", "Argentina", "Indiferente"]),
+    // Opcional: si no se envía, la vacante conserva su ubicación actual.
+    location: z.enum(["Uruguay", "Argentina", "Indiferente"]).optional(),
 
     openingDate: z.iso.date({
       error: "La fecha de apertura no es válida",

@@ -274,6 +274,8 @@ export const updateJobOpening = protectedProcedure
     const colorsChanged = input.stages.some(
       (stage) => persistedStagesById.get(stage.id)?.color !== stage.color,
     );
+    // Estado y ubicación son opcionales: si no llegan, se conservan.
+    const nextStatus = input.status ?? currentJobOpening.status;
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
     if (hasBeenOpened && stagesChanged) {

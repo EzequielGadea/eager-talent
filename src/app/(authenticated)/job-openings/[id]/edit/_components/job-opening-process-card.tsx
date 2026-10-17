@@ -12,7 +12,6 @@ import {
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Alert, AlertDescription } from "~/components/ui/alert";
 
 import {
   Card,
@@ -366,17 +365,17 @@ export function JobOpeningProcessCard({
           Agregar etapa
         </Button>
 
-        <Alert
+        <div
           role="note"
-          className="mt-1 border-0 bg-transparent px-0 text-text-secondary"
+          className="mt-1 flex items-center justify-center gap-2 text-center text-xs leading-4 text-text-secondary"
         >
-          <Info aria-hidden="true" />
-          <AlertDescription className="text-xs text-text-secondary">
+          <Info aria-hidden="true" className="size-4 shrink-0" />
+          <p>
             {canEditStages
               ? "Los cambios afectan solo a esta vacante. El flujo predeterminado se administra desde Configuración."
               : "El flujo de selección no puede modificarse porque la vacante ya fue abierta. Los demás datos permanecen disponibles para edición."}
-          </AlertDescription>
-        </Alert>
+          </p>
+        </div>
       </CardContent>
     </Card>
   );

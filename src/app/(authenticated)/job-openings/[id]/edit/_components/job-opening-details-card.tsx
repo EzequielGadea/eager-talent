@@ -127,7 +127,6 @@ export function JobOpeningDetailsCard({
         <fieldset className="flex flex-col gap-1.5">
           <legend className="text-[13px] font-medium text-text-primary">
             Estado
-            <span className="ml-1 text-danger">*</span>
           </legend>
 
           <Controller
@@ -135,14 +134,8 @@ export function JobOpeningDetailsCard({
             name="status"
             render={({ field }) => (
               <ToggleGroup
-                value={[field.value]}
-                onValueChange={(values) => {
-                  const nextStatus = values[0];
-
-                  if (nextStatus) {
-                    field.onChange(nextStatus);
-                  }
-                }}
+                value={field.value ? [field.value] : []}
+                onValueChange={(values) => field.onChange(values[0])}
                 size="sm"
                 spacing={1}
                 className="w-full rounded-lg border border-border-default bg-muted p-1"
@@ -232,7 +225,6 @@ export function JobOpeningDetailsCard({
         <fieldset className="flex flex-col gap-2">
           <legend className="text-[13px] font-medium text-text-primary">
             Ubicación
-            <span className="ml-1 text-danger">*</span>
           </legend>
 
           <Controller
@@ -240,16 +232,9 @@ export function JobOpeningDetailsCard({
             name="location"
             render={({ field }) => (
               <ToggleGroup
-                value={[field.value]}
-                onValueChange={(values) => {
-                  const nextLocation = values[0];
-
-                  if (nextLocation) {
-                    field.onChange(nextLocation);
-                  }
-                }}
+                value={field.value ? [field.value] : []}
+                onValueChange={(values) => field.onChange(values[0])}
                 variant="outline"
-                size="sm"
                 spacing={2}
                 className="flex-wrap justify-start"
               >
