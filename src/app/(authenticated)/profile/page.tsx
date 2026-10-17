@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { LogoutButton } from "./_components/logout-button";
 import { ProfileDetails } from "./_components/profile-details";
 import Loading from "~/components/ui/loading";
+import { ChangePasswordDialog } from "./_components/change-password-dialog";
 
 export default function ProfilePage() {
   return (
@@ -14,6 +15,7 @@ export default function ProfilePage() {
       </Suspense>
 
       <LogoutButton />
+      <ChangePasswordDialog />
     </div>
   );
 }
