@@ -13,7 +13,9 @@ export async function proxy(request: NextRequest) {
     headers: request.headers,
   });
 
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isAuthRoute = authRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  );
   const isHome = pathname === "/";
   const isPublic = isHome || isAuthRoute;
 
