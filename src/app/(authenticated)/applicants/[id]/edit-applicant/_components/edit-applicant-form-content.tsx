@@ -82,8 +82,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
 
   const updateApplicantMutation = api.applicant.updateApplicant.useMutation({
     onSuccess: () => {
-      router.push(`/applicants/${applicant.id}`);
-      router.refresh();
+       window.location.assign(`/applicants/${applicant.id}`);
     },
     onError: (error) => {
       if (error.data?.code === "CONFLICT") {

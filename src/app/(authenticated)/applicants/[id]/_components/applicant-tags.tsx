@@ -1,17 +1,31 @@
-import type { CSSProperties } from "react";
+import { auth } from "~/lib/auth";
+import { headers } from "next/headers";
 
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
-import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
 import type { api } from "~/lib/trpc/server";
-import { Badge } from "~/components/ui/badge";
+
+import { EditableApplicantTags } from "./editable-applicant-tags";
 
 type ApplicantPromise = Promise<
   Awaited<ReturnType<typeof api.applicant.getById>>
 >;
-type ApplicantTagsProps = { applicantPromise: ApplicantPromise };
+
+type ApplicantTagsProps = {
+  applicantPromise: ApplicantPromise;
+};
 
 export async function ApplicantTags({ applicantPromise }: ApplicantTagsProps) {
-  const { tags } = await applicantPromise;
+  const applicant = await applicantPromise;
+
+  const permission = await auth.api.hasPermission({
+    headers: await headers(),
+    body: {
+      permissions: {
+        applicant: ["update"],
+      },
+    },
+  });
+
   return (
     <Card size="sm">
       <CardHeader>
@@ -20,35 +34,12 @@ export async function ApplicantTags({ applicantPromise }: ApplicantTagsProps) {
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-wrap gap-2">
-        {tags.length === 0 && (
-          <Empty className="p-0">
-            <EmptyHeader>
-              <EmptyDescription>Sin etiquetas</EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        )}
-
-        {tags.map((tag) => {
-          const tagColor = tag.color ?? "var(--muted-foreground)";
-
-          return (
-            <Badge
-              key={tag.id}
-              variant="tag"
-              className="h-auto max-w-full whitespace-normal"
-              style={
-                {
-                  "--badge-background": `color-mix(in srgb, ${tagColor} 16%, transparent)`,
-                  "--badge-border": `color-mix(in srgb, ${tagColor} 44%, transparent)`,
-                  "--badge-foreground": `color-mix(in srgb, ${tagColor} 35%, var(--card-foreground))`,
-                } as CSSProperties
-              }
-            >
-              <span className="min-w-0 wrap-break-word">{tag.name}</span>
-            </Badge>
-          );
-        })}
+      <CardContent>
+        <EditableApplicantTags
+          applicantId={applicant.id}
+          initialTags={applicant.tags}
+          canEdit={permission.success}
+        />
       </CardContent>
     </Card>
   );
