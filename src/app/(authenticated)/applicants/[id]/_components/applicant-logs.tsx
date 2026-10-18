@@ -89,9 +89,14 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
     (app) => app.jobOpeningId === jobOpeningId,
   );
   const firstRecord = (current - 1) * pageSize + 1;
-  const pages = [...new Set([1, current - 1, current, current + 1, totalPages])]
-    .filter((p) => p >= 1 && p <= totalPages)
-    .sort((a, b) => a - b);
+  const pages =
+    totalPages <= 5
+      ? Array.from({ length: totalPages }, (_, index) => index + 1)
+      : current <= 3
+        ? [1, 2, 3, 4, totalPages]
+        : current >= totalPages - 2
+          ? [1, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
+          : [1, current - 1, current, current + 1, totalPages];
 
   const setPageAndScroll = (newPage: number) => {
     flushSync(() => {
@@ -264,7 +269,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
                     />
                   </PaginationItem>
                   {pages.map((p, i) => (
-                    <PaginationItem key={p}>
+                    <PaginationItem key={p} className="flex items-center">
                       {i > 0 && p - pages[i - 1] > 1 && <PaginationEllipsis />}
                       <PaginationLink
                         href="#"
