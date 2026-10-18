@@ -178,7 +178,7 @@ export function CandidateCard({
             : undefined,
         }}
         className={`rounded-xl border-border-default bg-card p-3 shadow-none ${
-          canUpdateApplication ? "cursor-grab active:cursor-grabbing" : ""
+          canUpdateApplication ? "cursor-grab" : ""
         }`}
       >
         <div className="flex items-center gap-3">

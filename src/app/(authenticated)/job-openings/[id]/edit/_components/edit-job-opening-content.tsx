@@ -94,6 +94,11 @@ function normalizeStages(value: unknown): UpdateJobOpeningInput["stages"] {
               : `stage-${index}`,
         name,
         type,
+        color:
+          typeof stageRecord.color === "string" &&
+          stageRecord.color.trim() !== ""
+            ? stageRecord.color
+            : "#94a3b8",
       },
     ];
   });

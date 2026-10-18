@@ -12,7 +12,6 @@ import {
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Alert, AlertDescription } from "~/components/ui/alert";
 
 import {
   Card,
@@ -29,14 +28,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+
+import { ColorPicker, ColorPickerHex } from "~/components/ui/color-picker";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
 
-const STAGE_COLOR_CLASS_NAMES = [
-  "bg-text-secondary",
-  "bg-info",
-  "bg-accent-purple",
-  "bg-warning",
-];
+// Color inicial de las etapas nuevas (el mismo de "Aplicado").
+const NEW_STAGE_COLOR = "#94a3b8";
 
 const STAGE_TYPE_CLASS_NAMES: Record<JobOpeningStageType, string> = {
   none: "",
@@ -117,6 +119,7 @@ export function JobOpeningProcessCard({
         id: crypto.randomUUID(),
         name: "",
         type: "none",
+        color: NEW_STAGE_COLOR,
       },
       {
         focusName: `stages.${insertionIndex}.name`,
@@ -217,7 +220,7 @@ export function JobOpeningProcessCard({
                 className={cn(
                   "text-text-tertiary",
                   canEditStages && !isBoundaryStage(index, stages.length)
-                    ? "cursor-grab active:cursor-grabbing"
+                    ? "cursor-grab hover:cursor-grab active:cursor-grabbing"
                     : "cursor-not-allowed",
                 )}
                 onDragStart={(event) => {
@@ -242,16 +245,32 @@ export function JobOpeningProcessCard({
                 {index + 1}
               </span>
 
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "size-2.5 shrink-0 rounded-full",
-                  STAGE_COLOR_CLASS_NAMES[
-                    index % STAGE_COLOR_CLASS_NAMES.length
-                  ] ?? "bg-text-secondary",
+              {/* El color se puede cambiar siempre, aunque el flujo esté bloqueado. */}
+              <Controller
+                control={control}
+                name={`stages.${index}.color`}
+                render={({ field }) => (
+                  <Popover>
+                    <PopoverTrigger
+                      type="button"
+                      aria-label={`Elegir color de la etapa ${stage.name}`}
+                      className="size-3.5 shrink-0 cursor-pointer rounded-full border border-border-default p-0"
+                      style={{ backgroundColor: field.value }}
+                    />
+                    <PopoverContent
+                      align="start"
+                      className="w-56 rounded-xl p-3"
+                    >
+                      <ColorPicker>
+                        <ColorPickerHex
+                          color={field.value}
+                          onChange={field.onChange}
+                        />
+                      </ColorPicker>
+                    </PopoverContent>
+                  </Popover>
                 )}
               />
-
               <div className="min-w-0 flex-1">
                 <Input
                   aria-label={`Nombre de la etapa ${index + 1}`}
@@ -346,17 +365,17 @@ export function JobOpeningProcessCard({
           Agregar etapa
         </Button>
 
-        <Alert
+        <div
           role="note"
-          className="mt-1 border-0 bg-transparent px-0 text-text-secondary"
+          className="mt-1 flex items-center justify-center gap-2 text-center text-xs leading-4 text-text-secondary"
         >
-          <Info aria-hidden="true" />
-          <AlertDescription className="text-xs text-text-secondary">
+          <Info aria-hidden="true" className="size-4 shrink-0" />
+          <p>
             {canEditStages
               ? "Los cambios afectan solo a esta vacante. El flujo predeterminado se administra desde Configuración."
               : "El flujo de selección no puede modificarse porque la vacante ya fue abierta. Los demás datos permanecen disponibles para edición."}
-          </AlertDescription>
-        </Alert>
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
