@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "demo-pis-2026",
@@ -69,13 +70,13 @@
         "prettier": "^3.9.6",
         "prisma": "^7.9.1",
         "tailwindcss": "^4",
-        "typescript": "^5",
-      },
-    },
+        "typescript": "^5"
+      }
+    }
   },
   "trustedDependencies": [
     "sharp",
-    "unrs-resolver",
+    "unrs-resolver"
   ],
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
