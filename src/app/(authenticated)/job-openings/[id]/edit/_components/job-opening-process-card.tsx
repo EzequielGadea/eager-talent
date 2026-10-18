@@ -220,7 +220,7 @@ export function JobOpeningProcessCard({
                 className={cn(
                   "text-text-tertiary",
                   canEditStages && !isBoundaryStage(index, stages.length)
-                    ? "cursor-grab active:cursor-grabbing"
+                    ? "cursor-grab hover:cursor-grab active:cursor-grabbing"
                     : "cursor-not-allowed",
                 )}
                 onDragStart={(event) => {
