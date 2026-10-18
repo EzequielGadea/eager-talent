@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { Mail } from "lucide-react";
 import { toast } from "~/components/ui/toast";
 import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
-import { authClient } from "~/lib/auth/client";
+import { api } from "~/lib/trpc/react";
 
 type Props = {
   email: string;
@@ -14,39 +14,34 @@ type Props = {
 
 export function ResendInviteMenuItem({ email, role }: Props) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [isRefreshing, startTransition] = useTransition();
 
-  const handleClick = () => {
-    startTransition(async () => {
-      const { error } = await authClient.organization.inviteMember({
-        email,
-        role,
-        resend: true,
+  const inviteMutation = api.user.invite.useMutation({
+    onError: (error) => {
+      toast.add({
+        type: "error",
+        title: "No se pudo reenviar la invitación",
+        description: error.message,
       });
-
-      if (error) {
-        toast.add({
-          type: "error",
-          title: "Error",
-          description: error.message ?? "No se pudo reenviar la invitación",
-        });
-
-        return;
-      }
-
-      router.refresh();
+    },
+    onSuccess: () => {
+      startTransition(() => {
+        router.refresh();
+      });
       toast.add({
         type: "success",
         title: "Invitación reenviada",
         description: `Se envió a ${email}`,
       });
-    });
-  };
+    },
+  });
+
+  const isPending = inviteMutation.isPending || isRefreshing;
 
   return (
     <DropdownMenuItem
       className="text-info! hover:text-info! focus:text-info! data-highlighted:text-info! [&_svg]:text-info! hover:[&_svg]:text-info! focus:[&_svg]:text-info! data-highlighted:[&_svg]:text-info!"
-      onClick={handleClick}
+      onClick={() => inviteMutation.mutate({ email, role, resend: true })}
       disabled={isPending}
     >
       <Mail className="size-4" />

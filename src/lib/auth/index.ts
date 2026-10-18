@@ -132,30 +132,25 @@ export const auth = betterAuth({
         orderBy: { createdAt: "desc" },
       });
 
-      if (inv) {
-        render(
-          createElement(ConfirmEmail, {
-            companyName: "Eager Talent",
-            url: `${process.env.APP_URL}/accept-invite/${inv.id}?token=${token}`,
-          }),
-        )
-          .then((emailHtml) => {
-            transporter.sendMail({
-              from: `"Eager Talent?" <${process.env.GOOGLE_EMAIL}>`,
-              to: user.email,
-              subject: "Bienvenido a Eager Talent",
-              html: emailHtml,
-              textEncoding: "base64",
-            });
-            console.log(`Invitation email sent to ${user.email}`);
-          })
-          .catch((err) => {
-            console.log(
-              `Unable to send invitation email to ${user.email}, error ${err}`,
-            );
+      try {
+        if (inv) {
+          const emailHtml = await render(
+            createElement(ConfirmEmail, {
+              companyName: "Eager Talent",
+              url: `${process.env.APP_URL}/accept-invite/${inv.id}?token=${token}`,
+            }),
+          );
+
+          await transporter.sendMail({
+            from: `"Eager Talent" <${process.env.GOOGLE_EMAIL}>`,
+            to: user.email,
+            subject: "Bienvenido a Eager Talent",
+            html: emailHtml,
+            textEncoding: "base64",
           });
-      } else {
-        try {
+
+          console.log(`Invitation email sent to ${user.email}`);
+        } else {
           const emailHtml = await render(
             createElement(PasswordResetEmail, {
               url,
@@ -172,16 +167,16 @@ export const auth = betterAuth({
           });
 
           console.log(`Password reset successfully sent to ${user.email}`);
-        } catch (err) {
-          console.log(
-            `Error while sending password reset to ${user.email}, error: ${err}`,
-          );
-
-          // Better Auth swallows errors thrown here, so callers detect the failure by the missing token
-          await prisma.verification.deleteMany({
-            where: { identifier: `reset-password:${token}` },
-          });
         }
+      } catch (err) {
+        console.log(
+          `Error while sending email to ${user.email}, error: ${err}`,
+        );
+
+        // Better Auth swallows errors thrown here, so callers detect the failure by the missing token
+        await prisma.verification.deleteMany({
+          where: { identifier: `reset-password:${token}` },
+        });
       }
     },
     onPasswordReset: async ({ user }) => {

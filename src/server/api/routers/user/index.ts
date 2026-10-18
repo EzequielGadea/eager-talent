@@ -4,6 +4,7 @@ import { listInterviewers } from "./list-interviewers";
 import { getAllUsers } from "./get-all-users";
 import { deleteUser } from "./delete-user";
 import { sendPasswordReset } from "./send-password-reset";
+import { invite } from "./invite";
 
 export { getCurrent };
 export { listInterviewers };
@@ -14,4 +15,5 @@ export const userRouter = createTRPCRouter({
   getAllUsers,
   delete: deleteUser,
   sendPasswordReset,
+  invite,
 });
