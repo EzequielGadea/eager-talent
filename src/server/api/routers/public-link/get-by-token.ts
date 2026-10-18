@@ -33,10 +33,17 @@ export const getByToken = publicProcedure
             availability: true,
             desiredSalaryAmount: true,
             desiredSalaryCurrency: true,
+            disqualificationDescription: true,
+            disqualificationMotive: {
+              select: {
+                name: true,
+              },
+            },
             jobOpening: {
               select: {
                 id: true,
                 name: true,
+                status: true,
                 stages: true,
                 location: true,
                 area: {
@@ -149,12 +156,19 @@ export const getByToken = publicProcedure
       application: {
         active: application.active,
         jobOpeningName: jobOpening.name,
+        jobOpeningStatus: jobOpening.status,
         currentStage: currentStageName,
         areaName: jobOpening.area?.name ?? null,
         availability: application.availability,
         location: jobOpening.location,
         salary: formattedSalary,
         includeSalary: link.includeSalary,
+        disqualificationMotive: !application.active
+          ? (application.disqualificationMotive?.name ?? null)
+          : null,
+        disqualificationDescription: !application.active
+          ? (application.disqualificationDescription ?? null)
+          : null,
       },
       interviews: application.interviews.map((interview) => ({
         id: interview.id,
