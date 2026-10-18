@@ -3,7 +3,15 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { ArrowRight, KeyRound, Loader2 } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Circle,
+  Eye,
+  EyeOff,
+  KeyRound,
+  Loader2,
+} from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -21,6 +29,7 @@ import {
   PASSWORD_MIN_LENGTH,
   passwordSchema,
 } from "~/lib/auth/password";
+import { passwordRules } from "~/lib/validations/password";
 import { toast } from "~/components/ui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -80,6 +89,7 @@ function getChangePasswordErrorMessage(error: AuthError) {
 export function ChangePasswordDialog() {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const {
     register,
@@ -97,16 +107,15 @@ export function ChangePasswordDialog() {
     },
   });
 
-  // Todos los requisitos que todavía no cumple la contraseña (no solo el primero)
   const newPassword = watch("newPassword");
-  const policyIssues = React.useMemo(() => {
-    const result = passwordSchema.safeParse(newPassword);
-    return result.success ? [] : result.error.issues.map((i) => i.message);
-  }, [newPassword]);
+  const passwordHasError = !!errors.newPassword;
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
-    if (!next) reset();
+    if (!next) {
+      reset();
+      setShowPassword(false);
+    }
   }
 
   async function onSubmit(values: FormData) {
@@ -212,31 +221,60 @@ export function ChangePasswordDialog() {
               >
                 Nueva contraseña
               </Label>
-              <Input
-                id="new-password"
-                type="password"
-                autoComplete="new-password"
-                className={inputClassName}
-                {...register("newPassword")}
-              />
-              {errors.newPassword ? (
-                policyIssues.length > 0 ? (
-                  <ul className="space-y-0.5 text-xs text-destructive">
-                    {policyIssues.map((issue) => (
-                      <li key={issue}>• {issue}</li>
-                    ))}
-                  </ul>
-                ) : (
+              <div className="relative">
+                <Input
+                  id="new-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  aria-invalid={passwordHasError}
+                  className={`${inputClassName} pr-10`}
+                  {...register("newPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={
+                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              </div>
+              <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                {passwordRules.map((rule) => {
+                  const ok = rule.test(newPassword ?? "");
+                  return (
+                    <li
+                      key={rule.id}
+                      className={`flex items-center gap-1.5 text-xs ${
+                        ok
+                          ? "text-emerald-600"
+                          : passwordHasError
+                            ? "text-red-600"
+                            : "text-slate-400"
+                      }`}
+                    >
+                      {ok ? (
+                        <Check className="size-3.5" />
+                      ) : (
+                        <Circle className="size-3.5" />
+                      )}
+                      {rule.label}
+                    </li>
+                  );
+                })}
+              </ul>
+              {errors.newPassword &&
+                passwordRules.every((rule) => rule.test(newPassword ?? "")) && (
                   <p className="text-xs text-destructive">
                     {errors.newPassword.message}
                   </p>
-                )
-              ) : (
-                <p className="text-xs text-muted-foreground">
-                  Entre {PASSWORD_MIN_LENGTH} y {PASSWORD_MAX_LENGTH}{" "}
-                  caracteres, con mayúscula, minúscula, número y símbolo.
-                </p>
-              )}
+                )}
             </div>
 
             {/* Confirmar contraseña */}
@@ -249,7 +287,7 @@ export function ChangePasswordDialog() {
               </Label>
               <Input
                 id="confirm-password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
                 className={inputClassName}
                 {...register("confirmPassword")}
