@@ -108,7 +108,9 @@ export function AcceptInviteForm({
     });
 
     if (signIn.error) {
-      console.log(signIn.error);
+      setServerError(
+        "Hubo un problema al iniciar tu sesión. Intenta iniciar sesión otra vez.",
+      );
       router.push("/login");
       return;
     }
@@ -119,22 +121,34 @@ export function AcceptInviteForm({
     });
 
     if (updateError) {
-      console.error(
-        "Error al actualizar el nombre del usuario:",
-        updateError.message,
-      );
+      setServerError("Hubo un error al actualizar tu nombre.");
     }
 
-    const { error: inviteError } =
+    const { data: accepted, error: inviteError } =
       await authClient.organization.acceptInvitation({
         invitationId: invitation.invitationId,
       });
 
     if (inviteError) {
-      console.error(
-        "Error al aceptar la invitación a la organización:",
-        inviteError.message,
+      setServerError(
+        "Hubo un error al aceptar la invitación a la organización.",
       );
+      return;
+    }
+
+    const organizationId = accepted?.invitation?.organizationId;
+
+    if (organizationId) {
+      const { error: setActiveError } = await authClient.organization.setActive(
+        {
+          organizationId,
+        },
+      );
+
+      if (setActiveError) {
+        setServerError("Hubo un error al activar la organización.");
+        return;
+      }
     }
 
     router.push("/");
