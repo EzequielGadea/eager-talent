@@ -18,23 +18,7 @@ import {
 import { api } from "~/lib/trpc/react";
 import type { DisqualifiedApplication } from "../types";
 
-const avatarColors = [
-  "bg-dashboard-orange-light text-dashboard-orange-text",
-  "bg-dashboard-sky-avatar text-dashboard-sky-text",
-  "bg-dashboard-success-avatar text-dashboard-success-text",
-  "bg-tag-gray-bg text-tag-gray-fg",
-  "bg-tag-blue-bg text-tag-blue-fg",
-  "bg-dashboard-purple-avatar text-dashboard-purple-text",
-  "bg-tag-amber-bg text-tag-amber-fg",
-];
-
-function getAvatarColor(id: string) {
-  const hash = id
-    .split("")
-    .reduce((total, character) => total + character.charCodeAt(0), 0);
-
-  return avatarColors[hash % avatarColors.length];
-}
+import getAvatar from "~/lib/avatar";
 
 type DisqualifiedCardProps = {
   application: DisqualifiedApplication;
@@ -63,9 +47,10 @@ export function DisqualifiedCard({
   });
 
   const fullName = `${application.name} ${application.lastName}`;
-  const initials =
-    `${application.name.charAt(0)}${application.lastName.charAt(0)}`.toUpperCase();
+  const avatar = getAvatar(application.name, application.lastName);
 
+  const initials = avatar.initials;
+  const avatarColor = avatar.colorClass;
   return (
     <>
       {/* Borde izquierdo rojo: marca visual de que fue descartado. */}
@@ -76,9 +61,7 @@ export function DisqualifiedCard({
         >
           <Avatar className="size-9 shrink-0">
             <AvatarImage src={application.photo ?? undefined} alt={fullName} />
-            <AvatarFallback className={getAvatarColor(application.applicantId)}>
-              {initials}
-            </AvatarFallback>
+            <AvatarFallback className={avatarColor}>{initials}</AvatarFallback>
           </Avatar>
 
           <div className="min-w-0 flex-1">
@@ -205,7 +188,7 @@ export function DisqualifiedCard({
               )}
             </div>
 
-            <div className="flex justify-end gap-2 border-t border-border-default bg-slate-50 px-6 py-4">
+            <div className="flex justify-end gap-2 border-t border-border-default bg-surface-subtle px-6 py-4">
               <Button
                 type="button"
                 variant="outline"
@@ -218,7 +201,7 @@ export function DisqualifiedCard({
 
               <Button
                 type="button"
-                className="rounded-full bg-slate-900 px-5 text-white hover:bg-slate-800"
+                className="rounded-full bg-primary px-5 text-primary-foreground hover:bg-primary/90"
                 disabled={requalifyMutation.isPending}
                 onClick={() =>
                   requalifyMutation.mutate({

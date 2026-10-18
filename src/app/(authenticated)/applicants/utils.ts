@@ -4,6 +4,8 @@ import { getSourceIcon } from "./_components/source-icon";
 import { ApplicantsPromise, SharedApplicantsPromise } from "./types";
 import { avatarPalette } from "./constants";
 
+import getAvatar from "~/lib/avatar";
+
 export async function transformApplicants(
   promise: ApplicantsPromise | SharedApplicantsPromise,
 ) {
@@ -29,17 +31,17 @@ export async function transformApplicants(
             )?.name
           : undefined;
 
+        const avatar = getAvatar(applicant.name, applicant.lastName);
+
         return {
           id: applicant.id,
           initials:
-            applicant.name && applicant.lastName
-              ? applicant.name[0] + applicant.lastName[0]
-              : "-",
+            applicant.name && applicant.lastName ? avatar.initials : "-",
           name:
             applicant.name || applicant.lastName
               ? `${applicant.name ?? ""} ${applicant.lastName ?? ""}`.trim()
               : "-",
-          avatarBg: getRandomColor(),
+          avatarBg: avatar.colorClass,
           photo: applicant.photo ?? null,
           tags: applicant.tags
             ? applicant.tags.map((tag) => ({
