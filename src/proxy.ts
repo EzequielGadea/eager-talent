@@ -23,7 +23,7 @@ export async function proxy(request: NextRequest) {
       : NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (!authRoutes.includes(pathname)) return NextResponse.next();
+if (!["/login", "/signup"].includes(pathname)) return NextResponse.next();
 
   const organizationId = session.session.activeOrganizationId;
 
