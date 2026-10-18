@@ -15,9 +15,11 @@ export function InvalidToken() {
         La invitación venció o ya fue usada. Pedile a quien te invitó que te
         envíe una nueva y volvé a abrir el link del mail.
       </p>
-      <Button variant="outline" className="mt-6 h-11 w-full rounded-full">
-        <a href="/login">Ir a iniciar sesión</a>
-      </Button>
+      <Button
+        render={<a href="/login">Ir a iniciar sesión</a>}
+        variant="outline"
+        className="mt-6 h-11 w-full rounded-full"
+      />
     </InviteShell>
   );
 }
