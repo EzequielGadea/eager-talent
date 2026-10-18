@@ -43,6 +43,8 @@ function getInitials(name: string, lastName: string) {
   return `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 }
 
+const PENDING_NAME_LABEL = "Pendiente";
+
 function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
   if (!lastAccess) {
     return <span>—</span>;
@@ -72,6 +74,9 @@ export function UserRow({ user }: Props) {
       ? userRoleConfig.recruiter
       : userRoleConfig.hiringManager;
 
+  const fullName = `${user.name} ${user.lastName}`.trim();
+  const initials = getInitials(user.name, user.lastName);
+
   const access =
     user.role === "recruiter"
       ? "Todo el sistema"
@@ -84,12 +89,16 @@ export function UserRow({ user }: Props) {
       <TableCell className="px-4 py-3 pl-6">
         <div className="flex items-center gap-3">
           <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-tag-purple-bg text-xs font-semibold text-tag-purple-fg">
-            {getInitials(user.name, user.lastName)}
+            {initials || "?"}
           </div>
 
-          <span className="font-semibold text-text-primary">
-            {user.name} {user.lastName}
-          </span>
+          {fullName ? (
+            <span className="font-semibold text-text-primary">{fullName}</span>
+          ) : (
+            <span className="italic text-text-secondary">
+              {PENDING_NAME_LABEL}
+            </span>
+          )}
         </div>
       </TableCell>
 

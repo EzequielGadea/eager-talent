@@ -43,7 +43,7 @@ export function UserActionsMenu({ user }: Props) {
   const [isPending, startTransition] = useTransition();
   const [dialog, setDialog] = useState<"ban" | "delete" | "reset" | null>(null);
 
-  const fullName = `${user.name} ${user.lastName}`;
+  const fullName = `${user.name} ${user.lastName}`.trim() || user.email;
 
   const handleCancelInvitation = () => {
     const invitationId = user.pendingInvitationId;
