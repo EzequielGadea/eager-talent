@@ -27,7 +27,7 @@ function formatRole(role: string | null) {
     .join(", ");
 }
 
-export async function getInvitation(invitationId: string) {
+async function getInvitation(invitationId: string) {
   const inv = await prisma.invitation.findUnique({
     where: { id: invitationId },
     select: {
