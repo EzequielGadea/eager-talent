@@ -215,6 +215,7 @@ export const auth = betterAuth({
 
         if (!existingUser) {
           await auth.api.createUser({
+            headers: request?.headers,
             body: {
               email,
               role: role === "recruiter" ? "admin" : "user",
