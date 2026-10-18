@@ -53,12 +53,15 @@ export const invite = protectedProcedure
       value: userId,
     });
 
-    // Invalidates any link previously sent to this user
-    if (existingUser) {
-      await ctx.db.verification.deleteMany({
-        where: tokenFilter(existingUser.id),
-      });
-    }
+    // Keep previous links until a new invitation email is successfully sent.
+    const previousTokenIds = existingUser
+      ? (
+          await ctx.db.verification.findMany({
+            where: tokenFilter(existingUser.id),
+            select: { id: true },
+          })
+        ).map((token) => token.id)
+      : [];
 
     let invitationId: string;
 
@@ -88,7 +91,12 @@ export const invite = protectedProcedure
       select: { id: true },
     });
     const wasSent = user
-      ? (await ctx.db.verification.count({ where: tokenFilter(user.id) })) > 0
+      ? (await ctx.db.verification.count({
+          where: {
+            ...tokenFilter(user.id),
+            id: { notIn: previousTokenIds },
+          },
+        })) > 0
       : false;
 
     if (!wasSent) {
@@ -103,6 +111,15 @@ export const invite = protectedProcedure
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: EMAIL_FAILURE_MESSAGE,
+      });
+    }
+
+    if (existingUser && previousTokenIds.length > 0) {
+      await ctx.db.verification.deleteMany({
+        where: {
+          ...tokenFilter(existingUser.id),
+          id: { in: previousTokenIds },
+        },
       });
     }
 
