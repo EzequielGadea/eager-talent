@@ -180,6 +180,12 @@ export const auth = betterAuth({
       }
     },
     onPasswordReset: async ({ user }) => {
+      // Consuming the emailed token proves ownership of the address
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: true },
+      });
+
       console.log(`Password for user ${user.email} has been reset.`);
     },
   },
