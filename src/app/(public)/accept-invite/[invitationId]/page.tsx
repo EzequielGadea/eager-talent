@@ -2,6 +2,9 @@ import { Suspense } from "react";
 import AcceptInvitePage from "./_components/accept-invite-form";
 import { InvalidToken } from "./_components/invalid-token";
 import { prisma } from "~/lib/prisma";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { tz } from "@date-fns/tz";
 
 const ROLE_LABELS: Record<string, string> = {
   hiringManager: "Hiring Manager",
@@ -10,11 +13,10 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 function formatExpiry(date: Date) {
-  return new Intl.DateTimeFormat("es-UY", {
-    day: "numeric",
-    month: "long",
-    timeZone: "America/Montevideo",
-  }).format(date);
+  return format(date, "d 'de' MMMM", {
+    locale: es,
+    in: tz("America/Montevideo"),
+  });
 }
 
 function formatRole(role: string | null) {
