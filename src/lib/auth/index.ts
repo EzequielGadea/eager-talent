@@ -206,6 +206,7 @@ export const auth = betterAuth({
         }
 
         const { email, role } = parsedInviteData.data;
+        const globalRole = role === "recruiter" ? "admin" : "user";
         const existingUser = await ctx.internalAdapter.findUserByEmail(email);
 
         if (!existingUser) {
@@ -213,9 +214,15 @@ export const auth = betterAuth({
             headers: request?.headers,
             body: {
               email,
-              role: role === "recruiter" ? "admin" : "user",
+              role: globalRole,
               name: "",
             },
+          });
+        } else {
+          // A re-invite (e.g. after a cancelled one) may change the role
+          await prisma.user.update({
+            where: { id: existingUser.user.id },
+            data: { role: globalRole },
           });
         }
 
