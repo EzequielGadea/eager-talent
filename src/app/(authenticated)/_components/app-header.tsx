@@ -9,6 +9,8 @@ import { SettingsIcon } from "./app-icons";
 import { GlobalSearch } from "./global-search";
 import { UserMenu } from "./user-menu";
 
+import getAvatar from "~/lib/avatar";
+
 // "member" (and a missing membership) intentionally has no label.
 const roleLabels: Partial<Record<string, string>> = {
   owner: "Recruiter",
@@ -51,12 +53,13 @@ function CurrentUserDetails({ user }: { user: CurrentUserData }) {
   const fullName = `${user.name} ${user.lastName}`.trim();
   const roleLabel = user.role ? roleLabels[user.role] : undefined;
 
+  const avatar = getAvatar(user.name, user.lastName);
   return (
     <div className="flex min-w-0 flex-1 items-center gap-2.5">
       <Avatar className="size-8.5">
         {user.image && <AvatarImage src={user.image} alt="" />}
-        <AvatarFallback className="bg-tag-green-bg text-xs font-semibold text-tag-green-fg">
-          {getInitials(fullName)}
+        <AvatarFallback className={`${avatar.colorClass}`}>
+          {avatar.initials}
         </AvatarFallback>
       </Avatar>
 
