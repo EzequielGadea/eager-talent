@@ -28,7 +28,6 @@ import {
 import {
   getRequiredStageType,
   isRequiredStage,
-  normalizeStageName,
 } from "~/lib/required-stage-types";
 import { api } from "~/lib/trpc/react";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
@@ -247,10 +246,7 @@ function DefaultStageEditor({
                     }
 
                     event.dataTransfer.effectAllowed = "move";
-                    event.dataTransfer.setData(
-                      STAGE_DRAG_TYPE,
-                      String(index),
-                    );
+                    event.dataTransfer.setData(STAGE_DRAG_TYPE, String(index));
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "ArrowUp") {
