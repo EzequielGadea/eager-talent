@@ -49,6 +49,7 @@ const STAGE_TYPE_OPTIONS = [
 ];
 
 const STAGE_COLORS = ["#64748B", "#3B82F6", "#F59E0B", "#22C55E"];
+const STAGE_DRAG_TYPE = "application/x-default-stage-index";
 
 function isBoundaryStage(index: number, total: number) {
   return index === 0 || index === total - 1;
@@ -116,6 +117,8 @@ function DefaultStageEditor({
 
   function moveStage(fromIndex: number, toIndex: number) {
     if (
+      !Number.isInteger(fromIndex) ||
+      !Number.isInteger(toIndex) ||
       fromIndex < 0 ||
       toIndex < 0 ||
       fromIndex >= stages.length ||
@@ -205,12 +208,23 @@ function DefaultStageEditor({
                 key={stage.key}
                 className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2"
                 onDragOver={(event) => {
-                  if (!locked) event.preventDefault();
+                  if (
+                    !locked &&
+                    event.dataTransfer.types.includes(STAGE_DRAG_TYPE)
+                  ) {
+                    event.preventDefault();
+                  }
                 }}
                 onDrop={(event) => {
+                  if (!event.dataTransfer.types.includes(STAGE_DRAG_TYPE)) {
+                    return;
+                  }
+
                   event.preventDefault();
+                  if (locked) return;
+
                   moveStage(
-                    Number(event.dataTransfer.getData("text/plain")),
+                    Number(event.dataTransfer.getData(STAGE_DRAG_TYPE)),
                     index,
                   );
                 }}
@@ -227,8 +241,16 @@ function DefaultStageEditor({
                       : `Reordenar etapa ${stage.name}`
                   }
                   onDragStart={(event) => {
+                    if (locked) {
+                      event.preventDefault();
+                      return;
+                    }
+
                     event.dataTransfer.effectAllowed = "move";
-                    event.dataTransfer.setData("text/plain", String(index));
+                    event.dataTransfer.setData(
+                      STAGE_DRAG_TYPE,
+                      String(index),
+                    );
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "ArrowUp") {

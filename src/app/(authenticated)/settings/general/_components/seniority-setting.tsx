@@ -2,7 +2,7 @@
 
 import { GripVertical, Plus, X } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 
 import { Button } from "~/components/ui/button";
@@ -119,6 +119,23 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
     setIsAddingSeniority(false);
     setSeniorityName("");
   }
+
+  useEffect(() => {
+    if (!isAddingSeniority) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsAddingSeniority(false);
+        setSeniorityName("");
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isAddingSeniority]);
 
   const hasChanges =
     JSON.stringify(seniorities.map((seniority) => seniority.id)) !==

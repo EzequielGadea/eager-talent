@@ -55,6 +55,36 @@ export const updateDefault = protectedProcedure
       input.stages.map((stage) => [stage.key, stage]),
     );
 
+    const boundaryStages = [
+      {
+        current: currentStages[0],
+        next: input.stages[0],
+        position: "primera",
+      },
+      {
+        current: currentStages.at(-1),
+        next: input.stages.at(-1),
+        position: "última",
+      },
+    ];
+
+    for (const boundary of boundaryStages) {
+      if (
+        !boundary.current ||
+        !boundary.next ||
+        boundary.next.key !== boundary.current.key ||
+        boundary.next.name !== boundary.current.name ||
+        boundary.next.type !== boundary.current.type ||
+        boundary.next.label !== boundary.current.label ||
+        boundary.next.color !== boundary.current.color
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `La ${boundary.position} etapa no se puede mover, editar ni eliminar.`,
+        });
+      }
+    }
+
     for (const requiredStage of currentStages) {
       if (!isRequiredStage(requiredStage)) continue;
 
