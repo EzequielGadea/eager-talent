@@ -1,7 +1,7 @@
-//import { headers } from "next/headers";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-//import { TRPCError } from "@trpc/server";
-//import { auth } from "~/lib/auth";
+
+import { Prisma } from "~/generated/prisma/client";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const createDescalificationMotive = protectedProcedure
@@ -11,18 +11,33 @@ export const createDescalificationMotive = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
-    /*const permission = await auth.api.hasPermission({
-      headers: await headers(),
-      body: { permissions: { area: ["create"] } },
-    });
-    if (!permission.success) {
-      throw new TRPCError({ code: "FORBIDDEN" });
-    }*/
-    const motive = await ctx.db.disqualificationMotive.create({
-      data: {
-        name: input.name,
-      },
+    const existingMotive = await ctx.db.disqualificationMotive.findFirst({
+      where: { name: { equals: input.name, mode: "insensitive" } },
+      select: { id: true },
     });
 
-    return motive;
+    if (existingMotive) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Ya existe un motivo con ese nombre.",
+      });
+    }
+
+    try {
+      return await ctx.db.disqualificationMotive.create({
+        data: { name: input.name },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Ya existe un motivo con ese nombre.",
+        });
+      }
+
+      throw error;
+    }
   });

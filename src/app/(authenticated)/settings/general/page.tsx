@@ -14,11 +14,12 @@ export default function GeneralSettingsPage() {
       </div>
       <div className="grid grid-cols-2 gap-4 ">
         <div className="flex flex-col gap-4">
-          <AreaSetting /> <RoleSetting /> <DescalificationMotiveSetting />
+          <AreaSetting /> <RoleSetting />
         </div>
         <div className="flex flex-col gap-4">
           <DefaultStageSetting />
           <SenioritySetting />
+          <DescalificationMotiveSetting />
         </div>
       </div>
     </section>

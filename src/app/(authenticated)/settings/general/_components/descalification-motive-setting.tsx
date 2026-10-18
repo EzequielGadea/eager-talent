@@ -76,6 +76,20 @@ export default function DescalificationMotiveSetting() {
       return;
     }
 
+    const normalizedName = name.toLocaleLowerCase("es");
+    const alreadyExists = motives?.some(
+      (motive) =>
+        motive.name.trim().toLocaleLowerCase("es") === normalizedName,
+    );
+
+    if (alreadyExists) {
+      toast.add({
+        title: `Ya existe un motivo con el nombre "${name}".`,
+        type: "error",
+      });
+      return;
+    }
+
     createMotive.mutate({ name });
   }
 
@@ -125,6 +139,8 @@ export default function DescalificationMotiveSetting() {
       <CardContent>
         <div className="flex flex-col">
           {motives?.map((motive) => {
+            const hasApplications = motive._count.applications > 0;
+
             return (
               <div
                 key={motive.id}
@@ -142,11 +158,19 @@ export default function DescalificationMotiveSetting() {
                     }
                   />
                   <DropdownMenuContent>
-                    <span className="block">
+                    <span
+                      className="block"
+                      title={
+                        hasApplications
+                          ? "No se puede eliminar porque está asociado a postulaciones"
+                          : undefined
+                      }
+                    >
                       <DropdownMenuItem
                         className={cn(
                           "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
                         )}
+                        disabled={hasApplications}
                         onClick={() =>
                           setMotiveToDelete({
                             id: motive.id,

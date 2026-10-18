@@ -18,6 +18,32 @@ export const deleteArea = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
+
+    const area = await ctx.db.area.findFirst({
+      where: { id: input.id, deletedAt: null },
+      select: {
+        _count: { select: { applicants: true, jobOpenings: true } },
+      },
+    });
+
+    if (!area) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "El área no existe." });
+    }
+
+    const deleteRestrictions = [
+      area._count.applicants > 0 ? "candidatos asignados" : null,
+      area._count.jobOpenings > 0 ? "vacantes asociadas" : null,
+    ].filter((restriction): restriction is string => restriction !== null);
+
+    if (deleteRestrictions.length > 0) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: `No se puede eliminar el área porque tiene ${deleteRestrictions.join(
+          " y ",
+        )}.`,
+      });
+    }
+
     await ctx.db.area.update({
       where: { id: input.id },
       data: { deletedAt: new Date() },

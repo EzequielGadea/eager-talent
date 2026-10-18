@@ -14,6 +14,9 @@ export const getAllRoles = protectedProcedure
         name: true,
         _count: { select: { applicants: true } },
       },
+      orderBy: {
+        name: "asc",
+      },
     });
 
     if (!roles) {

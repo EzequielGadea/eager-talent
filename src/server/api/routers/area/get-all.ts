@@ -12,7 +12,10 @@ export const getAllAreas = protectedProcedure
       select: {
         id: true,
         name: true,
-        _count: { select: { applicants: true } },
+        _count: { select: { applicants: true, jobOpenings: true } },
+      },
+      orderBy: {
+        name: "asc",
       },
     });
 

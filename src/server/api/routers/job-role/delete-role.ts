@@ -18,6 +18,23 @@ export const deleteRole = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
+
+    const role = await ctx.db.jobRole.findFirst({
+      where: { id: input.id, deletedAt: null },
+      select: { _count: { select: { applicants: true } } },
+    });
+
+    if (!role) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "El rol no existe." });
+    }
+
+    if (role._count.applicants > 0) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "No se puede eliminar el rol porque tiene candidatos asignados.",
+      });
+    }
+
     await ctx.db.jobRole.update({
       where: { id: input.id },
       data: { deletedAt: new Date() },

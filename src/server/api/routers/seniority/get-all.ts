@@ -13,7 +13,7 @@ export const getAllSeniorities = protectedProcedure
         id: true,
         name: true,
         order: true,
-        _count: { select: { applicants: true } },
+        _count: { select: { applicants: true, jobOpenings: true } },
       },
 
       orderBy: { order: "asc" },

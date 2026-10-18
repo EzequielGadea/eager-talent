@@ -18,6 +18,22 @@ export const createArea = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
+
+    const existingArea = await ctx.db.area.findFirst({
+      where: {
+        deletedAt: null,
+        name: { equals: input.name, mode: "insensitive" },
+      },
+      select: { id: true },
+    });
+
+    if (existingArea) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Ya existe un área con ese nombre.",
+      });
+    }
+
     const area = await ctx.db.area.create({
       data: {
         name: input.name,

@@ -10,6 +10,10 @@ export const getAllDescalificationMotive = protectedProcedure
       select: {
         id: true,
         name: true,
+        _count: { select: { applications: true } },
+      },
+      orderBy: {
+        name: "asc",
       },
     });
 

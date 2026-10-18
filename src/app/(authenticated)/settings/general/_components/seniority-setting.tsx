@@ -89,6 +89,21 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
     if (!name) {
       return;
     }
+
+    const normalizedName = name.toLocaleLowerCase("es");
+    const alreadyExists = seniorities.some(
+      (seniority) =>
+        seniority.name.trim().toLocaleLowerCase("es") === normalizedName,
+    );
+
+    if (alreadyExists) {
+      toast.add({
+        title: `Ya existe una seniority con el nombre "${name}".`,
+        type: "error",
+      });
+      return;
+    }
+
     createSeniority.mutate({
       name,
       order: seniorities.length + 1,
@@ -162,6 +177,16 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
       <CardContent className="flex flex-col gap-2">
         <ol className="flex flex-col gap-2">
           {seniorities?.map((seniority, index) => {
+            const deleteRestrictions = [
+              seniority._count.applicants > 0
+                ? "candidatos asignados"
+                : null,
+              seniority._count.jobOpenings > 0 ? "vacantes asociadas" : null,
+            ].filter(
+              (restriction): restriction is string => restriction !== null,
+            );
+            const isDeleteDisabled = deleteRestrictions.length > 0;
+
             return (
               <li
                 key={seniority.id}
@@ -211,8 +236,10 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                 <span
                   className="flex"
                   title={
-                    seniority._count.applicants > 0
-                      ? "No se puede eliminar porque tiene candidatos asignados"
+                    isDeleteDisabled
+                      ? `No se puede eliminar: ${deleteRestrictions.join(
+                          " y ",
+                        )}.`
                       : undefined
                   }
                 >
@@ -220,7 +247,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    disabled={seniority._count.applicants > 0}
+                    disabled={isDeleteDisabled}
                     onClick={() =>
                       setSeniorityToDel({
                         id: seniority.id,

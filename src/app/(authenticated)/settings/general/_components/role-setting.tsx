@@ -70,6 +70,19 @@ export default function RoleSetting() {
       return;
     }
 
+    const normalizedName = name.toLocaleLowerCase("es");
+    const alreadyExists = roles?.some(
+      (role) => role.name.trim().toLocaleLowerCase("es") === normalizedName,
+    );
+
+    if (alreadyExists) {
+      toast.add({
+        title: `Ya existe un rol con el nombre "${name}".`,
+        type: "error",
+      });
+      return;
+    }
+
     createRole.mutate({ name });
   }
 

@@ -20,6 +20,22 @@ export const createSeniority = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
+
+    const existingSeniority = await ctx.db.seniority.findFirst({
+      where: {
+        deletedAt: null,
+        name: { equals: input.name, mode: "insensitive" },
+      },
+      select: { id: true },
+    });
+
+    if (existingSeniority) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Ya existe una seniority con ese nombre.",
+      });
+    }
+
     const seniority = await ctx.db.seniority.create({
       data: {
         name: input.name,

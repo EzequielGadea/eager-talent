@@ -18,6 +18,22 @@ export const createRole = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({ code: "FORBIDDEN" });
     }
+
+    const existingRole = await ctx.db.jobRole.findFirst({
+      where: {
+        deletedAt: null,
+        name: { equals: input.name, mode: "insensitive" },
+      },
+      select: { id: true },
+    });
+
+    if (existingRole) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Ya existe un rol con ese nombre.",
+      });
+    }
+
     const role = await ctx.db.jobRole.create({
       data: {
         name: input.name,

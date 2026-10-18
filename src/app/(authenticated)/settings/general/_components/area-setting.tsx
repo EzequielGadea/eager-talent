@@ -60,6 +60,9 @@ export default function AreaSetting() {
       setAreaToDelete(null);
       await utils.area.getAllAreas.invalidate();
     },
+    onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
+    },
   });
 
   function handleCreateArea(event: React.FormEvent<HTMLFormElement>) {
@@ -78,7 +81,10 @@ export default function AreaSetting() {
     );
 
     if (alreadyExists) {
-      toast.add({ title: `El area "${name}" existe`, type: "error" });
+      toast.add({
+        title: `Ya existe un área con el nombre "${name}".`,
+        type: "error",
+      });
       return;
     }
 
@@ -124,7 +130,13 @@ export default function AreaSetting() {
       <CardContent>
         <div className="flex flex-col">
           {areas?.map((area) => {
-            const hasApplicants = area._count.applicants > 0;
+            const deleteRestrictions = [
+              area._count.applicants > 0 ? "candidatos asignados" : null,
+              area._count.jobOpenings > 0 ? "vacantes asociadas" : null,
+            ].filter(
+              (restriction): restriction is string => restriction !== null,
+            );
+            const isDeleteDisabled = deleteRestrictions.length > 0;
 
             return (
               <div
@@ -146,8 +158,10 @@ export default function AreaSetting() {
                     <span
                       className="block"
                       title={
-                        hasApplicants
-                          ? "No se puede eliminar porque tiene candidatos asignados"
+                        isDeleteDisabled
+                          ? `No se puede eliminar: ${deleteRestrictions.join(
+                              " y ",
+                            )}.`
                           : undefined
                       }
                     >
@@ -155,7 +169,7 @@ export default function AreaSetting() {
                         className={cn(
                           "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
                         )}
-                        disabled={hasApplicants}
+                        disabled={isDeleteDisabled}
                         onClick={() =>
                           setAreaToDelete({ id: area.id, name: area.name })
                         }

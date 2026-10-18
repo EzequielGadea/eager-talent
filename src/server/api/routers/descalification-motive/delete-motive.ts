@@ -1,7 +1,6 @@
-//import { headers } from "next/headers";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-//import { TRPCError } from "@trpc/server";
-//import { auth } from "~/lib/auth";
+
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const deleteDescalificationMotive = protectedProcedure
@@ -11,13 +10,26 @@ export const deleteDescalificationMotive = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
-    /*const permission = await auth.api.hasPermission({
-      headers: await headers(),
-      body: { permissions: { area: ["delete"] } },
-    }); 
-    if (!permission.success) {
-      throw new TRPCError({ code: "FORBIDDEN" });
-    }*/
+    const motive = await ctx.db.disqualificationMotive.findUnique({
+      where: { id: input.id },
+      select: { _count: { select: { applications: true } } },
+    });
+
+    if (!motive) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "El motivo de descalificación no existe.",
+      });
+    }
+
+    if (motive._count.applications > 0) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message:
+          "No se puede eliminar el motivo porque está asociado a postulaciones.",
+      });
+    }
+
     await ctx.db.disqualificationMotive.delete({
       where: { id: input.id },
     });
