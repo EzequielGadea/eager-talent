@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 import { Loader2, Pencil, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -95,12 +96,16 @@ const fieldControl =
 function getInitialValues(
   interview: EditableInterview,
 ): EditInterviewFormValues {
+  const mvdDate = interview.date
+    ? new TZDate(interview.date, "America/Montevideo")
+    : null;
+
   return {
     exploratoryName: interview.exploratoryName ?? "",
     modality: interview.modality,
     duration: interview.duration,
-    date: interview.date ? format(interview.date, "yyyy-MM-dd") : "",
-    time: interview.date ? format(interview.date, "HH:mm") : "",
+    date: mvdDate ? format(mvdDate, "yyyy-MM-dd") : "",
+    time: mvdDate ? format(mvdDate, "HH:mm") : "",
     interviewerIds: interview.interviewers.map(({ id }) => id),
   };
 }
@@ -195,6 +200,9 @@ export function EditInterviewDialog({
   const isPending = updateInterview.isPending || isRefreshing;
 
   function onSubmit(data: EditInterviewFormValues) {
+    const [year, month, day] = data.date.split("-").map(Number);
+    const [hour, minute] = data.time.split(":").map(Number);
+
     updateInterview.mutate({
       id: interview.id,
       exploratoryName: interview.jobOpeningId
@@ -202,7 +210,16 @@ export function EditInterviewDialog({
         : data.exploratoryName?.trim(),
       modality: data.modality as InterviewType,
       duration: data.duration,
-      date: new Date(`${data.date}T${data.time}`),
+      date: new TZDate(
+        year!,
+        month! - 1,
+        day!,
+        hour!,
+        minute!,
+        0,
+        0,
+        "America/Montevideo",
+      ),
       interviewerIds: data.interviewerIds,
     });
   }
