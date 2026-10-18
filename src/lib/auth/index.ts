@@ -124,9 +124,12 @@ export const auth = betterAuth({
     }),
     sendResetPassword: async ({ user, url, token }) => {
       const inv = await prisma.invitation.findFirst({
-        where: { email: user.email, status: "pending" },
+        where: {
+          email: user.email,
+          status: "pending",
+          expiresAt: { gt: new Date() },
+        },
         orderBy: { createdAt: "desc" },
-        include: { organization: true },
       });
 
       if (inv) {
