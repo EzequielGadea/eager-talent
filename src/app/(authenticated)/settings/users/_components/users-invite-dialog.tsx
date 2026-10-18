@@ -20,7 +20,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import { authClient } from "~/lib/auth/client";
+import { api } from "~/lib/trpc/react";
 import { toast } from "~/components/ui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -31,27 +31,10 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-function getInvitationErrorMessage(code?: string) {
-  switch (code) {
-    case "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION":
-      return "Este correo ya pertenece a un usuario de la organización.";
-    case "USER_IS_ALREADY_INVITED_TO_THIS_ORGANIZATION":
-      return "Este correo ya tiene una invitación pendiente.";
-    case "YOU_ARE_NOT_ALLOWED_TO_INVITE_USERS_TO_THIS_ORGANIZATION":
-      return "No tenés permisos para invitar usuarios a esta organización.";
-    case "YOU_ARE_NOT_ALLOWED_TO_INVITE_USER_WITH_THIS_ROLE":
-      return "No tenés permisos para invitar usuarios con este rol.";
-    case "INVITATION_LIMIT_REACHED":
-      return "Se alcanzó el límite de invitaciones. Intentá nuevamente más tarde.";
-    default:
-      return "No se pudo enviar la invitación. Intentá nuevamente.";
-  }
-}
-
 export function UsersInviteDialog() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isRefreshing, startTransition] = React.useTransition();
 
   const {
     register,
@@ -67,40 +50,35 @@ export function UsersInviteDialog() {
     },
   });
 
-  async function onSubmit(values: FormData) {
-    try {
-      setIsLoading(true);
-
-      const { error } = await authClient.organization.inviteMember({
-        email: values.email,
-        role: values.role,
-      });
-
-      if (error) {
-        toast.add({
-          type: "error",
-          title: "No se pudo enviar la invitación",
-          description: getInvitationErrorMessage(error.code),
-        });
-        return;
-      }
-
-      router.refresh();
-      reset();
-      setOpen(false);
-    } catch {
+  const inviteMutation = api.user.invite.useMutation({
+    onError: (error) => {
       toast.add({
         type: "error",
-        title: "Error inesperado",
-        description: "No se pudo enviar la invitación. Intentá nuevamente.",
+        title: "No se pudo enviar la invitación",
+        description: error.message,
       });
-    } finally {
-      setIsLoading(false);
-    }
+    },
+    onSuccess: () => {
+      startTransition(() => {
+        router.refresh();
+        handleOpenChange(false);
+      });
+    },
+  });
+
+  const isLoading = inviteMutation.isPending || isRefreshing;
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (!nextOpen) reset();
+  }
+
+  function onSubmit(values: FormData) {
+    inviteMutation.mutate(values);
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
           <button
