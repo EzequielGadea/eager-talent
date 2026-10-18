@@ -1,6 +1,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 
+import type { JobOpeningStatus } from "~/generated/prisma/enums";
 import {
   Card,
   CardContent,
@@ -22,7 +23,48 @@ type PublicCandidateCardProps = {
   title?: string | null;
   academicInstitution?: string | null;
   active?: boolean;
+  jobOpeningStatus?: JobOpeningStatus;
 };
+
+function getCandidateStatusBadge(
+  active: boolean,
+  jobOpeningStatus: JobOpeningStatus = "Open",
+) {
+  if (!active) {
+    return {
+      label: "Descartado",
+      badgeClass: "bg-danger-bg text-danger",
+      dotClass: "bg-danger",
+    };
+  }
+
+  switch (jobOpeningStatus) {
+    case "Paused":
+      return {
+        label: "Pausada",
+        badgeClass: "bg-warning-bg text-warning",
+        dotClass: "bg-warning",
+      };
+    case "Closed":
+      return {
+        label: "Cerrada",
+        badgeClass: "bg-tag-gray-bg text-tag-gray-fg",
+        dotClass: "bg-tag-gray-fg",
+      };
+    case "Cancelled":
+      return {
+        label: "Cancelada",
+        badgeClass: "bg-danger-bg text-danger",
+        dotClass: "bg-danger",
+      };
+    default:
+      return {
+        label: "En proceso",
+        badgeClass: "bg-info-bg text-info",
+        dotClass: "bg-info",
+      };
+  }
+}
 
 export function PublicCandidateCard({
   name,
@@ -37,11 +79,13 @@ export function PublicCandidateCard({
   title,
   academicInstitution,
   active = true,
+  jobOpeningStatus = "Open",
 }: PublicCandidateCardProps) {
   const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   const fullName = `${name} ${lastName}`;
   const formation =
     [title, academicInstitution].filter(Boolean).join(" · ") || "Sin información";
+  const status = getCandidateStatusBadge(active, jobOpeningStatus);
 
   return (
     <Card className="min-w-0">
@@ -69,16 +113,10 @@ export function PublicCandidateCard({
 
             <div className="mt-1 flex flex-wrap items-center gap-2.5">
               <span
-                className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                  active ? "bg-info-bg text-info" : "bg-danger-bg text-danger"
-                }`}
+                className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.badgeClass}`}
               >
-                <span
-                  className={`size-1.5 rounded-full ${
-                    active ? "bg-info" : "bg-danger"
-                  }`}
-                />
-                {active ? "En proceso" : "Descartado"}
+                <span className={`size-1.5 rounded-full ${status.dotClass}`} />
+                {status.label}
               </span>
 
               {(roleName || seniorityName) && (

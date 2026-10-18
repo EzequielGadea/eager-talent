@@ -76,10 +76,12 @@ async function PublicApplicationContent({
           title={candidate.title}
           academicInstitution={candidate.academicInstitution}
           active={application.active}
+          jobOpeningStatus={application.jobOpeningStatus}
         />
 
         <PublicApplicationCard
           jobOpeningName={application.jobOpeningName}
+          jobOpeningStatus={application.jobOpeningStatus}
           currentStage={application.currentStage}
           areaName={application.areaName}
           availability={application.availability}
@@ -87,6 +89,8 @@ async function PublicApplicationContent({
           salary={application.salary}
           includeSalary={application.includeSalary}
           active={application.active}
+          disqualificationMotive={application.disqualificationMotive}
+          disqualificationDescription={application.disqualificationDescription}
         />
 
         <PublicDocumentsCard
