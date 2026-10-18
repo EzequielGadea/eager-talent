@@ -345,14 +345,14 @@ export const updateJobOpening = protectedProcedure
       },
       data: {
         name: input.name,
-        status: input.status,
-        hasBeenOpened: hasBeenOpened || input.status === "Open",
+        status: nextStatus,
+        hasBeenOpened: hasBeenOpened || nextStatus === "Open",
         location: input.location,
         openingDate: new Date(`${input.openingDate}T00:00:00.000Z`),
         targetClosingDate: new Date(`${input.targetClosingDate}T00:00:00.000Z`),
 
         // Unchanged stages are not rewritten.
-        ...(stagesChanged
+        ...(stagesChanged || colorsChanged
           ? {
               stages: input.stages.map((stage) =>
                 toPersistedStage(stage, persistedStagesById.get(stage.id)),

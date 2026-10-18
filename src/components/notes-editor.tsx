@@ -153,7 +153,6 @@ export function NotesEditor({
   canEditNotes,
   title = "Notas / Comentarios",
   editorAriaLabel = "Notas",
-  editorClassName = "h-130",
   onSave,
 }: NotesEditorProps) {
   const [status, setStatus] = useState<keyof typeof STATUS_UI>("idle");
