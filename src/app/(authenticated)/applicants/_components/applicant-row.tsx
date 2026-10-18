@@ -10,7 +10,7 @@ import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
 import { getSourceIcon } from "./source-icon";
-
+import { getTagStyles } from "~/lib/tags/get-tag-styles";
 import { columns } from "../constants";
 
 function getSafeExternalUrl(value: string | null): string | null {
@@ -79,13 +79,10 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
               props.applicant.tags.map((tag, i) => (
                 <Badge
                   key={i}
-                  variant="secondary"
-                  style={{
-                    color: tag.color,
-                    backgroundColor: `${tag.color}26`,
-                  }}
+                  variant="tag"
+                  style={getTagStyles(tag.color ?? "gray")}
                   title={tag.label || "-"}
-                  className="whitespace-nowrap rounded-full border-transparent px-2 py-0.5 text-[10px] font-semibold leading-4"
+                  className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
                 >
                   {tag.label || "-"}
                 </Badge>
