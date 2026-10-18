@@ -47,10 +47,6 @@ type AddApplicantApplicationFormProps = {
   onSuccess: () => void;
 };
 
-function getInitials(applicant: AvailableApplicant) {
-  return `${applicant.name.charAt(0)}${applicant.lastName.charAt(0)}`.toUpperCase();
-}
-
 export function AddApplicantApplicationForm({
   jobOpeningId,
   applicant,

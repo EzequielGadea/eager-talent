@@ -22,10 +22,6 @@ import { api } from "~/lib/trpc/react";
 
 import getAvatar from "~/lib/avatar";
 
-function getInitials(name: string, lastName?: string | null) {
-  return `${name.charAt(0)}${lastName?.charAt(0) ?? ""}`.toUpperCase();
-}
-
 export default function OpeningHiring() {
   const [managerSearch, setManagerSearch] = React.useState("");
 

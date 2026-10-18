@@ -21,9 +21,6 @@ type Props = {
   user: User;
 };
 
-function getInitials(name: string, lastName: string) {
-  return `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-}
 
 function formatLastAccess(lastAccess: string | null) {
   if (!lastAccess) {
