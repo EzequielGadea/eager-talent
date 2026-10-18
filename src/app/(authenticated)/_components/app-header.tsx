@@ -1,7 +1,10 @@
+import Link from "next/link";
 import { headers } from "next/headers";
+import { Suspense } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { auth } from "~/lib/auth";
+import getAvatar from "~/lib/avatar";
 import { api } from "~/lib/trpc/server";
 import { cn } from "~/lib/utils";
 import { SettingsIcon } from "./app-icons";
