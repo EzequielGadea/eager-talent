@@ -90,6 +90,8 @@ export const jobOpeningStageSchema = z.object({
     .max(80, "El nombre de la etapa no puede superar 80 caracteres"),
 
   type: jobOpeningStageTypeSchema,
+
+  color: z.string().trim().min(1, "El color es obligatorio").max(32),
 });
 
 export const updateJobOpeningSchema = z
@@ -102,7 +104,8 @@ export const updateJobOpeningSchema = z
       .min(1, "El nombre de la vacante es obligatorio")
       .max(160, "El nombre no puede superar 160 caracteres"),
 
-    status: z.enum(JobOpeningStatus),
+    // Opcional: si no se envía, la vacante conserva su estado actual.
+    status: z.enum(JobOpeningStatus).optional(),
 
     areaId: z.string().min(1, "El área es obligatoria"),
 
@@ -110,7 +113,8 @@ export const updateJobOpeningSchema = z
       .array(z.string().min(1))
       .min(1, "Seleccioná al menos un seniority"),
 
-    location: z.enum(["Uruguay", "Argentina", "Indiferente"]),
+    // Opcional: si no se envía, la vacante conserva su ubicación actual.
+    location: z.enum(["Uruguay", "Argentina", "Indiferente"]).optional(),
 
     openingDate: z.iso.date({
       error: "La fecha de apertura no es válida",
@@ -187,6 +191,9 @@ export type UpdateJobOpeningInput = z.infer<typeof updateJobOpeningSchema>;
 
 type JobOpeningStage = z.infer<typeof jobOpeningStageSchema>;
 
+// Lo que define la estructura del flujo. El color no cuenta como cambio de flujo.
+type JobOpeningStageIdentity = Pick<JobOpeningStage, "id" | "name" | "type">;
+
 const FIRST_STAGE = "Aplicado";
 const LAST_STAGE = "Contratado/a";
 // Required between the first and last stages, in any order.
@@ -209,8 +216,8 @@ export function isRequiredStageName(name: string) {
 }
 
 export function jobOpeningStagesChanged(
-  currentStages: JobOpeningStage[],
-  nextStages: JobOpeningStage[],
+  currentStages: JobOpeningStageIdentity[],
+  nextStages: JobOpeningStageIdentity[],
 ) {
   if (currentStages.length !== nextStages.length) {
     return true;
