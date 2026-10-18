@@ -12,6 +12,7 @@ import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "~/lib/trpc/react";
 import { useState, useEffect } from "react";
+import { toast } from "~/components/ui/toast";
 import {
   Dialog,
   DialogClose,
@@ -42,6 +43,10 @@ export default function RoleSetting() {
       setRoleName("");
       setIsAddingRole(false);
       await utils.role.getAllRoles.invalidate();
+      toast.add({ title: "Rol creado con éxito", type: "success" });
+    },
+    onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
     },
   });
 
@@ -49,6 +54,10 @@ export default function RoleSetting() {
     onSuccess: async () => {
       setRoleToDelete(null);
       await utils.role.getAllRoles.invalidate();
+      toast.add({ title: "Rol eliminado con éxito", type: "success" });
+    },
+    onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
     },
   });
 

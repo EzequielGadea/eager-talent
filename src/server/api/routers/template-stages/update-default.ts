@@ -1,6 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { isRequiredStage } from "~/lib/required-stage-types";
+import { persistedStagesSchema } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 const stageSchema = z.object({
@@ -41,11 +43,39 @@ export const updateDefault = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const template = await ctx.db.stageTemplate.findFirst({
       where: { id: input.id, deletedAt: null },
-      select: { id: true },
+      select: { id: true, stages: true },
     });
 
     if (!template) {
       throw new TRPCError({ code: "NOT_FOUND" });
+    }
+
+    const currentStages = persistedStagesSchema.parse(template.stages);
+    const nextStagesByKey = new Map(
+      input.stages.map((stage) => [stage.key, stage]),
+    );
+
+    for (const requiredStage of currentStages) {
+      if (!isRequiredStage(requiredStage)) continue;
+
+      const nextStage = nextStagesByKey.get(requiredStage.key);
+      if (!nextStage) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `No se puede eliminar la etapa obligatoria ${requiredStage.name}.`,
+        });
+      }
+
+      if (
+        nextStage.name !== requiredStage.name ||
+        nextStage.type !== requiredStage.type ||
+        nextStage.label !== requiredStage.label
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `No se puede editar la etapa obligatoria ${requiredStage.name}.`,
+        });
+      }
     }
 
     const updated = await ctx.db.stageTemplate.update({

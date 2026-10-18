@@ -15,6 +15,21 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { toast } from "~/components/ui/toast";
+import {
+  ColorPicker,
+  ColorPickerHex,
+  ColorPickerInput,
+} from "~/components/ui/color-picker";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import {
+  getRequiredStageType,
+  isRequiredStage,
+  normalizeStageName,
+} from "~/lib/required-stage-types";
 import { api } from "~/lib/trpc/react";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 
@@ -24,18 +39,6 @@ type DefaultStage = {
   type: string;
   label: string;
   color: string;
-};
-
-const REQUIRED_MIDDLE_STAGES = [
-  "Entrevista HR",
-  "Entrevista Técnica",
-  "Oferta",
-];
-
-const REQUIRED_STAGE_TYPES: Record<string, string> = {
-  "entrevista hr": "Entrevista",
-  "entrevista tecnica": "Entrevista",
-  oferta: "Oferta",
 };
 
 const STAGE_TYPE_OPTIONS = [
@@ -49,19 +52,6 @@ const STAGE_COLORS = ["#64748B", "#3B82F6", "#F59E0B", "#22C55E"];
 
 function isBoundaryStage(index: number, total: number) {
   return index === 0 || index === total - 1;
-}
-
-function normalizeStageName(name: string) {
-  return name
-    .trim()
-    .replace(/\s+/g, " ")
-    .toLocaleLowerCase("es")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-}
-
-function getRequiredStageType(name: string) {
-  return REQUIRED_STAGE_TYPES[normalizeStageName(name)];
 }
 
 export default function DefaultStageSetting() {
@@ -79,17 +69,30 @@ export default function DefaultStageSetting() {
 
   if (!data) return null;
 
-  return <DefaultStageEditor key={JSON.stringify(data.stages)} data={data} />;
+  const requiredStageIds = new Set(
+    data.stages.flatMap((stage) => (isRequiredStage(stage) ? [stage.key] : [])),
+  );
+
+  return (
+    <DefaultStageEditor
+      key={JSON.stringify(data.stages)}
+      data={data}
+      requiredStageIds={requiredStageIds}
+    />
+  );
 }
 
 function DefaultStageEditor({
   data,
+  requiredStageIds,
 }: {
   data: { id: string; stages: DefaultStage[] };
+  requiredStageIds: ReadonlySet<string>;
 }) {
   const initialStages = data.stages.map((stage) => ({ ...stage }));
   const [stages, setStages] = useState<DefaultStage[]>(initialStages);
   const [savedStages, setSavedStages] = useState<DefaultStage[]>(initialStages);
+  const [openColor, setOpenColor] = useState<string | null>(null);
 
   const updateDefault = api.templateStages.updateDefault.useMutation({
     onSuccess: () => {
@@ -195,11 +198,7 @@ function DefaultStageEditor({
         <ol aria-live="polite" className="flex flex-col gap-2">
           {stages.map((stage, index) => {
             const locked = isBoundaryStage(index, stages.length);
-            const normalizedStageName = normalizeStageName(stage.name);
-            const isRequired = REQUIRED_MIDDLE_STAGES.some(
-              (requiredStage) =>
-                normalizeStageName(requiredStage) === normalizedStageName,
-            );
+            const isRequired = requiredStageIds.has(stage.key);
 
             return (
               <li
@@ -247,17 +246,39 @@ function DefaultStageEditor({
                 <span className="w-3.5 text-center font-mono text-[11px] text-text-tertiary">
                   {index + 1}
                 </span>
-                <span
-                  aria-hidden="true"
-                  className="size-2.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: stage.color }}
-                />
+                <Popover
+                  open={openColor === stage.key}
+                  onOpenChange={(open) => setOpenColor(open ? stage.key : null)}
+                >
+                  <PopoverTrigger
+                    type="button"
+                    className="size-4 shrink-0 cursor-pointer rounded-full border border-border-default p-0"
+                    style={{ backgroundColor: stage.color }}
+                    aria-label={`Elegir color para ${stage.name}`}
+                  />
+                  <PopoverContent align="start" className="w-56 rounded-xl p-3">
+                    <ColorPicker>
+                      <ColorPickerHex
+                        color={stage.color}
+                        onChange={(color) => updateStage(stage.key, { color })}
+                      />
+                      <ColorPickerInput
+                        type="text"
+                        aria-label={`Código de color para ${stage.name}`}
+                        value={stage.color}
+                        onChange={(event) =>
+                          updateStage(stage.key, { color: event.target.value })
+                        }
+                      />
+                    </ColorPicker>
+                  </PopoverContent>
+                </Popover>
                 <div className="min-w-0 flex-1">
                   <Input
                     aria-label={`Nombre de la etapa ${index + 1}`}
                     placeholder="Nombre de la etapa"
                     value={stage.name}
-                    readOnly={locked}
+                    readOnly={locked || isRequired}
                     maxLength={80}
                     className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
                     onChange={(event) => {

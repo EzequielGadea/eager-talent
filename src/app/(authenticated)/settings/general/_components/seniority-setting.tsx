@@ -64,12 +64,20 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
       setIsAddingSeniority(false);
       setSeniorityName("");
       await utils.seniority.getAllSeniorities.invalidate();
+      toast.add({ title: "Seniority creada con éxito", type: "success" });
+    },
+    onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
     },
   });
 
   const deleteSeniority = api.seniority.deleteSeniority.useMutation({
     onSuccess: async () => {
       await utils.seniority.getAllSeniorities.invalidate();
+      toast.add({ title: "Seniority eliminada con éxito", type: "success" });
+    },
+    onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
     },
   });
 

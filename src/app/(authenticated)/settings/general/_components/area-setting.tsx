@@ -17,6 +17,8 @@ import { Trash2 } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 
+import { toast } from "~/components/ui/toast";
+
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 import {
   Dialog,
@@ -45,7 +47,11 @@ export default function AreaSetting() {
     onSuccess: async () => {
       setAreaName("");
       setIsAddingArea(false);
+      toast.add({ title: "Area creada con exito", type: "success" });
       await utils.area.getAllAreas.invalidate();
+    },
+    onError: (error) => {
+      toast.add({ title: error.message, type: "error" });
     },
   });
 
@@ -62,6 +68,17 @@ export default function AreaSetting() {
     const name = areaName.trim();
 
     if (!name) {
+      return;
+    }
+
+    const normalizedName = name.toLocaleLowerCase();
+
+    const alreadyExists = areas?.some(
+      (area) => area.name.trim().toLocaleLowerCase() === normalizedName,
+    );
+
+    if (alreadyExists) {
+      toast.add({ title: `El area "${name}" existe`, type: "error" });
       return;
     }
 

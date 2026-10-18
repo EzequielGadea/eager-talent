@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
+import { toast } from "~/components/ui/toast";
 
 import { Trash2 } from "lucide-react";
 
@@ -47,6 +48,10 @@ export default function DescalificationMotiveSetting() {
         setMotiveName("");
         setIsAddingMotive(false);
         await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+        toast.add({ title: "Motivo creado con éxito", type: "success" });
+      },
+      onError: (error) => {
+        toast.add({ title: error.message, type: "error" });
       },
     });
 
@@ -55,6 +60,10 @@ export default function DescalificationMotiveSetting() {
       onSuccess: async () => {
         setMotiveToDelete(null);
         await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+        toast.add({ title: "Motivo eliminado con éxito", type: "success" });
+      },
+      onError: (error) => {
+        toast.add({ title: error.message, type: "error" });
       },
     });
 
