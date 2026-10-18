@@ -180,7 +180,7 @@ export function ChangePasswordDialog() {
         }
       />
 
-      <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl">
+      <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl sm:max-w-110">
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           {/* Header */}
           <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
