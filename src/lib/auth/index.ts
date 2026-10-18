@@ -19,7 +19,7 @@ import {
   passwordSchema,
 } from "./password";
 
-const INVITATION_EXPIRATION = 60 * 60 * 24; // Un dia
+const INVITATION_EXPIRATION = 60 * 5; // 5 minutos
 
 // No hay nada más permanente que una solución temporal.
 //                                  - Confucio, 500 a.C.
