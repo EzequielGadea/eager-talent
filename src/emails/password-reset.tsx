@@ -9,19 +9,14 @@ import {
   Head,
   Heading,
   Html,
-  Img,
   Preview,
   Row,
   Section,
   Tailwind,
   Text,
-} from 'react-email';
-import { barebonesBoxedTailwindConfig } from './theme';
-import { BarebonesFonts } from './theme-fonts';
-
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : '';
+} from "react-email";
+import { barebonesBoxedTailwindConfig } from "./theme";
+import { BarebonesFonts } from "./theme-fonts";
 
 interface PasswordResetEmailProps {
   companyName: string;
@@ -45,19 +40,7 @@ export const PasswordResetEmail = ({
             <Section className="bg-bg mobile:px-2 px-6 py-4">
               <Section className="mb-3 px-6">
                 <Row>
-                  <Column className="w-1/2 py-1.75 align-middle">
-                    <Row>
-                      <Column className="w-8 align-middle">
-                        <Img
-                          src={`${baseUrl}/static/shared/logo-black.png`}
-                          alt=""
-                          width={23}
-                          className="block"
-                        />
-                      </Column>
-                    </Row>
-                  </Column>
-                  <Column align="right" className="w-1/2 py-1.75 align-middle">
+                  <Column align="right" className="py-1.75 align-middle">
                     <Text className="font-13 m-0 text-right font-sans">
                       <span className="text-fg-3">{companyName}</span>
                     </Text>
@@ -67,12 +50,6 @@ export const PasswordResetEmail = ({
 
               <Section className="bg-bg-2 mobile:px-6 mobile:py-12 rounded-[8px] px-10 py-16 text-center">
                 <Section className="mb-3">
-                  <Img
-                    src={`${baseUrl}/static/shared/logo-black.png`}
-                    alt="Logo"
-                    width={48}
-                    className="mx-auto mb-5 block"
-                  />
                   <Heading as="h1" className="font-28 text-fg m-0 font-sans">
                     Restablecé tu contraseña
                   </Heading>
@@ -93,9 +70,8 @@ export const PasswordResetEmail = ({
                 </Section>
 
                 <Text className="font-13 text-fg-3 mx-auto mt-8 mb-0 max-w-100 text-center font-sans">
-                  Si no solicitaste este correo, ignóralo.
-                  Tu contraseña solo cambia si hacés click en el
-                  botón de arriba.
+                  Si no solicitaste este correo, ignóralo. Tu contraseña solo
+                  cambia si hacés click en el botón de arriba.
                 </Text>
               </Section>
             </Section>
@@ -107,8 +83,8 @@ export const PasswordResetEmail = ({
 );
 
 PasswordResetEmail.PreviewProps = {
-  companyName: 'Barebones',
-  url: 'https://example.com/',
+  companyName: "Barebones",
+  url: "https://example.com/",
 } satisfies PasswordResetEmailProps;
 
 export default PasswordResetEmail;
