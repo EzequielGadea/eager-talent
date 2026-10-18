@@ -13,6 +13,7 @@ import { createElement } from "react";
 import { createAuthMiddleware } from "better-auth/api";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { revokeUnacceptedInvitation } from "./invitation-lifecycle";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MAX_LENGTH,
@@ -195,6 +196,11 @@ export const auth = betterAuth({
       invitationExpiresIn: INVITATION_EXPIRATION,
       ac,
       roles,
+      organizationHooks: {
+        async beforeCancelInvitation({ invitation }) {
+          await revokeUnacceptedInvitation(await auth.$context, invitation);
+        },
+      },
       async sendInvitationEmail(data, request) {
         const ctx = await auth.$context;
         const parsedInviteData = inviteSchema.safeParse(data);
