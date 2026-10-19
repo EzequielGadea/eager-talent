@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import * as z from "zod";
 import {
   ArrowRight,
@@ -95,7 +95,7 @@ export function ChangePasswordDialog() {
     register,
     handleSubmit,
     setError,
-    watch,
+    control,
     formState: { errors },
     reset,
   } = useForm<FormData>({
@@ -107,7 +107,7 @@ export function ChangePasswordDialog() {
     },
   });
 
-  const newPassword = watch("newPassword");
+  const newPassword = useWatch({ control, name: "newPassword" });
   const passwordHasError = !!errors.newPassword;
 
   function handleOpenChange(next: boolean) {
