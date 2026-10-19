@@ -11,6 +11,10 @@ export const userStatusConfig = {
     label: "Inactivo",
     className: "bg-tag-gray-bg text-tag-gray-fg",
   },
+  Banned: {
+    label: "Baneado",
+    className: "bg-danger-bg text-danger",
+  },
 } as const;
 
 export const userRoleConfig = {
