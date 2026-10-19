@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Plus, Share2, X } from "lucide-react";
+import { ArrowUpRight, Plus, RotateCcw, Share2, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -13,6 +13,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
+import { RequalifyApplicantDialog } from "~/components/requalify-applicant-dialog";
 import {
   Table,
   TableBody,
@@ -116,6 +117,7 @@ export function ApplicantApplicationsCard({
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
+  const [showRequalifyDialog, setShowRequalifyDialog] = useState(false);
   const effectiveSelection =
     selection ?? getInitialSelection(applications, explorationInterviews);
   console.log({ selection, effectiveSelection });
@@ -248,7 +250,7 @@ export function ApplicantApplicationsCard({
 
         {!isExploration &&
           jobOpening &&
-          (canCreatePublicLink || (canUpdateApplication && app?.active)) && (
+          (canCreatePublicLink || canUpdateApplication) && (
             <div className="flex basis-full flex-wrap items-center justify-start gap-2.5 pt-2">
               {canCreatePublicLink && (
                 <Button
@@ -271,6 +273,17 @@ export function ApplicantApplicationsCard({
                     <X className="h-2.5 w-2.5" strokeWidth={2.5} />
                   </span>
                   Descalificar
+                </Button>
+              )}
+              {canUpdateApplication && app && !app.active && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 rounded-full border-info bg-background px-3.5 text-xs font-medium text-info shadow-none hover:bg-info-bg hover:text-text-link"
+                  onClick={() => setShowRequalifyDialog(true)}
+                >
+                  <RotateCcw className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  Recalificar
                 </Button>
               )}
             </div>
@@ -312,6 +325,19 @@ export function ApplicantApplicationsCard({
           applicantId={app.applicantId}
           jobOpeningId={app.jobOpeningId}
           candidateName={applicantName}
+          stageName={app.currentStageName}
+          onSuccess={() => router.refresh()}
+        />
+      )}
+
+      {canUpdateApplication && app && !app.active && (
+        <RequalifyApplicantDialog
+          key={`requalify-${app.jobOpeningId}`}
+          open={showRequalifyDialog}
+          onOpenChange={setShowRequalifyDialog}
+          applicantId={app.applicantId}
+          jobOpeningId={app.jobOpeningId}
+          applicantName={applicantName}
           stageName={app.currentStageName}
           onSuccess={() => router.refresh()}
         />
