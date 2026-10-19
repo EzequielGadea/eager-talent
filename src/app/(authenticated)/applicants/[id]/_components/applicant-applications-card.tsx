@@ -24,6 +24,7 @@ import { Separator } from "~/components/ui/separator";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
 import { ShareApplicationDialog } from "./share-application-dialog";
+import { DisqualifyCandidateDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/disqualify-candidate-dialog";
 import {
   ApplicantApplicationDropdown,
   type ApplicationSelection,
@@ -109,6 +110,7 @@ export function ApplicantApplicationsCard({
   const [showApplyDialog, setShowApplyDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
+  const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
   const effectiveSelection =
     selection ?? getInitialSelection(applications, explorationInterviews);
   console.log({ selection, effectiveSelection });
@@ -237,7 +239,7 @@ export function ApplicantApplicationsCard({
 
         {!isExploration &&
           jobOpening &&
-          (canCreatePublicLink || canUpdateApplication) && (
+          (canCreatePublicLink || (canUpdateApplication && app?.active)) && (
             <div className="flex basis-full flex-wrap items-center justify-start gap-2.5 pt-2">
               {canCreatePublicLink && (
                 <Button
@@ -249,11 +251,12 @@ export function ApplicantApplicationsCard({
                   <Share2 className="h-3.5 w-3.5" /> Compartir
                 </Button>
               )}
-              {canUpdateApplication && (
+              {canUpdateApplication && app?.active && (
                 <Button
                   variant="outline"
                   size="sm"
                   className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
+                  onClick={() => setShowDisqualifyDialog(true)}
                 >
                   <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
                     <X className="h-2.5 w-2.5" strokeWidth={2.5} />
@@ -289,6 +292,19 @@ export function ApplicantApplicationsCard({
           showDialog={showApplyDialog}
           setShowDialog={setShowApplyDialog}
           applicantId={applicantId}
+        />
+      )}
+
+      {canUpdateApplication && app?.active && (
+        <DisqualifyCandidateDialog
+          key={`disqualify-${app.jobOpeningId}`}
+          open={showDisqualifyDialog}
+          onOpenChange={setShowDisqualifyDialog}
+          applicantId={app.applicantId}
+          jobOpeningId={app.jobOpeningId}
+          candidateName={applicantName}
+          stageName={app.currentStageName}
+          onSuccess={() => router.refresh()}
         />
       )}
 
