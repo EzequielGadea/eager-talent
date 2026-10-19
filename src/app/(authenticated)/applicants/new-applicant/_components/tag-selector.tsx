@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { api } from "~/lib/trpc/react";
 import { Button } from "~/components/ui/button";
 import { Switch } from "~/components/ui/switch";
+import { getTagStyles } from "~/lib/tags/get-tag-styles";
 
 import { Badge } from "~/components/ui/badge";
 import {
@@ -30,18 +31,21 @@ type Props = {
   tags: Tag[];
   value: string[];
   onChange: (tags: string[]) => void;
+  variant?: "default" | "inline";
 };
 
-export function TagSelector({ tags, value, onChange }: Props) {
+export function TagSelector({
+  tags,
+  value,
+  onChange,
+  variant = "default",
+}: Props) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [creating, setCreating] = useState(false);
-  const [newTagColor, setNewTagColor] = useState("");
+
   const [newTagIsSkill, setNewTagIsSkill] = useState(false);
-  const getDefaultTagColor = () =>
-    getComputedStyle(document.documentElement)
-      .getPropertyValue("--tag-default-color")
-      .trim();
+
   const utils = api.useUtils();
 
   const createTag = api.tag.createTag.useMutation({
@@ -53,7 +57,6 @@ export function TagSelector({ tags, value, onChange }: Props) {
   const handleCreateTag = async () => {
     const newTag = await createTag.mutateAsync({
       name: search.trim(),
-      color: newTagColor,
       isSkill: newTagIsSkill,
     });
 
@@ -88,49 +91,50 @@ export function TagSelector({ tags, value, onChange }: Props) {
   );
   const closeCreateForm = () => {
     setCreating(false);
-    setNewTagColor(getDefaultTagColor());
     setNewTagIsSkill(false);
   };
 
   return (
     <div className="space-y-2">
       <div
-        className="flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-default px-3 py-2  cursor-pointer"
-        onClick={() => setOpen(true)}
+        className={
+          variant === "inline"
+            ? "flex flex-wrap items-center gap-2"
+            : "flex min-h-10 flex-wrap items-center gap-2 rounded-md border border-border-default px-3 py-2"
+        }
       >
         {value.map((tagId) => {
           const tag = tags.find((tag) => tag.id === tagId);
 
-          if (!tag) {
-            return null;
-          }
+          if (!tag) return null;
 
           return (
             <Badge
               key={tag.id}
-              variant="outline"
-              style={{
-                backgroundColor: `${tag.color}20`,
-                borderColor: `${tag.color}60`,
-                color: tag.color,
-              }}
+              variant="tag"
+              className="h-auto max-w-full whitespace-normal"
+              style={getTagStyles(tag.color)}
             >
-              {tag.name}
+              <span className="min-w-0 wrap-break-word">{tag.name}</span>
 
               <button
                 type="button"
                 onClick={() => removeTag(tag.id)}
                 className="ml-1 cursor-pointer"
+                aria-label={`Quitar etiqueta ${tag.name}`}
               >
-                <X className="h-3 w-3" />
+                <X className="size-3" />
               </button>
             </Badge>
           );
         })}
 
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger type="button" className="text-sm text-text-secondary">
-            Agregar etiqueta
+          <PopoverTrigger
+            type="button"
+            className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-dashed border-border-default px-2.5 py-1 text-xs font-medium text-text-secondary transition-colors hover:bg-surface-card"
+          >
+            + Agregar etiqueta
           </PopoverTrigger>
 
           <PopoverContent className="w-64 p-0">
@@ -150,14 +154,7 @@ export function TagSelector({ tags, value, onChange }: Props) {
                         value={tag.name}
                         onSelect={() => addTag(tag.id)}
                       >
-                        <Badge
-                          variant="outline"
-                          style={{
-                            backgroundColor: `${tag.color}20`,
-                            borderColor: `${tag.color}60`,
-                            color: tag.color,
-                          }}
-                        >
+                        <Badge variant="tag" style={getTagStyles(tag.color)}>
                           {tag.name}
                         </Badge>
                       </CommandItem>
@@ -169,10 +166,7 @@ export function TagSelector({ tags, value, onChange }: Props) {
                   <CommandGroup>
                     <CommandItem
                       value={search}
-                      onSelect={() => {
-                        setNewTagColor(getDefaultTagColor());
-                        setCreating(true);
-                      }}
+                      onSelect={() => setCreating(true)}
                     >
                       <Badge
                         className="border-tag-green-fg bg-tag-green-bg text-tag-green-fg hover:bg-tag-green-bg"
@@ -186,17 +180,6 @@ export function TagSelector({ tags, value, onChange }: Props) {
 
                 {creating && (
                   <div className="space-y-3 border-t p-3">
-                    <div className="flex items-center gap-3">
-                      <label className="text-xs font-medium">Color</label>
-
-                      <input
-                        type="color"
-                        value={newTagColor}
-                        onChange={(e) => setNewTagColor(e.target.value)}
-                        className="h-7 w-9 cursor-pointer"
-                      />
-                    </div>
-
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-medium">Skill</label>
 
@@ -205,6 +188,7 @@ export function TagSelector({ tags, value, onChange }: Props) {
                         onCheckedChange={setNewTagIsSkill}
                       />
                     </div>
+
                     <Button
                       className="w-full rounded-md bg-accent-green-strong px-3 py-1.5 text-xs text-text-on-dark"
                       type="button"

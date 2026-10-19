@@ -24,9 +24,9 @@ export const getAssignedInterviews = protectedProcedure.query(
 
     const interviews = await ctx.db.interview.findMany({
       where: {
-        interviewers: {
+        assignments: {
           some: {
-            id: ctx.session.user.id,
+            interviewerId: ctx.session.user.id,
           },
         },
       },

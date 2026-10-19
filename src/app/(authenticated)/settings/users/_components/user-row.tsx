@@ -14,6 +14,8 @@ import { UserActionsMenu } from "./user-actions-menu";
 
 export type User = inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
 
+import getAvatar from "~/lib/avatar";
+
 type Props = {
   user: User;
 };
@@ -38,10 +40,6 @@ const spanishFormatter: typeof baseSpanishFormatter = (
     now,
   );
 };
-
-function getInitials(name: string, lastName: string) {
-  return `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-}
 
 const PENDING_NAME_LABEL = "Pendiente";
 
@@ -75,7 +73,6 @@ export function UserRow({ user }: Props) {
       : userRoleConfig.hiringManager;
 
   const fullName = `${user.name} ${user.lastName}`.trim();
-  const initials = getInitials(user.name, user.lastName);
 
   const access =
     user.role === "recruiter"
@@ -84,12 +81,16 @@ export function UserRow({ user }: Props) {
           user.assignedJobOpeningsCount === 1 ? "vacante" : "vacantes"
         }`;
 
+  const avatar = getAvatar(user.name, user.lastName);
+
   return (
     <TableRow className="border-b border-border-default last:border-b-0">
       <TableCell className="px-4 py-3 pl-6">
         <div className="flex items-center gap-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-tag-purple-bg text-xs font-semibold text-tag-purple-fg">
-            {initials || "?"}
+          <div
+            className={`flex size-9 shrink-0 items-center justify-center rounded-full  text-xs font-semibold ${avatar.colorClass}`}
+          >
+            {avatar.initials || "?"}
           </div>
 
           {fullName ? (

@@ -39,6 +39,7 @@
     "@tiptap/extension-text": "^3.31.3",
     "@tiptap/extension-underline": "^3.31.3",
     "@tiptap/extensions": "3.31.3",
+    "@tiptap/markdown": "^3.31.4",
     "@tiptap/pm": "^3.31.3",
     "@tiptap/react": "^3.31.3",
     "@trpc/client": "^11.18.0",

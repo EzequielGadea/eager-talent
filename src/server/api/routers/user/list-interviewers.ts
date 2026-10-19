@@ -14,17 +14,41 @@ export const listInterviewers = protectedProcedure.query(async ({ ctx }) => {
     throw new TRPCError({ code: "FORBIDDEN" });
   }
 
-  return ctx.db.user.findMany({
+  const organizationId = ctx.session.session.activeOrganizationId;
+
+  if (!organizationId) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: "No hay una organizacion activa",
+    });
+  }
+
+  const members = await ctx.db.member.findMany({
     where: {
-      banned: false,
-      // Only users who already accepted their invitation have a membership
-      members: { some: {} },
+      organizationId,
+      user: {
+        banned: false,
+        deletedAt: null,
+      },
     },
-    orderBy: [{ name: "asc" }, { lastName: "asc" }],
     select: {
-      id: true,
-      name: true,
-      lastName: true,
+      role: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          lastName: true,
+        },
+      },
     },
   });
+
+  return members
+    .map(({ role, user }) => ({ ...user, role }))
+    .sort((firstUser, secondUser) =>
+      `${firstUser.name} ${firstUser.lastName}`.localeCompare(
+        `${secondUser.name} ${secondUser.lastName}`,
+        "es",
+      ),
+    );
 });
