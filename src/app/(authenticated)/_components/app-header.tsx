@@ -7,7 +7,6 @@ import { auth } from "~/lib/auth";
 import { api } from "~/lib/trpc/server";
 import { SettingsIcon } from "./app-icons";
 import { GlobalSearch } from "./global-search";
-import { UserMenu } from "./user-menu";
 
 import getAvatar from "~/lib/avatar";
 
@@ -87,49 +86,21 @@ export async function CurrentUser() {
   return <CurrentUserDetails user={user} />;
 }
 
-function HeaderUserAreaFallback() {
-  return (
-    <>
-      <div className="h-7 w-px bg-border-default" />
-
-      <div className="flex w-48 shrink-0 items-center p-1">
-        <CurrentUserPlaceholder />
-      </div>
-    </>
-  );
-}
-
-// Fetches the user once for both the settings button and the user block.
 async function HeaderUserArea() {
   const user = await getCurrentUser();
 
+  if (user?.role === "hiringManager") {
+    return null;
+  }
+
   return (
-    <>
-      {user?.role !== "hiringManager" && (
-        <Link
-          href="/settings"
-          aria-label="Abrir configuración"
-          className="flex size-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-hover"
-        >
-          <SettingsIcon className="size-4.5" aria-hidden="true" />
-        </Link>
-      )}
-
-      <div className="h-7 w-px bg-border-default" />
-
-      <div
-        className="flex w-48 shrink-0 items-center"
-        aria-label="Información del usuario"
-      >
-        <UserMenu side="bottom">
-          {user ? (
-            <CurrentUserDetails user={user} />
-          ) : (
-            <CurrentUserPlaceholder />
-          )}
-        </UserMenu>
-      </div>
-    </>
+    <Link
+      href="/settings"
+      aria-label="Abrir configuración"
+      className="flex size-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-hover"
+    >
+      <SettingsIcon className="size-4.5" aria-hidden="true" />
+    </Link>
   );
 }
 
@@ -140,7 +111,7 @@ export function AppHeader() {
 
       <div className="flex-1" />
 
-      <Suspense fallback={<HeaderUserAreaFallback />}>
+      <Suspense fallback={null}>
         <HeaderUserArea />
       </Suspense>
     </header>
