@@ -12,6 +12,7 @@ import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
 import {
   Table,
   TableBody,
@@ -24,7 +25,6 @@ import { Separator } from "~/components/ui/separator";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
 import { ShareApplicationDialog } from "./share-application-dialog";
-import { DisqualifyCandidateDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/disqualify-candidate-dialog";
 import {
   ApplicantApplicationDropdown,
   type ApplicationSelection,
@@ -296,7 +296,7 @@ export function ApplicantApplicationsCard({
       )}
 
       {canUpdateApplication && app?.active && (
-        <DisqualifyCandidateDialog
+        <DisqualifyApplicantDialog
           key={`disqualify-${app.jobOpeningId}`}
           open={showDisqualifyDialog}
           onOpenChange={setShowDisqualifyDialog}
