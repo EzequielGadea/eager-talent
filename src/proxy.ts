@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { auth } from "~/lib/auth";
+import { PUBLIC_LINK_BASE_PATH } from "~/lib/public-link-url";
 import { prisma } from "~/lib/prisma";
 
 const authRoutes = ["/login", "/signup", "/accept-invite", "/reset-password"];
-
+const publicRoutes = ["/", ...authRoutes];
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -13,21 +14,18 @@ export async function proxy(request: NextRequest) {
     headers: request.headers,
   });
 
-  const isAuthRoute = authRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`),
-  );
-  const isHome = pathname === "/";
-  const isPublic = isHome || isAuthRoute;
+  const isPublicRoute =
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith(`${PUBLIC_LINK_BASE_PATH}/`);
 
-  if (!session) {
-    return isPublic
-      ? NextResponse.next()
-      : NextResponse.redirect(new URL("/login", request.url));
+  if (!isPublicRoute && !session) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-if (!["/login", "/signup"].includes(pathname)) return NextResponse.next();
+  if (!["/login", "/signup"].includes(pathname) || !session)
+    return NextResponse.next();
 
-  const organizationId = session.session.activeOrganizationId;
+  const organizationId = session?.session.activeOrganizationId;
 
   // Esto no deberia suceder, ya que hay un database hook en la configuracion
   // de Better Auth que establece la Active Organization al iniciar sesion.
