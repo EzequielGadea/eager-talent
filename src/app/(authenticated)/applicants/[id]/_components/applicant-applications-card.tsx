@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight, Plus, Share2, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -98,13 +99,16 @@ export function ApplicantApplicationsCard({
   canCreateInterview,
   canCreateApplication,
 }: ApplicantApplicationsCardProps) {
+  const router = useRouter();
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
     () => getInitialSelection(applications, explorationInterviews),
   );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const effectiveSelection =
-    selection ?? getInitialSelection(applications, explorationInterviews);
+    selection?.type === "exploration" && explorationInterviews.length === 0
+      ? getInitialSelection(applications, explorationInterviews)
+      : (selection ?? getInitialSelection(applications, explorationInterviews));
 
   const isExploration = effectiveSelection?.type === "exploration";
   const app =
@@ -328,9 +332,28 @@ export function ApplicantApplicationsCard({
             </TableHeader>
             <TableBody>
               {interviews.map((interview) => (
-                <TableRow key={interview.id}>
+                <TableRow
+                  key={interview.id}
+                  role="link"
+                  tabIndex={0}
+                  aria-label={`Ver entrevista ${interview.name}`}
+                  className="cursor-pointer hover:bg-surface-hover focus-visible:bg-surface-hover focus-visible:outline-none"
+                  onClick={(event) => {
+                    if ((event.target as HTMLElement).closest("a")) return;
+                    router.push(
+                      `/interviews/${encodeURIComponent(interview.id)}`,
+                    );
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    router.push(
+                      `/interviews/${encodeURIComponent(interview.id)}`,
+                    );
+                  }}
+                >
                   <TableCell className="w-1/3 py-4">
-                    <p className="font-bold text-text-primary">
+                    <p className="truncate font-bold text-text-primary">
                       {interview.name}
                     </p>
                     <p className="mt-0.5 text-xs text-text-tertiary">

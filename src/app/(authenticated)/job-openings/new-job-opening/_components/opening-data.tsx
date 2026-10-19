@@ -72,7 +72,7 @@ function SeniorityField() {
                 <ToggleGroupItem
                   key={seniority.id}
                   value={seniority.id}
-                  className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                  className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                 >
                   {isSelected && <Check className="mr-1.5 h-3.5 w-3.5" />}
                   {seniority.name}
@@ -111,7 +111,7 @@ export default function OpeningData() {
           <div className="space-y-2 md:col-span-2">
             <Label
               htmlFor="name"
-              className="body text-[13px] text-slate-600 --text-primary"
+              className="body text-[13px] text-text-secondary"
             >
               Nombre de la vacante <span className="text-danger">*</span>
             </Label>
@@ -264,7 +264,7 @@ export default function OpeningData() {
                 >
                   <ToggleGroupItem
                     value="Uruguay"
-                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                   >
                     {field.value === "Uruguay" ? (
                       <CircleDot className="mr-1.5 h-3.5 w-3.5" />
@@ -275,7 +275,7 @@ export default function OpeningData() {
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="Argentina"
-                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                   >
                     {field.value === "Argentina" ? (
                       <CircleDot className="mr-1.5 h-3.5 w-3.5" />
@@ -286,7 +286,7 @@ export default function OpeningData() {
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="Indiferente"
-                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-emerald-50 data-pressed:text-accent-green-strong"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                   >
                     {field.value === "Indiferente" ? (
                       <CircleDot className="mr-1.5 h-3.5 w-3.5" />

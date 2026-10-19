@@ -38,6 +38,8 @@ import type { PipelineCandidate } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
 
+import getAvatar from "~/lib/avatar";
+
 const modalityLabels: Record<string, string> = {
   VideoCall: "Videollamada",
   InPerson: "Presencial",
@@ -144,28 +146,10 @@ export function CandidateCard({
     });
   };
 
-  const avatarColors = [
-    "bg-dashboard-orange-light text-dashboard-orange-text",
-    "bg-dashboard-sky-avatar text-dashboard-sky-text",
-    "bg-dashboard-success-avatar text-dashboard-success-text",
-    "bg-tag-gray-bg text-tag-gray-fg",
-    "bg-tag-blue-bg text-tag-blue-fg",
-    "bg-dashboard-purple-avatar text-dashboard-purple-text",
-    "bg-tag-amber-bg text-tag-amber-fg",
-  ];
+  const avatar = getAvatar(candidate.name, candidate.lastName);
 
-  function getAvatarColor(id: string) {
-    const hash = id
-      .split("")
-      .reduce((total, character) => total + character.charCodeAt(0), 0);
-
-    return avatarColors[hash % avatarColors.length];
-  }
-
-  const initials =
-    `${candidate.name.charAt(0)}${candidate.lastName.charAt(0)}`.toUpperCase();
-
-  const avatarColor = getAvatarColor(candidate.applicantId);
+  const initials = avatar.initials;
+  const avatarColor = avatar.colorClass;
 
   return (
     <>
@@ -178,7 +162,7 @@ export function CandidateCard({
             : undefined,
         }}
         className={`rounded-xl border-border-default bg-card p-3 shadow-none ${
-          canUpdateApplication ? "cursor-grab active:cursor-grabbing" : ""
+          canUpdateApplication ? "cursor-grab" : ""
         }`}
       >
         <div className="flex items-center gap-3">

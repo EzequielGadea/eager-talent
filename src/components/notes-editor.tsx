@@ -20,6 +20,7 @@ import { ListItem } from "@tiptap/extension-list-item";
 import { Paragraph } from "@tiptap/extension-paragraph";
 import { Text } from "@tiptap/extension-text";
 import { Underline as UnderlineExtension } from "@tiptap/extension-underline";
+import { Markdown } from "@tiptap/markdown";
 import { Selection } from "@tiptap/extensions/selection";
 import { UndoRedo } from "@tiptap/extensions/undo-redo";
 import {
@@ -105,6 +106,7 @@ const EXTENSIONS = [
   UnderlineExtension,
   Selection.configure({ className: "selection" }),
   LinkExtension.configure({ autolink: false, openOnClick: true }),
+  Markdown,
 ];
 
 const AUTOSAVE_DELAY_MS = 1000;
@@ -137,6 +139,7 @@ export type NotesEditorProps = {
   canEditNotes: boolean;
   title?: string;
   editorAriaLabel?: string;
+  editorClassName?: string;
   onSave: (content: JSONContent) => Promise<{
     lastModified: string;
     lastModifiedBy: { name: string; lastName: string };
@@ -183,11 +186,12 @@ export function NotesEditor({
     immediatelyRender: false,
     editable: canEditNotes,
     content: (content as JSONContent | string | null) ?? "",
+    contentType: "markdown",
     extensions: EXTENSIONS,
     editorProps: {
       attributes: {
         "aria-label": editorAriaLabel,
-        class: `h-130 overflow-y-auto text-base leading-relaxed ${canEditNotes ? "text-text-primary" : "text-text-tertiary"} caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-slate-200 outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2`,
+        class: `h-130 overflow-y-auto text-base leading-relaxed ${canEditNotes ? "text-text-primary" : "text-text-tertiary"} caret-success selection:bg-tag-green-bg selection:text-tag-green-fg [&_.selection]:bg-surface-sunken outline-none [&_a]:cursor-pointer [&_a]:text-text-link [&_a]:underline [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_h1]:text-2xl [&_h1]:font-normal [&_h1]:mb-3 [&_h2]:text-xl [&_h2]:font-normal [&_h2]:mb-2`,
       },
     },
     onUpdate: ({ editor }) => {
@@ -204,7 +208,8 @@ export function NotesEditor({
   // Flush on unmount. Prompt the user if there is unsaved content.
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (statusRef.current !== "dirty") return;
+      if (statusRef.current !== "dirty" && statusRef.current !== "saving")
+        return;
 
       debouncedSave.flush();
       event.preventDefault();

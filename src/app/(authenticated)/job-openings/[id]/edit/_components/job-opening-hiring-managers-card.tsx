@@ -14,6 +14,8 @@ import { useFormContext, useWatch } from "react-hook-form";
 
 import type { UpdateJobOpeningInput } from "~/lib/validations/job-opening";
 
+import getAvatar from "~/lib/avatar";
+
 type HiringManager = {
   id: string;
   name: string;
@@ -27,31 +29,8 @@ type JobOpeningHiringManagersCardProps = {
   hiringManagerOptions: HiringManager[];
 };
 
-const AVATAR_CLASS_NAMES = [
-  "bg-tag-purple-bg text-tag-purple-fg",
-  "bg-tag-amber-bg text-tag-amber-fg",
-  "bg-tag-green-bg text-tag-green-fg",
-  "bg-tag-blue-bg text-tag-blue-fg",
-];
-
 function getFullName(manager: HiringManager) {
   return `${manager.name} ${manager.lastName}`.trim();
-}
-
-function getInitials(manager: HiringManager) {
-  return `${manager.name.charAt(0)}${manager.lastName.charAt(0)}`.toUpperCase();
-}
-
-function getAvatarClassName(userId: string) {
-  const hash = Array.from(userId).reduce(
-    (total, character) => total + character.charCodeAt(0),
-    0,
-  );
-
-  return (
-    AVATAR_CLASS_NAMES[hash % AVATAR_CLASS_NAMES.length] ??
-    "bg-tag-gray-bg text-tag-gray-fg"
-  );
 }
 
 export function JobOpeningHiringManagersCard({
@@ -154,8 +133,12 @@ export function JobOpeningHiringManagersCard({
                 <Avatar size="sm">
                   {manager.image && <AvatarImage src={manager.image} alt="" />}
 
-                  <AvatarFallback className={getAvatarClassName(manager.id)}>
-                    {getInitials(manager)}
+                  <AvatarFallback
+                    className={
+                      getAvatar(manager.name, manager.lastName).colorClass
+                    }
+                  >
+                    {getAvatar(manager.name, manager.lastName).initials}
                   </AvatarFallback>
                 </Avatar>
 
@@ -231,9 +214,12 @@ export function JobOpeningHiringManagersCard({
                           )}
 
                           <AvatarFallback
-                            className={getAvatarClassName(manager.id)}
+                            className={
+                              getAvatar(manager.name, manager.lastName)
+                                .colorClass
+                            }
                           >
-                            {getInitials(manager)}
+                            {getAvatar(manager.name, manager.lastName).initials}
                           </AvatarFallback>
                         </Avatar>
 

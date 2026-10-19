@@ -21,6 +21,7 @@ type PipelineColumnClientProps = {
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
   canDeleteInterview: boolean;
+  search?: string;
 };
 
 export function PipelineColumnClient({
@@ -33,6 +34,7 @@ export function PipelineColumnClient({
   canUpdateApplication,
   canCreateInterview,
   canDeleteInterview,
+  search,
 }: PipelineColumnClientProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: stageId,
@@ -53,6 +55,7 @@ export function PipelineColumnClient({
 
   if (initialCandidates !== previousInitialCandidates) {
     setPreviousInitialCandidates(initialCandidates);
+    setLoadedCandidates([]); // Reset loaded candidates when search changes
 
     setOptimisticallyRemovedIds((current) => {
       const stillInitial = new Set(
@@ -157,6 +160,7 @@ export function PipelineColumnClient({
       stageId,
       limit: 3,
       offset: loadedCount,
+      search,
     },
     {
       enabled: false,

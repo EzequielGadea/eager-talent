@@ -21,21 +21,21 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <main
-      className={`${inter.variable} ${poppins.variable} relative isolate flex min-h-full flex-1 items-center justify-center overflow-hidden bg-slate-50 font-(family-name:--font-login-sans) text-slate-900`}
+      className={`${inter.variable} ${poppins.variable} relative isolate flex min-h-full flex-1 items-center justify-center overflow-hidden bg-surface-subtle font-(family-name:--font-login-sans) text-text-primary`}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -left-28 size-105 rounded-full bg-emerald-100/60 blur-md"
+        className="pointer-events-none absolute -top-24 -left-28 size-105 rounded-full bg-success-bg/60 blur-md"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-24 right-[18%] size-55 rounded-full bg-blue-50/80 blur-md"
+        className="pointer-events-none absolute top-24 right-[18%] size-55 rounded-full bg-info-bg/80 blur-md"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-24 -bottom-28 size-95 rounded-full bg-violet-100/60 blur-md"
+        className="pointer-events-none absolute -right-24 -bottom-28 size-95 rounded-full bg-tag-purple-bg/60 blur-md"
       />
 
       <LoginForm />

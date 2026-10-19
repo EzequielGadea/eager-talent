@@ -1,0 +1,90 @@
+// Get the full source code, including the theme and Tailwind config:
+// https://github.com/resend/react-email/tree/canary/apps/demo/emails
+
+import {
+  Body,
+  Button,
+  Column,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Row,
+  Section,
+  Tailwind,
+  Text,
+} from "react-email";
+import { barebonesBoxedTailwindConfig } from "./theme";
+import { BarebonesFonts } from "./theme-fonts";
+
+interface PasswordResetEmailProps {
+  companyName: string;
+  url: string;
+}
+
+export const PasswordResetEmail = ({
+  companyName,
+  url,
+}: PasswordResetEmailProps) => (
+  <Tailwind config={barebonesBoxedTailwindConfig}>
+    <Html>
+      <Head>
+        <BarebonesFonts />
+      </Head>
+
+      <Body className="bg-bg-2 m-0 text-center font-sans">
+        <Preview>Restablece tu contraseña</Preview>
+        <Container className="mobile:mt-0 mx-auto mt-8 w-full max-w-160">
+          <Section>
+            <Section className="bg-bg mobile:px-2 px-6 py-4">
+              <Section className="mb-3 px-6">
+                <Row>
+                  <Column align="right" className="py-1.75 align-middle">
+                    <Text className="font-13 m-0 text-right font-sans">
+                      <span className="text-fg-3">{companyName}</span>
+                    </Text>
+                  </Column>
+                </Row>
+              </Section>
+
+              <Section className="bg-bg-2 mobile:px-6 mobile:py-12 rounded-[8px] px-10 py-16 text-center">
+                <Section className="mb-3">
+                  <Heading as="h1" className="font-28 text-fg m-0 font-sans">
+                    Restablecé tu contraseña
+                  </Heading>
+                </Section>
+
+                <Text className="font-16 text-fg-2 mx-auto mt-0 mb-8 max-w-95 text-center font-sans">
+                  Alguien solicitó restablecer tu contraseña. Para hacerlo, haz
+                  click en el botón de abajo.
+                </Text>
+
+                <Section className="mb-6 text-center">
+                  <Button
+                    href={url}
+                    className="bg-fg font-16 text-fg-inverted inline-block rounded-lg px-7 py-4 text-center font-sans leading-6"
+                  >
+                    Restablecer contraseña
+                  </Button>
+                </Section>
+
+                <Text className="font-13 text-fg-3 mx-auto mt-8 mb-0 max-w-100 text-center font-sans">
+                  Si no solicitaste este correo, ignóralo. Tu contraseña solo
+                  cambia si hacés click en el botón de arriba.
+                </Text>
+              </Section>
+            </Section>
+          </Section>
+        </Container>
+      </Body>
+    </Html>
+  </Tailwind>
+);
+
+PasswordResetEmail.PreviewProps = {
+  companyName: "Barebones",
+  url: "https://example.com/",
+} satisfies PasswordResetEmailProps;
+
+export default PasswordResetEmail;

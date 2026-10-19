@@ -12,3 +12,11 @@ export function getInterviewName(
   );
   return stage?.name ?? "Entrevista";
 }
+
+export function getStageName(stagesJson: unknown, stageId: string | null) {
+  if (!stageId) return null;
+
+  return (
+    parseStages(stagesJson).find((stage) => stage.key === stageId)?.name ?? null
+  );
+}

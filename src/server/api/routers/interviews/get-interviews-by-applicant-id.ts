@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
 import { getInterviewName } from "~/lib/get-interview-name";
+import { isHiringManagerAssignedToInterview } from "~/server/api/procedures/is-hiring-manager-assigned-to-interview";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getInterviewsByApplicantIdProcedure = protectedProcedure
@@ -35,26 +36,7 @@ export const getInterviewsByApplicantIdProcedure = protectedProcedure
         applicantId: input.applicantId,
         ...(canReadAllResult.success
           ? {}
-          : {
-              OR: [
-                {
-                  applicant: {
-                    applicantHiringManagers: {
-                      some: { hiringManagerId: ctx.session.user.id },
-                    },
-                  },
-                },
-                {
-                  application: {
-                    jobOpening: {
-                      hiringManagers: {
-                        some: { id: ctx.session.user.id },
-                      },
-                    },
-                  },
-                },
-              ],
-            }),
+          : isHiringManagerAssignedToInterview(ctx.session.user.id)),
       },
       orderBy: {
         date: "asc",

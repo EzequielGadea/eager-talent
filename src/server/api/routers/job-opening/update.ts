@@ -22,8 +22,7 @@ type CurrentStage = {
   type: JobOpeningStageType;
 };
 
-// Neutral color for stages added from the edit form (same as "Aplicado").
-const NEW_STAGE_COLOR = "#94a3b8";
+type InputStage = z.infer<typeof jobOpeningStageSchema>;
 
 function getStageId(stageRecord: Record<string, unknown>, index: number) {
   if (typeof stageRecord.id === "string" && stageRecord.id !== "") {
@@ -116,7 +115,7 @@ function getPersistedStagesById(value: unknown) {
 // Existing stages keep all their fields (key, color, label...); only the
 // edited values change. New stages are created in the same format.
 function toPersistedStage(
-  stage: CurrentStage,
+  stage: InputStage,
   persistedStage: Record<string, unknown> | undefined,
 ) {
   const type = FORM_TO_PERSISTED_STAGE_TYPE[stage.type];
@@ -126,7 +125,7 @@ function toPersistedStage(
       key: stage.id,
       name: stage.name,
       type,
-      color: NEW_STAGE_COLOR,
+      color: stage.color,
       label: stage.name,
     };
   }
@@ -141,10 +140,7 @@ function toPersistedStage(
         : stage.id,
     name: stage.name,
     type,
-    color:
-      typeof persistedStage.color === "string"
-        ? persistedStage.color
-        : NEW_STAGE_COLOR,
+    color: stage.color,
     label:
       renamed || typeof persistedStage.label !== "string"
         ? stage.name
@@ -234,7 +230,6 @@ export const updateJobOpening = protectedProcedure
             in: input.hiringManagerIds,
           },
           user: {
-            status: "Active",
             banned: false,
           },
         },
@@ -274,6 +269,12 @@ export const updateJobOpening = protectedProcedure
       currentJobOpening.stages,
     );
     const stagesChanged = jobOpeningStagesChanged(currentStages, input.stages);
+    // Cambiar solo el color se permite siempre, incluso con la vacante abierta.
+    const colorsChanged = input.stages.some(
+      (stage) => persistedStagesById.get(stage.id)?.color !== stage.color,
+    );
+    // Estado y ubicación son opcionales: si no llegan, se conservan.
+    const nextStatus = input.status ?? currentJobOpening.status;
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
     if (hasBeenOpened && stagesChanged) {
@@ -343,14 +344,14 @@ export const updateJobOpening = protectedProcedure
       },
       data: {
         name: input.name,
-        status: input.status,
-        hasBeenOpened: hasBeenOpened || input.status === "Open",
+        status: nextStatus,
+        hasBeenOpened: hasBeenOpened || nextStatus === "Open",
         location: input.location,
         openingDate: new Date(`${input.openingDate}T00:00:00.000Z`),
         targetClosingDate: new Date(`${input.targetClosingDate}T00:00:00.000Z`),
 
         // Unchanged stages are not rewritten.
-        ...(stagesChanged
+        ...(stagesChanged || colorsChanged
           ? {
               stages: input.stages.map((stage) =>
                 toPersistedStage(stage, persistedStagesById.get(stage.id)),
