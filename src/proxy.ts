@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { auth } from "~/lib/auth";
-import { prisma } from "~/lib/prisma";
 import { PUBLIC_LINK_BASE_PATH } from "~/lib/public-link-url";
+import { prisma } from "~/lib/prisma";
 
 const authRoutes = ["/login", "/signup", "/accept-invite", "/reset-password"];
 const publicRoutes = ["/", ...authRoutes];
