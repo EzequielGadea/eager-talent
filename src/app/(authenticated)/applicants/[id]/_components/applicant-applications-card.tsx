@@ -186,7 +186,7 @@ export function ApplicantApplicationsCard({
   return (
     <Card className="bg-card p-0">
       <CardHeader className="flex flex-wrap items-center gap-x-3 gap-y-3 px-6 py-4">
-        <div className="flex min-w-0 flex-1 basis-full flex-wrap items-center gap-2.5 lg:basis-auto">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
           <CardTitle className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
             Postulación
           </CardTitle>
@@ -226,39 +226,43 @@ export function ApplicantApplicationsCard({
         </div>
 
         {!isExploration && jobOpening && (
-          <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2.5 lg:w-auto">
-            <Link
-              href={`/job-openings/${encodeURIComponent(jobOpening.id)}`}
-              className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
-            >
-              Ver vacante{" "}
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </Link>
-
-            {canCreatePublicLink && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
-                onClick={() => setShowShareDialog(true)}
-              >
-                <Share2 className="h-3.5 w-3.5" /> Compartir
-              </Button>
-            )}
-            {canUpdateApplication && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
-              >
-                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
-                  <X className="h-2.5 w-2.5" strokeWidth={2.5} />
-                </span>
-                Descalificar
-              </Button>
-            )}
-          </div>
+          <Link
+            href={`/job-openings/${encodeURIComponent(jobOpening.id)}`}
+            className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
+          >
+            Ver vacante{" "}
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
         )}
+
+        {!isExploration &&
+          jobOpening &&
+          (canCreatePublicLink || canUpdateApplication) && (
+            <div className="flex basis-full flex-wrap items-center justify-start gap-2.5 pt-2">
+              {canCreatePublicLink && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
+                  onClick={() => setShowShareDialog(true)}
+                >
+                  <Share2 className="h-3.5 w-3.5" /> Compartir
+                </Button>
+              )}
+              {canUpdateApplication && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
+                >
+                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
+                    <X className="h-2.5 w-2.5" strokeWidth={2.5} />
+                  </span>
+                  Descalificar
+                </Button>
+              )}
+            </div>
+          )}
       </CardHeader>
 
       <Separator className="bg-border-default" />
