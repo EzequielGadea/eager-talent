@@ -110,10 +110,8 @@ export function ApplicantApplicationsCard({
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const effectiveSelection =
-    selection?.type === "exploration" && explorationInterviews.length === 0
-      ? getInitialSelection(applications, explorationInterviews)
-      : (selection ?? getInitialSelection(applications, explorationInterviews));
-
+    selection ?? getInitialSelection(applications, explorationInterviews);
+  console.log({ selection, effectiveSelection });
   const isExploration = effectiveSelection?.type === "exploration";
   const app =
     effectiveSelection?.type === "application"
@@ -159,8 +157,8 @@ export function ApplicantApplicationsCard({
     ? explorationInterviews
     : (app?.interviews ?? []);
   const canScheduleInterview =
-  canCreateInterview &&
-  (isExploration || Boolean(app?.active && app.canScheduleInterview));
+    canCreateInterview &&
+    (isExploration || Boolean(app?.active && app.canScheduleInterview));
   const jobOpening = app?.jobOpening;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
   const desiredSalary = app
@@ -322,12 +320,15 @@ export function ApplicantApplicationsCard({
             </Button>
           )}
         </div>
-        {canCreateInterview && app && app.active && !app.canScheduleInterview && (
-          <p className="mb-4 text-sm text-text-tertiary">
-            Solo se pueden agendar entrevistas cuando la etapa actual es de tipo
-            entrevista.
-          </p>
-        )}
+        {canCreateInterview &&
+          app &&
+          app.active &&
+          !app.canScheduleInterview && (
+            <p className="mb-4 text-sm text-text-tertiary">
+              Solo se pueden agendar entrevistas cuando la etapa actual es de
+              tipo entrevista.
+            </p>
+          )}
 
         {canScheduleInterview && (
           <ScheduleInterviewDialog

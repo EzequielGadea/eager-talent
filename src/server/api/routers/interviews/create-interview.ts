@@ -73,7 +73,7 @@ export const createInterviewProcedure = protectedProcedure
     const eligibleInterviewers = await ctx.db.user.findMany({
       where: {
         id: { in: input.interviewerIds },
-        status: "Active",
+        //status: "Active",
         banned: false,
         members: {
           some: {
@@ -102,7 +102,7 @@ export const createInterviewProcedure = protectedProcedure
             jobOpeningId: input.jobOpeningId,
           },
         },
-        select: { applicantId: true, currentStageId: true, active:true },
+        select: { applicantId: true, currentStageId: true, active: true },
       });
 
       if (!application) {
@@ -114,7 +114,8 @@ export const createInterviewProcedure = protectedProcedure
       if (!application.active) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "No se pueden agendar entrevistas para una postulación descalificada.",
+          message:
+            "No se pueden agendar entrevistas para una postulación descalificada.",
         });
       }
       const jobOpening = await ctx.db.jobOpening.findUnique({

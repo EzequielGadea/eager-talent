@@ -25,11 +25,9 @@ export const listInterviewers = protectedProcedure.query(async ({ ctx }) => {
   const members = await ctx.db.member.findMany({
     where: {
       organizationId,
-      some: {
-        role: "hiringManager",
-      },
+      role: "hiringManager",
       user: {
-        status: "Active",
+        //status: "Active",
         banned: false,
         deletedAt: null,
       },
