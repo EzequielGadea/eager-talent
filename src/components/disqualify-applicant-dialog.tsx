@@ -13,7 +13,7 @@ import {
 } from "~/components/ui/dialog";
 import { Textarea } from "~/components/ui/textarea";
 
-type DisqualifyCandidateDialogProps = {
+type DisqualifyApplicantDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   applicantId: string;
@@ -24,7 +24,7 @@ type DisqualifyCandidateDialogProps = {
   onSuccess: () => void;
 };
 
-export function DisqualifyCandidateDialog({
+export function DisqualifyApplicantDialog({
   open,
   onOpenChange,
   applicantId,
@@ -33,7 +33,7 @@ export function DisqualifyCandidateDialog({
   candidateRole,
   stageName,
   onSuccess,
-}: DisqualifyCandidateDialogProps) {
+}: DisqualifyApplicantDialogProps) {
   const [motiveId, setMotiveId] = useState("");
   const [description, setDescription] = useState("");
 
