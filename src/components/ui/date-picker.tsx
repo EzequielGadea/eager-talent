@@ -5,9 +5,18 @@ import {
   DateField,
   DatePicker as HeroDatePicker,
 } from "@heroui/react";
-import { parseDate } from "@internationalized/date";
-import { Suspense, useRef, useSyncExternalStore } from "react";
-import { I18nProvider } from "react-aria-components";
+import { CalendarDate, parseDate } from "@internationalized/date";
+import {
+  type ComponentProps,
+  Suspense,
+  useContext,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import { DateFieldStateContext, I18nProvider } from "react-aria-components";
 
 import { cn } from "~/lib/utils";
 
@@ -141,6 +150,60 @@ function DatePickerFallback({ className }: { className?: string }) {
   );
 }
 
+const SEGMENT_DIGITS = { day: 2, month: 2, year: 4 } as const;
+
+// React Aria only commits a date once every segment is filled, so clearing a
+// segment leaves the previous date in its value. The segments are the source
+// of truth instead: the date is "" unless all three are filled and form a real date.
+function DateSegment({
+  segment,
+  hasMounted,
+  onDateChange,
+}: {
+  segment: ComponentProps<typeof DateField.Segment>["segment"];
+  hasMounted: boolean;
+  onDateChange: (value: string) => void;
+}) {
+  const state = useContext(DateFieldStateContext);
+  const notifyDateChange = useEffectEvent(onDateChange);
+  const [day, month, year] = (["day", "month", "year"] as const).map((type) =>
+    state?.segments.find((item) => item.type === type),
+  );
+
+  let isoDate = "";
+
+  if (
+    day &&
+    month &&
+    year &&
+    ![day, month, year].some((s) => s.isPlaceholder)
+  ) {
+    const date = new CalendarDate(year.value!, month.value!, day.value!);
+
+    if (date.day === day.value && date.month === month.value) {
+      isoDate = date.toString();
+    }
+  }
+
+  const isReporter = segment.type === "year";
+
+  useEffect(() => {
+    if (isReporter) notifyDateChange(isoDate);
+  }, [isReporter, isoDate]);
+
+  const digits =
+    hasMounted && !segment.isPlaceholder && segment.type in SEGMENT_DIGITS
+      ? SEGMENT_DIGITS[segment.type as keyof typeof SEGMENT_DIGITS]
+      : 0;
+
+  return (
+    <DateField.Segment
+      segment={{ ...segment, text: segment.text.padStart(digits, "0") }}
+      className={styles.segment}
+    />
+  );
+}
+
 function DatePicker({
   value,
   onChange,
@@ -156,22 +219,38 @@ function DatePicker({
   "aria-labelledby": ariaLabelledBy,
 }: DatePickerProps) {
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const [syncedDate, setSyncedDate] = useState(value ?? "");
+  const [resetKey, setResetKey] = useState(0);
   const hasMounted = useSyncExternalStore(
     () => () => {},
     () => true,
     () => false,
   );
 
+  // The field keeps its own (possibly partial) text, so it is only remounted
+  // when the form changes the value from outside, e.g. a reset.
+  if ((value ?? "") !== syncedDate) {
+    setSyncedDate(value ?? "");
+    setResetKey((key) => key + 1);
+  }
+
+  const handleDateChange = (nextDate: string) => {
+    if (nextDate === syncedDate) return;
+
+    setSyncedDate(nextDate);
+    onChange?.(nextDate);
+  };
+
   return (
     <Suspense fallback={<DatePickerFallback className={className} />}>
       <I18nProvider locale="es-UY">
         <HeroDatePicker
+          key={resetKey}
           id={id}
           name={name}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
-          value={toCalendarDate(value)}
-          onChange={(date) => onChange?.(date ? date.toString() : "")}
+          defaultValue={toCalendarDate(value)}
           onBlur={onBlur}
           minValue={toCalendarDate(minValue)}
           maxValue={toCalendarDate(maxValue)}
@@ -184,30 +263,13 @@ function DatePicker({
           <I18nProvider locale="en-GB">
             <DateField.Group fullWidth className={styles.group}>
               <DateField.Input className={styles.input}>
-                {(segment) => {
-                  if (!hasMounted || segment.isPlaceholder) {
-                    return (
-                      <DateField.Segment
-                        segment={segment}
-                        className={styles.segment}
-                      />
-                    );
-                  }
-
-                  const segmentText =
-                    segment.type === "day" || segment.type === "month"
-                      ? segment.text.padStart(2, "0")
-                      : segment.type === "year"
-                        ? segment.text.padStart(4, "0")
-                        : segment.text;
-
-                  return (
-                    <DateField.Segment
-                      segment={{ ...segment, text: segmentText }}
-                      className={styles.segment}
-                    />
-                  );
-                }}
+                {(segment) => (
+                  <DateSegment
+                    segment={segment}
+                    hasMounted={hasMounted}
+                    onDateChange={handleDateChange}
+                  />
+                )}
               </DateField.Input>
               <DateField.Suffix className={styles.suffix}>
                 <HeroDatePicker.Trigger
