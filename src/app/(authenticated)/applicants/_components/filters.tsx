@@ -16,6 +16,7 @@ import {
 } from "~/components/ui/popover";
 import { FilterKey, FiltersProps } from "../types";
 import { Source } from "~/generated/prisma/enums";
+import { sourceTranslations } from "~/lib/enum-translations";
 import { cn } from "~/lib/utils";
 
 export function Filters({
@@ -93,7 +94,7 @@ export function Filters({
             label: "Fuente",
             options: Object.values(Source).map((value) => ({
               id: value,
-              label: value,
+              label: sourceTranslations[value],
             })),
           },
           {

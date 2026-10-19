@@ -4,6 +4,7 @@ import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
+import { hearAboutUsTranslations } from "~/lib/enum-translations";
 
 type ApplicantPromise = Promise<
   Awaited<ReturnType<typeof api.applicant.getById>>
@@ -49,7 +50,11 @@ export async function ApplicantInfoCards({
           icon={<CircleHelp className="size-3.5 text-accent-green" />}
           title="¿Cómo escuchaste de nosotros?"
         >
-          <p className="font-semibold">{hearAboutUs ?? "Sin información"}</p>
+          <p className="font-semibold">
+            {hearAboutUs
+              ? hearAboutUsTranslations[hearAboutUs]
+              : "Sin información"}
+          </p>
         </InfoCard>
 
         <DocumentCard title="CV" value={resume} emptyMessage="Sin CV cargado" />

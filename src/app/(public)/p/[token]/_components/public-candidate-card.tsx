@@ -1,13 +1,9 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 
-import type { JobOpeningStatus } from "~/generated/prisma/enums";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import type { EnglishLevel, JobOpeningStatus } from "~/generated/prisma/enums";
+import { englishLevelTranslations } from "~/lib/enum-translations";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { getApplicationStatusBadge } from "../utils";
 
@@ -20,7 +16,7 @@ type PublicCandidateCardProps = {
   email?: string | null;
   phone?: string | null;
   country?: string | null;
-  englishLevel?: string | null;
+  englishLevel?: EnglishLevel | null;
   title?: string | null;
   academicInstitution?: string | null;
   active?: boolean;
@@ -45,7 +41,8 @@ export function PublicCandidateCard({
   const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   const fullName = `${name} ${lastName}`;
   const formation =
-    [title, academicInstitution].filter(Boolean).join(" · ") || "Sin información";
+    [title, academicInstitution].filter(Boolean).join(" · ") ||
+    "Sin información";
   const status = getApplicationStatusBadge(active, jobOpeningStatus);
 
   return (
@@ -130,7 +127,9 @@ export function PublicCandidateCard({
             Nivel de inglés
           </p>
           <p className="mt-1 text-sm font-medium text-text-primary">
-            {englishLevel ?? "Sin información"}
+            {englishLevel
+              ? englishLevelTranslations[englishLevel]
+              : "Sin información"}
           </p>
         </div>
 

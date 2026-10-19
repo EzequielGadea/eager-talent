@@ -6,7 +6,8 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import type { InterviewType } from "~/generated/prisma/enums";
+import { InterviewType } from "~/generated/prisma/enums";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
 
@@ -28,10 +29,10 @@ import {
 
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120];
 
-const MODALITY_OPTIONS = [
-  { value: "VideoCall", label: "Videollamada" },
-  { value: "InPerson", label: "Presencial" },
-] as const;
+const MODALITY_OPTIONS = Object.values(InterviewType).map((value) => ({
+  value,
+  label: interviewTypeTranslations[value],
+}));
 
 const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 

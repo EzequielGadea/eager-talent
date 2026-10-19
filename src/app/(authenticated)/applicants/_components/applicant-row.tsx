@@ -10,6 +10,7 @@ import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
 import { getSourceIcon } from "./source-icon";
+import { sourceTranslations } from "~/lib/enum-translations";
 import { getTagStyles } from "~/lib/tags/get-tag-styles";
 import { columns } from "../constants";
 
@@ -166,17 +167,17 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Fuente */}
       <TableCell className={`${columns.source} py-2 align-middle`}>
         <div className="flex min-w-0 items-center justify-center gap-1 text-center text-sm text-dashboard-text-muted">
-          {props.applicant.sourceText ? (
+          {props.applicant.source ? (
             <>
               <span className="shrink-0">
-                {getSourceIcon(props.applicant.sourceText)}
+                {getSourceIcon(props.applicant.source)}
               </span>
 
               <span
                 className="min-w-0 line-clamp-2 break-words leading-tight text-xs"
-                title={props.applicant.sourceText}
+                title={sourceTranslations[props.applicant.source]}
               >
-                {props.applicant.sourceText}
+                {sourceTranslations[props.applicant.source]}
               </span>
             </>
           ) : (

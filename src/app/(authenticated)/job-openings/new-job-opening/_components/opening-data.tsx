@@ -21,6 +21,7 @@ import { JobOpeningFormValues } from "./new-job-opening-form";
 
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
+import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 
 function SeniorityField() {
   const {
@@ -198,28 +199,28 @@ export default function OpeningData() {
                     value={JobOpeningStatus.Open}
                     className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
-                    Abierta
+                    {jobOpeningStatusTranslations.Open}
                   </ToggleGroupItem>
 
                   <ToggleGroupItem
                     value={JobOpeningStatus.Paused}
                     className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
-                    Pausada
+                    {jobOpeningStatusTranslations.Paused}
                   </ToggleGroupItem>
 
                   <ToggleGroupItem
                     value={JobOpeningStatus.Closed}
                     className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
-                    Cerrada
+                    {jobOpeningStatusTranslations.Closed}
                   </ToggleGroupItem>
 
                   <ToggleGroupItem
                     value={JobOpeningStatus.Cancelled}
                     className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
-                    Cancelada
+                    {jobOpeningStatusTranslations.Cancelled}
                   </ToggleGroupItem>
                 </ToggleGroup>
               )}

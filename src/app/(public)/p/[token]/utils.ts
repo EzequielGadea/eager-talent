@@ -1,4 +1,5 @@
 import type { JobOpeningStatus } from "~/generated/prisma/enums";
+import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 
 export function getApplicationStatusBadge(
   active: boolean,
@@ -15,19 +16,19 @@ export function getApplicationStatusBadge(
   switch (jobOpeningStatus) {
     case "Paused":
       return {
-        label: "Pausada",
+        label: jobOpeningStatusTranslations.Paused,
         badgeClass: "bg-warning-bg text-warning",
         dotClass: "bg-warning",
       };
     case "Closed":
       return {
-        label: "Cerrada",
+        label: jobOpeningStatusTranslations.Closed,
         badgeClass: "bg-tag-gray-bg text-tag-gray-fg",
         dotClass: "bg-tag-gray-fg",
       };
     case "Cancelled":
       return {
-        label: "Cancelada",
+        label: jobOpeningStatusTranslations.Cancelled,
         badgeClass: "bg-danger-bg text-danger",
         dotClass: "bg-danger",
       };
@@ -39,4 +40,3 @@ export function getApplicationStatusBadge(
       };
   }
 }
-

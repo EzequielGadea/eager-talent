@@ -13,16 +13,9 @@ import {
   CommandItem,
   CommandList,
 } from "~/components/ui/command";
-import type { JobOpeningStatus } from "~/generated/prisma/enums";
+import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { VacanciesIcon } from "./app-icons";
-
-const jobOpeningStatusLabel: Record<JobOpeningStatus, string> = {
-  Open: "Abierta",
-  Paused: "Pausada",
-  Closed: "Cerrada",
-  Cancelled: "Cancelada",
-};
 
 const commandGroupClassName =
   "**:[[cmdk-group-heading]]:font-sans **:[[cmdk-group-heading]]:font-bold **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-[0.06em]";
@@ -252,7 +245,9 @@ export function GlobalSearch() {
                       }
                       meta={[
                         { text: jobOpening.area },
-                        { text: jobOpeningStatusLabel[jobOpening.status] },
+                        {
+                          text: jobOpeningStatusTranslations[jobOpening.status],
+                        },
                         {
                           text:
                             jobOpening.applicantsCount === 0

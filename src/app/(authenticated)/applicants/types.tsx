@@ -1,3 +1,4 @@
+import type { Source } from "~/generated/prisma/enums";
 import { api } from "~/lib/trpc/server";
 import { avatarPalette } from "./constants";
 
@@ -33,7 +34,7 @@ export interface ApplicantInfo {
   seniorityName: string | undefined; //"Senior" | "Mid-Senior" | "Mid";
   seniorityColor: string;
   area: string;
-  sourceText: string;
+  source: Source | null;
   hasCv: boolean;
   cvUrl: string;
   hasLinkedin: boolean;
