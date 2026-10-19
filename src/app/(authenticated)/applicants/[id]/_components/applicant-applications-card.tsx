@@ -369,10 +369,18 @@ export function ApplicantApplicationsCard({
           <Table>
             <TableHeader>
               <TableRow className="shadow-none hover:bg-transparent hover:shadow-none">
-                <TableHead className="w-1/3 pb-4">Instancia</TableHead>
-                <TableHead className="w-1/5 pb-4">Fecha</TableHead>
-                <TableHead className="w-1/4 pb-4">Entrevistador/es</TableHead>
-                <TableHead className="w-1/6 pb-4">Resumen</TableHead>
+                <TableHead className="w-1/3 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
+                  Instancia
+                </TableHead>
+                <TableHead className="w-1/5 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
+                  Fecha
+                </TableHead>
+                <TableHead className="w-1/4 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
+                  Entrevistador/es
+                </TableHead>
+                <TableHead className="w-1/6 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
+                  Resumen
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
