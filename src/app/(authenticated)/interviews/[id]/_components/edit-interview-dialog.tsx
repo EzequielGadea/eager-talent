@@ -200,8 +200,10 @@ export function EditInterviewDialog({
   const isPending = updateInterview.isPending || isRefreshing;
 
   function onSubmit(data: EditInterviewFormValues) {
-    const [year, month, day] = data.date.split("-").map(Number);
-    const [hour, minute] = data.time.split(":").map(Number);
+    const date = new TZDate(
+      `${data.date}T${data.time}:00`,
+      "America/Montevideo",
+    );
 
     updateInterview.mutate({
       id: interview.id,
@@ -210,16 +212,7 @@ export function EditInterviewDialog({
         : data.exploratoryName?.trim(),
       modality: data.modality as InterviewType,
       duration: data.duration,
-      date: new TZDate(
-        year!,
-        month! - 1,
-        day!,
-        hour!,
-        minute!,
-        0,
-        0,
-        "America/Montevideo",
-      ),
+      date,
       interviewerIds: data.interviewerIds,
     });
   }
