@@ -359,7 +359,7 @@ export function ApplicantApplicationsCard({
         ) : (
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="shadow-none hover:bg-transparent hover:shadow-none">
                 <TableHead className="w-1/3 pb-4">Instancia</TableHead>
                 <TableHead className="w-1/5 pb-4">Fecha</TableHead>
                 <TableHead className="w-1/4 pb-4">Entrevistador/es</TableHead>
