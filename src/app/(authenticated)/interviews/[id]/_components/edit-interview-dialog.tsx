@@ -16,6 +16,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { DatePicker } from "~/components/ui/date-picker";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -92,6 +93,9 @@ type EditInterviewFormValues = z.infer<
 const fieldLabel = "text-sm font-medium text-text-secondary";
 const fieldControl =
   "h-11 rounded-xl bg-surface-card focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20";
+
+const datePickerControl =
+  "[--date-picker-height:2.75rem] [--date-picker-radius:var(--radius-xl)]";
 
 function getInitialValues(
   interview: EditableInterview,
@@ -265,11 +269,21 @@ export function EditInterviewDialog({
                 <label htmlFor="edit-interview-date" className={fieldLabel}>
                   Fecha
                 </label>
-                <Input
-                  id="edit-interview-date"
-                  type="date"
-                  className={fieldControl}
-                  {...register("date")}
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePicker
+                      id="edit-interview-date"
+                      name={field.name}
+                      aria-label="Fecha"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      isInvalid={!!errors.date}
+                      className={datePickerControl}
+                    />
+                  )}
                 />
                 {errors.date && (
                   <p className="text-xs text-danger">{errors.date.message}</p>
