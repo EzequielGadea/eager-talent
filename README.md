@@ -1,5 +1,15 @@
 # Eager Talent
 
+## Variables de entorno
+
+| Variable              | Obligatoria                                | Ejemplo                    | Descripción                                                                                                                                                                                                                                                                                                                             |
+| --------------------- | ------------------------------------------ | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `APP_URL`             | Sí                                         | `https://eagertalent.com`  | URL pública de la aplicación, con protocolo y sin barra final. Better Auth la usa como `baseURL` de respaldo cuando no hay un request (por ejemplo, durante el bootstrap) y se usa para armar los links de los correos de invitación y restablecimiento de contraseña. En Vercel no se define automáticamente, hay que cargarla a mano. |
+| `FIRST_USER_EMAIL`    | Solo si la base de datos no tiene usuarios | `admin@eagerworks.com`     | Correo del primer usuario del sistema. Se lee únicamente en el primer arranque, cuando no existe ningún usuario. Se crea con rol `admin`, queda como creador de la organización EagerWorks y recibe un correo para establecer su contraseña. Debe ser un email válido.                                                                  |
+| `FIRST_USER_NAME`     | Solo si la base de datos no tiene usuarios | `Camila Torres`            | Nombre del primer usuario del sistema. Se lee en las mismas condiciones que `FIRST_USER_EMAIL`. No puede estar vacío ni superar los 100 caracteres.                                                                                                                                                                                     |
+| `GOOGLE_EMAIL`        | Sí (?)                                     | `notificaciones@gmail.com` | Cuenta de Gmail desde la que se envían los correos de la aplicación (invitaciones y restablecimiento de contraseña). Es el usuario con el que nodemailer se autentica.                                                                                                                                                                  |
+| `GOOGLE_APP_PASSWORD` | Sí                                         | `abcd efgh ijkl mnop`      | Contraseña de aplicación de la cuenta indicada en `GOOGLE_EMAIL`. No es la contraseña normal de la cuenta: se genera desde la configuración de seguridad de Google y requiere tener la verificación en dos pasos activada.                                                                                                              |
+
 ## Desarrollo local
 
 Requisitos: Git, Node.js 20 o superior y Bun 1.2.20. En local utiliza Prisma Dev (PGlite).

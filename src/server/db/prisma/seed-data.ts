@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { betterAuth } from "better-auth";
-import { organization } from "better-auth/plugins";
+import { admin, organization } from "better-auth/plugins";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { faker } from "@faker-js/faker";
 import { TZDate } from "@date-fns/tz";
@@ -14,7 +14,6 @@ import type {
   JobOpeningStatus,
   InterviewStatus,
   InterviewType,
-  UserStatus,
 } from "~/generated/prisma/client";
 
 const ORGANIZATION_NAME = "EagerWorks";
@@ -93,13 +92,12 @@ function getSeedAuth(prisma: PrismaClient) {
       transaction: true,
     }),
     emailAndPassword: { enabled: true, autoSignIn: false },
-    plugins: [organization()],
+    plugins: [organization(), admin()],
   });
 }
 
 export async function seedDatabase(prisma: PrismaClient): Promise<void> {
-  const seedAuth = getSeedAuth(prisma);
-
+  const auth = getSeedAuth(prisma);
   // ==========================================================================
   // GESTIÓN DE USUARIOS CON BETTER-AUTH (IDEMPOTENCIA)
   // ==========================================================================
@@ -111,22 +109,27 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     });
 
     if (!existing) {
-      await seedAuth.api.signUpEmail({
+      await auth.api.createUser({
         body: {
           name: `${userDef.name} ${userDef.lastName}`,
           email: userDef.email,
           password: userDef.password,
+          role:
+            userDef.orgRole === "owner" || userDef.orgRole === "recruiter"
+              ? "admin"
+              : "user",
         },
       });
+
       await prisma.user.update({
         where: { email: userDef.email },
         data: {
           name: userDef.name,
           lastName: userDef.lastName,
-          status: "Active",
           emailVerified: true,
         },
       });
+
       console.log(
         `Usuario creado: ${userDef.email} (${userDef.name} ${userDef.lastName})`,
       );
@@ -136,7 +139,6 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         data: {
           name: userDef.name,
           lastName: userDef.lastName,
-          status: "Active",
           emailVerified: true,
         },
       });
@@ -157,7 +159,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       where: { email: "admin@example.com" },
     });
 
-    await seedAuth.api.createOrganization({
+    await auth.api.createOrganization({
       body: {
         name: ORGANIZATION_NAME,
         slug: ORGANIZATION_SLUG,
@@ -238,7 +240,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   const admin1 = dbUsers.find((u) => u.email === "admin@example.com")!;
   const admin2 = dbUsers.find((u) => u.email === "admin2@example.com")!;
-  const admin3 = dbUsers.find((u) => u.email === "admin3@example.com")!;
+  dbUsers.find((u) => u.email === "admin3@example.com")!;
   const hm1 = dbUsers.find((u) => u.email === "hiring.manager@example.com")!;
   const hm2 = dbUsers.find((u) => u.email === "hiring.manager2@example.com")!;
   const hm3 = dbUsers.find((u) => u.email === "hiring.manager3@example.com")!;
@@ -571,7 +573,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  const appFede1 = await prisma.application.create({
+  await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
@@ -585,7 +587,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  const appFede2 = await prisma.application.create({
+  await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening2.id,

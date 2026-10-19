@@ -5,9 +5,8 @@ import { auth } from "~/lib/auth";
 import { prisma } from "~/lib/prisma";
 import { PUBLIC_LINK_BASE_PATH } from "~/lib/public-link-url";
 
-const authRoutes = ["/login", "/signup"];
+const authRoutes = ["/login", "/signup", "/accept-invite", "/reset-password"];
 const publicRoutes = ["/", ...authRoutes];
-
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -23,30 +22,30 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (authRoutes.includes(pathname) && session) {
-    const organizationId = session.session.activeOrganizationId;
-    //si por alguna razón no tiene organización activa que deberia hacer?
-    if (!organizationId) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
+  if (!["/login", "/signup"].includes(pathname)) return NextResponse.next();
 
-    const membership = await prisma.member.findFirst({
-      where: {
-        userId: session.user.id,
-        organizationId,
-      },
-      select: {
-        role: true,
-      },
-    });
+  const organizationId = session?.session.activeOrganizationId;
 
-    const destination =
-      membership?.role === "hiringManager" ? "/job-openings" : "/dashboard";
-
-    return NextResponse.redirect(new URL(destination, request.url));
+  // Esto no deberia suceder, ya que hay un database hook en la configuracion
+  // de Better Auth que establece la Active Organization al iniciar sesion.
+  if (!organizationId) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  return NextResponse.next();
+  const membership = await prisma.member.findFirst({
+    where: {
+      userId: session.user.id,
+      organizationId,
+    },
+    select: {
+      role: true,
+    },
+  });
+
+  const destination =
+    membership?.role === "hiringManager" ? "/job-openings" : "/dashboard";
+
+  return NextResponse.redirect(new URL(destination, request.url));
 }
 
 export const config = {

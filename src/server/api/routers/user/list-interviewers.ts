@@ -27,8 +27,8 @@ export const listInterviewers = protectedProcedure.query(async ({ ctx }) => {
     where: {
       organizationId,
       user: {
-        status: "Active",
         banned: false,
+        deletedAt: null,
       },
     },
     select: {

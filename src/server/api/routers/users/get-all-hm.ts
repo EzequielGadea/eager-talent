@@ -9,6 +9,7 @@ export const getAllHiringManagers = protectedProcedure
     const hiringManagers = await ctx.db.member.findMany({
       where: {
         role: "hiringManager",
+        user: { deletedAt: null },
       },
       select: {
         user: {

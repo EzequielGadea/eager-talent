@@ -1,17 +1,16 @@
-import type { inferRouterOutputs } from "@trpc/server";
-import { MoreHorizontal, KeyRound, Trash2 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+"use client";
 
-import { Button } from "~/components/ui/button";
+import type { inferRouterOutputs } from "@trpc/server";
+import TimeAgo from "react-timeago";
+import spanishStrings from "react-timeago/lib/language-strings/es";
+import buildFormatter from "react-timeago/lib/formatters/buildFormatter";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { TableCell, TableRow } from "~/components/ui/table";
 import type { AppRouter } from "~/server/api/root";
 
 import { userRoleConfig, userStatusConfig } from "../constants";
+import { UserActionsMenu } from "./user-actions-menu";
 
 export type User = inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
 
@@ -21,53 +20,48 @@ type Props = {
   user: User;
 };
 
+const baseSpanishFormatter = buildFormatter(spanishStrings);
 
-function formatLastAccess(lastAccess: string | null) {
+const spanishFormatter: typeof baseSpanishFormatter = (
+  value,
+  unit,
+  suffix,
+  epochMilliseconds,
+  nextFormatter,
+  now,
+) => {
+  if (unit === "second") return "ahora mismo";
+  return baseSpanishFormatter(
+    value,
+    unit,
+    suffix === "from now" ? "ago" : suffix,
+    epochMilliseconds,
+    nextFormatter,
+    now,
+  );
+};
+
+const PENDING_NAME_LABEL = "Pendiente";
+
+function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
   if (!lastAccess) {
-    return "—";
+    return <span>—</span>;
   }
 
-  const lastAccessDate = new Date(lastAccess);
-  const now = new Date();
-
-  const diffInMilliseconds = now.getTime() - lastAccessDate.getTime();
-  const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-
-  if (diffInMinutes < 1) {
-    return "Ahora";
+  const date = new Date(lastAccess);
+  if (Number.isNaN(date.getTime())) {
+    return <span>—</span>;
   }
 
-  if (diffInMinutes < 60) {
-    return `Hace ${diffInMinutes} min`;
-  }
-
-  const diffInHours = Math.floor(diffInMinutes / 60);
-
-  if (diffInHours < 24) {
-    return `Hace ${diffInHours} ${diffInHours === 1 ? "hora" : "horas"}`;
-  }
-
-  const diffInDays = Math.floor(diffInHours / 24);
-
-  if (diffInDays < 7) {
-    return `Hace ${diffInDays} ${diffInDays === 1 ? "día" : "días"}`;
-  }
-
-  const diffInWeeks = Math.floor(diffInDays / 7);
-
-  if (diffInDays < 30) {
-    return `Hace ${diffInWeeks} ${diffInWeeks === 1 ? "semana" : "semanas"}`;
-  }
-
-  const diffInMonths = Math.floor(diffInDays / 30);
-
-  if (diffInDays < 365) {
-    return `Hace ${diffInMonths} ${diffInMonths === 1 ? "mes" : "meses"}`;
-  }
-
-  const diffInYears = Math.floor(diffInDays / 365);
-
-  return `Hace ${diffInYears} ${diffInYears === 1 ? "año" : "años"}`;
+  return (
+    <TimeAgo
+      date={date}
+      formatter={spanishFormatter}
+      title={format(date, "d MMM yyyy, HH:mm", { locale: es })}
+      minPeriod={60}
+      component={(props) => <time {...props} suppressHydrationWarning />}
+    />
+  );
 }
 
 export function UserRow({ user }: Props) {
@@ -77,6 +71,8 @@ export function UserRow({ user }: Props) {
     user.role === "recruiter"
       ? userRoleConfig.recruiter
       : userRoleConfig.hiringManager;
+
+  const fullName = `${user.name} ${user.lastName}`.trim();
 
   const access =
     user.role === "recruiter"
@@ -89,17 +85,21 @@ export function UserRow({ user }: Props) {
 
   return (
     <TableRow className="border-b border-border-default last:border-b-0">
-      <TableCell className="px-4 py-3">
+      <TableCell className="px-4 py-3 pl-6">
         <div className="flex items-center gap-3">
           <div
             className={`flex size-9 shrink-0 items-center justify-center rounded-full  text-xs font-semibold ${avatar.colorClass}`}
           >
-            {avatar.initials}
+            {avatar.initials || "?"}
           </div>
 
-          <span className="font-semibold text-text-primary">
-            {user.name} {user.lastName}
-          </span>
+          {fullName ? (
+            <span className="font-semibold text-text-primary">{fullName}</span>
+          ) : (
+            <span className="italic text-text-secondary">
+              {PENDING_NAME_LABEL}
+            </span>
+          )}
         </div>
       </TableCell>
 
@@ -127,40 +127,11 @@ export function UserRow({ user }: Props) {
       </TableCell>
 
       <TableCell className="px-4 py-3 text-text-secondary">
-        {formatLastAccess(user.lastAccess)}
+        <LastAccessText lastAccess={user.lastAccess} />
       </TableCell>
 
       <TableCell className="px-4 py-3 text-right">
-        {user.status === "PendingInvitation" ? (
-          <Button
-            type="button"
-            variant="ghost"
-            className="h-8 px-2 text-xs font-medium text-text-link"
-          >
-            Reenviar invitación
-          </Button>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className="flex size-8 items-center cursor-pointer justify-center rounded-md hover:bg-surface-sunken"
-              aria-label={`Acciones de ${user.name} ${user.lastName}`}
-            >
-              <MoreHorizontal className="size-4" />
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end" className="w-52">
-              <DropdownMenuItem>
-                <KeyRound className="size-4" />
-                Restablecer contraseña
-              </DropdownMenuItem>
-
-              <DropdownMenuItem className="text-danger focus:text-danger">
-                <Trash2 className="size-4" />
-                Eliminar usuario
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        <UserActionsMenu user={user} />
       </TableCell>
     </TableRow>
   );

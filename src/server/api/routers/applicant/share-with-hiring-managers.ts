@@ -63,7 +63,6 @@ export const shareWithHiringManagers = protectedProcedure
             in: input.hiringManagerIds,
           },
           user: {
-            status: "Active",
             banned: false,
           },
         },

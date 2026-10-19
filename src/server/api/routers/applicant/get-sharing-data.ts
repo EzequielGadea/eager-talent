@@ -44,6 +44,7 @@ export const getSharingData = protectedProcedure
         select: {
           id: true,
           applicantHiringManagers: {
+            where: { hiringManager: { deletedAt: null } },
             orderBy: {
               sharedAt: "desc",
             },
@@ -67,7 +68,6 @@ export const getSharingData = protectedProcedure
           organizationId,
           role: "hiringManager",
           user: {
-            status: "Active",
             banned: false,
           },
         },
