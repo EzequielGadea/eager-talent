@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -82,11 +81,7 @@ export default function AssignedInterviews() {
                 className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <Link
-                    href={`/applicants/${interview.applicant.id}`}
-
-                    className="group flex min-w-0 items-center gap-3"
-                  >
+                  <div className="flex min-w-0 items-center gap-3">
                     <Avatar className="size-9 shrink-0">
                       <AvatarImage
                         src={interview.applicant.photo ?? undefined}
@@ -102,7 +97,7 @@ export default function AssignedInterviews() {
                     </Avatar>
 
                     <div className="flex min-w-0 flex-col gap-1">
-                      <p className="text-sm font-semibold text-text-primary group-hover:text-text-link group-hover:underline">
+                      <p className="text-sm font-semibold text-text-primary">
                         {applicantName}
                       </p>
 
@@ -110,7 +105,7 @@ export default function AssignedInterviews() {
                         {interview.name} · {jobOpeningName} · {formattedDate}
                       </p>
                     </div>
-                  </Link>
+                  </div>
                 </div>
 
                 <Button
