@@ -40,7 +40,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   return (
     <TableRow
       onClick={() => handleApplicantClick(props.applicant.id)}
-      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-dashboard-success-light last:border-0"
+      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-success-bg last:border-0"
     >
       {/* Candidato */}
       <TableCell className={`${columns.applicant} py-2 align-middle`}>
