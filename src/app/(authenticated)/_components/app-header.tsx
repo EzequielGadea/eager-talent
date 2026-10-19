@@ -1,11 +1,8 @@
 import { headers } from "next/headers";
-import Link from "next/link";
-import { Suspense } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { auth } from "~/lib/auth";
 import { api } from "~/lib/trpc/server";
-import { SettingsIcon } from "./app-icons";
 import { GlobalSearch } from "./global-search";
 
 import getAvatar from "~/lib/avatar";
@@ -86,34 +83,12 @@ export async function CurrentUser() {
   return <CurrentUserDetails user={user} />;
 }
 
-async function HeaderUserArea() {
-  const user = await getCurrentUser();
-
-  if (user?.role === "hiringManager") {
-    return null;
-  }
-
-  return (
-    <Link
-      href="/settings"
-      aria-label="Abrir configuración"
-      className="flex size-9 items-center justify-center rounded-md text-text-secondary hover:bg-surface-hover"
-    >
-      <SettingsIcon className="size-4.5" aria-hidden="true" />
-    </Link>
-  );
-}
-
 export function AppHeader() {
   return (
     <header className="flex h-15 shrink-0 items-center gap-4 border-b border-border-default bg-surface-card px-6">
       <GlobalSearch />
 
       <div className="flex-1" />
-
-      <Suspense fallback={null}>
-        <HeaderUserArea />
-      </Suspense>
     </header>
   );
 }
