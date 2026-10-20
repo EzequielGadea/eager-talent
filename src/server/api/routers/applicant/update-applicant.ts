@@ -62,7 +62,7 @@ export const updateApplicant = protectedProcedure
         // Lock the applicant row so the change detection below and the update
         // are based on the same persisted state, even with concurrent edits.
         const lockedApplicants = await tx.$queryRaw<{ id: string }[]>`
-          SELECT "id" FROM "applicant" WHERE "id" = ${input.id} FOR UPDATE
+          SELECT "id" FROM "applicant" WHERE "id" = ${input.id} AND "deleted_at" IS NULL FOR UPDATE
         `;
 
         if (lockedApplicants.length === 0) {

@@ -44,6 +44,7 @@ export const fetchPipelineCandidates = protectedProcedure
 
     const where = {
       jobOpeningId: input.jobOpeningId,
+      deletedAt: null,
       currentStageId: input.stageId,
       active: true,
       applicant: getApplicantByKeywordWhere(input.search),

@@ -59,7 +59,7 @@ export const createInterviewProcedure = protectedProcedure
     }
 
     const applicant = await ctx.db.applicant.findUnique({
-      where: { id: input.applicantId },
+      where: { id: input.applicantId, deletedAt: null },
       select: { id: true },
     });
 
@@ -101,6 +101,7 @@ export const createInterviewProcedure = protectedProcedure
             applicantId: input.applicantId,
             jobOpeningId: input.jobOpeningId,
           },
+          deletedAt: null,
         },
         select: { applicantId: true, currentStageId: true, active: true },
       });

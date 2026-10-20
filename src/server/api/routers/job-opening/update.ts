@@ -196,6 +196,7 @@ export const updateJobOpening = protectedProcedure
           hasBeenOpened: true,
           stages: true,
           applications: {
+            where: { deletedAt: null },
             select: {
               currentStageId: true,
             },

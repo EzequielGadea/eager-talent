@@ -31,6 +31,7 @@ export const fetchShared = protectedProcedure
     }
     const searchWhere = getApplicantSearchWhere(input.search);
     const where: Prisma.ApplicantWhereInput = {
+      deletedAt: null,
       AND: [
         {
           applicantHiringManagers: {
