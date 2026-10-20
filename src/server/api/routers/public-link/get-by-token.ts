@@ -80,6 +80,7 @@ export const getByToken = publicProcedure
               },
             },
             interviews: {
+              where: { deletedAt: null },
               orderBy: {
                 date: "asc",
               },

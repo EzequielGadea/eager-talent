@@ -96,6 +96,7 @@ export const fetchPipelineCandidates = protectedProcedure
               },
               interviews: {
                 where: {
+                  deletedAt: null,
                   status: "Scheduled",
                   jobOpeningId: input.jobOpeningId,
                   date: { gt: new Date(now - MAX_INTERVIEW_MS) },

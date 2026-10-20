@@ -152,6 +152,7 @@ export const createInterviewProcedure = protectedProcedure
     const nearbyInterviews = await ctx.db.interview.findMany({
       where: {
         applicantId: input.applicantId,
+        deletedAt: null,
         status: "Scheduled",
         date: {
           gt: new Date(start.getTime() - MAX_INTERVIEW_MS),
