@@ -200,21 +200,17 @@ model ApplicantHiringManager {
 model JobRole {
   id         String      @id @default(cuid())
   name       String
-  deletedAt  DateTime?   @map("deleted_at")
   applicants Applicant[]
 
-  @@index([deletedAt])
   @@map("role")
 }
 
 model Area {
   id          String       @id @default(cuid())
   name        String
-  deletedAt   DateTime?    @map("deleted_at")
   applicants  Applicant[]
   jobOpenings JobOpening[]
 
-  @@index([deletedAt])
   @@map("area")
 }
 
@@ -223,11 +219,9 @@ model Seniority {
   name        String
   order       Int
   color       String
-  deletedAt   DateTime?    @map("deleted_at")
   applicants  Applicant[]
   jobOpenings JobOpening[]
 
-  @@index([deletedAt])
   @@map("seniority")
 }
 
@@ -236,10 +230,8 @@ model Tag {
   name       String
   isSkill    Boolean     @map("is_skill")
   color      String
-  deletedAt  DateTime?   @map("deleted_at")
   applicants Applicant[]
 
-  @@index([deletedAt]) 
   @@map("tag")
 }
 
