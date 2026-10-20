@@ -37,14 +37,16 @@ export function DeleteApplicantDialog({
       toast.add({ title: error.message, type: "error" });
     },
     onSuccess: () => {
+      toast.add({
+        type: "success",
+        title: "Candidato eliminado",
+        description: `${applicantName} fue eliminado del sistema`,
+      });
+
+      onOpenChange(false);
       startTransition(() => {
         router.push("/applicants");
-        onOpenChange(false);
-        toast.add({
-          type: "success",
-          title: "Candidato eliminado",
-          description: `${applicantName} fue eliminado del sistema`,
-        });
+        router.refresh();
       });
     },
   });
@@ -52,7 +54,13 @@ export function DeleteApplicantDialog({
   const isPending = deleteMutation.isPending || isTransitionPending;
 
   return (
-    <Dialog open={open} onOpenChange={isPending ? undefined : onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isPending) return;
+        onOpenChange(nextOpen);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Eliminar candidato</DialogTitle>
