@@ -137,6 +137,7 @@ export function ScheduleInterviewDialog({
 
   const {
     control,
+    register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
