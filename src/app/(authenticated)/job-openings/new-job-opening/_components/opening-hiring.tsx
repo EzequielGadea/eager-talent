@@ -28,7 +28,7 @@ export default function OpeningHiring() {
   const { control } = useFormContext<JobOpeningFormValues>();
 
   const { data: hiringManagers, isLoading: isLoadingManager } =
-    api.users.getAllHiringManagers.useQuery({});
+    api.user.getAllHiringManagers.useQuery({});
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
