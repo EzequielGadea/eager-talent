@@ -66,7 +66,7 @@ export async function ApplicantAwaiterFilters({
   promiseTagData,
   isHiringManagerView,
 }: {
-  promiseRoleData: ReturnType<typeof api.role.getAllRoles>;
+  promiseRoleData: ReturnType<typeof api.jobRole.getAllRoles>;
   promiseSeniorityData: ReturnType<typeof api.seniority.getAllSeniorities>;
   promiseAreaData: ReturnType<typeof api.area.getAllAreas>;
   promiseJobOpeningData: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
