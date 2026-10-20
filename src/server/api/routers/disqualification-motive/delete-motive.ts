@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const deleteDescalificationMotive = protectedProcedure
+export const deleteDisqualificationMotive = protectedProcedure
   .input(
     z.object({
       id: z.string().cuid(),

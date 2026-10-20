@@ -2,7 +2,7 @@ import AreaSetting from "./_components/area-setting";
 import DefaultStageSetting from "./_components/default-stage-setting";
 import RoleSetting from "./_components/role-setting";
 import SenioritySetting from "./_components/seniority-setting";
-import DescalificationMotiveSetting from "./_components/descalification-motive-setting";
+import DisqualificationMotiveSetting from "./_components/disqualification-motive-setting";
 
 export default function GeneralSettingsPage() {
   return (
@@ -19,7 +19,7 @@ export default function GeneralSettingsPage() {
         <div className="flex flex-col gap-4">
           <DefaultStageSetting />
           <SenioritySetting />
-          <DescalificationMotiveSetting />
+          <DisqualificationMotiveSetting />
         </div>
       </div>
     </section>
