@@ -156,7 +156,7 @@ export async function EditJobOpeningContent({
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
       <header>
-        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
+        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
           Editar vacante
         </h1>
       </header>
