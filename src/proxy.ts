@@ -16,6 +16,7 @@ export async function proxy(request: NextRequest) {
 
   const isPublicRoute =
     publicRoutes.includes(pathname) ||
+    /^\/accept-invite\/[^/]+$/.test(pathname) ||
     pathname.startsWith(`${PUBLIC_LINK_BASE_PATH}/`);
 
   if (!isPublicRoute && !session) {
