@@ -2,10 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
-import {
-  parseStages,
-  stageAllowsInterview,
-} from "~/lib/validations/job-opening";
+import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 export const getApplicationsByApplicantIdProcedure = protectedProcedure
@@ -65,18 +62,13 @@ export const getApplicationsByApplicantIdProcedure = protectedProcedure
       },
     });
 
-    return applications.map(({ jobOpening, ...application }) => {
-      const currentStage = parseStages(jobOpening.stages).find(
-        (stage) => stage.key === application.currentStageId,
-      );
-
-      return {
-        ...application,
-        currentStageName: currentStage?.name ?? application.currentStageId,
-        canScheduleInterview: stageAllowsInterview(currentStage),
-        jobOpening: { id: jobOpening.id, name: jobOpening.name },
-        desiredSalaryAmount:
-          application.desiredSalaryAmount?.toString() ?? null,
-      };
-    });
+    return applications.map(({ jobOpening, ...application }) => ({
+      ...application,
+      currentStageName:
+        parseStages(jobOpening.stages).find(
+          (stage) => stage.key === application.currentStageId,
+        )?.name ?? application.currentStageId,
+      jobOpening: { id: jobOpening.id, name: jobOpening.name },
+      desiredSalaryAmount: application.desiredSalaryAmount?.toString() ?? null,
+    }));
   });

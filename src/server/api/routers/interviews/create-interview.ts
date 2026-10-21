@@ -34,11 +34,7 @@ export const createInterviewProcedure = protectedProcedure
         }),
         interviewerIds: z
           .array(z.string())
-          .min(1, "Seleccioná al menos un entrevistador.")
-          .refine((ids) => new Set(ids).size === ids.length, {
-            message:
-              "No se puede seleccionar el mismo entrevistador más de una vez.",
-          }),
+          .min(1, "Seleccioná al menos un entrevistador."),
       })
       .refine(
         (data) => Boolean(data.jobOpeningId) !== Boolean(data.exploratoryName),
@@ -70,27 +66,6 @@ export const createInterviewProcedure = protectedProcedure
       });
     }
 
-    const eligibleInterviewers = await ctx.db.user.findMany({
-      where: {
-        id: { in: input.interviewerIds },
-        //status: "Active",
-        banned: false,
-        members: {
-          some: {
-            role: "hiringManager",
-          },
-        },
-      },
-      select: { id: true },
-    });
-
-    if (eligibleInterviewers.length !== input.interviewerIds.length) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Todos los entrevistadores deben ser Hiring Managers activos.",
-      });
-    }
-
     let stageId: string | null = null;
     let interviewName = input.exploratoryName ?? "";
 
@@ -102,7 +77,7 @@ export const createInterviewProcedure = protectedProcedure
             jobOpeningId: input.jobOpeningId,
           },
         },
-        select: { applicantId: true, currentStageId: true, active: true },
+        select: { applicantId: true, currentStageId: true },
       });
 
       if (!application) {
@@ -111,13 +86,7 @@ export const createInterviewProcedure = protectedProcedure
           message: "Application not found",
         });
       }
-      if (!application.active) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message:
-            "No se pueden agendar entrevistas para una postulación descalificada.",
-        });
-      }
+
       const jobOpening = await ctx.db.jobOpening.findUnique({
         where: { id: input.jobOpeningId },
         select: { stages: true },
