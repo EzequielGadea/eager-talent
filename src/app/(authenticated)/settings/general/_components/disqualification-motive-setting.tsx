@@ -28,6 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function DisqualificationMotiveSetting() {
   const [isAddingMotive, setIsAddingMotive] = useState(false);
@@ -39,8 +40,13 @@ export default function DisqualificationMotiveSetting() {
 
   const utils = api.useUtils();
 
-  const { data: motives, isLoading: isMotiveLoading } =
-    api.disqualificationMotive.getAllDisqualificationMotive.useQuery({});
+  const {
+    data: motives,
+    isLoading: isMotiveLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.disqualificationMotive.getAllDisqualificationMotive.useQuery({});
 
   const createMotive =
     api.disqualificationMotive.createDisqualificationMotive.useMutation({
@@ -125,6 +131,17 @@ export default function DisqualificationMotiveSetting() {
       <GeneralSettingsCardSkeleton
         title="Motivos de descalificación"
         rows={4}
+      />
+    );
+  }
+
+  if (isError || !motives) {
+    return (
+      <SettingsFetchError
+        title="Motivos de descalificación"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
       />
     );
   }

@@ -31,6 +31,7 @@ import {
 } from "~/lib/required-stage-types";
 import { api } from "~/lib/trpc/react";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 type DefaultStage = {
   key: string;
@@ -55,9 +56,10 @@ function isBoundaryStage(index: number, total: number) {
 }
 
 export default function DefaultStageSetting() {
-  const { data, isLoading } = api.templateStages.getDefault.useQuery();
+  const { data: flujo, isLoading: isFlujoLoading, isError, refetch, isFetching } =
+    api.templateStages.getDefault.useQuery();
 
-  if (isLoading) {
+  if (isFlujoLoading) {
     return (
       <GeneralSettingsCardSkeleton
         title="Flujo por defecto"
@@ -67,16 +69,25 @@ export default function DefaultStageSetting() {
     );
   }
 
-  if (!data) return null;
+  if (isError || !flujo) {
+    return (
+      <SettingsFetchError
+        title="Flujo por defecto"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
 
   const requiredStageIds = new Set(
-    data.stages.flatMap((stage) => (isRequiredStage(stage) ? [stage.key] : [])),
+    flujo.stages.flatMap((stage) => (isRequiredStage(stage) ? [stage.key] : [])),
   );
 
   return (
     <DefaultStageEditor
-      key={JSON.stringify(data.stages)}
-      data={data}
+      key={JSON.stringify(flujo.stages)}
+      data={flujo}
       requiredStageIds={requiredStageIds}
     />
   );

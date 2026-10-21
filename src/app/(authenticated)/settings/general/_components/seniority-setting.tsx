@@ -26,19 +26,29 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 type Seniority = NonNullable<
   inferRouterOutputs<AppRouter>["seniority"]["getAllSeniorities"]
 >[number];
 
 export default function SenioritySetting() {
-  const { data, isLoading } = api.seniority.getAllSeniorities.useQuery({});
+  const { data, isLoading, isError, refetch, isFetching } = api.seniority.getAllSeniorities.useQuery({});
 
   if (isLoading) {
     return <GeneralSettingsCardSkeleton title="Seniorities" rows={4} />;
   }
 
-  if (!data) return null;
+  if (isError || !data) {
+    return (
+      <SettingsFetchError
+        title="Seniorities"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
 
   return <SeniorityEditor key={JSON.stringify(data)} data={data} />;
 }

@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function RoleSetting() {
   const [isAddingRole, setIsAddingRole] = useState(false);
@@ -33,8 +34,13 @@ export default function RoleSetting() {
     name: string;
   } | null>(null);
 
-  const { data: roles, isLoading: isRolesLoading } =
-    api.jobRole.getAllRoles.useQuery({});
+  const {
+    data: roles,
+    isLoading: isRolesLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.jobRole.getAllRoles.useQuery({});
 
   const utils = api.useUtils();
 
@@ -115,6 +121,17 @@ export default function RoleSetting() {
 
   if (isRolesLoading) {
     return <GeneralSettingsCardSkeleton title="Roles de candidato" rows={4} />;
+  }
+
+  if (isError || !roles) {
+    return (
+      <SettingsFetchError
+        title="Roles de candidato"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
   }
 
   return (
