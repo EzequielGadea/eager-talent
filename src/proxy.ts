@@ -5,41 +5,25 @@ import { auth } from "~/lib/auth";
 import { PUBLIC_LINK_BASE_PATH } from "~/lib/public-link-url";
 import { prisma } from "~/lib/prisma";
 
-const escapeRegex = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-// Routes are regular expresions, if they include \/[^/]+$/ at the end, they
-// need a subroute otherwise they fail. /login is allowed but /login/a isn't.
-// this is checked by using the .test(string) method, returns true if the string
-// follows the regular expresion.
-const authRoutes = [
-  /^\/login$/,
-  /^\/signup$/,
-  /^\/accept-invite\/[^/]+$/,
-  /^\/reset-password\/[^/]+$/,
-];
-const publicBase = new RegExp(
-  `^\\/${escapeRegex(PUBLIC_LINK_BASE_PATH)}\\/[^/]+$`,
-);
-
+const authRoutes = ["/login", "/signup", "/accept-invite", "/reset-password"];
 const publicRoutes = ["/", ...authRoutes];
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
   const session = await auth.api.getSession({
     headers: request.headers,
   });
 
-  const isAuthRoute = authRoutes.some((route) => route.test(pathname));
   const isPublicRoute =
-    publicRoutes.includes(pathname) || isAuthRoute || publicBase.test(pathname);
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith(`${PUBLIC_LINK_BASE_PATH}/`);
 
-  if (!session) {
-    return isPublicRoute
-      ? NextResponse.next()
-      : NextResponse.redirect(new URL("/login", request.url));
+  if (!isPublicRoute && !session) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (!isAuthRoute) return NextResponse.next();
+  if (!["/login", "/signup"].includes(pathname) || !session)
+    return NextResponse.next();
 
   const organizationId = session?.session.activeOrganizationId;
 
