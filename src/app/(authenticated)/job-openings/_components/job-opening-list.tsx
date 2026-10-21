@@ -221,7 +221,7 @@ export default function JobOpeningsList({
                   </>
                 )}
 
-                <TableHead className="px-4 py-3">Abierta hace</TableHead>
+                <TableHead className="px-4 py-3">Abierta desde</TableHead>
 
                 <TableHead className="px-4 py-3" />
               </TableRow>
