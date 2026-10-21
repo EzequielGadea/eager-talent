@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../../../generated/prisma"
@@ -13,30 +8,52 @@ datasource db {
 }
 
 model User {
-  id            String     @id
+  id            String       @id
   name          String
   email         String
-  emailVerified Boolean    @default(false)
+  emailVerified Boolean      @default(false)
   image         String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   sessions      Session[]
   accounts      Account[]
+  members       Member[]
+  invitations   Invitation[]
+  lastName      String       @default("") @map("last_name")
+  lastAccess    DateTime?    @map("last_access")
+  role          String?
+  banned        Boolean      @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  deletedAt     DateTime?    @map("deleted_at")
+
+  assignedJobOpenings JobOpening[]    @relation("JobOpeningHiringManagers")
+  applicantHiringManagers ApplicantHiringManager[] @relation("ApplicantHiringManager")
+  applicantsSharedByMe    ApplicantHiringManager[] @relation("ApplicantSharedBy")
+  interviews          Interview[]     @relation("InterviewUsers")
+  interviewAssignments InterviewAssignment[] @relation("InterviewAssignmentInterviewer")
+  assignedInterviews   InterviewAssignment[] @relation("InterviewAssignmentAssigner")
+  applicantNotes      ApplicantNote[]
+  interviewNotes      InterviewNote[]
+  publicLinks         PublicLink[]
+  activities Activity[]
 
   @@unique([email])
   @@map("user")
 }
 
 model Session {
-  id        String   @id
-  expiresAt DateTime
-  token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  ipAddress String?
-  userAgent String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String   @id
+  expiresAt            DateTime
+  token                String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  ipAddress            String?
+  userAgent            String?
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy       String?
+  activeOrganizationId String?
 
   @@unique([token])
   @@index([userId])
@@ -77,3 +94,369 @@ model Verification {
   @@map("verification")
 }
 
+enum EnglishLevel {
+  Basic
+  Intermediate
+  Advanced
+  Native
+}
+
+enum Source {
+  Inbound
+  Outbound
+  Referral
+}
+
+enum HearAboutUs {
+  LinkedInPost
+  LinkedInJobs
+  JobBoard
+  Referral
+  AiRecommendation
+  InternetSearch
+  RecruiterContact
+  Other
+}
+
+enum JobOpeningStatus {
+  Open
+  Paused
+  Closed
+  Cancelled
+}
+
+enum InterviewStatus {
+  Completed
+  Scheduled
+  Pending
+}
+
+enum InterviewType {
+  VideoCall
+  InPerson
+}
+
+enum SalaryCurrency {
+  USD
+  UYU @map("$")
+}
+
+model Applicant {
+  id                  String        @id @default(cuid())
+  name                String
+  lastName            String        @map("last_name")
+  email               String?       @unique
+  phone               String?
+  photo               String?
+  country             String?
+  linkedin            String?
+  englishLevel        EnglishLevel? @map("english_level")
+  source              Source?
+  hearAboutUs         HearAboutUs?  @map("hear_about_us")
+  title               String?
+  academicInstitution String?       @map("academic_institution")
+  careerStartYear     Int?          @map("career_start_year")
+  careerEndYear       Int?          @map("career_end_year")
+  education           String?
+  resume              String?
+  roleId              String        @map("role_id")
+  areaId              String?       @map("area_id")
+  seniorityId         String?       @map("seniority_id")
+
+  role           JobRole        @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  area           Area?          @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  seniority      Seniority?     @relation(fields: [seniorityId], references: [id], onDelete: Restrict)
+  tags           Tag[]
+  applicantHiringManagers ApplicantHiringManager[]
+  applications   Application[]
+  interviews     Interview[]
+  activities     Activity[]
+  note           ApplicantNote?
+
+  @@index([roleId])
+  @@index([areaId])
+  @@index([seniorityId])
+  @@index([source])
+  @@map("applicant")
+}
+
+model ApplicantHiringManager {
+  applicantId     String    @map("applicant_id")
+  hiringManagerId String    @map("hiring_manager_id")
+  sharedByUserId  String    @map("shared_by_user_id")
+  sharedAt        DateTime  @default(now()) @map("shared_at")
+  viewedAt        DateTime? @map("viewed_at")
+
+  applicant     Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  hiringManager User      @relation("ApplicantHiringManager", fields: [hiringManagerId], references: [id], onDelete: Cascade)
+  sharedBy      User      @relation("ApplicantSharedBy", fields: [sharedByUserId], references: [id], onDelete: Restrict)
+
+  @@id([applicantId, hiringManagerId])
+  @@index([hiringManagerId])
+  @@index([sharedByUserId])
+  @@map("applicant_hiring_manager")
+}
+
+model JobRole {
+  id         String      @id @default(cuid())
+  name       String
+  deletedAt  DateTime?   @map("deleted_at")
+  applicants Applicant[]
+
+  @@index([deletedAt])
+  @@map("role")
+}
+
+model Area {
+  id          String       @id @default(cuid())
+  name        String
+  deletedAt   DateTime?    @map("deleted_at")
+  applicants  Applicant[]
+  jobOpenings JobOpening[]
+
+  @@index([deletedAt])
+  @@map("area")
+}
+
+model Seniority {
+  id          String       @id @default(cuid())
+  name        String
+  order       Int
+  color       String
+  deletedAt   DateTime?    @map("deleted_at")
+  applicants  Applicant[]
+  jobOpenings JobOpening[]
+
+  @@index([deletedAt])
+  @@map("seniority")
+}
+
+model Tag {
+  id         String      @id @default(cuid())
+  name       String
+  isSkill    Boolean     @map("is_skill")
+  color      String
+  deletedAt  DateTime?   @map("deleted_at")
+  applicants Applicant[]
+
+  @@index([deletedAt]) 
+  @@map("tag")
+}
+
+model DisqualificationMotive {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  applications Application[]
+
+  @@map("disqualification_motive")
+}
+
+model JobOpening {
+  id                String           @id @default(cuid())
+  name              String
+  status            JobOpeningStatus
+  hasBeenOpened     Boolean          @default(false) @map("has_been_opened")
+  // Snapshot de StageTemplate.stages
+  stages            Json
+  location          String
+  openingDate       DateTime         @map("opening_date")
+  targetClosingDate DateTime         @map("target_closing_date")
+  closingDate       DateTime?        @map("closing_date")
+  areaId            String           @map("area_id")
+  area              Area             @relation(fields: [areaId], references: [id], onDelete: Restrict)
+  seniorities       Seniority[]
+  hiringManagers    User[]           @relation("JobOpeningHiringManagers")
+  applications      Application[]
+
+  @@index([areaId])
+  @@index([status])
+  @@map("job_opening")
+}
+
+model StageTemplate {
+  id           String    @id @default(cuid())
+  stages       Json
+  lastModified DateTime? @map("last_modified")
+  deletedAt    DateTime? @map("deleted_at")
+
+  @@index([deletedAt])
+  @@map("stage_template")
+}
+
+model Application {
+  applicantId            String          @map("applicant_id")
+  jobOpeningId           String          @map("job_opening_id")
+  applicationDate        DateTime        @default(now()) @map("application_date")
+  active                 Boolean         @default(true)
+  // Key of the JobOpening.stages entry the application is currently in.
+  currentStageId         String          @map("current_stage_id")
+  stageEntryDate         DateTime        @default(now()) @map("stage_entry_date")
+  disqualificationDate   DateTime?       @map("disqualification_date")
+  disqualificationDescription String?   @map("disqualification_description")
+  disqualificationMotiveId    String?   @map("disqualification_motive_id")
+  desiredSalaryAmount    Decimal?        @map("desired_salary_amount")
+  desiredSalaryCurrency  SalaryCurrency? @map("desired_salary_currency")
+  availability           String?
+  applicant              Applicant       @relation(fields: [applicantId], references: [id], onDelete: Restrict)
+  jobOpening             JobOpening      @relation(fields: [jobOpeningId], references: [id], onDelete: Restrict)
+  disqualificationMotive DisqualificationMotive? @relation(fields: [disqualificationMotiveId], references: [id], onDelete: Restrict)
+  interviews             Interview[]
+  activities             Activity[]
+  publicLinks            PublicLink[]
+
+  @@id([applicantId, jobOpeningId])
+  @@index([jobOpeningId, active, currentStageId])
+  @@index([disqualificationMotiveId])
+  @@map("application")
+}
+
+model Interview {
+  id           String          @id @default(cuid())
+  // Mutually exclusive: exploratoryName (no application) or stageId (with application), enforced by a CHECK constraint.
+  exploratoryName String?       @map("exploratory_name")
+  // Key of the JobOpening.stages entry (type "Entrevista") this interview belongs to.
+  stageId      String?         @map("stage_id")
+  duration     Int
+  modality     InterviewType
+  date         DateTime?
+  status       InterviewStatus
+  summary      String?
+  applicantId  String          @map("applicant_id")
+  jobOpeningId String?         @map("job_opening_id")
+  applicant    Applicant       @relation(fields: [applicantId], references: [id], onDelete: Restrict)
+  // Nullable jobOpeningId permits an exploratory interview without an application.
+  application  Application?    @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Restrict)
+  interviewers User[]          @relation("InterviewUsers")
+  assignments  InterviewAssignment[]
+  note         InterviewNote?
+
+  @@index([applicantId, jobOpeningId])
+  @@index([status, date])
+  @@map("interview")
+}
+
+model InterviewAssignment {
+  interviewId   String   @map("interview_id")
+  interviewerId String   @map("interviewer_id")
+  assignedById  String   @map("assigned_by_id")
+  assignedAt    DateTime @default(now()) @map("assigned_at")
+
+  interview   Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  interviewer User      @relation("InterviewAssignmentInterviewer", fields: [interviewerId], references: [id], onDelete: Restrict)
+  assignedBy  User      @relation("InterviewAssignmentAssigner", fields: [assignedById], references: [id], onDelete: Restrict)
+
+  @@id([interviewId, interviewerId])
+  @@index([interviewerId])
+  @@index([assignedById])
+  @@map("interview_assignment")
+}
+
+model ApplicantNote {
+  id               String    @id @default(cuid())
+  content          Json
+  lastModified     DateTime  @default(now()) @updatedAt @map("last_modified")
+  applicantId      String    @unique @map("applicant_id")
+  lastModifiedById String    @map("last_modified_by_id")
+  applicant        Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  lastModifiedBy   User      @relation(fields: [lastModifiedById], references: [id], onDelete: Restrict)
+
+  @@index([lastModifiedById])
+  @@map("applicant_note")
+}
+
+model InterviewNote {
+  id               String    @id @default(cuid())
+  content          Json
+  lastModified     DateTime  @default(now()) @updatedAt @map("last_modified")
+  interviewId      String    @unique @map("interview_id")
+  lastModifiedById String    @map("last_modified_by_id")
+  interview        Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  lastModifiedBy   User      @relation(fields: [lastModifiedById], references: [id], onDelete: Restrict)
+
+  @@index([lastModifiedById])
+  @@map("interview_note")
+}
+
+model Activity {
+  id           String    @id @default(cuid())
+  description  String
+  date         DateTime     @default(now())
+  applicantId  String       @map("applicant_id")
+  jobOpeningId String?      @map("job_opening_id")
+  createdById  String       @map("created_by_id")
+
+  applicant    Applicant    @relation(fields: [applicantId], references: [id], onDelete: Restrict)
+  application  Application? @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Restrict)
+  createdBy    User         @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([applicantId, date])
+  @@index([applicantId, jobOpeningId])
+  @@index([createdById])
+  @@map("activity")
+}
+
+model Organization {
+  id          String       @id
+  name        String
+  slug        String
+  logo        String?
+  createdAt   DateTime
+  metadata    String?
+  members     Member[]
+  invitations Invitation[]
+
+  @@unique([slug])
+  @@map("organization")
+}
+
+model Member {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           String       @default("member")
+  createdAt      DateTime
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           String?
+  status         String       @default("pending")
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  inviterId      String
+  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("invitation")
+}
+
+model PublicLink {
+  id             String      @id @default(cuid())
+  name           String
+  token          String      @unique
+  includeSalary  Boolean     @default(false) @map("include_salary")
+  creationDate   DateTime    @default(now()) @map("creation_date")
+  expirationDate DateTime    @map("expiration_date")
+  revokedAt      DateTime?   @map("revoked_at")
+  createdById    String      @map("created_by_id")
+  applicantId    String      @map("applicant_id")
+  jobOpeningId   String      @map("job_opening_id")
+  createdBy      User        @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  application    Application @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Cascade)
+
+  @@index([createdById])
+  @@index([applicantId, jobOpeningId])
+  @@index([expirationDate])
+  @@map("public_link")
+}

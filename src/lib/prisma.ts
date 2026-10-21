@@ -6,7 +6,10 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const adapter = new PrismaPg({ connectionString: getDatabaseUrl() });
+const adapter = new PrismaPg({
+  connectionString: getDatabaseUrl(),
+  max: 1,
+});
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
