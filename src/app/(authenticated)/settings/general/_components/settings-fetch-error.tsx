@@ -28,9 +28,11 @@ export function SettingsFetchError({
               <CircleAlert className="size-6 text-danger" aria-hidden="true" />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-text-secondary">{message}</p>
+              <p className="text-sm text-text-secondary">
+                {message}
+              </p>
             </div>
-          </div>
+          </div> 
           <div className="p-0">
             <Button
               className="mt-4 w-40 rounded-full bg-destructive text-base text-white hover:bg-destructive/90"
@@ -43,7 +45,7 @@ export function SettingsFetchError({
               {isFetching ? "Reintentando..." : "Reintentar"}
             </Button>
           </div>
-        </div>
+         </div> 
       </CardContent>
     </Card>
   );
