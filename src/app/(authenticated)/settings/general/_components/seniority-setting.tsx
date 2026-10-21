@@ -235,13 +235,21 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                   className="max-md:size-9"
                   draggable={!isAddingSeniority}
                   disabled={isAddingSeniority}
+                  className="cursor-grab active:cursor-grabbing"
                   onDragStart={(event) => {
                     if (isAddingSeniority) {
                       event.preventDefault();
                       return;
                     }
+
                     event.dataTransfer.effectAllowed = "move";
                     event.dataTransfer.setData("text/plain", String(index));
+
+                    const row = event.currentTarget.closest("li");
+
+                    if (row) {
+                      event.dataTransfer.setDragImage(row, 20, 20);
+                    }
                   }}
                 >
                   <GripVertical
