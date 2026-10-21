@@ -285,7 +285,7 @@ export default function JobOpeningsList({
                 )}
 
                 <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Abierta hace
+                  Abierta desde
                 </TableHead>
 
                 <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />

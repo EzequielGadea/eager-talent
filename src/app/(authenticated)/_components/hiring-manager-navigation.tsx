@@ -8,13 +8,18 @@ import { NavigationItem } from "./navigation-item";
 import getAvatar from "~/lib/avatar";
 
 export async function HiringManagerNavigation() {
-  const [jobOpeningsAmount, applicantsAmount, assignedJobOpenings] =
-    await Promise.all([
-      api.jobOpening.getJobOpeningsAmount({}),
-      api.applicant.fetchAmount({}),
-      api.jobOpening.getAllJobOpenings({}),
-    ]);
-
+  const [
+    jobOpeningsAmount,
+    applicantsAmount,
+    sharedApplicants,
+    assignedJobOpenings,
+  ] = await Promise.all([
+    api.jobOpening.getJobOpeningsAmount({}),
+    api.applicant.fetchAmount({}),
+    api.applicant.fetchShared({}),
+    api.jobOpening.getAllJobOpenings({}),
+  ]);
+  const totalApplicants = applicantsAmount + sharedApplicants.total;
   return (
     <>
       <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
@@ -33,7 +38,7 @@ export async function HiringManagerNavigation() {
         icon={<Users className="size-4.5" aria-hidden="true" />}
         label="Candidatos"
         href="/applicants"
-        count={applicantsAmount}
+        count={totalApplicants}
       />
 
       <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
