@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function AreaSetting() {
   const [isAddingArea, setIsAddingArea] = useState(false);
@@ -40,7 +41,7 @@ export default function AreaSetting() {
 
   const utils = api.useUtils();
 
-  const { data: areas, isLoading: isAreasLoading } =
+  const { data: areas, isLoading: isAreasLoading,  isError, refetch, isFetching } =
     api.area.getAllAreas.useQuery({});
 
   const createArea = api.area.createArea.useMutation({
@@ -122,6 +123,17 @@ export default function AreaSetting() {
   if (isAreasLoading) {
     return <GeneralSettingsCardSkeleton title="Áreas" rows={4} />;
   }
+
+    if (isError || !areas) {
+      return (
+        <SettingsFetchError
+          title="Áreas"
+          message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+          refetch={refetch}
+          isFetching={isFetching}
+        />
+      );
+    }
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
