@@ -19,8 +19,8 @@ export const deleteRole = protectedProcedure
       throw new TRPCError({ code: "FORBIDDEN" });
     }
 
-    const role = await ctx.db.jobRole.findFirst({
-      where: { id: input.id, deletedAt: null },
+    const role = await ctx.db.jobRole.findUnique({
+      where: { id: input.id },
       select: { _count: { select: { applicants: true } } },
     });
 
@@ -35,8 +35,7 @@ export const deleteRole = protectedProcedure
       });
     }
 
-    await ctx.db.jobRole.update({
+    await ctx.db.jobRole.delete({
       where: { id: input.id },
-      data: { deletedAt: new Date() },
     });
   });

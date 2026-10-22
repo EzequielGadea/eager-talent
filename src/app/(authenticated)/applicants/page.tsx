@@ -142,7 +142,7 @@ async function ProtectedApplicantsPage(props: {
     }),
   );
 
-  const roleData = api.role.getAllRoles({});
+  const roleData = api.jobRole.getAllRoles({});
   const seniorityData = api.seniority.getAllSeniorities({});
   const areaData = api.area.getAllAreas({});
   const jobOpeningData = api.jobOpening.getAllJobOpenings({});

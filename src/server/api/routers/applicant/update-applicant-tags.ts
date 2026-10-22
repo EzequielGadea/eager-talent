@@ -30,7 +30,7 @@ export const updateApplicantTags = protectedProcedure
 
     return ctx.db.$transaction(async (tx) => {
       const applicant = await tx.applicant.findUnique({
-        where: { id: input.applicantId },
+        where: { id: input.applicantId, deletedAt: null },
         select: {
           tags: {
             select: { id: true },

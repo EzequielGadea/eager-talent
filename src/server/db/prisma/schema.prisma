@@ -162,6 +162,7 @@ model Applicant {
   roleId              String        @map("role_id")
   areaId              String?       @map("area_id")
   seniorityId         String?       @map("seniority_id")
+  deletedAt           DateTime?     @map("deleted_at")
 
   role           JobRole        @relation(fields: [roleId], references: [id], onDelete: Restrict)
   area           Area?          @relation(fields: [areaId], references: [id], onDelete: Restrict)
@@ -200,21 +201,17 @@ model ApplicantHiringManager {
 model JobRole {
   id         String      @id @default(cuid())
   name       String
-  deletedAt  DateTime?   @map("deleted_at")
   applicants Applicant[]
 
-  @@index([deletedAt])
   @@map("role")
 }
 
 model Area {
   id          String       @id @default(cuid())
   name        String
-  deletedAt   DateTime?    @map("deleted_at")
   applicants  Applicant[]
   jobOpenings JobOpening[]
 
-  @@index([deletedAt])
   @@map("area")
 }
 
@@ -223,11 +220,9 @@ model Seniority {
   name        String
   order       Int
   color       String
-  deletedAt   DateTime?    @map("deleted_at")
   applicants  Applicant[]
   jobOpenings JobOpening[]
 
-  @@index([deletedAt])
   @@map("seniority")
 }
 
@@ -236,10 +231,8 @@ model Tag {
   name       String
   isSkill    Boolean     @map("is_skill")
   color      String
-  deletedAt  DateTime?   @map("deleted_at")
   applicants Applicant[]
 
-  @@index([deletedAt]) 
   @@map("tag")
 }
 
@@ -297,6 +290,7 @@ model Application {
   desiredSalaryAmount    Decimal?        @map("desired_salary_amount")
   desiredSalaryCurrency  SalaryCurrency? @map("desired_salary_currency")
   availability           String?
+  deletedAt              DateTime?       @map("deleted_at")
   applicant              Applicant       @relation(fields: [applicantId], references: [id], onDelete: Restrict)
   jobOpening             JobOpening      @relation(fields: [jobOpeningId], references: [id], onDelete: Restrict)
   disqualificationMotive DisqualificationMotive? @relation(fields: [disqualificationMotiveId], references: [id], onDelete: Restrict)
@@ -323,6 +317,7 @@ model Interview {
   summary      String?
   applicantId  String          @map("applicant_id")
   jobOpeningId String?         @map("job_opening_id")
+  deletedAt    DateTime?       @map("deleted_at")
   applicant    Applicant       @relation(fields: [applicantId], references: [id], onDelete: Restrict)
   // Nullable jobOpeningId permits an exploratory interview without an application.
   application  Application?    @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Restrict)
@@ -357,6 +352,7 @@ model ApplicantNote {
   lastModified     DateTime  @default(now()) @updatedAt @map("last_modified")
   applicantId      String    @unique @map("applicant_id")
   lastModifiedById String    @map("last_modified_by_id")
+  deletedAt        DateTime? @map("deleted_at")
   applicant        Applicant @relation(fields: [applicantId], references: [id], onDelete: Cascade)
   lastModifiedBy   User      @relation(fields: [lastModifiedById], references: [id], onDelete: Restrict)
 
@@ -370,6 +366,7 @@ model InterviewNote {
   lastModified     DateTime  @default(now()) @updatedAt @map("last_modified")
   interviewId      String    @unique @map("interview_id")
   lastModifiedById String    @map("last_modified_by_id")
+  deletedAt        DateTime? @map("deleted_at")
   interview        Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
   lastModifiedBy   User      @relation(fields: [lastModifiedById], references: [id], onDelete: Restrict)
 
@@ -384,6 +381,7 @@ model Activity {
   applicantId  String       @map("applicant_id")
   jobOpeningId String?      @map("job_opening_id")
   createdById  String       @map("created_by_id")
+  deletedAt    DateTime?    @map("deleted_at")
 
   applicant    Applicant    @relation(fields: [applicantId], references: [id], onDelete: Restrict)
   application  Application? @relation(fields: [applicantId, jobOpeningId], references: [applicantId, jobOpeningId], onDelete: Restrict)

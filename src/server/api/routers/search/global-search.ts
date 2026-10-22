@@ -48,6 +48,7 @@ export const globalSearch = protectedProcedure
       canReadApplicants
         ? ctx.db.applicant.findMany({
             where: {
+              deletedAt: null,
               ...(canReadAllApplicants.success
                 ? {}
                 : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
@@ -86,7 +87,9 @@ export const globalSearch = protectedProcedure
               area: { select: { name: true } },
               _count: {
                 select: {
-                  applications: { where: { active: true } },
+                  applications: {
+                    where: { active: true, deletedAt: null },
+                  },
                 },
               },
             },

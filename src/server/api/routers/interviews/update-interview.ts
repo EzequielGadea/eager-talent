@@ -40,7 +40,7 @@ export const updateInterviewProcedure = protectedProcedure
     }
 
     const interview = await ctx.db.interview.findUnique({
-      where: { id: input.id },
+      where: { id: input.id, deletedAt: null },
       select: {
         id: true,
         date: true,
@@ -83,6 +83,7 @@ export const updateInterviewProcedure = protectedProcedure
       const nearbyInterviews = await ctx.db.interview.findMany({
         where: {
           id: { not: interview.id },
+          deletedAt: null,
           applicantId: interview.applicantId,
           status: "Scheduled",
           date: {

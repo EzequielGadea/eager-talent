@@ -29,7 +29,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 
-export default function DescalificationMotiveSetting() {
+export default function DisqualificationMotiveSetting() {
   const [isAddingMotive, setIsAddingMotive] = useState(false);
   const [motiveName, setMotiveName] = useState("");
   const [motiveToDelete, setMotiveToDelete] = useState<{
@@ -40,14 +40,14 @@ export default function DescalificationMotiveSetting() {
   const utils = api.useUtils();
 
   const { data: motives, isLoading: isMotiveLoading } =
-    api.descalificationMotive.getAllDescalificationMotive.useQuery({});
+    api.disqualificationMotive.getAllDisqualificationMotive.useQuery({});
 
   const createMotive =
-    api.descalificationMotive.createDescalificationMotive.useMutation({
+    api.disqualificationMotive.createDisqualificationMotive.useMutation({
       onSuccess: async () => {
         setMotiveName("");
         setIsAddingMotive(false);
-        await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+        await utils.disqualificationMotive.getAllDisqualificationMotive.invalidate();
         toast.add({ title: "Motivo creado con éxito", type: "success" });
       },
       onError: (error) => {
@@ -56,10 +56,10 @@ export default function DescalificationMotiveSetting() {
     });
 
   const deleteMotive =
-    api.descalificationMotive.deleteDescalificationMotive.useMutation({
+    api.disqualificationMotive.deleteDisqualificationMotive.useMutation({
       onSuccess: async () => {
         setMotiveToDelete(null);
-        await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+        await utils.disqualificationMotive.getAllDisqualificationMotive.invalidate();
         toast.add({ title: "Motivo eliminado con éxito", type: "success" });
       },
       onError: (error) => {

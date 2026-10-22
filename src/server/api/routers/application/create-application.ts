@@ -61,6 +61,7 @@ export const createApplication = protectedProcedure
       ctx.db.applicant.findUnique({
         where: {
           id: input.applicantId,
+          deletedAt: null,
         },
         select: {
           id: true,
@@ -106,6 +107,7 @@ export const createApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
         },
+        deletedAt: null,
       },
       select: {
         applicantId: true,
