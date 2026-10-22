@@ -16,7 +16,9 @@ export function HiringManagerJobOpeningsFallback() {
       <span className="sr-only">Cargando tus vacantes</span>
 
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Mis vacantes</h1>
+        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
+          Mis vacantes
+        </h1>
 
         <div className="mt-2 flex items-center gap-2">
           <Skeleton className="h-4 w-full max-w-64" />
@@ -27,25 +29,30 @@ export function HiringManagerJobOpeningsFallback() {
         <div className="w-full overflow-hidden">
           <Table className="table-fixed">
             <TableHeader>
-              <TableRow className="border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-                <TableHead className="px-4 py-3">Vacante</TableHead>
-                <TableHead className="hidden px-4 py-3 md:table-cell">
+              <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Vacante
+                </TableHead>
+                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground md:table-cell">
                   Área
                 </TableHead>
-                <TableHead className="px-4 py-3">Estado</TableHead>
-                <TableHead className="hidden px-4 py-3 sm:table-cell">
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Estado
+                </TableHead>
+                <TableHead className="hidden h-9.75 w-[9.5rem] min-w-[9.5rem] whitespace-nowrap px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground sm:table-cell">
                   Candidatos
                 </TableHead>
-                <TableHead className="hidden px-4 py-3 xl:table-cell">
+                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
                   Entrevista técnica
                 </TableHead>
-                <TableHead className="hidden px-4 py-3 xl:table-cell">
+                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
                   Ofertados
                 </TableHead>
-                <TableHead className="hidden px-4 py-3 xl:table-cell">
+                
+                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
                   Abierta desde
                 </TableHead>
-                <TableHead className="w-12 px-4 py-3" />
+                <TableHead className="h-9.75 w-12 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />
               </TableRow>
             </TableHeader>
 

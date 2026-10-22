@@ -196,6 +196,7 @@ export const updateJobOpening = protectedProcedure
           hasBeenOpened: true,
           stages: true,
           applications: {
+            where: { deletedAt: null },
             select: {
               currentStageId: true,
             },
@@ -206,7 +207,6 @@ export const updateJobOpening = protectedProcedure
       ctx.db.area.findFirst({
         where: {
           id: input.areaId,
-          deletedAt: null,
         },
         select: {
           id: true,
@@ -218,7 +218,6 @@ export const updateJobOpening = protectedProcedure
           id: {
             in: input.seniorityIds,
           },
-          deletedAt: null,
         },
       }),
 

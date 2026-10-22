@@ -1,20 +1,21 @@
 import type { JobOpeningStatus } from "~/generated/prisma/enums";
+import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 
 export const statusConfig = {
   Open: {
-    label: "Abierta",
+    label: jobOpeningStatusTranslations.Open,
     className: "bg-success-bg text-success",
   },
   Paused: {
-    label: "Pausada",
+    label: jobOpeningStatusTranslations.Paused,
     className: "bg-warning-bg text-warning",
   },
   Closed: {
-    label: "Cerrada",
+    label: jobOpeningStatusTranslations.Closed,
     className: "bg-tag-gray-bg text-tag-gray-fg",
   },
   Cancelled: {
-    label: "Cancelada",
+    label: jobOpeningStatusTranslations.Cancelled,
     className: "bg-danger-bg text-danger",
   },
 } satisfies Record<

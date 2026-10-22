@@ -157,7 +157,7 @@ export default function JobOpeningsList({
     <div className="mx-auto flex w-full flex-col gap-5 p-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">
+          <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
             {isHiringManagerView ? "Mis vacantes" : "Vacantes"}
           </h1>
 
@@ -198,32 +198,47 @@ export default function JobOpeningsList({
         <div className="w-full overflow-x-auto">
           <Table className="min-w-[900px]">
             <TableHeader>
-              <TableRow className="border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-                <TableHead className="px-4 py-3">Vacante</TableHead>
+              <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Vacante
+                </TableHead>
 
-                <TableHead className="px-4 py-3">Área</TableHead>
+                <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Área
+                </TableHead>
 
                 {!isHiringManagerView && (
-                  <TableHead className="px-4 py-3">Hiring Managers</TableHead>
+                  <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                    Hiring Managers
+                  </TableHead>
                 )}
 
-                <TableHead className="px-4 py-3">Estado</TableHead>
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Estado
+                </TableHead>
 
-                <TableHead className="px-4 py-3">Candidatos</TableHead>
+                <TableHead className="h-9.75 w-[9.5rem] min-w-[9.5rem] whitespace-nowrap px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Candidatos
+                </TableHead>
 
                 {isHiringManagerView && (
                   <>
-                    <TableHead className="px-4 py-3">
+                    <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
                       Entrevista técnica
                     </TableHead>
 
-                    <TableHead className="px-4 py-3">Ofertados</TableHead>
+                    <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                      Ofertados
+                    </TableHead>
                   </>
                 )}
 
-                <TableHead className="px-4 py-3">Abierta desde</TableHead>
+                
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Abierta desde
+                </TableHead>
 
-                <TableHead className="px-4 py-3" />
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />
               </TableRow>
             </TableHeader>
 

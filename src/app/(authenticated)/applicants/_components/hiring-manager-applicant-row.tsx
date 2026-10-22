@@ -38,7 +38,7 @@ export function HiringManagerApplicantRow({
   return (
     <TableRow
       onClick={() => router.push(`/applicants/${applicant.id}`)}
-      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-dashboard-success-light last:border-0"
+      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-success-bg last:border-0"
     >
       <TableCell className="px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">

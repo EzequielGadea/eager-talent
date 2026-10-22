@@ -21,7 +21,6 @@ export const createArea = protectedProcedure
 
     const existingArea = await ctx.db.area.findFirst({
       where: {
-        deletedAt: null,
         name: { equals: input.name, mode: "insensitive" },
       },
       select: { id: true },

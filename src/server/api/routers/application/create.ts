@@ -52,6 +52,18 @@ export const createApplicationProcedure = protectedProcedure
       });
     }
 
+    const applicant = await ctx.db.applicant.findUnique({
+      where: { id: input.applicantId, deletedAt: null },
+      select: { id: true },
+    });
+
+    if (!applicant) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Candidato no encontrado.",
+      });
+    }
+
     const jobOpening = await ctx.db.jobOpening.findUnique({
       where: { id: input.jobOpeningId },
       select: { stages: true, status: true },

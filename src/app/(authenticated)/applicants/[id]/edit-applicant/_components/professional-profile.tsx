@@ -19,11 +19,12 @@ import {
 import type { ApplicantFormValues } from "./edit-applicant-form";
 
 import { EnglishLevel } from "~/generated/prisma/enums";
+import { englishLevelTranslations } from "~/lib/enum-translations";
 
 export default function ProfessionalProfile() {
   const englishLevels = Object.values(EnglishLevel).map((englishLevel) => ({
     value: englishLevel,
-    label: englishLevel,
+    label: englishLevelTranslations[englishLevel],
   }));
 
   const {
@@ -35,7 +36,7 @@ export default function ProfessionalProfile() {
     api.area.getAllAreas.useQuery({});
 
   const { data: roles, isLoading: isLoadingRole } =
-    api.role.getAllRoles.useQuery({});
+    api.jobRole.getAllRoles.useQuery({});
 
   const { data: seniorities, isLoading: isLoadingSeniority } =
     api.seniority.getAllSeniorities.useQuery({});
@@ -184,7 +185,11 @@ export default function ProfessionalProfile() {
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar nivel" />
+                    <SelectValue placeholder="Seleccionar nivel">
+                      {field.value
+                        ? englishLevelTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>

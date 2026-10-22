@@ -19,12 +19,16 @@ import {
 
 import type { ApplicantFormValues } from "./new-applicant-form";
 
-import { EnglishLevel } from "~/generated/prisma/enums";
+import { EnglishLevel, SalaryCurrency } from "~/generated/prisma/enums";
+import {
+  englishLevelTranslations,
+  salaryCurrencyTranslations,
+} from "~/lib/enum-translations";
 
 export default function ProfessionalProfile() {
   const englishLevels = Object.values(EnglishLevel).map((englishLevel) => ({
     value: englishLevel,
-    label: englishLevel,
+    label: englishLevelTranslations[englishLevel],
   }));
 
   const {
@@ -37,7 +41,7 @@ export default function ProfessionalProfile() {
     api.area.getAllAreas.useQuery({});
 
   const { data: roles, isLoading: isLoadingRole } =
-    api.role.getAllRoles.useQuery({});
+    api.jobRole.getAllRoles.useQuery({});
 
   const { data: seniorities, isLoading: isLoadingSeniority } =
     api.seniority.getAllSeniorities.useQuery({});
@@ -239,13 +243,20 @@ export default function ProfessionalProfile() {
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Moneda" />
+                            <SelectValue placeholder="Moneda">
+                              {field.value
+                                ? salaryCurrencyTranslations[field.value]
+                                : undefined}
+                            </SelectValue>
                           </SelectTrigger>
 
                           <SelectContent>
                             <SelectItem value="">Sin seleccionar</SelectItem>
-                            <SelectItem value="USD">USD</SelectItem>
-                            <SelectItem value="UYU">UYU</SelectItem>
+                            {Object.values(SalaryCurrency).map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {salaryCurrencyTranslations[currency]}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       )}
@@ -292,7 +303,11 @@ export default function ProfessionalProfile() {
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar nivel" />
+                    <SelectValue placeholder="Seleccionar nivel">
+                      {field.value
+                        ? englishLevelTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
