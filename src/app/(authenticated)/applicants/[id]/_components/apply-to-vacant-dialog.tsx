@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import {
   Dialog,
   DialogContent,
@@ -34,14 +34,10 @@ import { SalaryCurrency } from "~/generated/prisma/enums";
 import { salaryCurrencyTranslations } from "~/lib/enum-translations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldError,
-} from "~/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "~/components/ui/field";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
+import { X } from "lucide-react";
 
 const applicationFormSchema = z
   .object({
@@ -49,20 +45,29 @@ const applicationFormSchema = z
     jobOpeningId: z.string({ error: "Debe indicar la vacante" }),
     desiredSalary: z.preprocess(
       (value) => (value === "" ? undefined : value),
-      z.coerce.number().positive().optional(),
+      z.coerce
+        .number()
+        .positive({
+          error: "El salraio debe ser mayor a 0",
+        })
+        .optional(),
     ),
     currency: z.enum(SalaryCurrency).optional(),
     availability: z
-      .string({ error: "Debe indicar la disponibilidad" })
+      .string(
+        /* Este campo es opcional
+        { error: "Debe indicar la disponibilidad" }*/
+      )
       .trim()
-      .min(1, "La disponibilidad es demasiado corta."),
+      //.min(1, "La disponibilidad es demasiado corta.")
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.desiredSalary !== undefined && data.currency === undefined) {
       ctx.addIssue({
         code: "custom",
         path: ["currency"],
-        message: "Debe elegir una moneda.",
+        message: "Debe elegir una moneda si ingresa salario.",
       });
     }
 
@@ -70,7 +75,7 @@ const applicationFormSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["desiredSalary"],
-        message: "Debe indicar el salario deseado.",
+        message: "Debe indicar el salario deseado si ingresa moneda.",
       });
     }
   });
@@ -93,6 +98,7 @@ export function ApplyToVacantDialog({
     handleSubmit,
     reset,
     setError,
+    trigger,
     formState: { errors, isValid },
   } = useForm<
     z.input<typeof applicationFormSchema>,
@@ -148,7 +154,7 @@ export function ApplyToVacantDialog({
       jobOpeningId: data.jobOpeningId,
       desiredSalary: data.desiredSalary,
       currency: data.currency,
-      availability: data.availability,
+      availability: data.availability ?? "",
     });
   }
 
@@ -165,6 +171,19 @@ export function ApplyToVacantDialog({
     control,
     name: "jobOpeningId",
   });
+
+  const desiredSalary = useWatch({
+    control,
+    name: "desiredSalary",
+  });
+  const currency = useWatch({
+    control,
+    name: "currency",
+  });
+
+  useEffect(() => {
+    void trigger(["desiredSalary", "currency"]);
+  }, [desiredSalary, currency, trigger]);
   return (
     <>
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -238,13 +257,34 @@ export function ApplyToVacantDialog({
                         </ComboboxContent>
                       </Combobox>
                       {fieldState.invalid && (
-                        <FieldError>{fieldState.error?.message}</FieldError>
+                        <p className="text-xs text-danger">
+                          {fieldState.error?.message}
+                        </p>
                       )}
                     </Field>
                   );
                 }}
               />
-              <div className="flex flex-col gap-4 sm:flex-row">
+              <Controller
+                control={control}
+                name="availability"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Disponibilidad</FieldLabel>
+                    <Input
+                      placeholder="Ej. Inmediata, 15 días, 1 mes"
+                      disabled={!isJobOpeningSelected}
+                      {...field}
+                    />
+                    {fieldState.invalid && isJobOpeningSelected && (
+                      <p className="text-xs text-danger">
+                        {fieldState.error?.message}
+                      </p>
+                    )}
+                  </Field>
+                )}
+              />
+              <div className="flex flex-col gap-4 sm:flex-row mb-5">
                 <Controller
                   control={control}
                   name="desiredSalary"
@@ -262,7 +302,9 @@ export function ApplyToVacantDialog({
                         }
                       />
                       {fieldState.invalid && isJobOpeningSelected && (
-                        <FieldError>{fieldState.error?.message}</FieldError>
+                        <p className="text-xs text-danger">
+                          {fieldState.error?.message}
+                        </p>
                       )}
                     </Field>
                   )}
@@ -284,6 +326,24 @@ export function ApplyToVacantDialog({
                               ? salaryCurrencyTranslations[field.value]
                               : undefined}
                           </SelectValue>
+                          {field.value && (
+                            <span
+                              role="button"
+                              tabIndex={isJobOpeningSelected ? 0 : -1}
+                              onPointerDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                field.onChange(undefined);
+                              }}
+                              aria-label="Quitar moneda"
+                              className="ml-auto rounded-sm p-1 text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="h-4 w-4" />
+                            </span>
+                          )}
                         </SelectTrigger>
 
                         <SelectContent>
@@ -295,7 +355,9 @@ export function ApplyToVacantDialog({
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && isJobOpeningSelected && (
-                        <FieldError>{fieldState.error?.message}</FieldError>
+                        <p className="text-xs text-danger">
+                          {fieldState.error?.message}
+                        </p>
                       )}
                     </Field>
                   )}
@@ -313,7 +375,9 @@ export function ApplyToVacantDialog({
                       {...field}
                     />
                     {fieldState.invalid && isJobOpeningSelected && (
-                      <FieldError>{fieldState.error?.message}</FieldError>
+                      <p className="text-xs text-danger">
+                        {fieldState.error?.message}
+                      </p>
                     )}
                   </Field>
                 )}
@@ -330,10 +394,11 @@ export function ApplyToVacantDialog({
               <Button
                 type="submit"
                 disabled={
+                  !isJobOpeningSelected ||
                   createApplicationMutation.isPending ||
                   isTransitionPending ||
                   isLoadingJobOpening ||
-                  !!jobOpeningsError ||
+                  jobOpeningsError != null ||
                   !isValid ||
                   !jobOpenings?.length
                 }
