@@ -14,6 +14,10 @@ import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
 import { ApplicantActionsMenu } from "./applicant-actions-menu";
+import {
+  englishLevelTranslations,
+  sourceTranslations,
+} from "~/lib/enum-translations";
 
 type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
@@ -144,10 +148,17 @@ export function ApplicantOverviewCard({
 
         <ApplicantAttribute
           label="Nivel de inglés"
-          value={englishLevel ?? "Sin información"}
+          value={
+            englishLevel
+              ? englishLevelTranslations[englishLevel]
+              : "Sin información"
+          }
         />
 
-        <ApplicantAttribute label="Fuente" value={source ?? "Sin fuente"} />
+        <ApplicantAttribute
+          label="Fuente"
+          value={source ? sourceTranslations[source] : "Sin fuente"}
+        />
       </CardContent>
     </Card>
   );

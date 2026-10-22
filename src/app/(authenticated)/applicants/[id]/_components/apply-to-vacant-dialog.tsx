@@ -31,6 +31,7 @@ import { z } from "zod";
 
 import { api } from "~/lib/trpc/react";
 import { SalaryCurrency } from "~/generated/prisma/enums";
+import { salaryCurrencyTranslations } from "~/lib/enum-translations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import {
@@ -295,12 +296,19 @@ export function ApplyToVacantDialog({
                         disabled={!isJobOpeningSelected}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Moneda" />
+                          <SelectValue placeholder="Moneda">
+                            {field.value
+                              ? salaryCurrencyTranslations[field.value]
+                              : undefined}
+                          </SelectValue>
                         </SelectTrigger>
 
                         <SelectContent>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="UYU">UYU</SelectItem>
+                          {Object.values(SalaryCurrency).map((currency) => (
+                            <SelectItem key={currency} value={currency}>
+                              {salaryCurrencyTranslations[currency]}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && isJobOpeningSelected && (

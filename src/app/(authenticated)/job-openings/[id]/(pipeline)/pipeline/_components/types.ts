@@ -1,3 +1,4 @@
+import type { InterviewType } from "~/generated/prisma/enums";
 import type { PersistedStage } from "~/lib/validations/job-opening";
 
 export type PipelineStage = PersistedStage;
@@ -12,7 +13,7 @@ export type PipelineCandidate = {
   scheduledInterviews: {
     id: string;
     name: string;
-    modality: string;
+    modality: InterviewType;
     duration: number;
     date: Date | string;
     interviewers: { id: string; name: string; lastName: string }[];

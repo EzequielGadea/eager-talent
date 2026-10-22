@@ -33,17 +33,13 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { api } from "~/lib/trpc/react";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 
 import type { PipelineCandidate } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
 
 import getAvatar from "~/lib/avatar";
-
-const modalityLabels: Record<string, string> = {
-  VideoCall: "Videollamada",
-  InPerson: "Presencial",
-};
 
 function formatInterviewLabel(date: Date) {
   if (isToday(date)) {
@@ -297,8 +293,8 @@ export function CandidateCard({
                     </p>
 
                     <p className="text-xs text-text-secondary">
-                      {modalityLabels[interview.modality] ?? interview.modality}{" "}
-                      · {interview.duration} min
+                      {interviewTypeTranslations[interview.modality]} ·{" "}
+                      {interview.duration} min
                     </p>
 
                     {interview.interviewers.length > 0 && (

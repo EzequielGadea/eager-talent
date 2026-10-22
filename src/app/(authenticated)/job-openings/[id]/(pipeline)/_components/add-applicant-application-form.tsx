@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { SalaryCurrency } from "~/generated/prisma/enums";
+import { salaryCurrencyTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -194,12 +195,19 @@ export function AddApplicantApplicationForm({
                   onValueChange={(value) => field.onChange(value ?? "")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Moneda" />
+                    <SelectValue placeholder="Moneda">
+                      {field.value
+                        ? salaryCurrencyTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
-                    <SelectItem value="USD">USD</SelectItem>
-                    <SelectItem value="UYU">UYU</SelectItem>
+                    {Object.values(SalaryCurrency).map((currency) => (
+                      <SelectItem key={currency} value={currency}>
+                        {salaryCurrencyTranslations[currency]}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               )}

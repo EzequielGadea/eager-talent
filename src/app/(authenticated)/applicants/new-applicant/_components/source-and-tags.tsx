@@ -16,6 +16,10 @@ import {
 } from "~/components/ui/select";
 import { Source } from "~/generated/prisma/enums";
 import { HearAboutUs } from "~/generated/prisma/enums";
+import {
+  hearAboutUsTranslations,
+  sourceTranslations,
+} from "~/lib/enum-translations";
 import type { ApplicantFormValues } from "./new-applicant-form";
 
 export default function SourceAndTags() {
@@ -23,22 +27,15 @@ export default function SourceAndTags() {
 
   const sources = Object.values(Source).map((source) => ({
     value: source,
-    label: source,
+    label: sourceTranslations[source],
   }));
 
   const hearAboutUs = Object.values(HearAboutUs).map((hearAbout) => ({
     value: hearAbout,
-    label: hearAbout,
+    label: hearAboutUsTranslations[hearAbout],
   }));
 
   const { data: availableTags } = api.tag.getAllTags.useQuery({});
-
-  /* const sources = [
-    { label: "LinkedIn", value: "linkedin" },
-    { label: "Referido", value: "referral" },
-    { label: "Sitio web", value: "website" },
-    { label: "Otro", value: "other" },
-  ];*/
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -59,7 +56,11 @@ export default function SourceAndTags() {
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar origen" />
+                    <SelectValue placeholder="Seleccionar origen">
+                      {field.value
+                        ? sourceTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
@@ -84,7 +85,11 @@ export default function SourceAndTags() {
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar origen" />
+                    <SelectValue placeholder="Seleccionar origen">
+                      {field.value
+                        ? hearAboutUsTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>

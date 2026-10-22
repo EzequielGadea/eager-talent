@@ -16,6 +16,7 @@ import { Check } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 
 import type { UpdateJobOpeningInput } from "~/lib/validations/job-opening";
+import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 
 type JobOpeningDetailsCardProps = {
   areaOptions: Array<{
@@ -144,28 +145,28 @@ export function JobOpeningDetailsCard({
                   value="Open"
                   className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
                 >
-                  Abierta
+                  {jobOpeningStatusTranslations.Open}
                 </ToggleGroupItem>
 
                 <ToggleGroupItem
                   value="Paused"
                   className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
                 >
-                  Pausada
+                  {jobOpeningStatusTranslations.Paused}
                 </ToggleGroupItem>
 
                 <ToggleGroupItem
                   value="Closed"
                   className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
                 >
-                  Cerrada
+                  {jobOpeningStatusTranslations.Closed}
                 </ToggleGroupItem>
 
                 <ToggleGroupItem
                   value="Cancelled"
                   className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
                 >
-                  Cancelada
+                  {jobOpeningStatusTranslations.Cancelled}
                 </ToggleGroupItem>
               </ToggleGroup>
             )}
