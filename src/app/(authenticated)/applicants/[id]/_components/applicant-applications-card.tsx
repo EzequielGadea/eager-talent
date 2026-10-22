@@ -21,6 +21,11 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Separator } from "~/components/ui/separator";
+import type { InterviewType, SalaryCurrency } from "~/generated/prisma/enums";
+import {
+  interviewTypeTranslations,
+  salaryCurrencyTranslations,
+} from "~/lib/enum-translations";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
 import { ShareApplicationDialog } from "./share-application-dialog";
@@ -33,7 +38,7 @@ export type Interview = {
   id: string;
   name: string;
   duration: number;
-  modality: string;
+  modality: InterviewType;
   date: Date | string | null;
   status: string;
   summary: string | null;
@@ -50,7 +55,7 @@ export type ApplicationSummary = {
   canScheduleInterview: boolean;
   disqualificationDescription?: string | null;
   desiredSalaryAmount?: string | null;
-  desiredSalaryCurrency?: string | null;
+  desiredSalaryCurrency?: SalaryCurrency | null;
   availability?: string | null;
   jobOpening: { id: string; name: string };
   interviews: Interview[];
@@ -162,7 +167,11 @@ export function ApplicantApplicationsCard({
   const jobOpening = app?.jobOpening;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
   const desiredSalary = app
-    ? [app.desiredSalaryCurrency, app.desiredSalaryAmount]
+    ? [
+        app.desiredSalaryCurrency &&
+          salaryCurrencyTranslations[app.desiredSalaryCurrency],
+        app.desiredSalaryAmount,
+      ]
         .filter(Boolean)
         .join(" ")
     : "";
@@ -393,11 +402,9 @@ export function ApplicantApplicationsCard({
                       {interview.name}
                     </p>
                     <p className="mt-0.5 text-xs text-text-tertiary">
-                      Entrevista{" "}
-                      {interview.modality === "VideoCall"
-                        ? "virtual"
-                        : "presencial"}{" "}
-                      de {interview.duration} minutos
+                      Entrevista:{" "}
+                      {interviewTypeTranslations[interview.modality]} ·{" "}
+                      {interview.duration} minutos
                     </p>
                   </TableCell>
 
