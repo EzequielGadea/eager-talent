@@ -15,7 +15,11 @@ type PipelineProps = {
   search?: string;
 };
 
-export async function Pipeline({ jobOpeningId, stages, search }: PipelineProps) {
+export async function Pipeline({
+  jobOpeningId,
+  stages,
+  search,
+}: PipelineProps) {
   const requestHeaders = await headers();
 
   const [canUpdateApplication, canCreateInterview, canDeleteInterview] =

@@ -103,7 +103,9 @@ async function PublicApplicationContent({
         <footer className="flex items-center gap-2 pt-1 pb-6 text-xs text-text-tertiary">
           <Lock className="size-3.5 shrink-0" />
           <p>
-            Compartido de forma segura via EagerTalent · La información visible fue seleccionada por el reclutador · Link válido hasta {formattedExpirationDate}.
+            Compartido de forma segura via EagerTalent · La información visible
+            fue seleccionada por el reclutador · Link válido hasta{" "}
+            {formattedExpirationDate}.
           </p>
         </footer>
       </div>

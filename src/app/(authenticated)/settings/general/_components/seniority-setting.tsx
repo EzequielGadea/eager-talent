@@ -195,9 +195,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
         <ol className="flex flex-col gap-2">
           {seniorities?.map((seniority, index) => {
             const deleteRestrictions = [
-              seniority._count.applicants > 0
-                ? "candidatos asignados"
-                : null,
+              seniority._count.applicants > 0 ? "candidatos asignados" : null,
               seniority._count.jobOpenings > 0 ? "vacantes asociadas" : null,
             ].filter(
               (restriction): restriction is string => restriction !== null,

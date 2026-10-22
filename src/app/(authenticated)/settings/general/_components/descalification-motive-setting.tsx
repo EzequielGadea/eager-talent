@@ -78,8 +78,7 @@ export default function DescalificationMotiveSetting() {
 
     const normalizedName = name.toLocaleLowerCase("es");
     const alreadyExists = motives?.some(
-      (motive) =>
-        motive.name.trim().toLocaleLowerCase("es") === normalizedName,
+      (motive) => motive.name.trim().toLocaleLowerCase("es") === normalizedName,
     );
 
     if (alreadyExists) {

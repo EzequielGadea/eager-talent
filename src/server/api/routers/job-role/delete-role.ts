@@ -31,7 +31,8 @@ export const deleteRole = protectedProcedure
     if (role._count.applicants > 0) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "No se puede eliminar el rol porque tiene candidatos asignados.",
+        message:
+          "No se puede eliminar el rol porque tiene candidatos asignados.",
       });
     }
 

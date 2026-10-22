@@ -175,7 +175,9 @@ export function DisqualifiedCard({
               </DialogTitle>
 
               <DialogDescription className="mt-1 text-sm text-text-secondary">
-                ¿Querés volver a calificar a {fullName}? La postulación regresará a la etapa «{stageName}» y se eliminará el motivo de descarte.
+                ¿Querés volver a calificar a {fullName}? La postulación
+                regresará a la etapa «{stageName}» y se eliminará el motivo de
+                descarte.
               </DialogDescription>
 
               {requalifyMutation.isError && (

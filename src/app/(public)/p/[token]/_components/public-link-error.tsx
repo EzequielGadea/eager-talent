@@ -18,9 +18,7 @@ export function PublicLinkError({ reason }: PublicLinkErrorProps) {
       </div>
 
       <h1 className="text-xl font-bold text-text-primary">
-        {isExpired
-          ? "El enlace compartido ha caducado"
-          : "Enlace no válido"}
+        {isExpired ? "El enlace compartido ha caducado" : "Enlace no válido"}
       </h1>
 
       <p className="mt-2 max-w-md text-sm text-text-secondary">

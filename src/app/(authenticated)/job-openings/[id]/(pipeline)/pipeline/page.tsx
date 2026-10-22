@@ -11,7 +11,10 @@ type PipelinePageProps = {
   searchParams: Promise<{ search?: string | string[] }>;
 };
 
-export default function PipelinePage({ params, searchParams }: PipelinePageProps) {
+export default function PipelinePage({
+  params,
+  searchParams,
+}: PipelinePageProps) {
   return (
     <Suspense fallback={<PipelineSkeleton />}>
       <PipelineContent params={params} searchParams={searchParams} />
@@ -27,5 +30,7 @@ async function PipelineContent({ params, searchParams }: PipelinePageProps) {
   const jobOpening = await api.jobOpening.fetchById({ id });
   const stages = jobOpening.stages as PipelineStage[];
 
-  return <Pipeline jobOpeningId={jobOpening.id} stages={stages} search={search} />;
+  return (
+    <Pipeline jobOpeningId={jobOpening.id} stages={stages} search={search} />
+  );
 }

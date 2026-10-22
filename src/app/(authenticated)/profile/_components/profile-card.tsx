@@ -34,8 +34,10 @@ type ProfileCardProps = {
 
 export function ProfileCard({ user }: ProfileCardProps) {
   const fullName = `${user.name} ${user.lastName}`;
+
   const initials =
     `${user.name.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+
   const role = user.role
     ? (ROLES[user.role] ?? {
         label: user.role,
@@ -46,7 +48,8 @@ export function ProfileCard({ user }: ProfileCardProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
       {/* Header: avatar + name + role + email */}
-      <div className="flex items-start gap-5 p-6">
+      <div className="flex items-center gap-5 px-6 pt-5 pb-4">
+        {" "}
         {user.image ? (
           <Image
             src={user.image}
@@ -63,28 +66,30 @@ export function ProfileCard({ user }: ProfileCardProps) {
             {initials}
           </div>
         )}
-
-        <div className="min-w-0 space-y-2">
+        <div className="min-w-0 space--2">
           <h2 className="truncate font-heading text-[21px] font-bold leading-tight text-text-primary">
             {fullName}
           </h2>
 
-          {role && (
-            <span
-              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${role.className}`}
-            >
-              {role.label}
-            </span>
-          )}
+          {/* Role tag and email on the same row */}
+          <div className="flex flex-wrap items-center gap-3">
+            {role && (
+              <span
+                className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${role.className}`}
+              >
+                {role.label}
+              </span>
+            )}
 
-          <p className="flex items-center gap-1.5 text-sm text-text-secondary">
-            <Mail size={14} className="shrink-0 text-text-tertiary" />
-            <span className="truncate">{user.email}</span>
-          </p>
+            <p className="flex min-w-0 items-center gap-1.5 text-sm text-text-secondary">
+              <Mail size={14} className="shrink-0 text-text-tertiary" />
+              <span className="truncate">{user.email}</span>
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Footer: profile fields */}
+      {/* Labeled data row */}
       <dl className="grid gap-x-8 gap-y-4 border-t border-border-default px-6 py-4 sm:grid-cols-4">
         <ProfileField label="Nombre" value={user.name} />
         <ProfileField label="Apellido" value={user.lastName} />
@@ -101,7 +106,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 function ProfileField({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 space-y-1">
-      <dt className="text-[11px] font-bold uppercase tracking-wider text-text-tertiary">
+      <dt className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary">
         {label}
       </dt>
       <dd className="truncate text-sm font-semibold text-text-primary">
