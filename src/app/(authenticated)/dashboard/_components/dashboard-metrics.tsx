@@ -5,7 +5,7 @@ export function DashboardMetrics() {
   return (
     <section
       aria-label="Indicadores principales"
-      className="grid grid-cols-1 gap-4 md:grid-cols-3"
+      className="grid grid-cols-1 gap-4 md:grid-cols-2"
     >
       <DashboardActiveJobOpening />
       <DashboardInterviews />

@@ -7,6 +7,7 @@ import { getInterviewByIdProcedure } from "./get-by-id";
 import { updateInterviewProcedure } from "./update-interview";
 import { checkInterviewCurrentStageProcedure } from "./check-current-stage";
 import { getInterviewAmount } from "./get-amount";
+import { getTodayInterview } from "./get-today-interview";
 
 export { getAssignedInterviews };
 
@@ -19,4 +20,5 @@ export const interviewsRouter = createTRPCRouter({
   delete: deleteInterviewProcedure,
   checkCurrentStage: checkInterviewCurrentStageProcedure,
   getInterviewAmount,
+  today: getTodayInterview,
 });
