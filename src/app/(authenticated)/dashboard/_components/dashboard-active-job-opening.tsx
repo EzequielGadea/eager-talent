@@ -1,12 +1,18 @@
 "use client";
 
+import { useEffect } from "react";
 import { ArrowUpRight, X } from "lucide-react";
 import { VacanciesIcon } from "../../_components/app-icons";
+import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 
 export function DashboardActiveJobOpening() {
-  const { data: jobOpenings, isLoading } =
+  const { data: jobOpenings, isLoading, isError, error } =
     api.jobOpening.getJobOpeningsAmount.useQuery({});
+
+  useEffect(() => {
+    if (isError) toast.add({ title: error.message, type: "error" });
+  }, [error, isError]);
 
   return (
     <article className="flex min-h-32 items-start gap-4 rounded-lg border border-border-default bg-white p-5 shadow-sm">
@@ -30,6 +36,10 @@ export function DashboardActiveJobOpening() {
             />
             <div className="mt-2 h-3 w-32 rounded-full bg-surface-sunken" />
           </>
+        ) : isError ? (
+          <p role="alert" className="mt-2 text-sm text-destructive">
+            No se pudieron cargar las vacantes.
+          </p>
         ) : (
           <>
             <p className="mt-1 text-3xl leading-none font-semibold text-text-primary">
