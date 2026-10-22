@@ -17,7 +17,7 @@ export const saveInterviewNoteProcedure = protectedProcedure
   )
   .mutation(async ({ input, ctx }) => {
     const interview = await ctx.db.interview.findUnique({
-      where: { id: input.interviewId },
+      where: { id: input.interviewId, deletedAt: null },
       select: {
         id: true,
         exploratoryName: true,

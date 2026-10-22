@@ -34,15 +34,15 @@ export default function RoleSetting() {
   } | null>(null);
 
   const { data: roles, isLoading: isRolesLoading } =
-    api.role.getAllRoles.useQuery({});
+    api.jobRole.getAllRoles.useQuery({});
 
   const utils = api.useUtils();
 
-  const createRole = api.role.createRole.useMutation({
+  const createRole = api.jobRole.createRole.useMutation({
     onSuccess: async () => {
       setRoleName("");
       setIsAddingRole(false);
-      await utils.role.getAllRoles.invalidate();
+      await utils.jobRole.getAllRoles.invalidate();
       toast.add({ title: "Rol creado con éxito", type: "success" });
     },
     onError: (error) => {
@@ -50,10 +50,10 @@ export default function RoleSetting() {
     },
   });
 
-  const deleteRole = api.role.deleteRole.useMutation({
+  const deleteRole = api.jobRole.deleteRole.useMutation({
     onSuccess: async () => {
       setRoleToDelete(null);
-      await utils.role.getAllRoles.invalidate();
+      await utils.jobRole.getAllRoles.invalidate();
       toast.add({ title: "Rol eliminado con éxito", type: "success" });
     },
     onError: (error) => {
