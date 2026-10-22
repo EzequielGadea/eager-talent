@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { format } from "date-fns";
 import { Mail } from "lucide-react";
+import getAvatar from "~/lib/avatar";
 
 const ROLES: Record<string, { label: string; className: string }> = {
   owner: {
@@ -33,9 +34,9 @@ type ProfileCardProps = {
 };
 
 export function ProfileCard({ user }: ProfileCardProps) {
-  const fullName = `${user.name} ${user.lastName}`;
-  const initials =
-    `${user.name.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+  const fullName = `${user.name} ${user.lastName}`.trim();
+  const avatar = getAvatar(user.name, user.lastName);
+
   const role = user.role
     ? (ROLES[user.role] ?? {
         label: user.role,
@@ -46,7 +47,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
       {/* Header: avatar + name + role + email */}
-      <div className="flex items-start gap-5 p-6">
+      <div className="flex items-center gap-5 px-6 pt-5 pb-4">
         {user.image ? (
           <Image
             src={user.image}
@@ -57,14 +58,14 @@ export function ProfileCard({ user }: ProfileCardProps) {
           />
         ) : (
           <div
-            aria-hidden
-            className="flex size-18 shrink-0 items-center justify-center rounded-xl bg-tag-green-bg font-heading text-2xl font-semibold text-tag-green-fg"
+            aria-hidden="true"
+            className={`flex size-18 shrink-0 items-center justify-center rounded-xl font-heading text-2xl font-semibold ${avatar.colorClass}`}
           >
-            {initials}
+            {avatar.initials}
           </div>
         )}
 
-        <div className="min-w-0 space-y-2">
+        <div className="min-w-0 flex-1 space-y-2">
           <h2 className="truncate font-heading text-[21px] font-bold leading-tight text-text-primary">
             {fullName}
           </h2>
@@ -77,8 +78,12 @@ export function ProfileCard({ user }: ProfileCardProps) {
             </span>
           )}
 
-          <p className="flex items-center gap-1.5 text-sm text-text-secondary">
-            <Mail size={14} className="shrink-0 text-text-tertiary" />
+          <p className="m-0 flex min-w-0 items-center gap-1.5 text-sm text-text-secondary">
+            <Mail
+              size={14}
+              className="shrink-0 text-text-tertiary"
+              aria-hidden="true"
+            />
             <span className="truncate">{user.email}</span>
           </p>
         </div>
