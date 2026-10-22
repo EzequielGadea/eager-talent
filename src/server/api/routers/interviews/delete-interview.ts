@@ -27,7 +27,7 @@ export const deleteInterviewProcedure = protectedProcedure
     }
 
     const interview = await ctx.db.interview.findUnique({
-      where: { id: input.interviewId },
+      where: { id: input.interviewId, deletedAt: null },
       select: {
         id: true,
         exploratoryName: true,
@@ -53,9 +53,16 @@ export const deleteInterviewProcedure = protectedProcedure
       interview.application?.jobOpening.stages,
     );
 
+    const deletedAt = new Date();
+
     await ctx.db.$transaction([
-      ctx.db.interview.delete({
+      ctx.db.interview.update({
         where: { id: interview.id },
+        data: { deletedAt },
+      }),
+      ctx.db.interviewNote.updateMany({
+        where: { interviewId: interview.id, deletedAt: null },
+        data: { deletedAt },
       }),
       ctx.db.activity.create({
         data: {

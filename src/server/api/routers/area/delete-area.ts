@@ -19,8 +19,8 @@ export const deleteArea = protectedProcedure
       throw new TRPCError({ code: "FORBIDDEN" });
     }
 
-    const area = await ctx.db.area.findFirst({
-      where: { id: input.id, deletedAt: null },
+    const area = await ctx.db.area.findUnique({
+      where: { id: input.id },
       select: {
         _count: { select: { applicants: true, jobOpenings: true } },
       },
@@ -44,8 +44,7 @@ export const deleteArea = protectedProcedure
       });
     }
 
-    await ctx.db.area.update({
+    await ctx.db.area.delete({
       where: { id: input.id },
-      data: { deletedAt: new Date() },
     });
   });

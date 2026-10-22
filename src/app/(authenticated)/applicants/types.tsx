@@ -51,7 +51,7 @@ export type SharedApplicantsPromise = ReturnType<
 >;
 
 export interface FiltersProps {
-  roleData: Awaited<ReturnType<typeof api.role.getAllRoles>>;
+  roleData: Awaited<ReturnType<typeof api.jobRole.getAllRoles>>;
   seniorityData: Awaited<ReturnType<typeof api.seniority.getAllSeniorities>>;
   areaData: Awaited<ReturnType<typeof api.area.getAllAreas>>;
   jobOpeningData: Awaited<ReturnType<typeof api.jobOpening.getAllJobOpenings>>;

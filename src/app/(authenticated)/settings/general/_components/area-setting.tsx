@@ -58,6 +58,7 @@ export default function AreaSetting() {
   const deleteArea = api.area.deleteArea.useMutation({
     onSuccess: async () => {
       setAreaToDelete(null);
+      toast.add({ title: "Área eliminada con éxito", type: "success" });
       await utils.area.getAllAreas.invalidate();
     },
     onError: (error) => {

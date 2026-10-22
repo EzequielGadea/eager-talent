@@ -36,7 +36,7 @@ export default function ProfessionalProfile() {
     api.area.getAllAreas.useQuery({});
 
   const { data: roles, isLoading: isLoadingRole } =
-    api.role.getAllRoles.useQuery({});
+    api.jobRole.getAllRoles.useQuery({});
 
   const { data: seniorities, isLoading: isLoadingSeniority } =
     api.seniority.getAllSeniorities.useQuery({});

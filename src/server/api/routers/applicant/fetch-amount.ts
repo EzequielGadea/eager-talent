@@ -100,6 +100,7 @@ export const fetchAmount = protectedProcedure
     };
 
     const where: Prisma.ApplicantWhereInput = {
+      deletedAt: null,
       AND: [accessWhere, filtersWhere],
     };
 

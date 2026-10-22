@@ -91,6 +91,7 @@ export const fetchAll = protectedProcedure
     };
 
     const where: Prisma.ApplicantWhereInput = {
+      deletedAt: null,
       AND: [accessWhere, filtersWhere],
     };
 

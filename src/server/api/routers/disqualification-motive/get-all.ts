@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const getAllDescalificationMotive = protectedProcedure
+export const getAllDisqualificationMotive = protectedProcedure
   .input(z.object({}))
   .query(async ({ ctx }) => {
     const motives = await ctx.db.disqualificationMotive.findMany({
