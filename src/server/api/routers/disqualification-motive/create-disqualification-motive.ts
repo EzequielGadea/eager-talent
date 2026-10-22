@@ -28,7 +28,6 @@ export const createDisqualificationMotive = protectedProcedure
         message: "No tienes permisos para crear motivos de descalificación.",
       });
     }
-
     const existingMotive = await ctx.db.disqualificationMotive.findFirst({
       where: { name: { equals: input.name, mode: "insensitive" } },
       select: { id: true },
