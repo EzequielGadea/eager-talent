@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
+import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 
 type JobOpeningStatusDropdownProps = {
@@ -82,7 +83,7 @@ export function JobOpeningStatusDropdown({
         className={`rounded-full ${statusStyle.badgeClassName}`}
       >
         <span className={`size-1.5 rounded-full ${statusStyle.dotClassName}`} />
-        {status}
+        {jobOpeningStatusTranslations[status]}
       </Badge>
     );
   }
@@ -93,7 +94,7 @@ export function JobOpeningStatusDropdown({
         type="button"
         disabled={updateStatusMutation.isPending}
         className="rounded-full"
-        aria-label={`Change job opening status, current status: ${status}`}
+        aria-label={`Cambiar el estado de la vacante, estado actual: ${jobOpeningStatusTranslations[status]}`}
       >
         <Badge
           variant="secondary"
@@ -102,7 +103,7 @@ export function JobOpeningStatusDropdown({
           <span
             className={`size-1.5 rounded-full ${statusStyle.dotClassName}`}
           />
-          {status}
+          {jobOpeningStatusTranslations[status]}
           <ChevronDown className="size-3.5" />
         </Badge>
       </DropdownMenuTrigger>
@@ -113,7 +114,9 @@ export function JobOpeningStatusDropdown({
             key={jobOpeningStatus}
             onClick={() => handleStatusChange(jobOpeningStatus)}
           >
-            <span className="flex-1">{jobOpeningStatus}</span>
+            <span className="flex-1">
+              {jobOpeningStatusTranslations[jobOpeningStatus]}
+            </span>
 
             {jobOpeningStatus === status && <Check className="size-4" />}
           </DropdownMenuItem>

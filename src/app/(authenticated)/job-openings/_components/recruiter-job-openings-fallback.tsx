@@ -18,7 +18,9 @@ export function RecruiterJobOpeningsFallback() {
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Vacantes</h1>
+          <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
+            Vacantes
+          </h1>
 
           <div className="mt-2 flex items-center gap-2">
             <Skeleton className="h-4 w-64" />
@@ -63,14 +65,26 @@ export function RecruiterJobOpeningsFallback() {
         <div className="w-full overflow-x-auto">
           <Table className="min-w-[900px]">
             <TableHeader>
-              <TableRow className="border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-                <TableHead className="px-4 py-3">Vacante</TableHead>
-                <TableHead className="px-4 py-3">Área</TableHead>
-                <TableHead className="px-4 py-3">Hiring Managers</TableHead>
-                <TableHead className="px-4 py-3">Estado</TableHead>
-                <TableHead className="px-4 py-3">Candidatos</TableHead>
-                <TableHead className="px-4 py-3">Abierta hace</TableHead>
-                <TableHead className="px-4 py-3" />
+              <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Vacante
+                </TableHead>
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Área
+                </TableHead>
+                <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Hiring Managers
+                </TableHead>
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Estado
+                </TableHead>
+                <TableHead className="h-9.75 w-[9.5rem] min-w-[9.5rem] whitespace-nowrap px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Candidatos
+                </TableHead>
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  Abierta hace
+                </TableHead>
+                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />
               </TableRow>
             </TableHeader>
 

@@ -1,18 +1,15 @@
 import { CalendarCheck } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
+import type { InterviewType } from "~/generated/prisma/enums";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 
 export type PublicInterviewItem = {
   id: string;
   name: string;
   duration?: number | null;
-  modality?: string | null;
+  modality?: InterviewType | null;
   date?: string | null;
   interviewers: string[];
   note?: string | null;
@@ -22,7 +19,9 @@ type PublicInterviewsCardProps = {
   interviews: PublicInterviewItem[];
 };
 
-export function PublicInterviewsCard({ interviews }: PublicInterviewsCardProps) {
+export function PublicInterviewsCard({
+  interviews,
+}: PublicInterviewsCardProps) {
   if (interviews.length === 0) {
     return (
       <Card className="min-w-0">
@@ -48,9 +47,7 @@ export function PublicInterviewsCard({ interviews }: PublicInterviewsCardProps) 
         <CardTitle className="text-base font-bold text-text-primary">
           Proceso de entrevistas
         </CardTitle>
-        <span className="text-xs text-text-tertiary">
-          — notas incluidas
-        </span>
+        <span className="text-xs text-text-tertiary">— notas incluidas</span>
       </CardHeader>
 
       <Separator />
@@ -70,7 +67,9 @@ export function PublicInterviewsCard({ interviews }: PublicInterviewsCardProps) 
                   <p className="text-xs text-text-secondary">
                     {[
                       interview.duration ? `${interview.duration} min` : null,
-                      interview.modality,
+                      interview.modality
+                        ? interviewTypeTranslations[interview.modality]
+                        : null,
                     ]
                       .filter(Boolean)
                       .join(" · ")}
