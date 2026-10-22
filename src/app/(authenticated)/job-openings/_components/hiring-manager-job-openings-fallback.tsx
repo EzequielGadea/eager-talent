@@ -48,8 +48,9 @@ export function HiringManagerJobOpeningsFallback() {
                 <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
                   Ofertados
                 </TableHead>
+                
                 <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
-                  Abierta hace
+                  Abierta desde
                 </TableHead>
                 <TableHead className="h-9.75 w-12 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />
               </TableRow>

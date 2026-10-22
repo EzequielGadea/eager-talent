@@ -186,7 +186,7 @@ export function JobOpeningFilters({
             variant="outline"
             size="sm"
             aria-label="Filtrar vacantes"
-            className="h-8 gap-2 px-4 text-[13px] font-normal text-text-secondary has-data-[icon=inline-start]:pl-4"
+            className="h-8 gap-2 px-4 text-[13px] font-normal bg-surface-card text-text-secondary has-data-[icon=inline-start]:pl-4"
           />
         }
       >
