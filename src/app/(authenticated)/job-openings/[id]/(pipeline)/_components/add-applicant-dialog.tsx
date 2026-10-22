@@ -18,11 +18,15 @@ import { AddApplicantSelection } from "./add-applicant-selection";
 
 type AddApplicantDialogProps = {
   jobOpeningId: string;
+  disabled?: boolean;
 };
 
 type Step = "select" | "application";
 
-export function AddApplicantDialog({ jobOpeningId }: AddApplicantDialogProps) {
+export function AddApplicantDialog({
+  jobOpeningId,
+  disabled = false,
+}: AddApplicantDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("select");
   const [selectedApplicant, setSelectedApplicant] =
@@ -50,14 +54,23 @@ export function AddApplicantDialog({ jobOpeningId }: AddApplicantDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <Button
-        type="button"
-        className="h-10 gap-2 rounded-full px-5"
-        onClick={() => setOpen(true)}
+      <span
+        title={
+          disabled
+            ? "Solo se puede postular candidatos a vacantes abiertas"
+            : undefined
+        }
       >
-        <Plus className="size-4" />
-        Candidato
-      </Button>
+        <Button
+          type="button"
+          className="h-10 gap-2 rounded-full px-5"
+          disabled={disabled}
+          onClick={() => setOpen(true)}
+        >
+          <Plus className="size-4" />
+          Candidato
+        </Button>
+      </span>
 
       <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
         {step === "select" ? (
