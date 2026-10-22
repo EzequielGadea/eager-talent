@@ -1,4 +1,5 @@
 import { protectedProcedure } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 // Always scoped to the session user; no userId input is accepted.
 export const getCurrent = protectedProcedure.query(async ({ ctx }) => {
@@ -11,7 +12,9 @@ export const getCurrent = protectedProcedure.query(async ({ ctx }) => {
     select: {
       name: true,
       lastName: true,
+      email: true,
       image: true,
+      createdAt: true,
       members: organizationId
         ? {
             where: { organizationId },
@@ -22,10 +25,19 @@ export const getCurrent = protectedProcedure.query(async ({ ctx }) => {
     },
   });
 
+  if (!user) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "No se encontró el usuario.",
+    });
+  }
+
   return {
     name: user.name,
     lastName: user.lastName,
+    email: user.email,
     image: user.image,
+    createdAt: user.createdAt,
     role: user.members?.[0]?.role ?? null,
   };
 });
