@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { TRPCError } from "@trpc/server";
 
-import { SalaryCurrency } from "~/generated/prisma/enums";
+import { JobOpeningStatus, SalaryCurrency } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -74,6 +74,7 @@ export const createApplication = protectedProcedure
           id: true,
           name: true,
           stages: true,
+          status: true,
         },
       }),
     ]);
@@ -89,6 +90,13 @@ export const createApplication = protectedProcedure
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Job opening not found",
+      });
+    }
+
+    if (jobOpening.status !== JobOpeningStatus.Open) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "Solo se puede postular candidatos a vacantes abiertas.",
       });
     }
 
