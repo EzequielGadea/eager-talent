@@ -1,23 +1,16 @@
 "use client";
 
-import {
-  Calendar,
-  DateField,
-  DatePicker as HeroDatePicker,
-} from "@heroui/react";
-import { CalendarDate, parseDate } from "@internationalized/date";
-import {
-  type ComponentProps,
-  Suspense,
-  useContext,
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
-import { DateFieldStateContext, I18nProvider } from "react-aria-components";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 
+import { Calendar } from "~/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
 
 type DatePickerProps = {
@@ -38,173 +31,99 @@ type DatePickerProps = {
   "aria-labelledby"?: string;
 };
 
-function toCalendarDate(value?: string | null) {
-  if (!value) return null;
+const MIN_YEAR = 1900;
 
-  try {
-    return parseDate(value);
-  } catch {
-    return null;
-  }
+function isoToDate(iso?: string | null) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? "");
+  if (!match) return undefined;
+
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+}
+
+function isoToText(iso?: string | null) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? "");
+
+  return match ? `${match[3]}/${match[2]}/${match[1]}` : "";
+}
+
+// Returns null when the text is not a real calendar date (e.g. 31/02/2025).
+function textToIso(text: string) {
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
+  if (!match) return null;
+
+  const [, day, month, year] = match;
+  const date = new Date(Number(year), Number(month) - 1, Number(day));
+  const isReal =
+    date.getFullYear() === Number(year) &&
+    date.getMonth() === Number(month) - 1 &&
+    date.getDate() === Number(day);
+
+  return isReal && Number(year) >= MIN_YEAR ? `${year}-${month}-${day}` : null;
+}
+
+function maskDigits(digits: string) {
+  return [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4)]
+    .filter(Boolean)
+    .join("/");
 }
 
 // Field height and radius can be overridden per usage through the
 // --date-picker-height and --date-picker-radius CSS variables.
-const fieldSize =
-  "h-[var(--date-picker-height,2.5rem)] rounded-[var(--date-picker-radius,var(--radius-lg))]";
+const fieldClassName = cn(
+  "flex h-[var(--date-picker-height,2.5rem)] w-full items-center rounded-[var(--date-picker-radius,var(--radius-lg))] border border-border-default bg-surface-card text-sm text-text-primary transition-[border-color,box-shadow] duration-150",
+  "hover:not-focus-within:border-border-strong",
+  "focus-within:border-border-focus focus-within:ring-4 focus-within:ring-border-focus/20",
+  "data-[invalid=true]:border-danger data-[invalid=true]:focus-within:ring-danger/20",
+  "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
+);
 
-const styles = {
-  root: "inline-flex w-full flex-col gap-1",
-  group: cn(
-    "inline-flex w-full items-center overflow-hidden border border-border-default bg-surface-card text-sm text-text-primary outline-none transition-[border-color,box-shadow] duration-150",
-    fieldSize,
-    "not-data-[invalid=true]:data-[hovered=true]:not-focus-within:border-border-strong",
-    "focus-within:border-border-focus focus-within:ring-4 focus-within:ring-border-focus/20",
-    "data-[invalid=true]:border-danger data-[invalid=true]:focus-within:ring-danger/20",
-    "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
-  ),
-  input: "flex flex-1 cursor-text items-center gap-px px-3 outline-none",
-  segment: cn(
-    "inline-block rounded-sm px-0.5 text-end text-nowrap outline-none",
-    "data-[type=literal]:px-0 data-[type=literal]:text-text-tertiary",
-    "data-[placeholder=true]:text-text-tertiary",
-    "focus:bg-tag-green-bg focus:text-tag-green-fg focus:data-[placeholder=true]:text-tag-green-fg",
-    "data-[invalid=true]:text-danger data-[invalid=true]:focus:bg-danger-bg data-[invalid=true]:focus:text-danger",
-  ),
-  suffix: "me-2 flex shrink-0 items-center text-text-tertiary",
-  trigger: cn(
-    "inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-text-tertiary outline-none transition-colors",
-    "data-[hovered=true]:bg-tag-green-bg data-[hovered=true]:text-tag-green-fg",
-    "data-[pressed=true]:bg-tag-green-bg data-[pressed=true]:text-tag-green-fg",
-    "aria-expanded:bg-tag-green-bg aria-expanded:text-tag-green-fg",
-    "data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-border-focus",
-  ),
-  triggerIndicator: "inline-flex size-4 items-center justify-center",
-  popover: cn(
-    "w-fit origin-(--trigger-anchor-point) overflow-y-auto overscroll-contain rounded-xl border border-border-default bg-popover p-3 text-popover-foreground shadow-lg outline-none",
-    "data-[entering=true]:animate-in data-[entering=true]:duration-150 data-[entering=true]:fade-in-0 data-[entering=true]:zoom-in-95",
-    "data-[exiting=true]:pointer-events-none data-[exiting=true]:animate-out data-[exiting=true]:duration-100 data-[exiting=true]:fade-out data-[exiting=true]:zoom-out-95",
-  ),
-  calendar: "group/calendar relative w-63 max-w-63",
-  header: "flex items-center justify-between gap-1 px-0.5 pb-3",
-  yearTrigger: cn(
-    "group/year flex flex-1 cursor-pointer items-center justify-start gap-1 rounded-md outline-none",
-    "focus-visible:ring-2 focus-visible:ring-border-focus",
-  ),
-  yearTriggerHeading: cn(
-    "text-sm font-semibold text-text-primary transition-colors",
-    "group-data-[open=true]/year:text-accent-green-strong",
-  ),
-  yearTriggerIndicator: cn(
-    "text-xs text-accent-green-strong transition-transform",
-    "group-data-[open=true]/year:rotate-90",
-  ),
-  navButton: cn(
-    "flex size-7 cursor-pointer items-center justify-center rounded-md text-text-secondary outline-none transition-[background-color,color,opacity] [&_svg]:size-4",
-    "data-[hovered=true]:bg-tag-green-bg data-[hovered=true]:text-tag-green-fg",
-    "data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-border-focus",
-    "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-40",
-    "group-has-[[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:pointer-events-none group-has-[[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:opacity-0",
-  ),
-  grid: cn(
-    "grid w-full grid-cols-7 transition-[opacity,visibility] duration-150",
-    "group-has-[[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:pointer-events-none group-has-[[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:invisible group-has-[[data-slot=calendar-year-picker-grid][data-open=true]]/calendar:opacity-0",
-  ),
-  gridSection: "contents [&>tr]:contents [&>tr:first-child>td]:mt-1",
-  headerCell:
-    "flex items-center justify-center pb-2 text-xs font-medium text-text-tertiary",
-  cell: cn(
-    "relative flex aspect-square size-full cursor-pointer items-center justify-center rounded-lg text-center text-sm font-medium text-text-primary outline-none transition-colors",
-    "not-data-[selected=true]:data-[hovered=true]:bg-tag-green-bg not-data-[selected=true]:data-[hovered=true]:text-tag-green-fg",
-    "data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-border-focus",
-    "data-[today=true]:font-semibold not-data-[selected=true]:data-[today=true]:bg-surface-sunken not-data-[selected=true]:data-[today=true]:text-accent-green-strong",
-    "data-[selected=true]:bg-accent-green data-[selected=true]:font-semibold data-[selected=true]:text-white data-[selected=true]:data-[hovered=true]:bg-accent-green-strong",
-    "data-[outside-month=true]:text-text-tertiary data-[outside-month=true]:opacity-50",
-    "data-[unavailable=true]:pointer-events-none data-[unavailable=true]:opacity-40",
-    "not-data-[outside-month=true]:data-[disabled=true]:pointer-events-none not-data-[outside-month=true]:data-[disabled=true]:line-through not-data-[outside-month=true]:data-[disabled=true]:opacity-40",
-  ),
-  yearGrid: cn(
-    "pointer-events-none absolute inset-x-0 grid grid-cols-3 content-start gap-1 overflow-y-auto p-1 opacity-0",
-    "data-[open=true]:pointer-events-auto data-[open=true]:opacity-100 data-[open=true]:transition-opacity data-[open=true]:delay-50 data-[open=true]:duration-200",
-  ),
-  yearCell: cn(
-    "relative inline-flex h-8 cursor-pointer items-center justify-center rounded-lg px-2.5 text-sm font-medium text-text-primary outline-none transition-colors select-none",
-    "not-data-[selected=true]:not-aria-selected:data-[hovered=true]:bg-tag-green-bg not-data-[selected=true]:not-aria-selected:data-[hovered=true]:text-tag-green-fg",
-    "data-[selected=true]:bg-accent-green data-[selected=true]:text-white aria-selected:bg-accent-green aria-selected:text-white",
-    "data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-border-focus",
-  ),
-};
-
-// React Aria reads the current date on render, which Cache Components
-// disallows during prerender, so the field streams in behind a Suspense boundary.
-function DatePickerFallback({ className }: { className?: string }) {
-  return (
-    <div aria-hidden="true" className={cn("w-full", className)}>
-      <div
-        className={cn(
-          "w-full border border-border-default bg-surface-card",
-          fieldSize,
-        )}
-      />
-    </div>
-  );
-}
-
-const SEGMENT_DIGITS = { day: 2, month: 2, year: 4 } as const;
-
-// React Aria only commits a date once every segment is filled, so clearing a
-// segment leaves the previous date in its value. The segments are the source
-// of truth instead: the date is "" unless all three are filled and form a real date.
-function DateSegment({
-  segment,
-  hasMounted,
-  onDateChange,
+// Rendered only while the popover is open: reading the current date during
+// prerender is not allowed with Cache Components.
+function DatePickerCalendar({
+  selected,
+  minDate,
+  maxDate,
+  onSelect,
 }: {
-  segment: ComponentProps<typeof DateField.Segment>["segment"];
-  hasMounted: boolean;
-  onDateChange: (value: string) => void;
+  selected?: Date;
+  minDate?: Date;
+  maxDate?: Date;
+  onSelect: (date: Date | undefined) => void;
 }) {
-  const state = useContext(DateFieldStateContext);
-  const notifyDateChange = useEffectEvent(onDateChange);
-  const [day, month, year] = (["day", "month", "year"] as const).map((type) =>
-    state?.segments.find((item) => item.type === type),
-  );
-
-  let isoDate = "";
-
-  if (
-    day &&
-    month &&
-    year &&
-    ![day, month, year].some((s) => s.isPlaceholder)
-  ) {
-    const date = new CalendarDate(year.value!, month.value!, day.value!);
-
-    if (date.day === day.value && date.month === month.value) {
-      isoDate = date.toString();
-    }
-  }
-
-  const isReporter = segment.type === "year";
-
-  useEffect(() => {
-    if (isReporter) notifyDateChange(isoDate);
-  }, [isReporter, isoDate]);
-
-  const digits =
-    hasMounted && !segment.isPlaceholder && segment.type in SEGMENT_DIGITS
-      ? SEGMENT_DIGITS[segment.type as keyof typeof SEGMENT_DIGITS]
-      : 0;
+  const currentYear = new Date().getFullYear();
+  const defaultStart = new Date(currentYear - 5, 0);
+  const defaultEnd = new Date(currentYear + 20, 11);
+  const startMonth =
+    minDate ?? (selected && selected < defaultStart ? selected : defaultStart);
+  const endMonth =
+    maxDate ?? (selected && selected > defaultEnd ? selected : defaultEnd);
 
   return (
-    <DateField.Segment
-      segment={{ ...segment, text: segment.text.padStart(digits, "0") }}
-      className={styles.segment}
+    <Calendar
+      mode="single"
+      locale={es}
+      formatters={{
+        formatMonthDropdown: (month) => {
+          const label = format(month, "LLL", { locale: es });
+          return `${label.charAt(0).toUpperCase()}${label.slice(1)}.`;
+        },
+      }}
+      weekStartsOn={1}
+      captionLayout="dropdown"
+      startMonth={startMonth}
+      endMonth={endMonth}
+      defaultMonth={selected ?? minDate}
+      selected={selected}
+      onSelect={onSelect}
+      disabled={[
+        ...(minDate ? [{ before: minDate }] : []),
+        ...(maxDate ? [{ after: maxDate }] : []),
+      ]}
     />
   );
 }
 
-function DatePicker({
+export function DatePicker({
   value,
   onChange,
   onBlur,
@@ -215,127 +134,92 @@ function DatePicker({
   isInvalid,
   isDisabled,
   className,
-  "aria-label": ariaLabel = "Fecha",
+  "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
 }: DatePickerProps) {
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const [syncedDate, setSyncedDate] = useState(value ?? "");
-  const [resetKey, setResetKey] = useState(0);
-  const hasMounted = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
+  const [text, setText] = useState(() => isoToText(value));
+  const [open, setOpen] = useState(false);
+  const [lastValue, setLastValue] = useState(value);
 
-  // The field keeps its own (possibly partial) text, so it is only remounted
-  // when the form changes the value from outside, e.g. a reset.
-  if ((value ?? "") !== syncedDate) {
-    setSyncedDate(value ?? "");
-    setResetKey((key) => key + 1);
+  // Follow external value changes (form reset, programmatic updates) unless
+  // they are just the echo of what the user is currently typing.
+  if (value !== lastValue) {
+    setLastValue(value);
+    if ((value ?? "") !== (textToIso(text) ?? "")) setText(isoToText(value));
   }
 
-  const handleDateChange = (nextDate: string) => {
-    if (nextDate === syncedDate) return;
+  const iso = textToIso(text);
+  const isOutOfRange =
+    !!iso && ((!!minValue && iso < minValue) || (!!maxValue && iso > maxValue));
+  const invalid =
+    !!isInvalid || isOutOfRange || (text.length === 10 && iso === null);
 
-    setSyncedDate(nextDate);
-    onChange?.(nextDate);
-  };
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const previousDigits = text.replace(/\D/g, "");
+    let digits = event.target.value.replace(/\D/g, "").slice(0, 8);
+
+    // Deleting a "/" leaves the digits untouched, so remove the previous digit.
+    const isDeleting = (event.nativeEvent as InputEvent).inputType?.startsWith(
+      "delete",
+    );
+    if (isDeleting && digits.length === previousDigits.length) {
+      digits = digits.slice(0, -1);
+    }
+
+    const nextText = maskDigits(digits);
+    setText(nextText);
+    onChange?.(textToIso(nextText) ?? "");
+  }
+
+  function handleSelect(date: Date | undefined) {
+    if (!date) return;
+
+    const nextIso = format(date, "yyyy-MM-dd");
+    setText(isoToText(nextIso));
+    onChange?.(nextIso);
+    setOpen(false);
+  }
 
   return (
-    <Suspense fallback={<DatePickerFallback className={className} />}>
-      <I18nProvider locale="es-UY">
-        <HeroDatePicker
-          key={resetKey}
-          id={id}
-          name={name}
-          aria-label={ariaLabel}
-          aria-labelledby={ariaLabelledBy}
-          defaultValue={toCalendarDate(value)}
-          onBlur={onBlur}
-          minValue={toCalendarDate(minValue)}
-          maxValue={toCalendarDate(maxValue)}
-          isInvalid={isInvalid}
-          isDisabled={isDisabled}
-          shouldForceLeadingZeros
-          data-slot="date-picker"
-          className={cn(styles.root, className)}
+    <div
+      data-invalid={invalid || undefined}
+      data-disabled={isDisabled || undefined}
+      className={cn(fieldClassName, className)}
+    >
+      <input
+        id={id}
+        name={name}
+        value={text}
+        onChange={handleInputChange}
+        onBlur={onBlur}
+        disabled={isDisabled}
+        inputMode="numeric"
+        autoComplete="off"
+        placeholder="DD/MM/AAAA"
+        maxLength={10}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-invalid={invalid || undefined}
+        className="h-full min-w-0 flex-1 bg-transparent px-3 outline-none placeholder:text-text-tertiary"
+      />
+
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger
+          disabled={isDisabled}
+          aria-label="Abrir calendario"
+          className="me-2 inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-text-tertiary outline-none transition-colors hover:bg-tag-green-bg hover:text-tag-green-fg focus-visible:ring-2 focus-visible:ring-border-focus aria-expanded:bg-tag-green-bg aria-expanded:text-tag-green-fg"
         >
-          <I18nProvider locale="en-GB">
-            <DateField.Group fullWidth className={styles.group}>
-              <DateField.Input className={styles.input}>
-                {(segment) => (
-                  <DateSegment
-                    segment={segment}
-                    hasMounted={hasMounted}
-                    onDateChange={handleDateChange}
-                  />
-                )}
-              </DateField.Input>
-              <DateField.Suffix className={styles.suffix}>
-                <HeroDatePicker.Trigger
-                  ref={triggerRef}
-                  className={styles.trigger}
-                >
-                  <HeroDatePicker.TriggerIndicator
-                    className={styles.triggerIndicator}
-                  />
-                </HeroDatePicker.Trigger>
-              </DateField.Suffix>
-            </DateField.Group>
-          </I18nProvider>
-          <HeroDatePicker.Popover
-            triggerRef={triggerRef}
-            placement="bottom end"
-            offset={8}
-            className={styles.popover}
-          >
-            <Calendar aria-label={ariaLabel} className={styles.calendar}>
-              <Calendar.Header className={styles.header}>
-                <Calendar.YearPickerTrigger className={styles.yearTrigger}>
-                  <Calendar.YearPickerTriggerHeading
-                    className={styles.yearTriggerHeading}
-                  />
-                  <Calendar.YearPickerTriggerIndicator
-                    className={styles.yearTriggerIndicator}
-                  />
-                </Calendar.YearPickerTrigger>
-                <Calendar.NavButton
-                  slot="previous"
-                  className={styles.navButton}
-                />
-                <Calendar.NavButton slot="next" className={styles.navButton} />
-              </Calendar.Header>
-              <Calendar.Grid className={styles.grid}>
-                <Calendar.GridHeader className={styles.gridSection}>
-                  {(day) => (
-                    <Calendar.HeaderCell className={styles.headerCell}>
-                      {day}
-                    </Calendar.HeaderCell>
-                  )}
-                </Calendar.GridHeader>
-                <Calendar.GridBody className={styles.gridSection}>
-                  {(date) => (
-                    <Calendar.Cell date={date} className={styles.cell} />
-                  )}
-                </Calendar.GridBody>
-              </Calendar.Grid>
-              <Calendar.YearPickerGrid className={styles.yearGrid}>
-                <Calendar.YearPickerGridBody>
-                  {({ year }) => (
-                    <Calendar.YearPickerCell
-                      year={year}
-                      className={styles.yearCell}
-                    />
-                  )}
-                </Calendar.YearPickerGridBody>
-              </Calendar.YearPickerGrid>
-            </Calendar>
-          </HeroDatePicker.Popover>
-        </HeroDatePicker>
-      </I18nProvider>
-    </Suspense>
+          <CalendarIcon className="size-4" />
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-fit p-3">
+          <DatePickerCalendar
+            selected={isoToDate(iso ?? value)}
+            minDate={isoToDate(minValue)}
+            maxDate={isoToDate(maxValue)}
+            onSelect={handleSelect}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 }
-
-export { DatePicker };
-export type { DatePickerProps };
