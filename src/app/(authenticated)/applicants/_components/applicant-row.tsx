@@ -10,7 +10,8 @@ import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
 import { getSourceIcon } from "./source-icon";
-
+import { sourceTranslations } from "~/lib/enum-translations";
+import { getTagStyles } from "~/lib/tags/get-tag-styles";
 import { columns } from "../constants";
 
 function getSafeExternalUrl(value: string | null): string | null {
@@ -39,7 +40,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   return (
     <TableRow
       onClick={() => handleApplicantClick(props.applicant.id)}
-      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-dashboard-success-light last:border-0"
+      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-success-bg last:border-0"
     >
       {/* Candidato */}
       <TableCell className={`${columns.applicant} py-2 align-middle`}>
@@ -79,13 +80,10 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
               props.applicant.tags.map((tag, i) => (
                 <Badge
                   key={i}
-                  variant="secondary"
-                  style={{
-                    color: tag.color,
-                    backgroundColor: `${tag.color}26`,
-                  }}
+                  variant="tag"
+                  style={getTagStyles(tag.color ?? "gray")}
                   title={tag.label || "-"}
-                  className="whitespace-nowrap rounded-full border-transparent px-2 py-0.5 text-[10px] font-semibold leading-4"
+                  className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
                 >
                   {tag.label || "-"}
                 </Badge>
@@ -169,17 +167,17 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Fuente */}
       <TableCell className={`${columns.source} py-2 align-middle`}>
         <div className="flex min-w-0 items-center justify-center gap-1 text-center text-sm text-dashboard-text-muted">
-          {props.applicant.sourceText ? (
+          {props.applicant.source ? (
             <>
               <span className="shrink-0">
-                {getSourceIcon(props.applicant.sourceText)}
+                {getSourceIcon(props.applicant.source)}
               </span>
 
               <span
                 className="min-w-0 line-clamp-2 break-words leading-tight text-xs"
-                title={props.applicant.sourceText}
+                title={sourceTranslations[props.applicant.source]}
               >
-                {props.applicant.sourceText}
+                {sourceTranslations[props.applicant.source]}
               </span>
             </>
           ) : (

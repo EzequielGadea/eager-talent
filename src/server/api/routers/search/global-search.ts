@@ -5,6 +5,8 @@ import { isHiringManagerAssignedToApplicant } from "~/server/api/procedures/is-h
 import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
+import { getApplicantByKeywordWhere } from "~/server/api/procedures/get-applicant-search-where";
+
 const RESULTS_LIMIT = 4;
 
 export const globalSearch = protectedProcedure
@@ -49,20 +51,7 @@ export const globalSearch = protectedProcedure
               ...(canReadAllApplicants.success
                 ? {}
                 : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
-              AND: queryTerms.map((term) => ({
-                OR: [
-                  { name: { contains: term, mode: "insensitive" } },
-                  { lastName: { contains: term, mode: "insensitive" } },
-                  { role: { name: { contains: term, mode: "insensitive" } } },
-                  {
-                    tags: {
-                      some: {
-                        name: { contains: term, mode: "insensitive" },
-                      },
-                    },
-                  },
-                ],
-              })),
+              ...getApplicantByKeywordWhere(input.query),
             },
             take: RESULTS_LIMIT,
             select: {

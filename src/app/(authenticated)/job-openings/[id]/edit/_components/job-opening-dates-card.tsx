@@ -69,13 +69,13 @@ export function JobOpeningDatesCard() {
             className="text-[13px] font-medium text-text-primary"
           >
             Fecha de apertura
+            <span className="ml-1 text-danger">*</span>
           </Label>
 
           <Input
             id="openingDate"
             type="date"
             className="h-9.5 [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-2.5 [&::-webkit-calendar-picker-indicator]:opacity-0"
-            errorMessage={errors.openingDate?.message}
             {...openingDateField}
             ref={(element) => {
               openingDateField.ref(element);
@@ -95,6 +95,9 @@ export function JobOpeningDatesCard() {
               </button>
             }
           />
+          <p className="min-h-4 text-xs text-danger">
+            {errors.openingDate?.message ?? "\u00A0"}
+          </p>
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -103,13 +106,14 @@ export function JobOpeningDatesCard() {
             className="text-[13px] font-medium text-text-primary"
           >
             Fecha objetivo de cierre
+            <span className="ml-1 text-danger">*</span>
           </Label>
 
           <Input
             id="targetClosingDate"
             type="date"
+            min={openingDateValue || undefined}
             className="h-9.5 [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-2.5 [&::-webkit-calendar-picker-indicator]:opacity-0"
-            errorMessage={errors.targetClosingDate?.message}
             {...targetClosingDateField}
             ref={(element) => {
               targetClosingDateField.ref(element);
@@ -131,6 +135,9 @@ export function JobOpeningDatesCard() {
               </button>
             }
           />
+          <p className="min-h-4 text-xs text-danger">
+            {errors.targetClosingDate?.message ?? "\u00A0"}
+          </p>
         </div>
 
         <div className="flex h-9.5 items-center gap-2 rounded-lg border border-tag-green-bg bg-success-bg px-3 text-tag-green-fg md:self-start">

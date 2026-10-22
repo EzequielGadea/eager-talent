@@ -34,7 +34,6 @@ export const getJobOpeningHiringManagers = protectedProcedure
 
     return ctx.db.user.findMany({
       where: {
-        status: "Active",
         banned: false,
         members: {
           some: {

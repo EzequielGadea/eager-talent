@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
-import { TagSelector } from "./tag-selector";
+import { TagSelector } from "../../../new-applicant/_components/tag-selector";
 import { Label } from "~/components/ui/label";
 import { api } from "~/lib/trpc/react";
 import {
@@ -16,6 +16,10 @@ import {
 } from "~/components/ui/select";
 import { Source } from "~/generated/prisma/enums";
 import { HearAboutUs } from "~/generated/prisma/enums";
+import {
+  hearAboutUsTranslations,
+  sourceTranslations,
+} from "~/lib/enum-translations";
 import type { ApplicantFormValues } from "./edit-applicant-form";
 
 export default function SourceAndTags() {
@@ -23,22 +27,15 @@ export default function SourceAndTags() {
 
   const sources = Object.values(Source).map((source) => ({
     value: source,
-    label: source,
+    label: sourceTranslations[source],
   }));
 
   const hearAboutUs = Object.values(HearAboutUs).map((hearAbout) => ({
     value: hearAbout,
-    label: hearAbout,
+    label: hearAboutUsTranslations[hearAbout],
   }));
 
   const { data: availableTags } = api.tag.getAllTags.useQuery({});
-
-  /* const sources = [
-    { label: "LinkedIn", value: "linkedin" },
-    { label: "Referido", value: "referral" },
-    { label: "Sitio web", value: "website" },
-    { label: "Otro", value: "other" },
-  ];*/
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
@@ -59,7 +56,11 @@ export default function SourceAndTags() {
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar origen" />
+                    <SelectValue placeholder="Seleccionar origen">
+                      {field.value
+                        ? sourceTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>
@@ -84,7 +85,11 @@ export default function SourceAndTags() {
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar origen" />
+                    <SelectValue placeholder="Seleccionar origen">
+                      {field.value
+                        ? hearAboutUsTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>

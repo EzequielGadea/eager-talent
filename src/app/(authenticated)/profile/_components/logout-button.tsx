@@ -16,7 +16,7 @@ export function LogoutButton() {
       onClick={handleLogout}
       className="w-full"
     >
-      Log out
+      Cerrar sesión
     </Button>
   );
 }

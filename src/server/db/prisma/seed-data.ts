@@ -1,10 +1,11 @@
 import { randomBytes } from "node:crypto";
 import { betterAuth } from "better-auth";
-import { organization } from "better-auth/plugins";
+import { admin, organization } from "better-auth/plugins";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { faker } from "@faker-js/faker";
 import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
+import { getTagColor } from "~/lib/tags/get-tag-color";
 import type {
   PrismaClient,
   EnglishLevel,
@@ -13,7 +14,6 @@ import type {
   JobOpeningStatus,
   InterviewStatus,
   InterviewType,
-  UserStatus,
 } from "~/generated/prisma/client";
 
 const ORGANIZATION_NAME = "EagerWorks";
@@ -92,13 +92,12 @@ function getSeedAuth(prisma: PrismaClient) {
       transaction: true,
     }),
     emailAndPassword: { enabled: true, autoSignIn: false },
-    plugins: [organization()],
+    plugins: [organization(), admin()],
   });
 }
 
 export async function seedDatabase(prisma: PrismaClient): Promise<void> {
-  const seedAuth = getSeedAuth(prisma);
-
+  const auth = getSeedAuth(prisma);
   // ==========================================================================
   // GESTIÓN DE USUARIOS CON BETTER-AUTH (IDEMPOTENCIA)
   // ==========================================================================
@@ -110,22 +109,27 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     });
 
     if (!existing) {
-      await seedAuth.api.signUpEmail({
+      await auth.api.createUser({
         body: {
           name: `${userDef.name} ${userDef.lastName}`,
           email: userDef.email,
           password: userDef.password,
+          role:
+            userDef.orgRole === "owner" || userDef.orgRole === "recruiter"
+              ? "admin"
+              : "user",
         },
       });
+
       await prisma.user.update({
         where: { email: userDef.email },
         data: {
           name: userDef.name,
           lastName: userDef.lastName,
-          status: "Active",
           emailVerified: true,
         },
       });
+
       console.log(
         `Usuario creado: ${userDef.email} (${userDef.name} ${userDef.lastName})`,
       );
@@ -135,7 +139,6 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         data: {
           name: userDef.name,
           lastName: userDef.lastName,
-          status: "Active",
           emailVerified: true,
         },
       });
@@ -156,7 +159,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       where: { email: "admin@example.com" },
     });
 
-    await seedAuth.api.createOrganization({
+    await auth.api.createOrganization({
       body: {
         name: ORGANIZATION_NAME,
         slug: ORGANIZATION_SLUG,
@@ -237,7 +240,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   const admin1 = dbUsers.find((u) => u.email === "admin@example.com")!;
   const admin2 = dbUsers.find((u) => u.email === "admin2@example.com")!;
-  const admin3 = dbUsers.find((u) => u.email === "admin3@example.com")!;
+  dbUsers.find((u) => u.email === "admin3@example.com")!;
   const hm1 = dbUsers.find((u) => u.email === "hiring.manager@example.com")!;
   const hm2 = dbUsers.find((u) => u.email === "hiring.manager2@example.com")!;
   const hm3 = dbUsers.find((u) => u.email === "hiring.manager3@example.com")!;
@@ -295,28 +298,28 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // ETIQUETAS TÉCNICAS (STACK EAGERWORKS) Y DE GESTIÓN
   const skillTagDefs = [
-    { name: "Ruby on Rails", color: "#CC0000" },
-    { name: "React", color: "#61DAFB" },
-    { name: "Next.js", color: "#000000" },
-    { name: "TypeScript", color: "#3178C6" },
-    { name: "React Native", color: "#087EA4" },
-    { name: "Node.js", color: "#339933" },
-    { name: "Python", color: "#3776AB" },
-    { name: "PostgreSQL", color: "#4169E1" },
-    { name: "Docker", color: "#2496ED" },
-    { name: "AWS", color: "#FF9900" },
-    { name: "Redis", color: "#DC382D" },
-    { name: "GraphQL", color: "#E10098" },
-    { name: "Tailwind CSS", color: "#06B6D4" },
+    { name: "Ruby on Rails", color: getTagColor("Ruby on Rails") },
+    { name: "React", color: getTagColor("React")},
+    { name: "Next.js", color: getTagColor("Next.js") },
+    { name: "TypeScript", color: getTagColor("TypeScript") },
+    { name: "React Native", color: getTagColor("React Native") },
+    { name: "Node.js", color: getTagColor("Node.js")},
+    { name: "Python", color: getTagColor("Python") },
+    { name: "PostgreSQL", color: getTagColor("PostgreSQL") },
+    { name: "Docker", color: getTagColor("Docker") },
+    { name: "AWS", color: getTagColor("AWS") },
+    { name: "Redis", color: getTagColor("Redis") },
+    { name: "GraphQL", color: getTagColor("GraphQL") },
+    { name: "Tailwind CSS", color: getTagColor("Tailwind CSS") },
   ];
   const otherTagDefs = [
-    { name: "Híbrido Montevideo (Cordón)", color: "#3B82F6" },
-    { name: "Remoto Uruguay", color: "#10B981" },
-    { name: "Inglés C1 / Fluido", color: "#8B5CF6" },
-    { name: "Inglés C2 / Bilingüe", color: "#6366F1" },
-    { name: "Top Talent", color: "#F59E0B" },
-    { name: "Referido Eagerworks", color: "#EC4899" },
-    { name: "Disponible Inmediato", color: "#14B8A6" },
+    { name: "Híbrido Montevideo (Cordón)", color: getTagColor("Híbrido Montevideo (Cordón)") },
+    { name: "Remoto Uruguay", color: getTagColor("Remoto Uruguay") },
+    { name: "Inglés C1 / Fluido", color: getTagColor("Inglés C1 / Fluido") },
+    { name: "Inglés C2 / Bilingüe", color: getTagColor("Inglés C2 / Bilingüe") },
+    { name: "Top Talent", color: getTagColor("Top Talent") },
+    { name: "Referido Eagerworks", color: getTagColor("Referido Eagerworks") },
+    { name: "Disponible Inmediato", color: getTagColor("Disponible Inmediato") },
   ];
 
   const tags: Record<string, { id: string; name: string }> = {};
@@ -570,7 +573,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  const appFede1 = await prisma.application.create({
+  await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
@@ -584,7 +587,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  const appFede2 = await prisma.application.create({
+  await prisma.application.create({
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening2.id,

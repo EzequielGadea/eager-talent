@@ -9,7 +9,14 @@ export const getAllSeniorities = protectedProcedure
     const seniorities = await ctx.db.seniority.findMany({
       where: { deletedAt: null },
 
-      select: { id: true, name: true },
+      select: {
+        id: true,
+        name: true,
+        order: true,
+        _count: { select: { applicants: true, jobOpenings: true } },
+      },
+
+      orderBy: { order: "asc" },
     });
 
     if (!seniorities) {

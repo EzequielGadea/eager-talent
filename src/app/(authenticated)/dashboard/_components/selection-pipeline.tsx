@@ -3,13 +3,13 @@ import { PipelineIcon } from "../../_components/app-icons";
 function PipelineRowPlaceholder() {
   return (
     <div className="grid grid-cols-[minmax(90px,150px)_1fr_32px] items-center gap-2.5">
-      <div className="h-3 w-24 max-w-full rounded-full bg-slate-200" />
+      <div className="h-3 w-24 max-w-full rounded-full bg-border-default" />
 
-      <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
-        <div className="h-full w-2/3 rounded-full bg-slate-200" />
+      <div className="h-2.5 overflow-hidden rounded-full bg-surface-sunken">
+        <div className="h-full w-2/3 rounded-full bg-border-default" />
       </div>
 
-      <div className="ml-auto h-3 w-6 rounded-full bg-slate-200" />
+      <div className="ml-auto h-3 w-6 rounded-full bg-border-default" />
     </div>
   );
 }

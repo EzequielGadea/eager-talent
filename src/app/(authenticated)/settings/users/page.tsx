@@ -1,12 +1,9 @@
 import { Suspense } from "react";
-import { Plus } from "lucide-react";
 
-import { buttonVariants } from "~/components/ui/button";
 import { api } from "~/lib/trpc/server";
-import Link from "next/link";
 import { UsersTable } from "./_components/users-table";
 import { UsersTableSkeleton } from "./_components/users-table-skeleton";
-import { cn } from "~/lib/utils";
+import { UsersInviteDialog } from "./_components/users-invite-dialog";
 
 async function UsersContent() {
   const users = await api.user.getAllUsers({});
@@ -22,16 +19,7 @@ export default function UsersPage() {
           Gestioná los usuarios con acceso a EagerTalent
         </p>
 
-        <Link
-          href="/settings/users/new"
-          className={cn(
-            buttonVariants({ size: "sm" }),
-            "gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover",
-          )}
-        >
-          <Plus size={16} />
-          Agregar usuario
-        </Link>
+        <UsersInviteDialog />
       </div>
 
       <Suspense fallback={<UsersTableSkeleton />}>

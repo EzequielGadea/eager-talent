@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { SalaryCurrency } from "~/generated/prisma/enums";
+import { salaryCurrencyTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -19,6 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+
+import getAvatar from "~/lib/avatar";
 
 import type { AvailableApplicant } from "./add-applicant-types";
 
@@ -62,10 +65,6 @@ type AddApplicantApplicationFormProps = {
   onSuccess: () => void;
 };
 
-function getInitials(applicant: AvailableApplicant) {
-  return `${applicant.name.charAt(0)}${applicant.lastName.charAt(0)}`.toUpperCase();
-}
-
 export function AddApplicantApplicationForm({
   jobOpeningId,
   applicant,
@@ -80,7 +79,7 @@ export function AddApplicantApplicationForm({
       availability: "",
     },
   });
-
+  const avatar = getAvatar(applicant.name, applicant.lastName);
   const {
     control,
     register,
@@ -170,8 +169,8 @@ export function AddApplicantApplicationForm({
               alt={`${applicant.name} ${applicant.lastName}`}
             />
 
-            <AvatarFallback className="bg-muted text-muted-foreground">
-              {getInitials(applicant)}
+            <AvatarFallback className={`${avatar.colorClass}`}>
+              {avatar.initials}
             </AvatarFallback>
           </Avatar>
 
@@ -227,12 +226,19 @@ export function AddApplicantApplicationForm({
                     }
                   >
                     <SelectTrigger aria-invalid={!!errors.currency}>
-                      <SelectValue placeholder="Moneda" />
+                      <SelectValue placeholder="Moneda">
+                        {field.value
+                          ? salaryCurrencyTranslations[field.value]
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
 
                     <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="UYU">UYU</SelectItem>
+                      {Object.values(SalaryCurrency).map((currency) => (
+                        <SelectItem key={currency} value={currency}>
+                          {salaryCurrencyTranslations[currency]}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
