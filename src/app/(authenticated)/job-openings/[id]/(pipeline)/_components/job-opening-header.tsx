@@ -88,7 +88,10 @@ export function JobOpeningHeader({
         )}
 
         {canCreateApplication && (
-          <AddApplicantDialog jobOpeningId={jobOpeningId} />
+          <AddApplicantDialog
+            jobOpeningId={jobOpeningId}
+            disabled={status !== JobOpeningStatus.Open}
+          />
         )}
       </div>
     </header>
