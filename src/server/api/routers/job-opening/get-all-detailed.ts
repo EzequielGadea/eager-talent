@@ -42,6 +42,7 @@ const jobOpeningSelect = {
   applications: {
     where: {
       active: true,
+      deletedAt: null,
     },
     select: {
       currentStageId: true,
@@ -107,6 +108,7 @@ export const getAllJobOpeningsDetailed = protectedProcedure
               applications: {
                 where: {
                   active: true,
+                  deletedAt: null,
                 },
               },
             },

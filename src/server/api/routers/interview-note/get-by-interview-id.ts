@@ -34,6 +34,7 @@ export const getInterviewNoteByInterviewIdProcedure = protectedProcedure
       ctx.db.interview.findFirst({
         where: {
           id: input.interviewId,
+          deletedAt: null,
           ...(canReadAllResult.success
             ? {}
             : isHiringManagerAssignedToInterview(ctx.session.user.id)),
@@ -41,7 +42,7 @@ export const getInterviewNoteByInterviewIdProcedure = protectedProcedure
         select: { id: true },
       }),
       ctx.db.interviewNote.findUnique({
-        where: { interviewId: input.interviewId },
+        where: { interviewId: input.interviewId, deletedAt: null },
         select: {
           id: true,
           content: true,

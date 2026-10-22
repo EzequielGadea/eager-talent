@@ -34,6 +34,7 @@ export const getApplicationsByApplicantIdProcedure = protectedProcedure
     const applications = await ctx.db.application.findMany({
       where: {
         applicantId: input.applicantId,
+        deletedAt: null,
         ...(canReadAllResult.success
           ? {}
           : {

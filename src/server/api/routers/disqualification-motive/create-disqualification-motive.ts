@@ -4,7 +4,7 @@ import { z } from "zod";
 import { Prisma } from "~/generated/prisma/client";
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const createDescalificationMotive = protectedProcedure
+export const createDisqualificationMotive = protectedProcedure
   .input(
     z.object({
       name: z.string().trim().min(1, "El nombre es obligatorio."),

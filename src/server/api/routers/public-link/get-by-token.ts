@@ -29,6 +29,7 @@ export const getByToken = publicProcedure
         },
         application: {
           select: {
+            deletedAt: true,
             active: true,
             currentStageId: true,
             availability: true,
@@ -57,6 +58,7 @@ export const getByToken = publicProcedure
             applicant: {
               select: {
                 id: true,
+                deletedAt: true,
                 name: true,
                 lastName: true,
                 photo: true,
@@ -81,6 +83,7 @@ export const getByToken = publicProcedure
               },
             },
             interviews: {
+              where: { deletedAt: null },
               orderBy: {
                 date: "asc",
               },
@@ -109,7 +112,11 @@ export const getByToken = publicProcedure
       },
     });
 
-    if (!link) {
+    if (
+      !link ||
+      link.application.deletedAt ||
+      link.application.applicant.deletedAt
+    ) {
       return { status: "not_found" as const };
     }
 

@@ -15,7 +15,7 @@ export const saveApplicantNoteProcedure = protectedProcedure
   )
   .mutation(async ({ input, ctx }) => {
     const applicant = await ctx.db.applicant.findUnique({
-      where: { id: input.applicantId },
+      where: { id: input.applicantId, deletedAt: null },
       select: { id: true, note: { select: { id: true } } },
     });
 
