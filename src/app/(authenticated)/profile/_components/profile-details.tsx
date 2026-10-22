@@ -1,30 +1,21 @@
-import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { TRPCError } from "@trpc/server";
 
-import { auth } from "~/lib/auth";
+import { api } from "~/lib/trpc/server";
+
+import { ProfileCard } from "./profile-card";
 
 export async function ProfileDetails() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  let user: Awaited<ReturnType<typeof api.user.getCurrent>>;
 
-  if (!session) {
-    return <p className="text-sm text-foreground/60">No iniciaste sesión.</p>;
+  try {
+    user = await api.user.getCurrent();
+  } catch (error) {
+    if (error instanceof TRPCError && error.code === "UNAUTHORIZED") {
+      redirect("/login");
+    }
+    throw error;
   }
 
-  const { user } = session;
-
-  return (
-    <dl className="space-y-2 text-sm">
-      <div className="flex justify-between gap-4">
-        <dt className="text-foreground/60">Nombre</dt>
-        <dd>{user.name}</dd>
-      </div>
-      <div className="flex justify-between gap-4">
-        <dt className="text-foreground/60">Correo</dt>
-        <dd>{user.email}</dd>
-      </div>
-      <div className="flex justify-between gap-4">
-        <dt className="text-foreground/60">Fecha de creación del usuario</dt>
-        <dd>{new Date(user.createdAt).toLocaleString()}</dd>
-      </div>
-    </dl>
-  );
+  return <ProfileCard user={user} />;
 }
