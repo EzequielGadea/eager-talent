@@ -5,10 +5,11 @@ import { redirect } from "next/navigation";
 import { auth } from "~/lib/auth";
 
 import EditApplicantForm from "./_components/edit-applicant-form";
+import { EditApplicantPageSkeleton } from "./_components/edit-applicant-skeleton";
 
 export default function EditApplicantPage() {
   return (
-    <Suspense fallback={<div>Cargando candidato...</div>}>
+    <Suspense fallback={<EditApplicantPageSkeleton />}>
       <ProtectedEditApplicantPage />
     </Suspense>
   );

@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 import ApplicantEditFormContent from "./edit-applicant-form-content";
+import { EditApplicantFormSkeleton } from "./edit-applicant-skeleton";
 
 const MAX_PHOTO_SIZE = 4 * 1024 * 1024;
 
@@ -105,7 +106,7 @@ export default function EditApplicantForm() {
   });
 
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <EditApplicantFormSkeleton />;
   }
 
   if (error || !applicant) {
