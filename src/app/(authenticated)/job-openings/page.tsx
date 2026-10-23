@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { z } from "zod";
 import { HiringManagerJobOpeningsFallback } from "./_components/hiring-manager-job-openings-fallback";
 import { RecruiterJobOpeningsFallback } from "./_components/recruiter-job-openings-fallback";
+import { JobOpeningsRoleFallback } from "./_components/job-openings-role-fallback";
 import { auth } from "~/lib/auth";
 import JobOpeningsList from "./_components/job-opening-list";
 import {
@@ -44,7 +45,7 @@ type JobOpeningsPageProps = {
 
 export default function JobOpeningsPage(props: JobOpeningsPageProps) {
   return (
-    <Suspense fallback={<RecruiterJobOpeningsFallback />}>
+    <Suspense fallback={<JobOpeningsRoleFallback />}>
       <JobOpeningsPageContent searchParams={props.searchParams} />
     </Suspense>
   );
