@@ -1,15 +1,4 @@
-import { ChevronDown, Filter, Plus } from "lucide-react";
-
-import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
 
 export function RecruiterJobOpeningsFallback() {
   return (
@@ -28,94 +17,39 @@ export function RecruiterJobOpeningsFallback() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled
-            className="h-8 px-4 text-[13px] font-normal text-text-secondary"
-          >
-            <Filter data-icon="inline-start" />
-            Filtrar
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled
-            className="h-8 px-4 text-[13px] font-normal text-text-secondary"
-          >
-            Ordenar
-            <ChevronDown data-icon="inline-end" />
-          </Button>
-
-          <Button
-            size="sm"
-            disabled
-            className="rounded-full bg-dashboard-dark text-text-on-dark"
-          >
-            <Plus data-icon="inline-start" />
-            Nueva vacante
-          </Button>
+          <Skeleton className="h-8 w-24 rounded-lg" />
+          <Skeleton className="h-8 w-24 rounded-lg" />
+          <Skeleton className="h-8.5 w-36 rounded-full" />
         </div>
       </div>
 
       <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-background shadow-sm">
-        <div className="w-full overflow-x-auto">
-          <Table className="min-w-[900px]">
-            <TableHeader>
-              <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Vacante
-                </TableHead>
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Área
-                </TableHead>
-                <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Hiring Managers
-                </TableHead>
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Estado
-                </TableHead>
-                <TableHead className="h-9.75 w-[9.5rem] min-w-[9.5rem] whitespace-nowrap px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Candidatos
-                </TableHead>
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Abierta hace
-                </TableHead>
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />
-              </TableRow>
-            </TableHeader>
+        <div className="border-b border-dashboard-border bg-(--surface-subtle) px-4 py-3">
+          <div className="flex items-center gap-8">
+            <Skeleton className="h-3 w-28" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-32" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-3 w-24" />
+          </div>
+        </div>
 
-            <TableBody className="divide-y divide-dashboard-border">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <TableRow key={index} className="h-17.5 hover:bg-transparent">
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-4 w-36" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-4 w-32" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-6 w-20 rounded-full" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-4 w-8" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-4 w-24" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="ml-auto size-4" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="divide-y divide-dashboard-border">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex h-16 items-center justify-between gap-8 px-4"
+            >
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-4 w-10" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="ml-auto size-4" />
+            </div>
+          ))}
         </div>
 
         <div className="flex items-center justify-between border-t border-dashboard-border px-4 py-3">
