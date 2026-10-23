@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 export const getCurrent = protectedProcedure.query(async ({ ctx }) => {
   const organizationId = ctx.session.session.activeOrganizationId;
 
-  const user = await ctx.db.user.findUniqueOrThrow({
+  const user = await ctx.db.user.findUnique({
     where: {
       id: ctx.session.user.id,
     },

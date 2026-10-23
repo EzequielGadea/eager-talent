@@ -6,7 +6,7 @@ import { profileSchema } from "~/lib/validations/profile";
 export const updateCurrent = protectedProcedure
   .input(
     profileSchema.extend({
-      image: z.string().url().nullable().optional(),
+      image: z.string().nullable().optional(),
     }),
   )
   .mutation(({ ctx, input }) =>

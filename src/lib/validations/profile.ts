@@ -19,3 +19,15 @@ export const profileSchema = z.object({
 });
 
 export type ProfileFormData = z.infer<typeof profileSchema>;
+
+export const profileImageSchema = z
+  .file()
+  .max(4 * 1024 * 1024, "La imagen no puede superar los 4 MB.")
+  .mime(
+    ["image/jpeg", "image/png", "image/webp", "image/gif"],
+    "Seleccioná una imagen JPEG, PNG, WebP o GIF.",
+  );
+
+export const updateProfileSchema = profileSchema.extend({
+  image: z.string().nullable().optional(),
+});

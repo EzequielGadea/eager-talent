@@ -22,9 +22,11 @@ import { toast } from "~/components/ui/toast";
 import getAvatar from "~/lib/avatar";
 import { api } from "~/lib/trpc/react";
 import { useUploadThing } from "~/lib/uploadthing";
-import { profileSchema, type ProfileFormData } from "~/lib/validations/profile";
-
-const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
+import {
+  profileImageSchema,
+  profileSchema,
+  type ProfileFormData,
+} from "~/lib/validations/profile";
 
 type ProfileEditProps = {
   user: {
@@ -101,19 +103,19 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
 
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      setImageError("Seleccioná un archivo de imagen válido.");
-      return;
-    }
+    const result = profileImageSchema.safeParse(file);
 
-    if (file.size > MAX_IMAGE_SIZE) {
-      setImageError("La imagen no puede superar los 4 MB.");
+    if (!result.success) {
+      setImageError(
+        result.error.issues[0]?.message ?? "La imagen no es válida.",
+      );
       return;
     }
 
     setImageError(null);
     setImageFile(file);
     setImageRemoved(false);
+    setIsImageZoomed(false);
 
     const reader = new FileReader();
 
@@ -301,14 +303,15 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 className="hidden"
                 onChange={handleImageChange}
                 disabled={isSaving}
               />
 
               <p className="text-xs text-text-tertiary">
-                Imagen de hasta 4 MB. Podés quitarla para usar tus iniciales.
+                Imagen JPEG, PNG, WebP o GIF de hasta 4 MB. Podés quitarla para
+                usar tus iniciales.
               </p>
 
               {imageError && (
