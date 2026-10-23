@@ -233,6 +233,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                   type="button"
                   variant="ghost"
                   size="icon-xs"
+                  className="max-md:size-9"
                   draggable={!isAddingSeniority}
                   disabled={isAddingSeniority}
                   onDragStart={(event) => {
@@ -244,7 +245,10 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                     event.dataTransfer.setData("text/plain", String(index));
                   }}
                 >
-                  <GripVertical aria-hidden="true" />
+                  <GripVertical
+                    aria-hidden="true"
+                    className="size-5 md:size-3"
+                  />
                 </Button>
                 <span className="w-3.5 text-center font-mono text-[11px] text-text-tertiary">
                   {" "}
@@ -293,8 +297,8 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                         py-4"
               onSubmit={handleCreateSeniority}
             >
-              <li className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2 w-full">
-                <div className="flex-1">
+              <li className="flex w-full flex-col gap-2.5 rounded-lg border border-border-default px-2 py-2 md:flex-row md:items-center">
+                <div className="w-full min-w-0 md:flex-1">
                   <Input
                     type="text"
                     value={seniorityName}

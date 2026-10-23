@@ -191,10 +191,9 @@ export default function RoleSetting() {
           {isAddingRole && (
             <form
               onSubmit={handleCreateRole}
-              className="flex items-end gap-3 border-b border-border-default
-                        py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={roleName}
