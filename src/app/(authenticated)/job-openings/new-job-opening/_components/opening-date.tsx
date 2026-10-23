@@ -122,9 +122,12 @@ export default function OpeningDate() {
                     name={field.name}
                     aria-label="Fecha objetivo de cierre"
                     value={toDateInputValue(field.value)}
-                    onChange={(value) =>
-                      field.onChange(fromDateInputValue(value))
-                    }
+                    onChange={(value) => {
+                      field.onChange(fromDateInputValue(value));
+                      // Skip empty partial input unless it clears an existing error.
+                      if (value || errors.closingDate)
+                        void trigger("closingDate");
+                    }}
                     onBlur={field.onBlur}
                     ref={field.ref}
                     minValue={toDateInputValue(openingDate)}

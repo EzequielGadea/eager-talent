@@ -130,7 +130,7 @@ const segmentClassName = cn(
   "data-[type=literal]:px-0 data-[type=literal]:text-text-tertiary",
   "data-placeholder:text-text-tertiary",
   "data-focused:bg-tag-green-bg data-focused:text-tag-green-fg data-focused:data-placeholder:text-tag-green-fg",
-  "data-invalid:text-danger data-invalid:data-focused:bg-danger-bg data-invalid:data-focused:text-danger",
+  "data-invalid:not-data-focused:text-danger",
 );
 
 // React Aria keeps the previous date when a segment is cleared, so the form
