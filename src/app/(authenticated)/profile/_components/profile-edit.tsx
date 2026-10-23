@@ -5,7 +5,7 @@ import { type ChangeEvent, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Check, Eye, X } from "lucide-react";
+import { Camera, Check, X } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
