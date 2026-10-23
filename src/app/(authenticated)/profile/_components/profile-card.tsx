@@ -44,9 +44,11 @@ type ProfileCardProps = {
 export function ProfileCard({ user }: ProfileCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
+  const [failedImage, setFailedImage] = useState<string | null>(null);
 
   const fullName = `${user.name} ${user.lastName}`.trim();
   const avatar = getAvatar(user.name, user.lastName);
+  const imageSrc = user.image && user.image !== failedImage ? user.image : null;
 
   const role = user.role
     ? (ROLES[user.role] ?? {
@@ -74,7 +76,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
       <div className="space-y-6">
         <div className="overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
           <div className="flex items-center gap-5 p-6">
-            {user.image ? (
+            {imageSrc ? (
               <button
                 type="button"
                 onClick={() => setIsImageZoomed(true)}
@@ -82,10 +84,11 @@ export function ProfileCard({ user }: ProfileCardProps) {
                 className="shrink-0 cursor-zoom-in rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Image
-                  src={user.image}
+                  src={imageSrc}
                   alt={`Foto de ${fullName}`}
                   width={72}
                   height={72}
+                  onError={() => setFailedImage(imageSrc)}
                   className="size-18 rounded-xl object-cover"
                 />
               </button>
@@ -128,7 +131,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
               onClick={() => setIsEditing(true)}
               aria-label="Editar perfil"
               title="Editar perfil"
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-default text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary"
+              className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border-default text-text-secondary transition-colors hover:bg-surface-hover hover:text-text-primary"
             >
               <Pencil size={16} />
             </button>
@@ -160,7 +163,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
         </section>
       </div>
 
-      {isImageZoomed && user.image && (
+      {isImageZoomed && imageSrc && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
           role="dialog"
@@ -176,13 +179,13 @@ export function ProfileCard({ user }: ProfileCardProps) {
               type="button"
               aria-label="Cerrar imagen ampliada"
               onClick={() => setIsImageZoomed(false)}
-              className="absolute -right-3 -top-3 z-10 flex size-9 items-center justify-center rounded-full border border-border-default bg-surface-card text-text-primary shadow-sm"
+              className="absolute -right-3 -top-3 z-10 flex size-9 cursor-pointer items-center justify-center rounded-full border border-border-default bg-surface-card text-text-primary shadow-sm"
             >
               <X size={18} />
             </button>
 
             <Image
-              src={user.image}
+              src={imageSrc}
               alt={`Foto ampliada de ${fullName}`}
               width={800}
               height={800}

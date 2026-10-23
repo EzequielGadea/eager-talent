@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 const NAME_REGEX = /^\p{L}+(?:[ '’-]\p{L}+)*$/u;
+const CONSECUTIVE_SEPARATORS_REGEX = /[ '’-]{2}/u;
 
 const nameField = (label: string) =>
   z
@@ -8,9 +9,21 @@ const nameField = (label: string) =>
     .trim()
     .min(1, `${label} es obligatorio`)
     .max(60, `${label} no puede superar los 60 caracteres`)
+    .refine(
+      (value) => !/^[ '’-]/u.test(value),
+      `${label} no puede comenzar con un guion o apóstrofe`,
+    )
+    .refine(
+      (value) => !/[ '’-]$/u.test(value),
+      `${label} no puede terminar con un guion o apóstrofe`,
+    )
+    .refine(
+      (value) => !CONSECUTIVE_SEPARATORS_REGEX.test(value),
+      `${label} no puede contener separadores consecutivos`,
+    )
     .regex(
       NAME_REGEX,
-      `${label} solo puede contener letras, espacios, guiones y apóstrofes`,
+      `${label} solo puede contener letras, espacios, guiones y apóstrofes entre palabras`,
     );
 
 export const profileSchema = z.object({
@@ -29,5 +42,5 @@ export const profileImageSchema = z
   );
 
 export const updateProfileSchema = profileSchema.extend({
-  image: z.string().nullable().optional(),
+  image: z.httpUrl("La imagen debe ser una URL válida.").nullable().optional(),
 });

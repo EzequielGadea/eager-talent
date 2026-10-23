@@ -38,6 +38,16 @@ type ProfileEditProps = {
   onDone: () => void;
 };
 
+async function isDecodableImage(file: File) {
+  try {
+    const bitmap = await createImageBitmap(file);
+    bitmap.close();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function ProfileEdit({ user, onDone }: ProfileEditProps) {
   const router = useRouter();
   const [isTransitionPending, startTransition] = useTransition();
@@ -97,7 +107,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
   const isSaving =
     updateCurrent.isPending || isTransitionPending || isUploading;
 
-  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+  async function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
 
@@ -109,6 +119,11 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
       setImageError(
         result.error.issues[0]?.message ?? "La imagen no es válida.",
       );
+      return;
+    }
+
+    if (!(await isDecodableImage(file))) {
+      setImageError("El archivo no es una imagen válida.");
       return;
     }
 
@@ -212,6 +227,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                   width={80}
                   height={80}
                   unoptimized={preview.startsWith("data:")}
+                  onError={() => setPreview(null)}
                   className="size-20 rounded-xl object-cover"
                 />
               </button>
@@ -233,6 +249,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                 <Button
                   type="button"
                   variant="outline"
+                  className="cursor-pointer"
                   disabled={isSaving}
                   onClick={() => fileInputRef.current?.click()}
                 >
@@ -247,6 +264,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                         <Button
                           type="button"
                           variant="outline"
+                          className="cursor-pointer"
                           disabled={isSaving}
                         >
                           <X size={16} />
@@ -275,7 +293,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                             <Button
                               type="button"
                               variant="outline"
-                              className="h-auto rounded-full px-3.75 py-2 text-[13px] font-semibold"
+                              className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-[13px] font-semibold"
                             >
                               Cancelar
                             </Button>
@@ -354,17 +372,60 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
         </div>
 
         <div className="flex justify-end gap-3 border-t border-border-default px-6 py-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onDone}
-            disabled={isSaving}
-          >
-            <X size={16} />
-            Cancelar
-          </Button>
+          <Dialog>
+            <DialogTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="cursor-pointer"
+                  disabled={isSaving}
+                >
+                  <X size={16} />
+                  Cancelar
+                </Button>
+              }
+            />
 
-          <Button type="submit" disabled={isSaving}>
+            <DialogContent className="max-w-110 overflow-hidden border bg-card p-0 text-card-foreground shadow-2xl sm:max-w-110">
+              <DialogHeader className="flex flex-row items-center justify-between space-y-0 border-b px-5.5 py-4.5">
+                <DialogTitle className="m-0 text-base font-bold tracking-tight">
+                  Cancelar edición
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="p-5.5">
+                <p className="text-sm text-muted-foreground">
+                  ¿Seguro que querés cancelar? Se perderán los cambios que no
+                  hayas guardado.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 border-t bg-muted/30 px-5.5 py-3.5">
+                <DialogClose
+                  render={
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-[13px] font-semibold"
+                    >
+                      Seguir editando
+                    </Button>
+                  }
+                />
+
+                <Button
+                  type="button"
+                  onClick={onDone}
+                  className="h-auto cursor-pointer rounded-full bg-foreground px-4.25 py-2 text-[13px] font-semibold text-background hover:bg-foreground/90"
+                >
+                  Descartar cambios
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Button type="submit" className="cursor-pointer" disabled={isSaving}>
             <Check size={16} />
             {isUploading
               ? "Subiendo foto..."
@@ -390,7 +451,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
             <Button
               type="button"
               variant="outline"
-              className="absolute -right-3 -top-3 z-10 rounded-full"
+              className="absolute -right-3 -top-3 z-10 cursor-pointer rounded-full"
               aria-label="Cerrar imagen ampliada"
               onClick={() => setIsImageZoomed(false)}
             >
@@ -403,6 +464,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
               width={800}
               height={800}
               unoptimized={preview.startsWith("data:")}
+              onError={() => setIsImageZoomed(false)}
               className="max-h-[85vh] w-auto rounded-lg object-contain"
             />
           </div>
