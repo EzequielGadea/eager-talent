@@ -38,6 +38,7 @@ function differenceInDateDays(startDate: Date, endDate: Date) {
 export default function OpeningDate() {
   const {
     control,
+    trigger,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
 
@@ -80,9 +81,11 @@ export default function OpeningDate() {
                     name={field.name}
                     aria-label="Fecha de apertura"
                     value={toDateInputValue(field.value)}
-                    onChange={(value) =>
-                      field.onChange(fromDateInputValue(value))
-                    }
+                    onChange={(value) => {
+                      field.onChange(fromDateInputValue(value));
+                      // The closing date error depends on the opening date.
+                      if (closingDate) void trigger("closingDate");
+                    }}
                     onBlur={field.onBlur}
                     isInvalid={!!errors.openingDate}
                   />
