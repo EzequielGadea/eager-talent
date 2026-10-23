@@ -28,6 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function DisqualificationMotiveSetting() {
   const [isAddingMotive, setIsAddingMotive] = useState(false);
@@ -39,8 +40,13 @@ export default function DisqualificationMotiveSetting() {
 
   const utils = api.useUtils();
 
-  const { data: motives, isLoading: isMotiveLoading } =
-    api.disqualificationMotive.getAllDisqualificationMotive.useQuery({});
+  const {
+    data: motives,
+    isLoading: isMotiveLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.disqualificationMotive.getAllDisqualificationMotive.useQuery({});
 
   const createMotive =
     api.disqualificationMotive.createDisqualificationMotive.useMutation({
@@ -78,8 +84,7 @@ export default function DisqualificationMotiveSetting() {
 
     const normalizedName = name.toLocaleLowerCase("es");
     const alreadyExists = motives?.some(
-      (motive) =>
-        motive.name.trim().toLocaleLowerCase("es") === normalizedName,
+      (motive) => motive.name.trim().toLocaleLowerCase("es") === normalizedName,
     );
 
     if (alreadyExists) {
@@ -125,6 +130,17 @@ export default function DisqualificationMotiveSetting() {
       <GeneralSettingsCardSkeleton
         title="Motivos de descalificación"
         rows={4}
+      />
+    );
+  }
+
+  if (isError || !motives) {
+    return (
+      <SettingsFetchError
+        title="Motivos de descalificación"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
       />
     );
   }
@@ -191,10 +207,9 @@ export default function DisqualificationMotiveSetting() {
           {isAddingMotive && (
             <form
               onSubmit={handleCreateMotive}
-              className="flex items-end gap-3 border-b border-border-default
-              py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={motiveName}

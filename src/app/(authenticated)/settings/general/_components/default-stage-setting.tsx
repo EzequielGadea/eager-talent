@@ -31,14 +31,14 @@ import {
 } from "~/lib/required-stage-types";
 import { api } from "~/lib/trpc/react";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
+import { SettingsFetchError } from "./settings-fetch-error";
 
-type DefaultStage = {
-  key: string;
-  name: string;
-  type: string;
-  label: string;
-  color: string;
-};
+import {
+  persistedStageTypeSchema,
+  type PersistedStage,
+} from "~/lib/validations/job-opening";
+
+type DefaultStage = PersistedStage;
 
 const STAGE_TYPE_OPTIONS = [
   { value: "Ninguna", label: "Ninguna" },
@@ -55,9 +55,15 @@ function isBoundaryStage(index: number, total: number) {
 }
 
 export default function DefaultStageSetting() {
-  const { data, isLoading } = api.templateStages.getDefault.useQuery();
+  const {
+    data: flujo,
+    isLoading: isFlujoLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.templateStages.getDefault.useQuery();
 
-  if (isLoading) {
+  if (isFlujoLoading) {
     return (
       <GeneralSettingsCardSkeleton
         title="Flujo por defecto"
@@ -67,16 +73,27 @@ export default function DefaultStageSetting() {
     );
   }
 
-  if (!data) return null;
+  if (isError || !flujo) {
+    return (
+      <SettingsFetchError
+        title="Flujo por defecto"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
 
   const requiredStageIds = new Set(
-    data.stages.flatMap((stage) => (isRequiredStage(stage) ? [stage.key] : [])),
+    flujo.stages.flatMap((stage) =>
+      isRequiredStage(stage) ? [stage.key] : [],
+    ),
   );
 
   return (
     <DefaultStageEditor
-      key={JSON.stringify(data.stages)}
-      data={data}
+      key={JSON.stringify(flujo.stages)}
+      data={flujo}
       requiredStageIds={requiredStageIds}
     />
   );
@@ -205,7 +222,7 @@ function DefaultStageEditor({
             return (
               <li
                 key={stage.key}
-                className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2"
+                className="grid grid-cols-[auto_auto_auto_minmax(0,1fr)_auto] items-center gap-2.5 rounded-lg border border-border-default px-2 py-2 md:grid-cols-[auto_auto_auto_minmax(0,1fr)_auto_auto]"
                 onDragOver={(event) => {
                   if (
                     !locked &&
@@ -232,6 +249,7 @@ function DefaultStageEditor({
                   type="button"
                   variant="ghost"
                   size="icon-xs"
+                  className="max-md:size-9"
                   draggable={!locked}
                   disabled={locked}
                   aria-label={
@@ -259,7 +277,10 @@ function DefaultStageEditor({
                     }
                   }}
                 >
-                  <GripVertical aria-hidden="true" />
+                  <GripVertical
+                    aria-hidden="true"
+                    className="size-5 md:size-3"
+                  />
                 </Button>
                 <span className="w-3.5 text-center font-mono text-[11px] text-text-tertiary">
                   {index + 1}
@@ -301,11 +322,14 @@ function DefaultStageEditor({
                     className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
                     onChange={(event) => {
                       const name = event.target.value;
-                      const requiredType = getRequiredStageType(name);
-
+                      const requiredType = persistedStageTypeSchema.safeParse(
+                        getRequiredStageType(name),
+                      );
                       updateStage(stage.key, {
                         name,
-                        ...(requiredType ? { type: requiredType } : {}),
+                        ...(requiredType.success
+                          ? { type: requiredType.data }
+                          : {}),
                       });
                     }}
                   />
@@ -315,13 +339,17 @@ function DefaultStageEditor({
                   items={STAGE_TYPE_OPTIONS}
                   disabled={locked || isRequired}
                   onValueChange={(value: string | null) => {
-                    if (value) updateStage(stage.key, { type: value });
+                    const result = persistedStageTypeSchema.safeParse(value);
+
+                    if (!result.success) return;
+
+                    updateStage(stage.key, { type: result.data });
                   }}
                 >
                   <SelectTrigger
                     size="sm"
                     aria-label={`Tipo de etapa de ${stage.name}`}
-                    className="w-28 rounded-full text-xs"
+                    className="col-start-4 row-start-2 w-full min-w-0 rounded-full text-xs md:col-start-auto md:row-start-auto md:w-28"
                   >
                     <SelectValue />
                   </SelectTrigger>
@@ -336,6 +364,7 @@ function DefaultStageEditor({
                   </SelectContent>
                 </Select>
                 <Button
+                  className="col-start-5 row-start-1 md:col-start-auto md:row-start-auto"
                   type="button"
                   variant="ghost"
                   size="icon-sm"

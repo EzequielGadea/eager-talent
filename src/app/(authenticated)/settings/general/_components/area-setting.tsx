@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function AreaSetting() {
   const [isAddingArea, setIsAddingArea] = useState(false);
@@ -40,8 +41,13 @@ export default function AreaSetting() {
 
   const utils = api.useUtils();
 
-  const { data: areas, isLoading: isAreasLoading } =
-    api.area.getAllAreas.useQuery({});
+  const {
+    data: areas,
+    isLoading: isAreasLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.area.getAllAreas.useQuery({});
 
   const createArea = api.area.createArea.useMutation({
     onSuccess: async () => {
@@ -123,6 +129,17 @@ export default function AreaSetting() {
     return <GeneralSettingsCardSkeleton title="Áreas" rows={4} />;
   }
 
+  if (isError || !areas) {
+    return (
+      <SettingsFetchError
+        title="Áreas"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
@@ -188,10 +205,9 @@ export default function AreaSetting() {
           {isAddingArea && (
             <form
               onSubmit={handleCreateArea}
-              className="flex items-end gap-3 border-b border-border-default
-              py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={areaName}
