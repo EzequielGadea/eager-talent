@@ -5,7 +5,7 @@ import { type ChangeEvent, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Check, X } from "lucide-react";
+import { ArrowRight, Camera, X } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -309,6 +309,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                               onClick={handleRemoveImage}
                             >
                               Quitar foto
+                              <ArrowRight size={14} />
                             </Button>
                           }
                         />
@@ -381,7 +382,6 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                   className="cursor-pointer"
                   disabled={isSaving}
                 >
-                  <X size={16} />
                   Cancelar
                 </Button>
               }
@@ -420,18 +420,19 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                   className="h-auto cursor-pointer rounded-full bg-foreground px-4.25 py-2 text-[13px] font-semibold text-background hover:bg-foreground/90"
                 >
                   Descartar cambios
+                  <ArrowRight size={14} />
                 </Button>
               </div>
             </DialogContent>
           </Dialog>
 
           <Button type="submit" className="cursor-pointer" disabled={isSaving}>
-            <Check size={16} />
             {isUploading
               ? "Subiendo foto..."
               : isSaving
                 ? "Guardando..."
                 : "Guardar cambios"}
+            <ArrowRight size={16} />
           </Button>
         </div>
       </form>

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { format } from "date-fns";
 import { Mail, Pencil, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import getAvatar from "~/lib/avatar";
 import { ProfileEdit } from "./profile-edit";
 import { ChangePasswordDialog } from "./change-password-dialog";
@@ -45,6 +45,13 @@ export function ProfileCard({ user }: ProfileCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
   const [failedImage, setFailedImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      setIsEditing(false);
+      setIsImageZoomed(false);
+    };
+  }, []);
 
   const fullName = `${user.name} ${user.lastName}`.trim();
   const avatar = getAvatar(user.name, user.lastName);

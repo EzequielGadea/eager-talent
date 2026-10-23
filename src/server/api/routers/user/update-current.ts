@@ -6,7 +6,10 @@ import { profileSchema } from "~/lib/validations/profile";
 export const updateCurrent = protectedProcedure
   .input(
     profileSchema.extend({
-      image: z.string().nullable().optional(),
+      image: z
+        .httpUrl("La imagen debe ser una URL válida.")
+        .nullable()
+        .optional(),
     }),
   )
   .mutation(({ ctx, input }) =>

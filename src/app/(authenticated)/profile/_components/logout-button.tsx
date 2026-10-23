@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import { ArrowRight, LogOut } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -66,6 +66,7 @@ export function LogoutButton() {
             className="rounded-full font-semibold text-[13px] h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
           >
             Cerrar sesión
+            <ArrowRight size={14} />
           </Button>
         </div>
       </DialogContent>
