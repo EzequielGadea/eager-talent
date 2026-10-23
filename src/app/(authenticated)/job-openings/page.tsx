@@ -4,8 +4,8 @@ import { Suspense } from "react";
 import { z } from "zod";
 import { HiringManagerJobOpeningsFallback } from "./_components/hiring-manager-job-openings-fallback";
 import { RecruiterJobOpeningsFallback } from "./_components/recruiter-job-openings-fallback";
+import { JobOpeningsRoleFallback } from "./_components/job-openings-role-fallback";
 import { auth } from "~/lib/auth";
-import { Skeleton } from "~/components/ui/skeleton";
 import JobOpeningsList from "./_components/job-opening-list";
 import {
   defaultJobOpeningSort,
@@ -48,17 +48,6 @@ export default function JobOpeningsPage(props: JobOpeningsPageProps) {
     <Suspense fallback={<JobOpeningsRoleFallback />}>
       <JobOpeningsPageContent searchParams={props.searchParams} />
     </Suspense>
-  );
-}
-
-function JobOpeningsRoleFallback() {
-  return (
-    <div role="status" className="mx-auto flex w-full flex-col gap-5 p-6">
-      <span className="sr-only">Cargando vacantes</span>
-      <Skeleton className="h-8 w-44" />
-      <Skeleton className="h-4 w-64" />
-      <Skeleton className="h-148 w-full rounded-xl" />
-    </div>
   );
 }
 

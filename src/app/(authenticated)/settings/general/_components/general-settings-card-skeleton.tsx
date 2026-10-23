@@ -1,19 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 
 export function GeneralSettingsCardSkeleton({
-  title,
   rows = 3,
   showActionButton = true,
 }: {
-  title: string;
+  title?: string;
   rows?: number;
   showActionButton?: boolean;
 }) {
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">{title}</CardTitle>
+        <Skeleton className="h-4 w-36" />
       </CardHeader>
 
       <CardContent className="flex flex-col gap-2">

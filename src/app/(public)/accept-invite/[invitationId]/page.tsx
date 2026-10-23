@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import AcceptInvitePage from "./_components/accept-invite-form";
 import { InvalidToken } from "./_components/invalid-token";
+import { InviteShell } from "./_components/invite-shell";
+import { Skeleton } from "~/components/ui/skeleton";
 import { prisma } from "~/lib/prisma";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -88,6 +90,45 @@ async function InvitationContent({
   );
 }
 
+function AcceptInviteFallback() {
+  return (
+    <InviteShell>
+      <div className="space-y-2">
+        <Skeleton className="h-6 w-48" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-4/5" />
+      </div>
+
+      <Skeleton className="mt-5 h-14 w-full rounded-xl" />
+
+      <div className="mt-6 space-y-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-11 w-full rounded-xl" />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-11 w-full rounded-xl" />
+        </div>
+
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-36" />
+          <Skeleton className="h-11 w-full rounded-xl" />
+        </div>
+
+        <Skeleton className="h-11 w-full rounded-full" />
+      </div>
+    </InviteShell>
+  );
+}
+
 export default function Page({
   params,
   searchParams,
@@ -96,13 +137,7 @@ export default function Page({
   searchParams: Promise<{ token?: string; error?: string }>;
 }) {
   return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center bg-slate-50">
-          <div className="text-sm text-slate-500">Cargando invitación...</div>
-        </div>
-      }
-    >
+    <Suspense fallback={<AcceptInviteFallback />}>
       <InvitationContent
         paramsPromise={params}
         searchParamsPromise={searchParams}

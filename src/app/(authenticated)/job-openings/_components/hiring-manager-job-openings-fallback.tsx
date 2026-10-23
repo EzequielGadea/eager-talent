@@ -1,14 +1,4 @@
-import { CalendarDays } from "lucide-react";
-
 import { Skeleton } from "~/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
 
 export function HiringManagerJobOpeningsFallback() {
   return (
@@ -26,66 +16,30 @@ export function HiringManagerJobOpeningsFallback() {
       </div>
 
       <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-background shadow-sm">
-        <div className="w-full overflow-hidden">
-          <Table className="table-fixed">
-            <TableHeader>
-              <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Vacante
-                </TableHead>
-                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground md:table-cell">
-                  Área
-                </TableHead>
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Estado
-                </TableHead>
-                <TableHead className="hidden h-9.75 w-[9.5rem] min-w-[9.5rem] whitespace-nowrap px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground sm:table-cell">
-                  Candidatos
-                </TableHead>
-                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
-                  Entrevista técnica
-                </TableHead>
-                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
-                  Ofertados
-                </TableHead>
-                <TableHead className="hidden h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground xl:table-cell">
-                  Abierta hace
-                </TableHead>
-                <TableHead className="h-9.75 w-12 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />
-              </TableRow>
-            </TableHeader>
+        <div className="border-b border-dashboard-border bg-(--surface-subtle) px-4 py-3">
+          <div className="flex items-center gap-8">
+            <Skeleton className="h-3 w-28" />
+            <Skeleton className="hidden h-3 w-20 md:block" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="hidden h-3 w-24 sm:block" />
+            <Skeleton className="hidden h-3 w-28 xl:block" />
+          </div>
+        </div>
 
-            <TableBody className="divide-y divide-dashboard-border">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <TableRow key={index} className="h-17.5 hover:bg-transparent">
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-4 w-full max-w-36" />
-                  </TableCell>
-                  <TableCell className="hidden px-4 py-3 md:table-cell">
-                    <Skeleton className="h-4 w-full max-w-24" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="h-6 w-full max-w-20 rounded-full" />
-                  </TableCell>
-                  <TableCell className="hidden px-4 py-3 sm:table-cell">
-                    <Skeleton className="h-4 w-8" />
-                  </TableCell>
-                  <TableCell className="hidden px-4 py-3 xl:table-cell">
-                    <Skeleton className="h-4 w-8" />
-                  </TableCell>
-                  <TableCell className="hidden px-4 py-3 xl:table-cell">
-                    <Skeleton className="h-4 w-8" />
-                  </TableCell>
-                  <TableCell className="hidden px-4 py-3 xl:table-cell">
-                    <Skeleton className="h-4 w-full max-w-24" />
-                  </TableCell>
-                  <TableCell className="px-4 py-3">
-                    <Skeleton className="ml-auto size-4" />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="divide-y divide-dashboard-border">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex h-16 items-center justify-between gap-8 px-4"
+            >
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="hidden h-4 w-24 md:block" />
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="hidden h-4 w-10 sm:block" />
+              <Skeleton className="hidden h-4 w-24 xl:block" />
+              <Skeleton className="ml-auto size-4" />
+            </div>
+          ))}
         </div>
 
         <div className="flex items-center justify-between gap-4 border-t border-dashboard-border px-4 py-3">
@@ -95,11 +49,9 @@ export function HiringManagerJobOpeningsFallback() {
       </div>
 
       <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-background shadow-sm">
-        <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
-          <CalendarDays className="size-4 text-dashboard-text-muted" />
-          <h2 className="text-sm font-semibold text-text-primary">
-            Entrevistas asignadas a vos
-          </h2>
+        <div className="flex items-center gap-2 border-b border-dashboard-border px-4 py-3">
+          <Skeleton className="size-4 rounded-sm" />
+          <Skeleton className="h-4 w-48" />
         </div>
 
         <div className="flex flex-col divide-y divide-dashboard-border">
