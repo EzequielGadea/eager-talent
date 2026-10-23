@@ -47,7 +47,7 @@ export default function ProfessionalProfile() {
     api.seniority.getAllSeniorities.useQuery({});
 
   const { data: jobOpenings, isLoading: isLoadingJobOpening } =
-    api.jobOpening.getAllJobOpenings.useQuery({});
+    api.jobOpening.getAllOpenJobOpenings.useQuery({});
 
   const jobOpening = useWatch({
     control,
