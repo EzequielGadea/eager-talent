@@ -33,7 +33,8 @@ type Seniority = NonNullable<
 >[number];
 
 export default function SenioritySetting() {
-  const { data, isLoading, isError, refetch, isFetching } = api.seniority.getAllSeniorities.useQuery({});
+  const { data, isLoading, isError, refetch, isFetching } =
+    api.seniority.getAllSeniorities.useQuery({});
 
   if (isLoading) {
     return <GeneralSettingsCardSkeleton title="Seniorities" rows={4} />;
@@ -205,9 +206,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
         <ol className="flex flex-col gap-2">
           {seniorities?.map((seniority, index) => {
             const deleteRestrictions = [
-              seniority._count.applicants > 0
-                ? "candidatos asignados"
-                : null,
+              seniority._count.applicants > 0 ? "candidatos asignados" : null,
               seniority._count.jobOpenings > 0 ? "vacantes asociadas" : null,
             ].filter(
               (restriction): restriction is string => restriction !== null,
