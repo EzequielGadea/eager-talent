@@ -10,6 +10,14 @@ import { Camera, Check, Eye, X } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import { toast } from "~/components/ui/toast";
 import getAvatar from "~/lib/avatar";
 import { api } from "~/lib/trpc/react";
@@ -231,15 +239,62 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                 </Button>
 
                 {preview && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={isSaving}
-                    onClick={handleRemoveImage}
-                  >
-                    <X size={16} />
-                    Quitar foto
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={isSaving}
+                        >
+                          <X size={16} />
+                          Quitar foto
+                        </Button>
+                      }
+                    />
+
+                    <DialogContent className="max-w-110 overflow-hidden border bg-card p-0 text-card-foreground shadow-2xl sm:max-w-110">
+                      <DialogHeader className="flex flex-row items-center justify-between space-y-0 border-b px-5.5 py-4.5">
+                        <DialogTitle className="m-0 text-base font-bold tracking-tight">
+                          Quitar foto de perfil
+                        </DialogTitle>
+                      </DialogHeader>
+
+                      <div className="p-5.5">
+                        <p className="text-sm text-muted-foreground">
+                          ¿Seguro que querés quitar tu foto de perfil? Tendrás
+                          que guardar los cambios para confirmar la eliminación.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 border-t bg-muted/30 px-5.5 py-3.5">
+                        <DialogClose
+                          render={
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="h-auto rounded-full px-3.75 py-2 text-[13px] font-semibold"
+                            >
+                              Cancelar
+                            </Button>
+                          }
+                        />
+
+                        <DialogClose
+                          render={
+                            <Button
+                              type="button"
+                              disabled={isSaving}
+                              className="h-auto cursor-pointer rounded-full bg-foreground px-4.25 py-2 text-[13px] font-semibold text-background hover:bg-foreground/90"
+                              onClick={handleRemoveImage}
+                            >
+                              Quitar foto
+                            </Button>
+                          }
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </div>
 
@@ -338,6 +393,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
             >
               <X size={18} />
             </Button>
+
             <Image
               src={preview}
               alt="Foto de perfil ampliada"
