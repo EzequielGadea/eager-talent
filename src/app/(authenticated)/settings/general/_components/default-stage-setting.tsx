@@ -33,13 +33,12 @@ import { api } from "~/lib/trpc/react";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 import { SettingsFetchError } from "./settings-fetch-error";
 
-type DefaultStage = {
-  key: string;
-  name: string;
-  type: string;
-  label: string;
-  color: string;
-};
+import {
+  persistedStageTypeSchema,
+  type PersistedStage,
+} from "~/lib/validations/job-opening";
+
+type DefaultStage = PersistedStage;
 
 const STAGE_TYPE_OPTIONS = [
   { value: "Ninguna", label: "Ninguna" },
@@ -56,8 +55,13 @@ function isBoundaryStage(index: number, total: number) {
 }
 
 export default function DefaultStageSetting() {
-  const { data: flujo, isLoading: isFlujoLoading, isError, refetch, isFetching } =
-    api.templateStages.getDefault.useQuery();
+  const {
+    data: flujo,
+    isLoading: isFlujoLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.templateStages.getDefault.useQuery();
 
   if (isFlujoLoading) {
     return (
@@ -81,7 +85,9 @@ export default function DefaultStageSetting() {
   }
 
   const requiredStageIds = new Set(
-    flujo.stages.flatMap((stage) => (isRequiredStage(stage) ? [stage.key] : [])),
+    flujo.stages.flatMap((stage) =>
+      isRequiredStage(stage) ? [stage.key] : [],
+    ),
   );
 
   return (
@@ -312,11 +318,14 @@ function DefaultStageEditor({
                     className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
                     onChange={(event) => {
                       const name = event.target.value;
-                      const requiredType = getRequiredStageType(name);
-
+                      const requiredType = persistedStageTypeSchema.safeParse(
+                        getRequiredStageType(name),
+                      );
                       updateStage(stage.key, {
                         name,
-                        ...(requiredType ? { type: requiredType } : {}),
+                        ...(requiredType.success
+                          ? { type: requiredType.data }
+                          : {}),
                       });
                     }}
                   />
@@ -326,7 +335,11 @@ function DefaultStageEditor({
                   items={STAGE_TYPE_OPTIONS}
                   disabled={locked || isRequired}
                   onValueChange={(value: string | null) => {
-                    if (value) updateStage(stage.key, { type: value });
+                    const result = persistedStageTypeSchema.safeParse(value);
+
+                    if (!result.success) return;
+
+                    updateStage(stage.key, { type: result.data });
                   }}
                 >
                   <SelectTrigger
