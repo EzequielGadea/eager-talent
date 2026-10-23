@@ -15,7 +15,7 @@ import { statusConfig } from "../constants";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
 
-type JobOpening =
+export type JobOpening =
   inferRouterOutputs<AppRouter>["jobOpening"]["getAllJobOpeningsDetailed"][number];
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
   isHiringManagerView: boolean;
 };
 
-function HiringManagersCell({
+export function HiringManagersCell({
   managers,
 }: {
   managers: JobOpening["hiringManagers"];
@@ -100,11 +100,9 @@ export default function JobOpeningRow({
       className="group cursor-pointer border-b border-border-default transition-colors last:border-b-0 hover:bg-success-bg"
     >
       <TableCell className="px-4 py-3">
-        <div className="flex items-center gap-3">
-          <span className="min-w-0 text-xs font-semibold leading-tight text-dashboard-dark">
-            {jobOpening.name}
-          </span>
-        </div>
+        <span className="font-semibold text-text-primary">
+          {jobOpening.name}
+        </span>
       </TableCell>
 
       <TableCell className="px-4 py-3 text-text-secondary">
