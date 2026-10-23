@@ -14,7 +14,13 @@ export function Header(props: {
 
   return (
     <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
-      <div className="min-w-0 flex-1">
+      <div
+        className={
+          props.isHiringManagerView
+            ? "min-w-0 flex-[1_1_20rem]"
+            : "min-w-0 flex-1"
+        }
+      >
         <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
           Candidatos
         </h1>
@@ -36,7 +42,7 @@ export function Header(props: {
         )}
       </div>
       {props.isHiringManagerView && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
           <span className="text-sm text-text-secondary">
             {props.countApplicants}{" "}
             {props.countApplicants === 1 ? "candidato" : "candidatos"} de

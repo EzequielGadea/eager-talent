@@ -124,13 +124,25 @@ function CardHeader({ applicant }: { applicant: ApplicantInfo }) {
   );
 }
 
-function JobOpeningLine({ jobOpening }: { jobOpening: string[] }) {
+function JobOpeningLine({
+  jobOpening,
+  showFirst = false,
+}: {
+  jobOpening: string[];
+  showFirst?: boolean;
+}) {
   return (
-    <p className="truncate text-xs text-dashboard-text-muted">
+    <p className="flex min-w-0 items-center gap-1 text-xs text-dashboard-text-muted">
       {jobOpening.length > 0 ? (
         <>
-          {jobOpening[jobOpening.length - 1]}
-          {jobOpening.length > 1 && ` +${jobOpening.length - 1}`}
+          <span className="min-w-0 truncate">
+            {jobOpening[showFirst ? 0 : jobOpening.length - 1]}
+          </span>
+          {jobOpening.length > 1 && (
+            <span className="shrink-0 whitespace-nowrap">
+              +{jobOpening.length - 1}
+            </span>
+          )}
         </>
       ) : (
         "Sin vacante"
@@ -181,14 +193,14 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
 
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-1.5 text-xs text-dashboard-text-muted">
-          {applicant.sourceText && (
+          {applicant.source && (
             <span className="shrink-0">
-              {getSourceIcon(applicant.sourceText)}
+              {getSourceIcon(applicant.source)}
             </span>
           )}
 
           <span className="truncate">
-            {[applicant.area, applicant.sourceText].filter(Boolean).join(" · ")}
+            {[applicant.area, applicant.source].filter(Boolean).join(" · ")}
           </span>
         </div>
 
@@ -233,7 +245,7 @@ function HiringManagerApplicantCard({
     <article className="relative flex flex-col gap-2 px-4 py-3 transition-colors hover:bg-dashboard-success-light">
       <CardHeader applicant={applicant} />
 
-      <JobOpeningLine jobOpening={applicant.jobOpening} />
+      <JobOpeningLine jobOpening={applicant.jobOpening} showFirst />
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         {applicant.currentStage ? (
