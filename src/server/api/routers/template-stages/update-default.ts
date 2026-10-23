@@ -1,10 +1,19 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { isRequiredStage, normalizeStageName, getRequiredStageType } from "~/lib/required-stage-types";
-import { persistedStagesSchema, persistedStageTypeSchema } from "~/lib/validations/job-opening";
+import {
+  isRequiredStage,
+  normalizeStageName,
+  getRequiredStageType,
+} from "~/lib/required-stage-types";
+import {
+  persistedStagesSchema,
+  persistedStageTypeSchema,
+} from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
-import { auth  } from "~/lib/auth";
+import { auth } from "~/lib/auth";
+
+import { getRequiredStageErrors } from "~/lib/validations/required-stages";
 
 const stageSchema = z.object({
   key: z.string().min(1),
@@ -33,34 +42,10 @@ const stagesSchema = z
       });
     }
 
-    const requiredNames = [
-      "Aplicado",
-      "Entrevista HR",
-      "Entrevista técnica",
-      "Oferta",
-      "Contratado/a",
-    ];
-
-    for (const name of requiredNames) {
-      if (!names.includes(normalizeStageName(name))) {
-        ctx.addIssue({
-          code: "custom",
-          message: `El flujo debe incluir la etapa obligatoria ${name}.`,
-        });
-      }
-    }
-
-    if (names[0] !== normalizeStageName("Aplicado")) {
+    for (const message of getRequiredStageErrors(stages)) {
       ctx.addIssue({
         code: "custom",
-        message: "Aplicado debe ser la primera etapa del flujo.",
-      });
-    }
-
-    if (names.at(-1) !== normalizeStageName("Contratado/a")) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Contratado/a debe ser la última etapa del flujo.",
+        message,
       });
     }
 
@@ -84,17 +69,16 @@ export const updateDefault = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
-
     const permission = await auth.api.hasPermission({
       headers: ctx.headers,
       body: {
         permissions: {
           stageTemplate: ["update"],
-        }
-      }
-    })
+        },
+      },
+    });
 
-    if(!permission?.success){
+    if (!permission?.success) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "No tienes permisos para actualizar el flujo por defecto.",
