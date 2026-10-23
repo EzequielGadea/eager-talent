@@ -142,7 +142,7 @@ export function GlobalSearch() {
   const showResults = isFocused && normalizedQuery.length > 0;
 
   return (
-    <div className="relative flex min-w-0 max-w-xl flex-1 items-center">
+    <div className="relative flex min-w-0 flex-1 items-center md:mx-auto md:w-[calc(50%-2rem)] md:flex-none">
       <Command
         shouldFilter={false}
         className="contents"
@@ -169,17 +169,17 @@ export function GlobalSearch() {
           onBlur={() => setIsFocused(false)}
           aria-label="Buscar"
           placeholder="Buscar candidatos, vacantes o etiquetas…"
-          className="h-9.5 w-full rounded-md border border-border-default bg-surface-subtle py-2 pr-14 pl-9 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-focus"
+          className="h-9.5 w-full min-w-0 rounded-md border border-border-default bg-slate-50 py-2 pr-3 pl-9 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-focus md:pr-14"
         />
 
-        <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-border-default bg-white px-1.5 py-0.5 text-xs text-text-tertiary max-[640px]:hidden">
+        <kbd className="absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-border-default bg-white px-1.5 py-0.5 text-xs text-text-tertiary md:block">
           {isFocused ? "Esc" : "⌘K"}
         </kbd>
 
         {showResults && (
           <div
             onMouseDown={(event) => event.preventDefault()}
-            className="absolute top-full left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-border-default bg-white shadow-lg"
+            className="absolute top-full left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-border-default bg-white shadow-lg max-md:fixed max-md:inset-x-4 max-md:top-17 max-md:mt-0 max-md:w-auto"
           >
             <CommandList hideScrollbar={false} className="max-h-96">
               <CommandEmpty className="py-8 text-center text-sm text-text-tertiary">
@@ -267,7 +267,9 @@ export function GlobalSearch() {
                 <KeyHint keys="↵" label="abrir" />
               </span>
 
-              <span>Click en un resultado abre el perfil / detalle</span>
+              <span className="hidden md:inline">
+                Click en un resultado abre el perfil / detalle
+              </span>
             </div>
           </div>
         )}

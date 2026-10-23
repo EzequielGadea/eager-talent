@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
+import { ApplicantCardList } from "./applicant-card-list";
 import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantRow } from "./applicant-row";
 import { HiringManagerApplicantRow } from "./hiring-manager-applicant-row";
@@ -52,9 +53,20 @@ export function ApplicantTable(props: {
     "source",
   ].some((key) => searchParams.has(key));
 
+  const emptyMessage = hasActiveFilters
+    ? "No se encontraron candidatos con los filtros aplicados."
+    : "Todavía no hay candidatos registrados.";
+
   return (
     <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-      <div className="w-full overflow-x-auto">
+      <ApplicantCardList
+        applicants={props.applicantsData}
+        isPending={isPending}
+        emptyMessage={emptyMessage}
+        isHiringManagerView={props.isHiringManagerView}
+      />
+
+      <div className="hidden w-full overflow-x-auto md:block">
         <Table
           className={
             props.isHiringManagerView
@@ -77,9 +89,7 @@ export function ApplicantTable(props: {
                   colSpan={props.isHiringManagerView ? 5 : 10}
                   className="h-24 text-center text-dashboard-text-muted"
                 >
-                  {hasActiveFilters
-                    ? "No se encontraron candidatos con los filtros aplicados."
-                    : "Todavía no hay candidatos registrados."}
+                  {emptyMessage}
                 </TableCell>
               </TableRow>
             ) : props.isHiringManagerView ? (

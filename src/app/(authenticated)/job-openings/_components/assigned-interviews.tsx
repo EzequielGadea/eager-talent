@@ -90,9 +90,9 @@ export default function AssignedInterviews() {
             return (
               <div
                 key={interview.id}
-                className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
+                className="flex items-center justify-between gap-4 px-4 py-3"
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   <Link
                     href={`/applicants/${interview.applicant.id}`}
                     className="group flex min-w-0 items-center gap-3"
@@ -117,8 +117,14 @@ export default function AssignedInterviews() {
                       </p>
 
                       <p className="text-xs text-text-secondary">
-                        {interview.name} · {jobOpeningName} · {formattedDate}
+                        {interview.name}
                       </p>
+
+                      <p className="text-xs text-text-secondary">
+                        {jobOpeningName}
+                      </p>
+
+                      <p className="text-xs text-info">{formattedDate}</p>
                     </div>
                   </Link>
                 </div>
@@ -126,7 +132,7 @@ export default function AssignedInterviews() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-2 rounded-full border-dashboard-border"
+                  className="shrink-0 gap-2 rounded-full border-dashboard-border"
                   onClick={() => router.push(`/interviews/${interview.id}`)}
                 >
                   Ver

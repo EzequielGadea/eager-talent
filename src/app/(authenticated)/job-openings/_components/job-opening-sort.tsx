@@ -78,7 +78,11 @@ export function JobOpeningSort({ value, onValueChange }: JobOpeningSortProps) {
           />
         }
       >
-        Ordenar: {selectedOption?.triggerLabel ?? "Más recientes"}
+        <span>
+          {/* The prefix is visually hidden on mobile to save space. */}
+          <span className="sr-only md:not-sr-only">Ordenar: </span>
+          {selectedOption?.triggerLabel ?? "Más recientes"}
+        </span>
         <ChevronDown data-icon="inline-end" />
       </PopoverTrigger>
 
