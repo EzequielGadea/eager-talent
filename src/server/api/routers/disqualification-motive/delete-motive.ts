@@ -14,11 +14,11 @@ export const deleteDisqualificationMotive = protectedProcedure
     const permission = await auth.api.hasPermission({
       headers: ctx.headers,
       body: {
-        permissions:{
-          disqualificationMotive: ["delete"]
+        permissions: {
+          disqualificationMotive: ["delete"],
         },
-      }
-    })
+      },
+    });
 
     if (!permission.success) {
       throw new TRPCError({

@@ -16,11 +16,11 @@ export const createDescalificationMotive = protectedProcedure
     const permission = await auth.api.hasPermission({
       headers: ctx.headers,
       body: {
-        permissions:{
-          disqualificationMotive: ["create"]
+        permissions: {
+          disqualificationMotive: ["create"],
         },
-      }
-    })
+      },
+    });
 
     if (!permission.success) {
       throw new TRPCError({
@@ -28,7 +28,7 @@ export const createDescalificationMotive = protectedProcedure
         message: "No tienes permisos para crear motivos de descalificación.",
       });
     }
-    
+
     const existingMotive = await ctx.db.disqualificationMotive.findFirst({
       where: { name: { equals: input.name, mode: "insensitive" } },
       select: { id: true },

@@ -41,8 +41,13 @@ export default function AreaSetting() {
 
   const utils = api.useUtils();
 
-  const { data: areas, isLoading: isAreasLoading,  isError, refetch, isFetching } =
-    api.area.getAllAreas.useQuery({});
+  const {
+    data: areas,
+    isLoading: isAreasLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.area.getAllAreas.useQuery({});
 
   const createArea = api.area.createArea.useMutation({
     onSuccess: async () => {
@@ -124,16 +129,16 @@ export default function AreaSetting() {
     return <GeneralSettingsCardSkeleton title="Áreas" rows={4} />;
   }
 
-    if (isError || !areas) {
-      return (
-        <SettingsFetchError
-          title="Áreas"
-          message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
-          refetch={refetch}
-          isFetching={isFetching}
-        />
-      );
-    }
+  if (isError || !areas) {
+    return (
+      <SettingsFetchError
+        title="Áreas"
+        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
 
   return (
     <Card className="w-full rounded-xl shadow-sm">
