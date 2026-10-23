@@ -151,6 +151,7 @@ export function CandidateCard({
     <>
       <Card
         ref={setNodeRef}
+        data-pipeline-candidate
         {...dragProps}
         style={{
           transform: transform
