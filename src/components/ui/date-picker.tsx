@@ -217,6 +217,7 @@ export function DatePicker({
         name={name}
         key={resetKey}
         defaultValue={isoToCalendarDate(value)}
+        shouldForceLeadingZeros
         onBlur={onBlur}
         isInvalid={isInvalid || undefined}
         isDisabled={isDisabled}
