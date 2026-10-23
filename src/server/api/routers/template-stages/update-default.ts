@@ -1,15 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { isRequiredStage } from "~/lib/required-stage-types";
-import { persistedStagesSchema } from "~/lib/validations/job-opening";
+import { isRequiredStage, normalizeStageName, getRequiredStageType } from "~/lib/required-stage-types";
+import { persistedStagesSchema, persistedStageTypeSchema } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 import { auth  } from "~/lib/auth";
 
 const stageSchema = z.object({
   key: z.string().min(1),
   name: z.string().trim().min(1).max(80),
-  type: z.string().min(1),
+  type: persistedStageTypeSchema,
   label: z.string().min(1),
   color: z.string().min(1),
 });
@@ -25,12 +25,54 @@ const stagesSchema = z
       });
     }
 
-    const names = stages.map((stage) => stage.name.toLocaleLowerCase("es"));
+    const names = stages.map((stage) => normalizeStageName(stage.name));
     if (new Set(names).size !== names.length) {
       ctx.addIssue({
         code: "custom",
         message: "Las etapas no pueden tener nombres repetidos",
       });
+    }
+
+    const requiredNames = [
+      "Aplicado",
+      "Entrevista HR",
+      "Entrevista técnica",
+      "Oferta",
+      "Contratado/a",
+    ];
+
+    for (const name of requiredNames) {
+      if (!names.includes(normalizeStageName(name))) {
+        ctx.addIssue({
+          code: "custom",
+          message: `El flujo debe incluir la etapa obligatoria ${name}.`,
+        });
+      }
+    }
+
+    if (names[0] !== normalizeStageName("Aplicado")) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Aplicado debe ser la primera etapa del flujo.",
+      });
+    }
+
+    if (names.at(-1) !== normalizeStageName("Contratado/a")) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Contratado/a debe ser la última etapa del flujo.",
+      });
+    }
+
+    for (const stage of stages) {
+      const expectedType = getRequiredStageType(stage.name);
+
+      if (expectedType && stage.type !== expectedType) {
+        ctx.addIssue({
+          code: "custom",
+          message: `La etapa ${stage.name} debe tener el tipo ${expectedType}.`,
+        });
+      }
     }
   });
 
@@ -72,36 +114,6 @@ export const updateDefault = protectedProcedure
     const nextStagesByKey = new Map(
       input.stages.map((stage) => [stage.key, stage]),
     );
-
-    const boundaryStages = [
-      {
-        current: currentStages[0],
-        next: input.stages[0],
-        position: "primera",
-      },
-      {
-        current: currentStages.at(-1),
-        next: input.stages.at(-1),
-        position: "última",
-      },
-    ];
-
-    for (const boundary of boundaryStages) {
-      if (
-        !boundary.current ||
-        !boundary.next ||
-        boundary.next.key !== boundary.current.key ||
-        boundary.next.name !== boundary.current.name ||
-        boundary.next.type !== boundary.current.type ||
-        boundary.next.label !== boundary.current.label ||
-        boundary.next.color !== boundary.current.color
-      ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: `La ${boundary.position} etapa no se puede mover, editar ni eliminar.`,
-        });
-      }
-    }
 
     for (const requiredStage of currentStages) {
       if (!isRequiredStage(requiredStage)) continue;
