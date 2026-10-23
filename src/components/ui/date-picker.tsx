@@ -3,7 +3,13 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import {
   DateField,
   DateFieldStateContext,
@@ -30,6 +36,7 @@ type DatePickerProps = {
   value?: string | null;
   onChange?: (value: string) => void;
   onBlur?: () => void;
+  ref?: React.Ref<{ focus: () => void }>;
   name?: string;
   id?: string;
   /** ISO date string (yyyy-MM-dd). */
@@ -82,10 +89,16 @@ function DatePickerCalendar({
   const currentYear = new Date().getFullYear();
   const defaultStart = new Date(currentYear - 5, 0);
   const defaultEnd = new Date(currentYear + 20, 11);
+  const earliest = [defaultStart, selected, maxDate].filter(
+    (date) => date !== undefined,
+  );
+  const latest = [defaultEnd, selected, minDate].filter(
+    (date) => date !== undefined,
+  );
   const startMonth =
-    minDate ?? (selected && selected < defaultStart ? selected : defaultStart);
+    minDate ?? new Date(Math.min(...earliest.map((date) => date.getTime())));
   const endMonth =
-    maxDate ?? (selected && selected > defaultEnd ? selected : defaultEnd);
+    maxDate ?? new Date(Math.max(...latest.map((date) => date.getTime())));
 
   return (
     <Calendar
@@ -152,6 +165,7 @@ export function DatePicker({
   value,
   onChange,
   onBlur,
+  ref,
   name,
   id,
   minValue,
@@ -165,6 +179,14 @@ export function DatePicker({
   const [open, setOpen] = useState(false);
   const [syncedDate, setSyncedDate] = useState(value ?? "");
   const [resetKey, setResetKey] = useState(0);
+  const fieldRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () =>
+      fieldRef.current
+        ?.querySelector<HTMLElement>("[role=spinbutton]")
+        ?.focus(),
+  }));
 
   // The field keeps its own (possibly partial) text, so it is only remounted
   // when the form changes the value from outside, e.g. a reset or the calendar.
@@ -190,6 +212,7 @@ export function DatePicker({
   return (
     <I18nProvider locale="es-AR">
       <DateField
+        ref={fieldRef}
         id={id}
         name={name}
         key={resetKey}

@@ -66,6 +66,7 @@ export function JobOpeningDatesCard() {
                 value={field.value}
                 onChange={field.onChange}
                 onBlur={field.onBlur}
+                ref={field.ref}
                 isInvalid={!!errors.openingDate}
                 className="[--date-picker-height:2.375rem]"
               />
@@ -96,6 +97,7 @@ export function JobOpeningDatesCard() {
                 value={field.value}
                 onChange={field.onChange}
                 onBlur={field.onBlur}
+                ref={field.ref}
                 minValue={openingDateValue || undefined}
                 isInvalid={!!errors.targetClosingDate}
                 className="[--date-picker-height:2.375rem]"

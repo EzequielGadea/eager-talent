@@ -247,6 +247,7 @@ export function ScheduleInterviewDialog({
                       value={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
+                      ref={field.ref}
                       minValue={getTodayLocalISO()}
                       isInvalid={!!errors.date}
                       className="[--date-picker-height:2.75rem] [--date-picker-radius:var(--radius-xl)]"

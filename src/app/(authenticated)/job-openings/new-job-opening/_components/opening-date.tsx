@@ -87,6 +87,7 @@ export default function OpeningDate() {
                       if (closingDate) void trigger("closingDate");
                     }}
                     onBlur={field.onBlur}
+                    ref={field.ref}
                     isInvalid={!!errors.openingDate}
                   />
                 )}
@@ -125,6 +126,7 @@ export default function OpeningDate() {
                       field.onChange(fromDateInputValue(value))
                     }
                     onBlur={field.onBlur}
+                    ref={field.ref}
                     minValue={toDateInputValue(openingDate)}
                     isInvalid={!!errors.closingDate}
                   />

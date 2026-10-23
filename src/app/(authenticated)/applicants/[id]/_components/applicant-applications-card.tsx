@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
+import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -109,11 +110,17 @@ export function ApplicantApplicationsCard({
   canCreateApplication,
 }: ApplicantApplicationsCardProps) {
   const router = useRouter();
+  const utils = api.useUtils();
   const [, startTransition] = useTransition();
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
     () => getInitialSelection(applications, explorationInterviews),
   );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
+
+  function refreshApplicantData() {
+    void utils.activity.getByApplicantId.invalidate({ applicantId });
+    router.refresh();
+  }
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
@@ -326,7 +333,7 @@ export function ApplicantApplicationsCard({
           jobOpeningId={app.jobOpeningId}
           candidateName={applicantName}
           stageName={app.currentStageName}
-          onSuccess={() => router.refresh()}
+          onSuccess={refreshApplicantData}
         />
       )}
 
@@ -339,7 +346,7 @@ export function ApplicantApplicationsCard({
           jobOpeningId={app.jobOpeningId}
           applicantName={applicantName}
           stageName={app.currentStageName}
-          onSuccess={() => router.refresh()}
+          onSuccess={refreshApplicantData}
         />
       )}
 

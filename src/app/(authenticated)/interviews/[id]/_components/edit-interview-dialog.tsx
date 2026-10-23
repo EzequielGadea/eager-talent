@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TZDate } from "@date-fns/tz";
+import { parseDateTime, toZoned } from "@internationalized/date";
 import { format } from "date-fns";
 import { Loader2, Pencil, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -30,6 +31,8 @@ import { InterviewType } from "~/generated/prisma/enums";
 import { interviewTypeTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
+
+const INTERVIEW_TIME_ZONE = "America/Montevideo";
 
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120];
 
@@ -102,7 +105,7 @@ function getInitialValues(
   interview: EditableInterview,
 ): EditInterviewFormValues {
   const mvdDate = interview.date
-    ? new TZDate(interview.date, "America/Montevideo")
+    ? new TZDate(interview.date, INTERVIEW_TIME_ZONE)
     : null;
 
   return {
@@ -205,10 +208,10 @@ export function EditInterviewDialog({
   const isPending = updateInterview.isPending || isRefreshing;
 
   function onSubmit(data: EditInterviewFormValues) {
-    const date = new TZDate(
-      `${data.date}T${data.time}:00`,
-      "America/Montevideo",
-    );
+    const date = toZoned(
+      parseDateTime(`${data.date}T${data.time}`),
+      INTERVIEW_TIME_ZONE,
+    ).toDate();
 
     updateInterview.mutate({
       id: interview.id,
@@ -281,6 +284,7 @@ export function EditInterviewDialog({
                       value={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
+                      ref={field.ref}
                       isInvalid={!!errors.date}
                       className={datePickerControl}
                     />
