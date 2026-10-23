@@ -4,6 +4,7 @@ import { z } from "zod";
 import { isRequiredStage } from "~/lib/required-stage-types";
 import { persistedStagesSchema } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
+import { auth  } from "~/lib/auth";
 
 const stageSchema = z.object({
   key: z.string().min(1),
@@ -41,6 +42,23 @@ export const updateDefault = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
+
+    const permission = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: {
+        permissions: {
+          stageTemplate: ["update"],
+        }
+      }
+    })
+
+    if(!permission?.success){
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tienes permisos para actualizar el flujo por defecto.",
+      });
+    }
+
     const template = await ctx.db.stageTemplate.findFirst({
       where: { id: input.id, deletedAt: null },
       select: { id: true, stages: true },
