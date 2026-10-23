@@ -1,19 +1,14 @@
-﻿import "server-only";
+import "server-only";
 
 import { Suspense } from "react";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { Table, TableBody } from "~/components/ui/table";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { api } from "~/lib/trpc/server";
 
-import {
-  ApplicantTableHeader,
-  HiringManagerApplicantTableHeader,
-} from "./_components/applicant-table";
 import {
   ApplicantAwaiterFilters,
   ApplicantAwaiterHeader,
@@ -22,9 +17,9 @@ import {
 } from "./_components/applicant-awaiter";
 import {
   ApplicantsPageSkeleton,
+  ApplicantsTableSkeleton,
   FiltersFallback,
   HeaderFallback,
-  TableFallback,
 } from "./_components/fallbacks";
 
 import type { ApplicantsSearchParams } from "./types";
@@ -178,31 +173,7 @@ async function ProtectedApplicantsPage(props: {
         </Suspense>
       </div>
 
-      <Suspense
-        fallback={
-          <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-            <div className="w-full overflow-x-auto">
-              <Table
-                className={
-                  isHiringManagerView
-                    ? "min-w-200 table-fixed"
-                    : "min-w-262.5 table-fixed"
-                }
-              >
-                {isHiringManagerView ? (
-                  <HiringManagerApplicantTableHeader showSharedBy={false} />
-                ) : (
-                  <ApplicantTableHeader />
-                )}
-
-                <TableBody className="divide-y divide-dashboard-border">
-                  <TableFallback isHiringManagerView={isHiringManagerView} />
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        }
-      >
+      <Suspense fallback={<ApplicantsTableSkeleton />}>
         <ApplicantAwaiterTable
           promiseData={data}
           promiseCount={countApplicants}
@@ -212,21 +183,7 @@ async function ProtectedApplicantsPage(props: {
       </Suspense>
 
       {isHiringManagerView && sharedData && (
-        <Suspense
-          fallback={
-            <div className="mt-4 w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-              <div className="w-full overflow-x-auto">
-                <Table className="min-w-200 table-fixed">
-                  <HiringManagerApplicantTableHeader showSharedBy={true} />
-
-                  <TableBody className="divide-y divide-dashboard-border">
-                    <TableFallback isHiringManagerView showSharedBy />
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          }
-        >
+        <Suspense fallback={<ApplicantsTableSkeleton className="mt-4" />}>
           <SharedApplicantsAwaiter
             promiseData={sharedData}
             currentPage={currentSharedPage}

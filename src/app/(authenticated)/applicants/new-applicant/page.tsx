@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import NewApplicantForm from "./_components/new-applicant-form";
+import { NewApplicantPageSkeleton } from "./_components/new-applicant-skeleton";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 
@@ -7,7 +8,7 @@ import { redirect } from "next/navigation";
 
 export default function newApplicantPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<NewApplicantPageSkeleton />}>
       <ProtectedNewApplicantPage />
     </Suspense>
   );

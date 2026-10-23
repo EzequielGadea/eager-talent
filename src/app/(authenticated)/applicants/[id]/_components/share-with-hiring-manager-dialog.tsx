@@ -429,9 +429,11 @@ export function ShareWithHiringManagerDialog({
                 className="overflow-hidden rounded-xl p-2"
               >
                 <ComboboxEmpty>
-                  {sharingDataQuery.isLoading
-                    ? "Cargando Hiring Managers..."
-                    : "No se encontraron Hiring Managers."}
+                  {sharingDataQuery.isLoading ? (
+                    <Skeleton className="mx-auto h-4 w-40" />
+                  ) : (
+                    "No se encontraron Hiring Managers."
+                  )}
                 </ComboboxEmpty>
 
                 <ComboboxList className="max-h-52 overflow-y-scroll! overscroll-contain scrollbar-gutter-stable [scrollbar-color:var(--border-default)_var(--muted)] scrollbar-thin! [&::-webkit-scrollbar]:block! [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-muted [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-default">
@@ -477,13 +479,15 @@ export function ShareWithHiringManagerDialog({
               </h3>
 
               <span aria-live="polite" className="text-sm text-text-tertiary">
-                {sharingDataQuery.isLoading
-                  ? "Cargando..."
-                  : sharingDataQuery.error
-                    ? "—"
-                    : `${currentAccess.length} ${
-                        currentAccess.length === 1 ? "persona" : "personas"
-                      }`}
+                {sharingDataQuery.isLoading ? (
+                  <Skeleton className="h-4 w-16" />
+                ) : sharingDataQuery.error ? (
+                  "—"
+                ) : (
+                  `${currentAccess.length} ${
+                    currentAccess.length === 1 ? "persona" : "personas"
+                  }`
+                )}
               </span>
             </div>
 
