@@ -46,11 +46,7 @@ export default function DisqualificationMotiveSetting() {
     isError,
     refetch,
     isFetching,
-<<<<<<< HEAD:src/app/(authenticated)/settings/general/_components/disqualification-motive-setting.tsx
   } = api.disqualificationMotive.getAllDisqualificationMotive.useQuery({});
-=======
-  } = api.descalificationMotive.getAllDescalificationMotive.useQuery({});
->>>>>>> fe81626 (style: aplicar formato de Prettier a los archivos):src/app/(authenticated)/settings/general/_components/descalification-motive-setting.tsx
 
   const createMotive =
     api.disqualificationMotive.createDisqualificationMotive.useMutation({

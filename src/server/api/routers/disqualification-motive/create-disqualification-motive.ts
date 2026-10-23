@@ -6,7 +6,7 @@ import { protectedProcedure } from "~/server/api/trpc";
 
 import { auth } from "~/lib/auth";
 
-export const createDescalificationMotive = protectedProcedure
+export const createDisqualificationMotive = protectedProcedure
   .input(
     z.object({
       name: z.string().trim().min(1, "El nombre es obligatorio."),
