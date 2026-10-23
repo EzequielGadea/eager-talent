@@ -19,19 +19,16 @@ export default function AssignedInterviews() {
     isError,
   } = api.interview.getAssignedInterviews.useQuery();
 
-  return (
-    <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-      <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
-        <CalendarDays size={16} className="text-dashboard-text-muted" />
+  if (isLoading) {
+    return (
+      <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+        <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
+          <Skeleton className="size-4 rounded-sm" />
+          <Skeleton className="h-4 w-44" />
+        </div>
 
-        <h2 className="text-sm font-semibold text-text-primary">
-          Entrevistas asignadas a vos
-        </h2>
-      </div>
-
-      {isLoading ? (
         <div className="flex flex-col divide-y divide-dashboard-border">
-          {Array.from({ length: 3 }).map((_, index) => (
+          {Array.from({ length: 2 }).map((_, index) => (
             <div
               key={index}
               className="flex items-center justify-between gap-4 px-4 py-3"
@@ -45,7 +42,21 @@ export default function AssignedInterviews() {
             </div>
           ))}
         </div>
-      ) : isError ? (
+      </section>
+    );
+  }
+
+  return (
+    <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+      <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
+        <CalendarDays size={16} className="text-dashboard-text-muted" />
+
+        <h2 className="text-sm font-semibold text-text-primary">
+          Entrevistas asignadas a vos
+        </h2>
+      </div>
+
+      {isError ? (
         <p className="px-4 py-6 text-sm text-danger">
           No se pudieron cargar las entrevistas.
         </p>
