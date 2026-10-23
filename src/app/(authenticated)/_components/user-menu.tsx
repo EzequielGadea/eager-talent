@@ -37,7 +37,8 @@ export function UserMenu({ children, side = "top" }: UserMenuProps) {
         {children}
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent side={side} sideOffset={8}>
+      {/* min-w-max keeps items on one line when the trigger is only the avatar. */}
+      <DropdownMenuContent side={side} sideOffset={8} className="min-w-max">
         <DropdownMenuItem render={<Link href="/profile" />} className="gap-2">
           <UserRound aria-hidden="true" />
           <span>Perfil</span>

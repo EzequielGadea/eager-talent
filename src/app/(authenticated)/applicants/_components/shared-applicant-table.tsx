@@ -6,6 +6,7 @@ import { Share2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 
 import type { ApplicantInfo } from "../types";
+import { ApplicantCardList } from "./applicant-card-list";
 import { ApplicantPagination } from "./applicant-pagination";
 import { HiringManagerApplicantTableHeader } from "./applicant-table";
 import { HiringManagerApplicantRow } from "./hiring-manager-applicant-row";
@@ -55,7 +56,15 @@ export function SharedApplicantsTable(props: {
       </div>
 
       <div className="w-full overflow-hidden rounded-b-xl border-x border-b border-dashboard-border bg-white shadow-sm">
-        <div className="w-full overflow-x-auto">
+        <ApplicantCardList
+          applicants={props.applicantsData}
+          isPending={isPending}
+          emptyMessage="No hay perfiles compartidos con vos."
+          isHiringManagerView
+          showSharedBy
+        />
+
+        <div className="hidden w-full overflow-x-auto md:block">
           <Table className="min-w-200 table-fixed">
             <HiringManagerApplicantTableHeader showSharedBy={true} />
 

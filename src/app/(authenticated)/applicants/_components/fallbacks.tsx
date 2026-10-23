@@ -8,7 +8,7 @@ export function HeaderFallback({
 }) {
   return (
     <header className="mb-4.5 flex items-start justify-between gap-4">
-      <div>
+      <div className="min-w-0 flex-1">
         <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
           Candidatos
         </h1>
@@ -16,9 +16,7 @@ export function HeaderFallback({
         <Skeleton className="mt-2 h-4 w-96 max-w-full" />
       </div>
 
-      {!isHiringManagerView && (
-        <Skeleton className="h-8.5 w-36 rounded-full" />
-      )}
+      {!isHiringManagerView && <Skeleton className="h-8.5 w-36 rounded-full" />}
     </header>
   );
 }
@@ -45,11 +43,7 @@ export function FiltersFallback({
   );
 }
 
-export function ApplicantsTableSkeleton({
-  className,
-}: {
-  className?: string;
-}) {
+export function ApplicantsTableSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={`w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm ${className ?? ""}`}
