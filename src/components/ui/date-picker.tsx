@@ -3,7 +3,19 @@
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import {
+  DateField,
+  DateFieldStateContext,
+  DateInput,
+  DateSegment,
+  I18nProvider,
+} from "react-aria-components";
+import {
+  CalendarDate,
+  getLocalTimeZone,
+  parseDate,
+} from "@internationalized/date";
 
 import { Calendar } from "~/components/ui/calendar";
 import {
@@ -31,40 +43,17 @@ type DatePickerProps = {
   "aria-labelledby"?: string;
 };
 
-const MIN_YEAR = 1900;
-
 function isoToDate(iso?: string | null) {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? "");
-  if (!match) return undefined;
-
-  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  return isoToCalendarDate(iso)?.toDate(getLocalTimeZone());
 }
 
-function isoToText(iso?: string | null) {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? "");
-
-  return match ? `${match[3]}/${match[2]}/${match[1]}` : "";
-}
-
-// Returns null when the text is not a real calendar date (e.g. 31/02/2025).
-function textToIso(text: string) {
-  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
-  if (!match) return null;
-
-  const [, day, month, year] = match;
-  const date = new Date(Number(year), Number(month) - 1, Number(day));
-  const isReal =
-    date.getFullYear() === Number(year) &&
-    date.getMonth() === Number(month) - 1 &&
-    date.getDate() === Number(day);
-
-  return isReal && Number(year) >= MIN_YEAR ? `${year}-${month}-${day}` : null;
-}
-
-function maskDigits(digits: string) {
-  return [digits.slice(0, 2), digits.slice(2, 4), digits.slice(4)]
-    .filter(Boolean)
-    .join("/");
+function isoToCalendarDate(iso?: string | null) {
+  if (!iso) return null;
+  try {
+    return parseDate(iso);
+  } catch {
+    return null;
+  }
 }
 
 // Field height and radius can be overridden per usage through the
@@ -73,8 +62,8 @@ const fieldClassName = cn(
   "flex h-[var(--date-picker-height,2.5rem)] w-full items-center rounded-[var(--date-picker-radius,var(--radius-lg))] border border-border-default bg-surface-card text-sm text-text-primary transition-[border-color,box-shadow] duration-150",
   "hover:not-focus-within:border-border-strong",
   "focus-within:border-border-focus focus-within:ring-4 focus-within:ring-border-focus/20",
-  "data-[invalid=true]:border-danger data-[invalid=true]:focus-within:ring-danger/20",
-  "data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50",
+  "data-[invalid]:border-danger data-[invalid]:focus-within:ring-danger/20",
+  "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
 );
 
 // Rendered only while the popover is open: reading the current date during
@@ -123,6 +112,42 @@ function DatePickerCalendar({
   );
 }
 
+const segmentClassName = cn(
+  "inline-block rounded-sm px-0.5 text-end text-nowrap outline-none",
+  "data-[type=literal]:px-0 data-[type=literal]:text-text-tertiary",
+  "data-placeholder:text-text-tertiary",
+  "data-focused:bg-tag-green-bg data-focused:text-tag-green-fg data-focused:data-placeholder:text-tag-green-fg",
+  "data-invalid:text-danger data-invalid:data-focused:bg-danger-bg data-invalid:data-focused:text-danger",
+);
+
+// React Aria keeps the previous date when a segment is cleared, so the form
+// value is derived from the segments: empty unless they form a real date.
+function DatePickerSegment({
+  segment,
+  onDateChange,
+}: {
+  segment: React.ComponentProps<typeof DateSegment>["segment"];
+  onDateChange: (value: string) => void;
+}) {
+  const state = useContext(DateFieldStateContext);
+  const part = (type: string) => {
+    const item = state?.segments.find((segment) => segment.type === type);
+    return item?.isPlaceholder ? undefined : item?.value;
+  };
+  const [day, month, year] = [part("day"), part("month"), part("year")];
+  const date = day && month && year ? new CalendarDate(year, month, day) : null;
+  // CalendarDate constrains impossible dates (31/02), so compare with the typed text.
+  const isoDate =
+    date?.day === day && date?.month === month ? (date?.toString() ?? "") : "";
+  const isReporter = segment.type === "year";
+
+  useEffect(() => {
+    if (isReporter) onDateChange(isoDate);
+  }, [isReporter, isoDate, onDateChange]);
+
+  return <DateSegment segment={segment} className={segmentClassName} />;
+}
+
 export function DatePicker({
   value,
   onChange,
@@ -137,89 +162,73 @@ export function DatePicker({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
 }: DatePickerProps) {
-  const [text, setText] = useState(() => isoToText(value));
   const [open, setOpen] = useState(false);
-  const [lastValue, setLastValue] = useState(value);
+  const [syncedDate, setSyncedDate] = useState(value ?? "");
+  const [resetKey, setResetKey] = useState(0);
 
-  // Follow external value changes (form reset, programmatic updates) unless
-  // they are just the echo of what the user is currently typing.
-  if (value !== lastValue) {
-    setLastValue(value);
-    if ((value ?? "") !== (textToIso(text) ?? "")) setText(isoToText(value));
+  // The field keeps its own (possibly partial) text, so it is only remounted
+  // when the form changes the value from outside, e.g. a reset or the calendar.
+  if ((value ?? "") !== syncedDate) {
+    setSyncedDate(value ?? "");
+    setResetKey((key) => key + 1);
   }
 
-  const iso = textToIso(text);
-  const isOutOfRange =
-    !!iso && ((!!minValue && iso < minValue) || (!!maxValue && iso > maxValue));
-  const invalid =
-    !!isInvalid || isOutOfRange || (text.length === 10 && iso === null);
+  function handleDateChange(nextDate: string) {
+    if (nextDate === syncedDate) return;
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const previousDigits = text.replace(/\D/g, "");
-    let digits = event.target.value.replace(/\D/g, "").slice(0, 8);
-
-    // Deleting a "/" leaves the digits untouched, so remove the previous digit.
-    const isDeleting = (event.nativeEvent as InputEvent).inputType?.startsWith(
-      "delete",
-    );
-    if (isDeleting && digits.length === previousDigits.length) {
-      digits = digits.slice(0, -1);
-    }
-
-    const nextText = maskDigits(digits);
-    setText(nextText);
-    onChange?.(textToIso(nextText) ?? "");
+    setSyncedDate(nextDate);
+    onChange?.(nextDate);
   }
 
-  function handleSelect(date: Date | undefined) {
-    if (!date) return;
+  function handleSelect(selected: Date | undefined) {
+    if (!selected) return;
 
-    const nextIso = format(date, "yyyy-MM-dd");
-    setText(isoToText(nextIso));
-    onChange?.(nextIso);
+    onChange?.(format(selected, "yyyy-MM-dd"));
     setOpen(false);
   }
 
   return (
-    <div
-      data-invalid={invalid || undefined}
-      data-disabled={isDisabled || undefined}
-      className={cn(fieldClassName, className)}
-    >
-      <input
+    <I18nProvider locale="es-AR">
+      <DateField
         id={id}
         name={name}
-        value={text}
-        onChange={handleInputChange}
+        key={resetKey}
+        defaultValue={isoToCalendarDate(value)}
         onBlur={onBlur}
-        disabled={isDisabled}
-        inputMode="numeric"
-        autoComplete="off"
-        placeholder="DD/MM/AAAA"
-        maxLength={10}
+        isInvalid={isInvalid || undefined}
+        isDisabled={isDisabled}
+        validationBehavior="aria"
         aria-label={ariaLabel}
         aria-labelledby={ariaLabelledBy}
-        aria-invalid={invalid || undefined}
-        className="h-full min-w-0 flex-1 bg-transparent px-3 outline-none placeholder:text-text-tertiary"
-      />
+        className={cn(fieldClassName, className)}
+      >
+        <DateInput className="flex h-full min-w-0 flex-1 cursor-text items-center gap-px px-3 outline-none">
+          {(segment) => (
+            <DatePickerSegment
+              segment={segment}
+              onDateChange={handleDateChange}
+            />
+          )}
+        </DateInput>
 
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger
-          disabled={isDisabled}
-          aria-label="Abrir calendario"
-          className="me-2 inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-text-tertiary outline-none transition-colors hover:bg-tag-green-bg hover:text-tag-green-fg focus-visible:ring-2 focus-visible:ring-border-focus aria-expanded:bg-tag-green-bg aria-expanded:text-tag-green-fg"
-        >
-          <CalendarIcon className="size-4" />
-        </PopoverTrigger>
-        <PopoverContent align="end" className="w-fit p-3">
-          <DatePickerCalendar
-            selected={isoToDate(iso ?? value)}
-            minDate={isoToDate(minValue)}
-            maxDate={isoToDate(maxValue)}
-            onSelect={handleSelect}
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger
+            disabled={isDisabled}
+            aria-label="Abrir calendario"
+            className="me-2 inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-text-tertiary outline-none transition-colors hover:bg-tag-green-bg hover:text-tag-green-fg focus-visible:ring-2 focus-visible:ring-border-focus aria-expanded:bg-tag-green-bg aria-expanded:text-tag-green-fg"
+          >
+            <CalendarIcon className="size-4" />
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-fit p-3">
+            <DatePickerCalendar
+              selected={isoToDate(value)}
+              minDate={isoToDate(minValue)}
+              maxDate={isoToDate(maxValue)}
+              onSelect={handleSelect}
+            />
+          </PopoverContent>
+        </Popover>
+      </DateField>
+    </I18nProvider>
   );
 }
