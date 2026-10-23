@@ -1,7 +1,9 @@
 const REQUIRED_STAGE_TYPES: Record<string, string> = {
+  aplicado: "Ninguna",
   "entrevista hr": "Entrevista",
   "entrevista tecnica": "Entrevista",
   oferta: "Oferta",
+  "contratado/a": "Contratado",
 };
 
 export function normalizeStageName(name: string) {
