@@ -194,6 +194,7 @@ export const updateJobOpening = protectedProcedure
           id: true,
           status: true,
           hasBeenOpened: true,
+          openingDate: true,
           stages: true,
           applications: {
             where: { deletedAt: null },
@@ -242,6 +243,16 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
+    if (
+      currentJobOpening.status === "Closed" ||
+      currentJobOpening.status === "Cancelled"
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No se puede modificar una vacante cerrada o cancelada",
+      });
+    }
+
     if (!area) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -260,6 +271,25 @@ export const updateJobOpening = protectedProcedure
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Uno o más Hiring Managers no son válidos",
+      });
+    }
+
+    const persistedOpeningDate = new Date(
+      Date.UTC(
+        currentJobOpening.openingDate.getUTCFullYear(),
+        currentJobOpening.openingDate.getUTCMonth(),
+        currentJobOpening.openingDate.getUTCDate(),
+      ),
+    );
+    const nextTargetClosingDate = new Date(
+      `${input.targetClosingDate}T00:00:00.000Z`,
+    );
+
+    if (nextTargetClosingDate < persistedOpeningDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "La fecha objetivo de cierre no puede ser anterior a la apertura",
       });
     }
 
@@ -346,8 +376,7 @@ export const updateJobOpening = protectedProcedure
         status: nextStatus,
         hasBeenOpened: hasBeenOpened || nextStatus === "Open",
         location: input.location,
-        openingDate: new Date(`${input.openingDate}T00:00:00.000Z`),
-        targetClosingDate: new Date(`${input.targetClosingDate}T00:00:00.000Z`),
+        targetClosingDate: nextTargetClosingDate,
 
         // Unchanged stages are not rewritten.
         ...(stagesChanged || colorsChanged

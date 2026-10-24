@@ -49,6 +49,16 @@ export const updateStatus = protectedProcedure
       });
     }
 
+    if (
+      jobOpening.status === JobOpeningStatus.Closed ||
+      jobOpening.status === JobOpeningStatus.Cancelled
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No se puede modificar el estado de una vacante cerrada o cancelada",
+      });
+    }
+
     const hasBeenOpened =
       jobOpening.hasBeenOpened ||
       jobOpening.status === "Open" ||
