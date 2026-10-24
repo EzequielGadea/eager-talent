@@ -59,7 +59,7 @@ async function PublicApplicationContent({
   }));
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 text-foreground selection:bg-tag-green-bg selection:text-tag-green-fg">
+    <div className="min-h-screen bg-slate-50 py-8 text-foreground">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4">
         <PublicHeader recruiterName={recruiterName} />
 
@@ -103,7 +103,9 @@ async function PublicApplicationContent({
         <footer className="flex items-center gap-2 pt-1 pb-6 text-xs text-text-tertiary">
           <Lock className="size-3.5 shrink-0" />
           <p>
-            Compartido de forma segura via EagerTalent · La información visible fue seleccionada por el reclutador · Link válido hasta {formattedExpirationDate}.
+            Compartido de forma segura via EagerTalent · La información visible
+            fue seleccionada por el reclutador · Link válido hasta{" "}
+            {formattedExpirationDate}.
           </p>
         </footer>
       </div>

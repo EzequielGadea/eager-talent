@@ -37,7 +37,7 @@ import { interviewTypeTranslations } from "~/lib/enum-translations";
 
 import type { PipelineCandidate } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
-import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
+import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
 
 import getAvatar from "~/lib/avatar";
 
@@ -387,7 +387,7 @@ export function CandidateCard({
       )}
 
       {canUpdateApplication && (
-        <DisqualifyCandidateDialog
+        <DisqualifyApplicantDialog
           open={isDisqualifyDialogOpen}
           onOpenChange={setIsDisqualifyDialogOpen}
           applicantId={candidate.applicantId}
