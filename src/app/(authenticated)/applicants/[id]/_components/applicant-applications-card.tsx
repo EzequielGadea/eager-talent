@@ -128,7 +128,8 @@ export function ApplicantApplicationsCard({
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
   const [showRequalifyDialog, setShowRequalifyDialog] = useState(false);
-  const effectiveSelection = selection;
+  const effectiveSelection =
+    selection ?? getInitialSelection(applications, explorationInterviews);
   const isExploration = effectiveSelection?.type === "exploration";
   const app =
     effectiveSelection?.type === "application"
