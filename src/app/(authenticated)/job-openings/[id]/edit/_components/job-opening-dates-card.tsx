@@ -1,37 +1,20 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
+import { DatePicker } from "~/components/ui/date-picker";
 import { Label } from "~/components/ui/label";
-import { Calendar, Clock3 } from "lucide-react";
+import { Clock3 } from "lucide-react";
 
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import { useFormContext, useWatch } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 import type { UpdateJobOpeningInput } from "~/lib/validations/job-opening";
-import { useRef } from "react";
 
 export function JobOpeningDatesCard() {
   const {
-    register,
     control,
     formState: { errors },
   } = useFormContext<UpdateJobOpeningInput>();
-
-  const openingDateInputRef = useRef<HTMLInputElement>(null);
-  const targetClosingDateInputRef = useRef<HTMLInputElement>(null);
-
-  const openingDateField = register("openingDate");
-  const targetClosingDateField = register("targetClosingDate");
-
-  function openDatePicker(input: HTMLInputElement | null) {
-    if (!input) {
-      return;
-    }
-
-    input.focus();
-    input.showPicker?.();
-  }
 
   const openingDateValue = useWatch({
     control,
@@ -72,28 +55,22 @@ export function JobOpeningDatesCard() {
             <span className="ml-1 text-danger">*</span>
           </Label>
 
-          <Input
-            id="openingDate"
-            type="date"
-            className="h-9.5 [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-2.5 [&::-webkit-calendar-picker-indicator]:opacity-0"
-            {...openingDateField}
-            ref={(element) => {
-              openingDateField.ref(element);
-              openingDateInputRef.current = element;
-            }}
-            iconRight={
-              <button
-                type="button"
-                aria-label="Abrir calendario de fecha de apertura"
-                className="flex size-7 cursor-pointer items-center justify-center"
-                onClick={() => openDatePicker(openingDateInputRef.current)}
-              >
-                <Calendar
-                  aria-hidden="true"
-                  className="size-4 text-text-tertiary"
-                />
-              </button>
-            }
+          <Controller
+            control={control}
+            name="openingDate"
+            render={({ field }) => (
+              <DatePicker
+                id="openingDate"
+                name={field.name}
+                aria-label="Fecha de apertura"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                ref={field.ref}
+                isInvalid={!!errors.openingDate}
+                className="[--date-picker-height:2.375rem]"
+              />
+            )}
           />
           <p className="min-h-4 text-xs text-danger">
             {errors.openingDate?.message ?? "\u00A0"}
@@ -109,31 +86,23 @@ export function JobOpeningDatesCard() {
             <span className="ml-1 text-danger">*</span>
           </Label>
 
-          <Input
-            id="targetClosingDate"
-            type="date"
-            min={openingDateValue || undefined}
-            className="h-9.5 [&::-webkit-calendar-picker-indicator]:pointer-events-none [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-2.5 [&::-webkit-calendar-picker-indicator]:opacity-0"
-            {...targetClosingDateField}
-            ref={(element) => {
-              targetClosingDateField.ref(element);
-              targetClosingDateInputRef.current = element;
-            }}
-            iconRight={
-              <button
-                type="button"
-                aria-label="Abrir calendario de fecha objetivo de cierre"
-                className="flex size-7 cursor-pointer items-center justify-center"
-                onClick={() =>
-                  openDatePicker(targetClosingDateInputRef.current)
-                }
-              >
-                <Calendar
-                  aria-hidden="true"
-                  className="size-4 text-text-tertiary"
-                />
-              </button>
-            }
+          <Controller
+            control={control}
+            name="targetClosingDate"
+            render={({ field }) => (
+              <DatePicker
+                id="targetClosingDate"
+                name={field.name}
+                aria-label="Fecha objetivo de cierre"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                ref={field.ref}
+                minValue={openingDateValue || undefined}
+                isInvalid={!!errors.targetClosingDate}
+                className="[--date-picker-height:2.375rem]"
+              />
+            )}
           />
           <p className="min-h-4 text-xs text-danger">
             {errors.targetClosingDate?.message ?? "\u00A0"}

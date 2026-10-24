@@ -41,7 +41,7 @@ async function InterviewPageContent({ params }: InterviewPageProps) {
 
   return (
     <InterviewSessionProvider key={id}>
-      <div className="flex min-w-0 flex-col gap-4 selection:bg-tag-green-bg selection:text-tag-green-fg">
+      <div className="flex min-w-0 flex-col gap-4">
         <Suspense fallback={<InterviewHeaderSkeleton />}>
           <InterviewHeader interviewPromise={interviewPromise} />
         </Suspense>
