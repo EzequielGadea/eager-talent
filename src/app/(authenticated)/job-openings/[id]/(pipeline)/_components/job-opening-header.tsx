@@ -1,6 +1,8 @@
+import { TZDate } from "@date-fns/tz";
 import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 
+import { Button } from "~/components/ui/button";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 
 import { AddApplicantDialog } from "./add-applicant-dialog";
@@ -17,14 +19,35 @@ type JobOpeningHeaderProps = {
 };
 
 function getDaysSince(date: Date) {
+  const nowInUruguay = new TZDate(new Date(), "America/Montevideo");
+  const todayUtc = Date.UTC(
+    nowInUruguay.getFullYear(),
+    nowInUruguay.getMonth(),
+    nowInUruguay.getDate(),
+  );
+  const openingUtc = Date.UTC(
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+  );
   const millisecondsPerDay = 1000 * 60 * 60 * 24;
-  const difference = Date.now() - date.getTime();
 
-  return Math.max(0, Math.floor(difference / millisecondsPerDay));
+  return Math.round((todayUtc - openingUtc) / millisecondsPerDay);
 }
 
 function getOpeningLabel(openingDate: Date) {
   const daysSince = getDaysSince(openingDate);
+
+  if (daysSince < 0) {
+    const formattedDate = new Intl.DateTimeFormat("es-UY", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(openingDate));
+
+    return `Fecha de apertura: ${formattedDate}`;
+  }
 
   if (daysSince === 0) {
     return "Abierta hoy";
@@ -46,6 +69,9 @@ export function JobOpeningHeader({
   canCreateApplication,
   canUpdateJobOpening,
 }: JobOpeningHeaderProps) {
+  const isLocked =
+    status === JobOpeningStatus.Closed || status === JobOpeningStatus.Cancelled;
+
   return (
     <header className="flex items-center justify-between gap-4">
       <div className="flex min-w-0 items-center gap-3">
@@ -66,7 +92,7 @@ export function JobOpeningHeader({
             <JobOpeningStatusDropdown
               jobOpeningId={jobOpeningId}
               status={status}
-              canUpdate={canUpdateJobOpening}
+              canUpdate={canUpdateJobOpening && !isLocked}
             />
           </div>
 
@@ -77,15 +103,26 @@ export function JobOpeningHeader({
       </div>
 
       <div className="flex shrink-0 items-center gap-3">
-        {canUpdateJobOpening && (
-          <Link
-            href={`/job-openings/${jobOpeningId}/edit`}
-            className="inline-flex h-10 shrink-0 flex-row items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <Pencil className="size-4 shrink-0" />
-            <span>Editar</span>
-          </Link>
-        )}
+        {canUpdateJobOpening &&
+          (isLocked ? (
+            <Button
+              type="button"
+              variant="outline"
+              disabled
+              className="h-10 shrink-0 gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium"
+            >
+              <Pencil className="size-4 shrink-0" />
+              <span>Editar</span>
+            </Button>
+          ) : (
+            <Link
+              href={`/job-openings/${jobOpeningId}/edit`}
+              className="inline-flex h-10 shrink-0 flex-row items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <Pencil className="size-4 shrink-0" />
+              <span>Editar</span>
+            </Link>
+          ))}
 
         {canCreateApplication && (
           <AddApplicantDialog

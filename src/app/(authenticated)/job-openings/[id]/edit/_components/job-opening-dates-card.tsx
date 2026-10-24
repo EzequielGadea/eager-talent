@@ -67,8 +67,9 @@ export function JobOpeningDatesCard() {
                 onChange={field.onChange}
                 onBlur={field.onBlur}
                 ref={field.ref}
+                isDisabled
                 isInvalid={!!errors.openingDate}
-                className="[--date-picker-height:2.375rem]"
+                className="[--date-picker-height:2.375rem] data-[disabled]:bg-input/50"
               />
             )}
           />

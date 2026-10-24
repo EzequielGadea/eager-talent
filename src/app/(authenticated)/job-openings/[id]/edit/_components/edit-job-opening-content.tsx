@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import {
   jobOpeningStageTypeSchema,
   PERSISTED_TO_FORM_STAGE_TYPE,
@@ -115,6 +117,10 @@ export async function EditJobOpeningContent({
     api.seniority.getAllSeniorities({}),
     api.jobOpening.listAssignableUsers({}),
   ]);
+
+  if (jobOpening.status === "Closed" || jobOpening.status === "Cancelled") {
+    redirect(`/job-openings/${jobOpening.id}/pipeline`);
+  }
 
   const defaultValues: UpdateJobOpeningInput = {
     id: jobOpening.id,
