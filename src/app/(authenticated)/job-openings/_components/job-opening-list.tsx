@@ -22,6 +22,7 @@ import {
 } from "~/components/ui/table";
 
 import JobOpeningRow from "./job-opening-row";
+import { JobOpeningCardList } from "./job-opening-card-list";
 import { JobOpeningPagination } from "./job-opening-pagination";
 import type { JobOpeningSortValue } from "~/server/api/routers/job-opening/sort";
 import type { JobOpeningStatus } from "~/generated/prisma/enums";
@@ -149,12 +150,23 @@ export default function JobOpeningsList({
     !jobOpeningsAmount
   ) {
     return (
-      <div className="p-6 text-danger">No se pudieron cargar las vacantes.</div>
+      <div className="text-danger md:p-6">
+        No se pudieron cargar las vacantes.
+      </div>
     );
   }
 
+  const emptyMessage =
+    currentStatuses.length > 0 ||
+    currentAreaId ||
+    currentHiringManagerId ||
+    currentOpeningDateRange ||
+    currentOnlyWithActiveCandidates
+      ? "No hay vacantes que cumplan con los criterios del filtro."
+      : "Todavía no hay vacantes registradas.";
+
   return (
-    <div className="mx-auto flex w-full flex-col gap-5 p-6">
+    <div className="mx-auto flex w-full flex-col gap-5 md:p-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
@@ -184,18 +196,25 @@ export default function JobOpeningsList({
 
             <Button
               size="sm"
-              className="gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover"
+              className="h-8.5 w-8.5 gap-2 rounded-full bg-dashboard-dark px-0 text-text-on-dark hover:bg-dashboard-dark-hover md:h-7 md:w-auto md:px-2.5"
               onClick={() => router.push("/job-openings/new-job-opening")}
             >
               <Plus size={16} />
-              Nueva vacante
+              {/* Icon-only on mobile; the label stays available to screen readers. */}
+              <span className="sr-only md:not-sr-only">Nueva vacante</span>
             </Button>
           </div>
         )}
       </div>
 
       <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-        <div className="w-full overflow-x-auto">
+        <JobOpeningCardList
+          jobOpenings={jobOpenings}
+          isHiringManagerView={isHiringManagerView}
+          emptyMessage={emptyMessage}
+        />
+
+        <div className="hidden w-full overflow-x-auto md:block">
           <Table className="min-w-[900px]">
             <TableHeader>
               <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
@@ -248,13 +267,7 @@ export default function JobOpeningsList({
                     colSpan={isHiringManagerView ? 8 : 7}
                     className="h-24 text-center text-dashboard-text-muted"
                   >
-                    {currentStatuses.length > 0 ||
-                    currentAreaId ||
-                    currentHiringManagerId ||
-                    currentOpeningDateRange ||
-                    currentOnlyWithActiveCandidates
-                      ? "No hay vacantes que cumplan con los criterios del filtro."
-                      : "Todavía no hay vacantes registradas."}
+                    {emptyMessage}
                   </TableCell>
                 </TableRow>
               ) : (

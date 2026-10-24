@@ -37,7 +37,7 @@ export function ApplicantPagination(props: {
   ];
 
   return (
-    <div className="flex items-center justify-between border-t border-dashboard-border px-4 py-3">
+    <div className="flex flex-col items-center gap-3 border-t border-dashboard-border px-4 py-3 sm:flex-row sm:justify-between">
       <p className="text-[13px] font-normal leading-5 text-dashboard-text-muted">
         Mostrando {startItem} - {endItem} de {props.countApplicants} candidatos
       </p>
@@ -61,7 +61,17 @@ export function ApplicantPagination(props: {
           <FirstPage currentPage={currentPage} gotoPage={goToPage} />
 
           {pages.map((page) => (
-            <PaginationItem key={page}>
+            <PaginationItem
+              key={page}
+              // On small screens only the current page ±1 and the edges fit.
+              className={
+                Math.abs(page - currentPage) > 1 &&
+                page !== 1 &&
+                page !== totalPages
+                  ? "max-sm:hidden"
+                  : undefined
+              }
+            >
               <PaginationLink
                 href="#"
                 isActive={page === currentPage}
