@@ -234,6 +234,7 @@ function DefaultStageEditor({
                   size="icon-xs"
                   draggable={!locked}
                   disabled={locked}
+                  className="cursor-grab active:cursor-grabbing"
                   aria-label={
                     locked
                       ? `${stage.name} es una etapa fija`
@@ -247,6 +248,44 @@ function DefaultStageEditor({
 
                     event.dataTransfer.effectAllowed = "move";
                     event.dataTransfer.setData(STAGE_DRAG_TYPE, String(index));
+
+                    const row = event.currentTarget.closest("li");
+
+                    if (!row) return;
+
+                    const { width, height } = row.getBoundingClientRect();
+
+                    // Creamos una vista previa sencilla.
+                    const preview = document.createElement("div");
+
+                    preview.textContent = stage.name;
+
+                    Object.assign(preview.style, {
+                      width: `${width}px`,
+                      height: `${height}px`,
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "0 16px",
+                      boxSizing: "border-box",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "8px",
+                      backgroundColor: "#ffffff",
+                      color: "#111827",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      position: "fixed",
+                      top: "0",
+                      left: "0",
+                      pointerEvents: "none",
+                    });
+
+                    document.body.appendChild(preview);
+
+                    event.dataTransfer.setDragImage(preview, 20, 20);
+
+                    requestAnimationFrame(() => {
+                      preview.remove();
+                    });
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "ArrowUp") {

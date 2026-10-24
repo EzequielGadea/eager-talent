@@ -195,9 +195,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
         <ol className="flex flex-col gap-2">
           {seniorities?.map((seniority, index) => {
             const deleteRestrictions = [
-              seniority._count.applicants > 0
-                ? "candidatos asignados"
-                : null,
+              seniority._count.applicants > 0 ? "candidatos asignados" : null,
               seniority._count.jobOpenings > 0 ? "vacantes asociadas" : null,
             ].filter(
               (restriction): restriction is string => restriction !== null,
@@ -226,13 +224,21 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                   size="icon-xs"
                   draggable={!isAddingSeniority}
                   disabled={isAddingSeniority}
+                  className="cursor-grab active:cursor-grabbing"
                   onDragStart={(event) => {
                     if (isAddingSeniority) {
                       event.preventDefault();
                       return;
                     }
+
                     event.dataTransfer.effectAllowed = "move";
                     event.dataTransfer.setData("text/plain", String(index));
+
+                    const row = event.currentTarget.closest("li");
+
+                    if (row) {
+                      event.dataTransfer.setDragImage(row, 20, 20);
+                    }
                   }}
                 >
                   <GripVertical aria-hidden="true" />
