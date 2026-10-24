@@ -74,7 +74,10 @@ export function RequalifyApplicantDialog({
             type="button"
             variant="outline"
             className="rounded-full px-5"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              requalifyMutation.reset();
+              onOpenChange(false);
+            }}
             disabled={requalifyMutation.isPending}
           >
             Cancelar

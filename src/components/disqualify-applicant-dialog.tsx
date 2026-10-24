@@ -207,7 +207,11 @@ export function DisqualifyApplicantDialog({
             type="button"
             variant="outline"
             className="h-9 rounded-full px-5 text-[13px]"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              resetForm();
+              disqualifyMutation.reset();
+              onOpenChange(false);
+            }}
             disabled={disqualifyMutation.isPending}
           >
             Cancelar
