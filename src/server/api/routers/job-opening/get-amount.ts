@@ -1,4 +1,6 @@
 import { TRPCError } from "@trpc/server";
+import { TZDate } from "@date-fns/tz";
+import { addWeeks, startOfWeek } from "date-fns";
 
 import { auth } from "~/lib/auth";
 import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
@@ -42,35 +44,68 @@ export const getJobOpeningsAmount = protectedProcedure
       AND: [accessWhere, getJobOpeningFilterWhere(input)],
     };
 
-    const [total, open, paused, closed, cancelled] = await Promise.all([
-      ctx.db.jobOpening.count({
-        where: filteredWhere,
-      }),
+    const now = new TZDate(Date.now(), "America/Montevideo");
+    const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+    const nextWeekStart = addWeeks(weekStart, 1);
 
-      ctx.db.jobOpening.count({
-        where: {
-          AND: [accessWhere, { status: "Open" }],
-        },
-      }),
+    const weekStartDate = new Date(
+      Date.UTC(
+        weekStart.getFullYear(),
+        weekStart.getMonth(),
+        weekStart.getDate(),
+      ),
+    );
+    const nextWeekStartDate = new Date(
+      Date.UTC(
+        nextWeekStart.getFullYear(),
+        nextWeekStart.getMonth(),
+        nextWeekStart.getDate(),
+      ),
+    );
 
-      ctx.db.jobOpening.count({
-        where: {
-          AND: [accessWhere, { status: "Paused" }],
-        },
-      }),
+    const [total, open, paused, closed, cancelled, openedThisWeek] =
+      await Promise.all([
+        ctx.db.jobOpening.count({
+          where: filteredWhere,
+        }),
 
-      ctx.db.jobOpening.count({
-        where: {
-          AND: [accessWhere, { status: "Closed" }],
-        },
-      }),
+        ctx.db.jobOpening.count({
+          where: {
+            AND: [accessWhere, { status: "Open" }],
+          },
+        }),
 
-      ctx.db.jobOpening.count({
-        where: {
-          AND: [accessWhere, { status: "Cancelled" }],
-        },
-      }),
-    ]);
+        ctx.db.jobOpening.count({
+          where: {
+            AND: [accessWhere, { status: "Paused" }],
+          },
+        }),
+
+        ctx.db.jobOpening.count({
+          where: {
+            AND: [accessWhere, { status: "Closed" }],
+          },
+        }),
+
+        ctx.db.jobOpening.count({
+          where: {
+            AND: [accessWhere, { status: "Cancelled" }],
+          },
+        }),
+        ctx.db.jobOpening.count({
+          where: {
+            AND: [
+              accessWhere,
+              {
+                openingDate: {
+                  gte: weekStartDate,
+                  lt: nextWeekStartDate,
+                },
+              },
+            ],
+          },
+        }),
+      ]);
 
     return {
       total,
@@ -78,5 +113,6 @@ export const getJobOpeningsAmount = protectedProcedure
       paused,
       closed,
       cancelled,
+      openedThisWeek,
     };
   });
