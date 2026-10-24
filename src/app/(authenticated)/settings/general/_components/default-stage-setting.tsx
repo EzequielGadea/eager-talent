@@ -318,6 +318,7 @@ function DefaultStageEditor({
                     placeholder="Nombre de la etapa"
                     value={stage.name}
                     readOnly={locked || isRequired}
+                    disabled={index === 0 || index === stages.length - 1}
                     maxLength={80}
                     className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
                     onChange={(event) => {
