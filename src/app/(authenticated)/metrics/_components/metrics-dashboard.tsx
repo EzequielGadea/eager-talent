@@ -326,12 +326,18 @@ function PipelineChart({
       : undefined;
   const firstStage = pipeline?.stages[0];
   const lastStage = pipeline?.stages.at(-1);
-  const hasConversion = !!firstStage && firstStage.count > 0;
-  const globalConversion = pipeline?.globalConversion ?? 0;
-  const maxStageCount = Math.max(
-    ...(pipeline?.stages.map((item) => item.count) ?? []),
-    1,
+  const stages = pipeline?.stages ?? [];
+  // reachedCounts[i] = cuántos llegaron al menos hasta la etapa i
+  const reachedCounts = stages.map((_, i) =>
+    stages.slice(i).reduce((sum, s) => sum + s.count, 0),
   );
+  const firstReached = reachedCounts[0] ?? 0;
+  const lastReached = reachedCounts.at(-1) ?? 0;
+  const maxStageCount = Math.max(...reachedCounts, 1);
+  const hasConversion = firstReached > 0;
+  const globalConversion = hasConversion
+    ? (lastReached / firstReached) * 100
+    : 0;
 
   return (
     <Card className="gap-0">
@@ -388,8 +394,7 @@ function PipelineChart({
             >
               {hasConversion ? `${Math.round(globalConversion)}%` : "—"}
             </strong>{" "}
-            · {firstStage.count} {firstStage.name.toLowerCase()} →{" "}
-            {lastStage?.count ?? 0}{" "}
+            · {firstReached} {firstStage.name.toLowerCase()} → {lastReached}{" "}
             {(lastStage?.name ?? "etapa final").toLowerCase()}
           </p>
         )}
@@ -424,11 +429,12 @@ function PipelineChart({
             {pipeline.stages.map((stage, index) => {
               const nextStage = pipeline.stages[index + 1];
               const color = STAGE_COLORS[index % STAGE_COLORS.length];
-              const barWidth = (stage.count / maxStageCount) * 100;
+
+              const reached = reachedCounts[index] ?? 0;
+              const reachedNext = reachedCounts[index + 1] ?? 0;
+              const barWidth = (reached / maxStageCount) * 100;
               const advancePercentage =
-                nextStage && stage.count > 0
-                  ? (nextStage.count / stage.count) * 100
-                  : 0;
+                nextStage && reached > 0 ? (reachedNext / reached) * 100 : 0;
               const advances = advancePercentage > 0;
 
               return (
@@ -449,8 +455,8 @@ function PipelineChart({
                         }}
                       />
                     </span>
-                    <span className="text-right text-[15px] font-bold text-text-primary">
-                      {stage.count}
+                    <span className="order-2 text-right text-[15px] font-bold text-text-primary sm:order-3">
+                      {reached}
                     </span>
                   </div>
 
@@ -463,7 +469,7 @@ function PipelineChart({
                         }`}
                       >
                         <span
-                          className={`h-3 w-[3px] rounded-[2px] ${
+                          className={`h-3 w-0.75 rounded-xs ${
                             advances ? "bg-emerald-500" : "bg-red-500"
                           }`}
                         />
