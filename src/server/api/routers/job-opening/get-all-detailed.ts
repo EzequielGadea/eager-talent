@@ -155,10 +155,10 @@ export const getAllJobOpeningsDetailed = protectedProcedure
       const { applications, stages, ...jobOpeningData } = jobOpening;
       const parsedStages = parseStages(stages);
       const technicalStageId = parsedStages.find(
-        (stage) => stage.name === "Entrevista Técnica",
+        (stage) => stage.name.toLocaleLowerCase("es") === "entrevista técnica",
       )?.key;
       const offerStageId = parsedStages.find(
-        (stage) => stage.name === "Oferta",
+        (stage) => stage.type === "Oferta",
       )?.key;
 
       return {
