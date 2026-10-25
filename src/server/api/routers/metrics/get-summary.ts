@@ -36,7 +36,6 @@ export const getMetricsSummary = protectedProcedure.query(async ({ ctx }) => {
       FROM application
       INNER JOIN applicant ON applicant.id = application.applicant_id
       INNER JOIN job_opening ON job_opening.id = application.job_opening_id
-      WHERE job_opening.status = 'Closed'
       GROUP BY applicant.hear_about_us
     `,
   ]);
