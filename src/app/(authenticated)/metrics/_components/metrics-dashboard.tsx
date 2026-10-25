@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
-  LabelList,
   Pie,
   PieChart,
   Tooltip,
@@ -14,13 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardTitle } from "~/components/ui/card";
 import { ChartContainer } from "~/components/ui/chart";
 import {
   Empty,
@@ -36,20 +29,10 @@ import {
   SelectValue,
   SelectGroup,
 } from "~/components/ui/select";
+import { Briefcase } from "lucide-react";
 import { api } from "~/lib/trpc/react";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
-
-const chartColors = [
-  "var(--accent-green-strong)",
-  "var(--accent-purple-strong)",
-  "var(--info)",
-  "var(--warning)",
-  "var(--danger)",
-  "var(--dashboard-sky-text)",
-  "var(--dashboard-orange-text)",
-  "var(--dashboard-purple-text)",
-];
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 type MetricsSummary = RouterOutputs["metrics"]["getMetricsSummary"];
@@ -311,6 +294,9 @@ function SourcesChart({
   );
 }
 
+// Colores por etapa, en el orden del mockup (emerald, blue, violet, amber) + slate de reserva
+const STAGE_COLORS = ["#10b981", "#2563eb", "#8b5cf6", "#f59e0b", "#94a3b8"];
+
 function PipelineChart({
   closedOpenings,
 }: {
@@ -340,68 +326,75 @@ function PipelineChart({
       : undefined;
   const firstStage = pipeline?.stages[0];
   const lastStage = pipeline?.stages.at(-1);
-  const globalConversionText =
-    pipeline && firstStage
-      ? firstStage.count > 0
-        ? `${formatPercentage(pipeline.globalConversion)} · ${firstStage.count} ${firstStage.name} → ${lastStage?.count ?? 0} ${lastStage?.name ?? "etapa final"}`
-        : "— · 0 postulados → 0 contratados"
-      : "";
+  const hasConversion = !!firstStage && firstStage.count > 0;
+  const globalConversion = pipeline?.globalConversion ?? 0;
+  const maxStageCount = Math.max(
+    ...(pipeline?.stages.map((item) => item.count) ?? []),
+    1,
+  );
 
   return (
-    <Card>
-      <CardHeader className="gap-3 sm:flex sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-1">
-          <CardTitle>Pipeline por vacante</CardTitle>
-          <CardDescription className="flex flex-wrap items-center gap-2 text-sm text-text-secondary">
-            <span>Postulaciones por etapa del proceso</span>
-            {pipeline && globalConversionText && (
-              <>
-                <span className="text-text-muted">•</span>
-                <span className="font-medium text-text-primary">
-                  Conversión de punta a punta: {globalConversionText}
-                </span>
-              </>
-            )}
-          </CardDescription>
-        </div>
-        {closedOpenings.length > 0 && (
-          <div className="w-full sm:min-w-[20rem] sm:max-w-[28rem]">
-            <label
-              htmlFor="metrics-job-opening"
-              className="mb-1.5 block text-xs font-medium text-text-secondary"
-            >
-              Vacante
-            </label>
-            <Select
-              value={selectedOpeningId}
-              onValueChange={(value) => {
-                if (typeof value === "string") setSelectedOpeningId(value);
-              }}
-              items={closedOpenings.map((o) => ({
-                value: o.id,
-                label: o.name,
-              }))}
-            >
-              <SelectTrigger
-                id="metrics-job-opening"
-                className="w-full min-w-0"
-              >
-                <SelectValue placeholder="Seleccioná una vacante" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {closedOpenings.map((opening) => (
-                    <SelectItem key={opening.id} value={opening.id}>
-                      {opening.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-      </CardHeader>
+    <Card className="gap-0">
       <CardContent>
+        {/* Header */}
+        <div className="mb-1 flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+          <CardTitle className="text-base font-bold tracking-[-0.01em]">
+            Pipeline por vacante
+          </CardTitle>
+          {closedOpenings.length > 0 && (
+            <div className="min-w-0 max-w-full">
+              <label htmlFor="metrics-job-opening" className="sr-only">
+                Vacante
+              </label>
+              <Select
+                value={selectedOpeningId}
+                onValueChange={(value) => {
+                  if (typeof value === "string") setSelectedOpeningId(value);
+                }}
+                items={closedOpenings.map((o) => ({
+                  value: o.id,
+                  label: o.name,
+                }))}
+              >
+                <SelectTrigger
+                  id="metrics-job-opening"
+                  className="h-auto w-auto min-w-0 max-w-full gap-2 rounded-md bg-card px-3.25 py-1.75 text-[13px] font-medium text-text-primary [&_svg:last-child]:size-3.25 [&_svg:last-child]:text-text-tertiary"
+                >
+                  <Briefcase className="size-3.5 shrink-0" aria-hidden="true" />
+                  <SelectValue placeholder="Seleccioná una vacante" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {closedOpenings.map((opening) => (
+                      <SelectItem key={opening.id} value={opening.id}>
+                        {opening.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+
+        {/* Subtítulo */}
+        {pipeline && firstStage && (
+          <p className="mb-5 text-[13px] text-text-secondary">
+            Conversión de punta a punta:{" "}
+            <strong
+              className={
+                globalConversion > 0 ? "text-emerald-700" : "text-red-600"
+              }
+            >
+              {hasConversion ? `${Math.round(globalConversion)}%` : "—"}
+            </strong>{" "}
+            · {firstStage.count} {firstStage.name.toLowerCase()} →{" "}
+            {lastStage?.count ?? 0}{" "}
+            {(lastStage?.name ?? "etapa final").toLowerCase()}
+          </p>
+        )}
+
+        {/* Contenido */}
         {closedOpenings.length === 0 ? (
           <EmptyChart message="No hay vacantes cerradas disponibles." />
         ) : pipelineQuery.isError ? (
@@ -427,50 +420,60 @@ function PipelineChart({
         ) : pipeline.stages.length === 0 ? (
           <EmptyChart message="La vacante seleccionada no tiene etapas configuradas." />
         ) : (
-          <div className="space-y-3">
-            <div className="space-y-3">
-              {pipeline.stages.map((stage, index) => {
-                const nextStage = pipeline.stages[index + 1];
-                const maxStageCount = Math.max(
-                  ...pipeline.stages.map((item) => item.count),
-                  1,
-                );
-                const barWidth =
-                  maxStageCount > 0 ? (stage.count / maxStageCount) * 100 : 0;
-                const advancePercentage =
-                  nextStage && stage.count > 0
-                    ? (nextStage.count / stage.count) * 100
-                    : null;
+          <div className="flex flex-col gap-1.5">
+            {pipeline.stages.map((stage, index) => {
+              const nextStage = pipeline.stages[index + 1];
+              const color = STAGE_COLORS[index % STAGE_COLORS.length];
+              const barWidth = (stage.count / maxStageCount) * 100;
+              const advancePercentage =
+                nextStage && stage.count > 0
+                  ? (nextStage.count / stage.count) * 100
+                  : 0;
+              const advances = advancePercentage > 0;
 
-                return (
-                  <div key={stage.id} className="space-y-1.5">
-                    <div className="grid grid-cols-[minmax(0,12rem)_minmax(0,1fr)_auto] items-center gap-3">
-                      <span className="min-w-0 truncate text-sm text-text-secondary">
-                        {stage.name}
-                      </span>
-                      <div className="h-2.5 overflow-hidden rounded-full bg-surface-subtle">
-                        <div
-                          className="h-full rounded-full bg-[var(--accent-purple-strong)]"
-                          style={{ width: `${barWidth}%` }}
+              return (
+                <Fragment key={stage.id}>
+                  <div className="grid grid-cols-[118px_1fr_40px] items-center gap-3.5">
+                    <span
+                      className="truncate text-[13px] font-medium text-text-primary"
+                      title={stage.name}
+                    >
+                      {stage.name}
+                    </span>
+                    <span className="relative h-3.5 rounded-full bg-slate-100">
+                      <span
+                        className="absolute left-0 top-0 h-full rounded-full"
+                        style={{
+                          width: `${barWidth}%`,
+                          backgroundColor: color,
+                        }}
+                      />
+                    </span>
+                    <span className="text-right text-[15px] font-bold text-text-primary">
+                      {stage.count}
+                    </span>
+                  </div>
+
+                  {nextStage && (
+                    <div className="grid grid-cols-[118px_1fr_40px]">
+                      <span />
+                      <span
+                        className={`inline-flex items-center gap-1.5 py-px text-[11px] font-semibold ${
+                          advances ? "text-emerald-700" : "text-red-600"
+                        }`}
+                      >
+                        <span
+                          className={`h-3 w-[3px] rounded-[2px] ${
+                            advances ? "bg-emerald-500" : "bg-red-500"
+                          }`}
                         />
-                      </div>
-                      <span className="text-sm font-medium text-text-primary">
-                        {stage.count}
+                        {Math.round(advancePercentage)}% avanza
                       </span>
                     </div>
-                    {nextStage && (
-                      <div className="flex justify-center">
-                        <span className="inline-flex rounded-full bg-surface-subtle px-2 py-0.5 text-[10px] font-medium text-text-secondary">
-                          {advancePercentage === null
-                            ? "—"
-                            : `${Math.round(advancePercentage)} %`}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                  )}
+                </Fragment>
+              );
+            })}
           </div>
         )}
       </CardContent>
