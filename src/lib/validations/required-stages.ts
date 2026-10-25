@@ -20,9 +20,9 @@ export function getRequiredStageErrors(
     errors.push(`${LAST_STAGE} debe ser la última etapa del flujo.`);
   }
 
-  const middleNames = new Set(names.slice(1, -1));
+  const presentNames = new Set(names);
   const missingStages = REQUIRED_MIDDLE_STAGES.filter(
-    (name) => !middleNames.has(normalizeName(name)),
+    (name) => !presentNames.has(normalizeName(name)),
   );
 
   if (missingStages.length > 0) {
