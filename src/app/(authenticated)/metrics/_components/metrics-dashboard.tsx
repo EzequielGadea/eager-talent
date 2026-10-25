@@ -219,86 +219,91 @@ function DisqualificationChart({
 
 function SourcesChart({
   sources,
-  total,
 }: {
   sources: MetricsSummary["applicationSources"];
-  total: number;
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Fuentes de postulación</CardTitle>
-        <CardDescription>
-          Distribución de {total} postulaciones en vacantes cerradas
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-5">
+    <Card className="h-full gap-0">
+      <CardContent className="flex flex-1 flex-col">
+        <CardTitle className="mb-1.5 text-base font-bold tracking-[-0.01em]">
+          Fuentes de postulación
+        </CardTitle>
+
         {sources.length === 0 ? (
-          <EmptyChart message="Todavía no hay postulaciones asociadas a vacantes cerradas." />
+          <div className="mt-4">
+            <EmptyChart message="Todavía no hay postulaciones asociadas a vacantes cerradas." />
+          </div>
         ) : (
           <>
-            <ChartContainer
-              className="h-64 w-full"
-              label="Distribución de postulaciones por fuente"
-            >
-              <PieChart>
-                <Tooltip
-                  formatter={(value) => [`${Number(value)} postulaciones`]}
-                />
-                <Pie
-                  data={sources}
-                  dataKey="count"
-                  nameKey="name"
-                  innerRadius="56%"
-                  outerRadius="82%"
-                  paddingAngle={2}
-                  strokeWidth={2}
-                  stroke="var(--card)"
-                >
-                  {sources.map((source, index) => (
-                    <Cell
-                      key={source.name}
-                      fill={chartColors[index % chartColors.length]}
-                    />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-
-            <div className="overflow-hidden rounded-md border border-border-default">
-              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 bg-surface-subtle px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary">
-                <span>FUENTE</span>
-                <span className="text-right">%</span>
-              </div>
-              <div className="divide-y divide-border-default bg-card">
-                {sources.map((source, index) => (
-                  <div
-                    key={source.name}
-                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 text-sm"
+            {/* Donut: absorbe el alto sobrante de la card */}
+            <div className="flex flex-1 items-center justify-center pb-[22px] pt-4">
+              <ChartContainer
+                className="size-56 shrink-0"
+                label="Distribución de postulaciones por fuente"
+              >
+                <PieChart>
+                  <Tooltip
+                    formatter={(value) => [`${Number(value)} postulaciones`]}
+                  />
+                  <Pie
+                    data={sources}
+                    dataKey="count"
+                    nameKey="name"
+                    innerRadius="47.6%"
+                    outerRadius="100%"
+                    startAngle={90}
+                    endAngle={-270}
+                    paddingAngle={0}
+                    stroke="none"
                   >
-                    <span className="flex min-w-0 items-center gap-2.5">
-                      <span
-                        className="size-2.5 shrink-0 rounded-full"
-                        style={{
-                          backgroundColor:
-                            chartColors[index % chartColors.length],
-                        }}
-                        aria-hidden="true"
+                    {sources.map((source, index) => (
+                      <Cell
+                        key={source.name}
+                        fill={MOTIVE_COLORS[index % MOTIVE_COLORS.length]}
                       />
-                      <span
-                        className="min-w-0 truncate text-text-secondary"
-                        title={source.name}
-                      >
-                        {source.name}
-                      </span>
-                    </span>
-                    <span className="shrink-0 font-medium text-text-primary">
-                      {formatPercentage(source.percentage)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
             </div>
+
+            {/* Tabla */}
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="px-0.5 py-1.5 text-left text-[11px] font-bold tracking-[0.06em] text-text-tertiary">
+                    FUENTE
+                  </th>
+                  <th className="px-0.5 py-1.5 text-right text-[11px] font-bold tracking-[0.06em] text-text-tertiary">
+                    %
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {sources.map((source, index) => (
+                  <tr key={source.name} className="border-t border-slate-100">
+                    <td className="px-0.5 py-[11px] text-[13px] text-text-primary">
+                      <span className="flex items-center gap-2">
+                        <span
+                          aria-hidden="true"
+                          className="size-2 shrink-0 rounded-[2px]"
+                          style={{
+                            backgroundColor:
+                              MOTIVE_COLORS[index % MOTIVE_COLORS.length],
+                          }}
+                        />
+                        <span className="min-w-0 truncate" title={source.name}>
+                          {source.name}
+                        </span>
+                      </span>
+                    </td>
+                    <td className="px-0.5 py-[11px] text-right text-[13px] font-semibold text-text-primary">
+                      {Math.round(source.percentage)}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </>
         )}
       </CardContent>
