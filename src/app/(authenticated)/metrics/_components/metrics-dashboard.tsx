@@ -70,99 +70,140 @@ function EmptyChart({ message }: { message: string }) {
   );
 }
 
-function DisqualificationChart({
-  motives,
-  total,
+// Mismos colores que el mockup (emerald-500, violet-500, blue-600, amber-500, slate-400)
+const MOTIVE_COLORS = ["#10b981", "#8b5cf6", "#2563eb", "#f59e0b", "#94a3b8"];
+
+function TruncatedTick({
+  x = 0,
+  y = 0,
+  payload,
 }: {
-  motives: MetricsSummary["disqualificationMotives"];
-  total: number;
+  x?: number;
+  y?: number;
+  payload?: { value: string };
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Motivos de descalificación</CardTitle>
-        <CardDescription>
-          {total} postulaciones descalificadas en vacantes cerradas
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-5">
+    <foreignObject x={x - 35} y={y + 2} width={70} height={20}>
+      <div
+        title={payload?.value}
+        className="truncate text-center text-[11px] text-text-tertiary"
+      >
+        {payload?.value}
+      </div>
+    </foreignObject>
+  );
+}
+
+function DisqualificationChart({
+  motives,
+}: {
+  motives: MetricsSummary["disqualificationMotives"];
+}) {
+  // Eje Y dinámico: múltiplo de 10 hacia arriba (35% -> 40), mínimo 10
+  const maxValue = Math.max(
+    10,
+    Math.ceil(Math.max(...motives.map((m) => m.percentage), 0) / 10) * 10,
+  );
+  const ticks = Array.from({ length: maxValue / 10 + 1 }, (_, i) => i * 10);
+
+  return (
+    <Card className="h-full gap-0">
+      <CardContent className="flex flex-1 flex-col">
+        <CardTitle className="text-base font-bold tracking-[-0.01em]">
+          Motivos de descalificación
+        </CardTitle>
+
         {motives.length === 0 ? (
-          <EmptyChart message="Todavía no hay postulaciones descalificadas con un motivo registrado." />
+          <div className="mt-4">
+            <EmptyChart message="Todavía no hay postulaciones descalificadas con un motivo registrado." />
+          </div>
         ) : (
           <>
+            {/* Leyenda */}
+            <div className="mb-4 mt-3 flex flex-wrap gap-x-4 gap-y-2.5">
+              {motives.map((motive, index) => (
+                <span
+                  key={motive.name}
+                  className="inline-flex items-center gap-[5px] text-xs text-text-secondary"
+                >
+                  <span
+                    className="size-[9px] rounded-[2px]"
+                    style={{
+                      background: MOTIVE_COLORS[index % MOTIVE_COLORS.length],
+                    }}
+                  />
+                  {motive.name}
+                  <strong className="font-bold text-text-primary">
+                    {formatPercentage(motive.percentage)}
+                  </strong>
+                </span>
+              ))}
+            </div>
+
+            {/* Gráfico */}
             <ChartContainer
-              className="h-64 w-full"
+              className="mb-1.5 h-[168px] w-full"
               label="Porcentaje de postulaciones por motivo de descalificación"
             >
               <BarChart
                 data={motives}
-                margin={{ top: 10, right: 8, bottom: 22, left: 8 }}
-                barCategoryGap={16}
+                margin={{ top: 0, right: 4, bottom: 0, left: 0 }}
+                barCategoryGap={10}
               >
-                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <CartesianGrid vertical={false} stroke="#f1f5f9" />
                 <XAxis
                   dataKey="name"
                   interval={0}
-                  tickFormatter={(value: string) =>
-                    value.length > 18 ? `${value.slice(0, 17)}…` : value
-                  }
                   axisLine={false}
                   tickLine={false}
-                  fontSize={11}
-                  height={60}
-                  angle={-8}
-                  textAnchor="end"
+                  height={28}
+                  tick={<TruncatedTick />}
                 />
                 <YAxis
                   type="number"
-                  domain={[0, 100]}
+                  domain={[0, maxValue]}
+                  ticks={ticks}
+                  width={46}
+                  tickMargin={16}
                   tickFormatter={(value: number) => `${value}%`}
                   axisLine={false}
                   tickLine={false}
-                  fontSize={12}
+                  tick={{ fontSize: 11, fill: "var(--text-tertiary)" }}
                 />
                 <Tooltip
+                  cursor={false}
                   formatter={(value) => [
                     `${Number(value).toFixed(1)} %`,
                     "Porcentaje",
                   ]}
-                  labelFormatter={(label) => label}
                 />
-                <Bar dataKey="percentage" radius={[6, 6, 0, 0]} maxBarSize={42}>
+                <Bar dataKey="percentage" radius={[6, 6, 0, 0]} maxBarSize={58}>
                   {motives.map((motive, index) => (
                     <Cell
                       key={motive.name}
-                      fill={chartColors[index % chartColors.length]}
+                      fill={MOTIVE_COLORS[index % MOTIVE_COLORS.length]}
                     />
                   ))}
-                  <LabelList
-                    dataKey="percentage"
-                    position="top"
-                    formatter={(value) => `${Math.round(Number(value))}%`}
-                    fontSize={11}
-                  />
                 </Bar>
               </BarChart>
             </ChartContainer>
 
-            <div className="overflow-hidden rounded-md border border-border-default">
-              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 bg-surface-subtle px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary">
+            {/* Tabla */}
+            <div className="mt-2 flex flex-1 flex-col">
+              <div className="flex items-center justify-between px-0.5 py-1.5 text-[11px] font-bold tracking-[0.06em] text-text-tertiary">
                 <span>MOTIVO</span>
-                <span className="text-right">%</span>
+                <span>%</span>
               </div>
-              <div className="divide-y divide-border-default bg-card">
+              <div className="flex flex-1 flex-col">
                 {motives.map((motive) => (
                   <div
                     key={motive.name}
-                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-3 py-2.5 text-sm"
+                    className="flex min-h-[43px] flex-1 items-center justify-between gap-3 border-t border-slate-100 px-0.5 text-[13px] text-text-primary"
                   >
-                    <span
-                      className="min-w-0 truncate text-text-secondary"
-                      title={motive.name}
-                    >
+                    <span className="min-w-0 truncate" title={motive.name}>
                       {motive.name}
                     </span>
-                    <span className="shrink-0 font-medium text-text-primary">
+                    <span className="shrink-0 font-semibold">
                       {formatPercentage(motive.percentage)}
                     </span>
                   </div>
