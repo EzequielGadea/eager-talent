@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Fragment } from "react";
+import { useState, Fragment } from "react";
 import {
   Bar,
   BarChart,
@@ -108,10 +108,10 @@ function DisqualificationChart({
               {motives.map((motive, index) => (
                 <span
                   key={motive.name}
-                  className="inline-flex items-center gap-[5px] text-xs text-text-secondary"
+                  className="inline-flex items-center gap-1.25 text-xs text-text-secondary"
                 >
                   <span
-                    className="size-[9px] rounded-[2px]"
+                    className="size-2.25 rounded-xs"
                     style={{
                       background: MOTIVE_COLORS[index % MOTIVE_COLORS.length],
                     }}
@@ -126,7 +126,7 @@ function DisqualificationChart({
 
             {/* Gráfico */}
             <ChartContainer
-              className="mb-1.5 h-[168px] w-full"
+              className="mb-1.5 h-42 w-full"
               label="Porcentaje de postulaciones por motivo de descalificación"
             >
               <BarChart
@@ -182,7 +182,7 @@ function DisqualificationChart({
                 {motives.map((motive) => (
                   <div
                     key={motive.name}
-                    className="flex min-h-[43px] flex-1 items-center justify-between gap-3 border-t border-slate-100 px-0.5 text-[13px] text-text-primary"
+                    className="flex min-h-10.75 flex-1 items-center justify-between gap-3 border-t border-slate-100 px-0.5 text-[13px] text-text-primary"
                   >
                     <span className="min-w-0 truncate" title={motive.name}>
                       {motive.name}
@@ -220,7 +220,7 @@ function SourcesChart({
         ) : (
           <>
             {/* Donut: absorbe el alto sobrante de la card */}
-            <div className="flex flex-1 items-center justify-center pb-[22px] pt-4">
+            <div className="flex flex-1 items-center justify-center pb-5.5 pt-4">
               <ChartContainer
                 className="size-56 shrink-0"
                 label="Distribución de postulaciones por fuente"
@@ -266,11 +266,11 @@ function SourcesChart({
               <tbody>
                 {sources.map((source, index) => (
                   <tr key={source.name} className="border-t border-slate-100">
-                    <td className="px-0.5 py-[11px] text-[13px] text-text-primary">
+                    <td className="px-0.5 py-2.75 text-[13px] text-text-primary">
                       <span className="flex items-center gap-2">
                         <span
                           aria-hidden="true"
-                          className="size-2 shrink-0 rounded-[2px]"
+                          className="size-2 shrink-0 rounded-xs"
                           style={{
                             backgroundColor:
                               MOTIVE_COLORS[index % MOTIVE_COLORS.length],
@@ -281,7 +281,7 @@ function SourcesChart({
                         </span>
                       </span>
                     </td>
-                    <td className="px-0.5 py-[11px] text-right text-[13px] font-semibold text-text-primary">
+                    <td className="px-0.5 py-2.75 text-right text-[13px] font-semibold text-text-primary">
                       {Math.round(source.percentage)}%
                     </td>
                   </tr>
@@ -511,14 +511,8 @@ export function MetricsDashboard({
       </header>
 
       <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
-        <DisqualificationChart
-          motives={summary.disqualificationMotives}
-          total={summary.totalDisqualified}
-        />
-        <SourcesChart
-          sources={summary.applicationSources}
-          total={summary.totalApplications}
-        />
+        <DisqualificationChart motives={summary.disqualificationMotives} />
+        <SourcesChart sources={summary.applicationSources} />
       </div>
 
       <PipelineChart closedOpenings={closedOpenings} />
