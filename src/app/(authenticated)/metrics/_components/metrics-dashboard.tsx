@@ -55,8 +55,14 @@ function EmptyChart({ message }: { message: string }) {
 }
 
 // Mismos colores que el mockup (emerald-500, violet-500, blue-600, amber-500, slate-400)
-const MOTIVE_COLORS = ["#10b981", "#8b5cf6", "#2563eb", "#f59e0b", "#94a3b8"];
-
+const MOTIVE_COLORS = [
+  "#10b981",
+  "#8b5cf6",
+  "#2563eb",
+  "#f59e0b",
+  "#06b6d4",
+  "#94a3b8",
+];
 function TruncatedTick({
   x = 0,
   y = 0,
@@ -70,7 +76,7 @@ function TruncatedTick({
     <foreignObject x={x - 35} y={y + 2} width={70} height={20}>
       <div
         title={payload?.value}
-        className="truncate text-center text-[11px] text-text-tertiary"
+        className="hidden truncate text-center text-[11px] text-text-tertiary sm:block"
       >
         {payload?.value}
       </div>
