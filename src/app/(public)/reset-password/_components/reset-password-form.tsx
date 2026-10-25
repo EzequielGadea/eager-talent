@@ -31,6 +31,12 @@ import { Input } from "~/components/ui/input";
 
 import { InvalidResetLink } from "./invalid-reset-link";
 import { ResetPasswordShell } from "./reset-password-shell";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 const formSchema = z
   .object({
@@ -54,6 +60,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const [tokenInvalid, setTokenInvalid] = useState(false);
   const [isDone, setIsDone] = useState(false);
 
@@ -67,11 +75,23 @@ export function ResetPasswordForm({ token }: { token: string }) {
     control,
     handleSubmit,
     setError,
+    getValues,
     formState: { errors, isSubmitting },
   } = form;
 
   const passwordValue = useWatch({ control, name: "password" });
   const passwordHasError = !!errors.password;
+
+  function handleCancel() {
+    const { password, confirmPassword } = getValues();
+
+    if (password !== "" || confirmPassword !== "") {
+      setShowCancelConfirmation(true);
+      return;
+    }
+
+    window.location.assign("/login");
+  }
 
   async function onSubmit(values: FormValues) {
     const { error } = await authClient.resetPassword({
@@ -90,6 +110,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
       });
       return;
     }
+
+    try {
+      await authClient.signOut();
+    } catch {}
 
     setIsDone(true);
   }
@@ -111,6 +135,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
         </p>
         <Link
           href="/login"
+          prefetch={false}
           className={cn(
             buttonVariants(),
             "mt-6 h-11 w-full rounded-full bg-slate-900 text-white hover:bg-slate-800",
@@ -200,14 +225,32 @@ export function ResetPasswordForm({ token }: { token: string }) {
                 <FieldLabel htmlFor="confirmPassword">
                   Repetir contraseña
                 </FieldLabel>
-                <Input
-                  {...field}
-                  id="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  aria-invalid={fieldState.invalid}
-                  className="h-11 rounded-xl"
-                />
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    aria-invalid={fieldState.invalid}
+                    className="h-11 rounded-xl pr-11"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                    aria-label={
+                      showConfirmPassword
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                    }
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="size-4" />
+                    ) : (
+                      <Eye className="size-4" />
+                    )}
+                  </button>
+                </div>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -222,19 +265,65 @@ export function ResetPasswordForm({ token }: { token: string }) {
             </Alert>
           )}
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="h-11 w-full rounded-full bg-slate-900 text-white hover:bg-slate-800"
-          >
-            {isSubmitting ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              "Restablecer contraseña"
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSubmitting}
+              className="h-11 rounded-full px-5"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="h-11 flex-1 rounded-full bg-slate-900 text-white hover:bg-slate-800"
+            >
+              {isSubmitting ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                "Restablecer contraseña"
+              )}
+            </Button>
+          </div>
         </FieldGroup>
       </form>
+      <Dialog
+        open={showCancelConfirmation}
+        onOpenChange={setShowCancelConfirmation}
+      >
+        <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
+          <div className="border-b border-border-default px-6 py-5">
+            <DialogTitle className="text-lg font-semibold text-text-primary">
+              Descartar cambios
+            </DialogTitle>
+            <DialogDescription className="mt-1 text-sm text-text-secondary">
+              Hay contraseñas ingresadas. ¿Querés descartar los cambios? Se
+              perderán las contraseñas que escribiste.
+            </DialogDescription>
+          </div>
+
+          <div className="flex justify-end gap-2 px-6 py-4">
+            <Button
+              type="button"
+              variant="outline"
+              className="rounded-full px-5"
+              onClick={() => setShowCancelConfirmation(false)}
+            >
+              Seguir editando
+            </Button>
+
+            <Button
+              type="button"
+              className="rounded-full px-5"
+              onClick={() => window.location.assign("/login")}
+            >
+              Descartar cambios
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </ResetPasswordShell>
   );
 }

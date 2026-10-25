@@ -7,6 +7,7 @@ import {
   ArrowRight,
   Check,
   Circle,
+  CircleCheck,
   Eye,
   EyeOff,
   KeyRound,
@@ -20,6 +21,7 @@ import {
   DialogTitle,
   DialogClose,
   DialogTrigger,
+  DialogDescription,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -89,13 +91,19 @@ function getChangePasswordErrorMessage(error: AuthError) {
 export function ChangePasswordDialog() {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isDone, setIsDone] = React.useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [showCancelConfirmation, setShowCancelConfirmation] =
+    React.useState(false);
 
   const {
     register,
     handleSubmit,
     setError,
     control,
+    getValues,
     formState: { errors },
     reset,
   } = useForm<FormData>({
@@ -114,8 +122,27 @@ export function ChangePasswordDialog() {
     setOpen(next);
     if (!next) {
       reset();
+      setIsDone(false);
+      setShowCurrentPassword(false);
       setShowPassword(false);
+      setShowConfirmPassword(false);
     }
+  }
+
+  function handleCancel() {
+    const values = getValues();
+
+    const hasChanges =
+      values.currentPassword !== "" ||
+      values.newPassword !== "" ||
+      values.confirmPassword !== "";
+
+    if (hasChanges) {
+      setShowCancelConfirmation(true);
+      return;
+    }
+
+    handleOpenChange(false);
   }
 
   async function onSubmit(values: FormData) {
@@ -149,12 +176,7 @@ export function ChangePasswordDialog() {
         return;
       }
 
-      toast.add({
-        type: "success",
-        title: "Contraseña actualizada",
-        description: "Tu contraseña se cambió correctamente.",
-      });
-      handleOpenChange(false);
+      setIsDone(true);
     } catch {
       toast.add({
         type: "error",
@@ -170,169 +192,288 @@ export function ChangePasswordDialog() {
     "h-10 px-3.25 text-sm bg-card border-input rounded-md focus-visible:border-border-focus! focus-visible:ring-1! focus-visible:ring-accent-green/30!";
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger
-        render={
-          <Button type="button" variant="outline" className="w-full">
-            <KeyRound size={16} />
-            Cambiar contraseña
-          </Button>
-        }
-      />
-
-      <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl sm:max-w-110">
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          {/* Header */}
-          <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
-            <DialogTitle className="text-base font-bold tracking-tight m-0">
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogTrigger
+          render={
+            <Button type="button" variant="outline" className="w-full">
+              <KeyRound size={16} />
               Cambiar contraseña
-            </DialogTitle>
-          </DialogHeader>
+            </Button>
+          }
+        />
 
-          {/* Body */}
-          <div className="p-5.5 flex flex-col gap-4">
-            {/* Contraseña actual */}
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="current-password"
-                className="text-xs font-semibold text-muted-foreground"
-              >
-                Contraseña actual
-              </Label>
-              <Input
-                id="current-password"
-                type="password"
-                autoComplete="current-password"
-                className={inputClassName}
-                {...register("currentPassword")}
-              />
-              {errors.currentPassword && (
-                <p className="text-xs text-destructive">
-                  {errors.currentPassword.message}
-                </p>
-              )}
-            </div>
-
-            {/* Nueva contraseña */}
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="new-password"
-                className="text-xs font-semibold text-muted-foreground"
-              >
-                Nueva contraseña
-              </Label>
-              <div className="relative">
-                <Input
-                  id="new-password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  aria-invalid={passwordHasError}
-                  className={`${inputClassName} pr-10`}
-                  {...register("newPassword")}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={
-                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
-                  }
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="size-4" />
-                  ) : (
-                    <Eye className="size-4" />
-                  )}
-                </button>
+        <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl sm:max-w-110">
+          {isDone ? (
+            <div className="p-5.5">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex size-8 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-violet-500 text-white">
+                  <ArrowRight className="size-4 -rotate-90" />
+                </div>
+                <span className="text-2xl font-bold tracking-tight text-slate-900">
+                  EagerTalent
+                </span>
               </div>
-              <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                {passwordRules.map((rule) => {
-                  const ok = rule.test(newPassword ?? "");
-                  return (
-                    <li
-                      key={rule.id}
-                      className={`flex items-center gap-1.5 text-xs ${
-                        ok
-                          ? "text-emerald-600"
-                          : passwordHasError
-                            ? "text-red-600"
-                            : "text-slate-400"
-                      }`}
-                    >
-                      {ok ? (
-                        <Check className="size-3.5" />
-                      ) : (
-                        <Circle className="size-3.5" />
-                      )}
-                      {rule.label}
-                    </li>
-                  );
-                })}
-              </ul>
-              {errors.newPassword &&
-                passwordRules.every((rule) => rule.test(newPassword ?? "")) && (
-                  <p className="text-xs text-destructive">
-                    {errors.newPassword.message}
-                  </p>
-                )}
-            </div>
 
-            {/* Confirmar contraseña */}
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="confirm-password"
-                className="text-xs font-semibold text-muted-foreground"
+              <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <CircleCheck className="size-5" />
+              </div>
+
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">
+                Contraseña restablecida
+              </h1>
+
+              <p className="mt-2 text-sm text-slate-500">
+                Tu contraseña fue actualizada correctamente. Ya podés iniciar
+                sesión con la nueva.
+              </p>
+
+              <Button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await authClient.signOut();
+                  } catch {}
+
+                  window.location.assign("/login");
+                }}
+                className="mt-6 h-11 w-full rounded-full bg-slate-900 text-white hover:bg-slate-800"
               >
-                Confirmar nueva contraseña
-              </Label>
-              <Input
-                id="confirm-password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                className={inputClassName}
-                {...register("confirmPassword")}
-              />
-              {errors.confirmPassword && (
-                <p className="text-xs text-destructive">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
+                Ir a iniciar sesión
+                <ArrowRight className="size-4" />
+              </Button>
             </div>
-          </div>
+          ) : (
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+              {/* Header */}
+              <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
+                <DialogTitle className="text-base font-bold tracking-tight m-0">
+                  Cambiar contraseña
+                </DialogTitle>
+              </DialogHeader>
 
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-2 px-5.5 py-3.5 border-t bg-muted/30">
-            <DialogClose
-              render={
+              {/* Body */}
+              <div className="p-5.5 flex flex-col gap-4">
+                {/* Contraseña actual */}
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="current-password"
+                    className="text-xs font-semibold text-muted-foreground"
+                  >
+                    Contraseña actual
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="current-password"
+                      type={showCurrentPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      className={`${inputClassName} pr-10`}
+                      {...register("currentPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowCurrentPassword((v) => !v)}
+                      aria-label={
+                        showCurrentPassword
+                          ? "Ocultar contraseña"
+                          : "Mostrar contraseña"
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showCurrentPassword ? (
+                        <EyeOff className="size-4" />
+                      ) : (
+                        <Eye className="size-4" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.currentPassword && (
+                    <p className="text-xs text-destructive">
+                      {errors.currentPassword.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Nueva contraseña */}
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="new-password"
+                    className="text-xs font-semibold text-muted-foreground"
+                  >
+                    Nueva contraseña
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="new-password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      aria-invalid={passwordHasError}
+                      className={`${inputClassName} pr-10`}
+                      {...register("newPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={
+                        showPassword
+                          ? "Ocultar contraseña"
+                          : "Mostrar contraseña"
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="size-4" />
+                      ) : (
+                        <Eye className="size-4" />
+                      )}
+                    </button>
+                  </div>
+                  <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                    {passwordRules.map((rule) => {
+                      const ok = rule.test(newPassword ?? "");
+                      return (
+                        <li
+                          key={rule.id}
+                          className={`flex items-center gap-1.5 text-xs ${
+                            ok
+                              ? "text-emerald-600"
+                              : passwordHasError
+                                ? "text-red-600"
+                                : "text-slate-400"
+                          }`}
+                        >
+                          {ok ? (
+                            <Check className="size-3.5" />
+                          ) : (
+                            <Circle className="size-3.5" />
+                          )}
+                          {rule.label}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  {errors.newPassword &&
+                    passwordRules.every((rule) =>
+                      rule.test(newPassword ?? ""),
+                    ) && (
+                      <p className="text-xs text-destructive">
+                        {errors.newPassword.message}
+                      </p>
+                    )}
+                </div>
+
+                {/* Confirmar contraseña */}
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="confirm-password"
+                    className="text-xs font-semibold text-muted-foreground"
+                  >
+                    Confirmar nueva contraseña
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      className={`${inputClassName} pr-10`}
+                      {...register("confirmPassword")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((v) => !v)}
+                      aria-label={
+                        showConfirmPassword
+                          ? "Ocultar contraseña"
+                          : "Mostrar contraseña"
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="size-4" />
+                      ) : (
+                        <Eye className="size-4" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="text-xs text-destructive">
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center justify-end gap-2 px-5.5 py-3.5 border-t bg-muted/30">
                 <Button
                   type="button"
                   variant="outline"
+                  onClick={handleCancel}
                   className="rounded-full font-semibold text-[13px] h-auto px-3.75 py-2"
                 >
                   Cancelar
                 </Button>
-              }
-            />
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="rounded-full font-semibold text-[13px] h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 cursor-pointer"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      Cambiar contraseña
+                      <ArrowRight className="w-3.75 h-3.75" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={showCancelConfirmation}
+        onOpenChange={setShowCancelConfirmation}
+      >
+        <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
+          <div className="border-b border-border-default px-6 py-5">
+            <DialogTitle className="text-lg font-semibold text-text-primary">
+              Descartar cambios
+            </DialogTitle>
+            <DialogDescription className="mt-1 text-sm text-text-secondary">
+              Hay contraseñas ingresadas. ¿Querés descartar los cambios? Se
+              perderán las contraseñas que escribiste.
+            </DialogDescription>
+          </div>
+
+          <div className="flex justify-end gap-2 px-6 py-4">
             <Button
-              type="submit"
-              disabled={isLoading}
-              className="rounded-full font-semibold text-[13px] h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 cursor-pointer"
+              type="button"
+              variant="outline"
+              className="rounded-full px-5"
+              onClick={() => setShowCancelConfirmation(false)}
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  Cambiar contraseña
-                  <ArrowRight className="w-3.75 h-3.75" />
-                </>
-              )}
+              Seguir editando
+            </Button>
+
+            <Button
+              type="button"
+              className="rounded-full px-5"
+              onClick={() => {
+                setShowCancelConfirmation(false);
+                handleOpenChange(false);
+              }}
+            >
+              Descartar cambios
             </Button>
           </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
