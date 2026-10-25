@@ -34,6 +34,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from "~/components/ui/select";
 import { api } from "~/lib/trpc/react";
 import type { inferRouterOutputs } from "@trpc/server";
@@ -330,16 +331,25 @@ function PipelineChart({
               onValueChange={(value) => {
                 if (typeof value === "string") setSelectedOpeningId(value);
               }}
+              items={closedOpenings.map((o) => ({
+                value: o.id,
+                label: o.name,
+              }))}
             >
-              <SelectTrigger id="metrics-job-opening" className="w-full min-w-0">
+              <SelectTrigger
+                id="metrics-job-opening"
+                className="w-full min-w-0"
+              >
                 <SelectValue placeholder="Seleccioná una vacante" />
               </SelectTrigger>
               <SelectContent>
-                {closedOpenings.map((opening) => (
-                  <SelectItem key={opening.id} value={opening.id}>
-                    {opening.name}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {closedOpenings.map((opening) => (
+                    <SelectItem key={opening.id} value={opening.id}>
+                      {opening.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
