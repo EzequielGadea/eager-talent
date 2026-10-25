@@ -133,7 +133,6 @@ export default function AreaSetting() {
     return (
       <SettingsFetchError
         title="Áreas"
-        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
         refetch={refetch}
         isFetching={isFetching}
       />

@@ -127,7 +127,6 @@ export default function RoleSetting() {
     return (
       <SettingsFetchError
         title="Roles de candidato"
-        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
         refetch={refetch}
         isFetching={isFetching}
       />

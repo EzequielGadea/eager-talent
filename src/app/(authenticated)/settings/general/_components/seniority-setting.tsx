@@ -44,7 +44,6 @@ export default function SenioritySetting() {
     return (
       <SettingsFetchError
         title="Seniorities"
-        message="No se pudo cargar la información. Por favor, inténtalo de nuevo."
         refetch={refetch}
         isFetching={isFetching}
       />
