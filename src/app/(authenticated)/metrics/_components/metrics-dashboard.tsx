@@ -33,6 +33,7 @@ import { Briefcase } from "lucide-react";
 import { api } from "~/lib/trpc/react";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
+import { keepPreviousData } from "@tanstack/react-query";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 type MetricsSummary = RouterOutputs["metrics"]["getMetricsSummary"];
@@ -314,12 +315,14 @@ function PipelineChart({
 
   const pipelineQuery = api.metrics.getPipeline.useQuery(
     { jobOpeningId: selectedOpeningId },
-    { enabled: selectedOpeningId.length > 0 },
+    {
+      enabled: selectedOpeningId.length > 0,
+      placeholderData: keepPreviousData,
+    },
   );
-  const pipeline =
-    pipelineQuery.data?.jobOpeningId === selectedOpeningId
-      ? pipelineQuery.data
-      : undefined;
+
+  const pipeline = pipelineQuery.data;
+  const isRefreshing = pipelineQuery.isPlaceholderData;
   const firstStage = pipeline?.stages[0];
   const lastStage = pipeline?.stages.at(-1);
   const stages = pipeline?.stages ?? [];
@@ -381,7 +384,11 @@ function PipelineChart({
 
         {/* Subtítulo */}
         {pipeline && firstStage && (
-          <p className="mb-5 text-[13px] text-text-secondary">
+          <p
+            className={`mb-5 text-[13px] text-text-secondary transition-opacity ${
+              isRefreshing ? "opacity-50" : ""
+            }`}
+          >
             Conversión de punta a punta:{" "}
             <strong
               className={
@@ -421,7 +428,12 @@ function PipelineChart({
         ) : pipeline.stages.length === 0 ? (
           <EmptyChart message="La vacante seleccionada no tiene etapas configuradas." />
         ) : (
-          <div className="flex flex-col gap-1.5">
+          <div
+            aria-busy={isRefreshing}
+            className={`flex flex-col gap-1.5 transition-opacity ${
+              isRefreshing ? "opacity-50" : ""
+            }`}
+          >
             {pipeline.stages.map((stage, index) => {
               const nextStage = pipeline.stages[index + 1];
               const color = STAGE_COLORS[index % STAGE_COLORS.length];
