@@ -180,60 +180,58 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
-    const [
-      currentJobOpening,
-      area,
-      validSeniorityCount,
-      validHiringManagerCount,
-    ] = await Promise.all([
-      ctx.db.jobOpening.findUnique({
-        where: {
-          id: input.id,
-        },
-        select: {
-          id: true,
-          status: true,
-          hasBeenOpened: true,
-          stages: true,
-          applications: {
-            where: { deletedAt: null },
-            select: {
-              currentStageId: true,
+    const [currentJobOpening, area, validSeniorityCount, activeHiringManagers] =
+      await Promise.all([
+        ctx.db.jobOpening.findUnique({
+          where: {
+            id: input.id,
+          },
+          select: {
+            id: true,
+            status: true,
+            hasBeenOpened: true,
+            stages: true,
+            hiringManagers: { select: { id: true } },
+            applications: {
+              where: { deletedAt: null },
+              select: {
+                currentStageId: true,
+              },
             },
           },
-        },
-      }),
+        }),
 
-      ctx.db.area.findFirst({
-        where: {
-          id: input.areaId,
-        },
-        select: {
-          id: true,
-        },
-      }),
+        ctx.db.area.findFirst({
+          where: {
+            id: input.areaId,
+          },
+          select: {
+            id: true,
+          },
+        }),
 
-      ctx.db.seniority.count({
-        where: {
-          id: {
-            in: input.seniorityIds,
+        ctx.db.seniority.count({
+          where: {
+            id: {
+              in: input.seniorityIds,
+            },
           },
-        },
-      }),
+        }),
 
-      ctx.db.member.count({
-        where: {
-          organizationId,
-          role: "hiringManager",
-          userId: {
-            in: input.hiringManagerIds,
+        ctx.db.member.findMany({
+          where: {
+            organizationId,
+            role: "hiringManager",
+            userId: {
+              in: input.hiringManagerIds,
+            },
+            user: {
+              banned: false,
+            },
           },
-          user: {
-            banned: false,
-          },
-        },
-      }),
-    ]);
+          select: { userId: true },
+        }),
+      ]);
 
     if (!currentJobOpening) {
       throw new TRPCError({
@@ -256,7 +254,20 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
-    if (validHiringManagerCount !== input.hiringManagerIds.length) {
+    // Un HM baneado que ya estaba asignado se tolera (no bloquea la edición),
+    // pero no se puede asignar uno nuevo que esté baneado.
+    const activeHiringManagerIds = new Set(
+      activeHiringManagers.map((member) => member.userId),
+    );
+    const currentHiringManagerIds = new Set(
+      currentJobOpening.hiringManagers.map((manager) => manager.id),
+    );
+    const hasInvalidHiringManager = input.hiringManagerIds.some(
+      (id) =>
+        !activeHiringManagerIds.has(id) && !currentHiringManagerIds.has(id),
+    );
+
+    if (hasInvalidHiringManager) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Uno o más Hiring Managers no son válidos",
