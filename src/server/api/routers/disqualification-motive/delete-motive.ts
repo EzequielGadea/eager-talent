@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { protectedProcedure } from "~/server/api/trpc";
 
+import { auth } from "~/lib/auth";
+
 export const deleteDisqualificationMotive = protectedProcedure
   .input(
     z.object({
@@ -10,6 +12,14 @@ export const deleteDisqualificationMotive = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
+    const permission = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { disqualificationMotive: ["delete"] } },
+    });
+
+    if (!permission.success) {
+      throw new TRPCError({ code: "FORBIDDEN" });
+    }
     const motive = await ctx.db.disqualificationMotive.findUnique({
       where: { id: input.id },
       select: { _count: { select: { applications: true } } },

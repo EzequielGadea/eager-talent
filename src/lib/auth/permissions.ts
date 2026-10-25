@@ -15,6 +15,7 @@ export const accessStatements = {
   seniority: CRUD,
   tag: CRUD,
   stageTemplate: CRUD,
+  disqualificationMotive: CRUD,
   user: CRUD,
 
   // Entities with assigned scoping
