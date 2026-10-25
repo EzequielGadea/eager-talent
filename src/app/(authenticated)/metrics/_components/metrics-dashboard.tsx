@@ -302,19 +302,15 @@ function PipelineChart({
 }: {
   closedOpenings: ClosedOpening[];
 }) {
-  const firstOpeningId = closedOpenings[0]?.id ?? "";
-  const [selectedOpeningId, setSelectedOpeningId] = useState(firstOpeningId);
+  const [requestedOpeningId, setRequestedOpeningId] = useState<string | null>(
+    null,
+  );
 
-  useEffect(() => {
-    if (closedOpenings.length === 0) {
-      setSelectedOpeningId("");
-      return;
-    }
-
-    if (!closedOpenings.some((opening) => opening.id === selectedOpeningId)) {
-      setSelectedOpeningId(firstOpeningId);
-    }
-  }, [closedOpenings, firstOpeningId, selectedOpeningId]);
+  // Si la elección ya no existe (o no hubo ninguna), cae a la primera vacante
+  const selectedOpeningId =
+    closedOpenings.find((opening) => opening.id === requestedOpeningId)?.id ??
+    closedOpenings[0]?.id ??
+    "";
 
   const pipelineQuery = api.metrics.getPipeline.useQuery(
     { jobOpeningId: selectedOpeningId },
@@ -355,7 +351,7 @@ function PipelineChart({
               <Select
                 value={selectedOpeningId}
                 onValueChange={(value) => {
-                  if (typeof value === "string") setSelectedOpeningId(value);
+                  if (typeof value === "string") setRequestedOpeningId(value);
                 }}
                 items={closedOpenings.map((o) => ({
                   value: o.id,
