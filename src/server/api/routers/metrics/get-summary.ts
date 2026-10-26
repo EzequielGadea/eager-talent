@@ -25,7 +25,6 @@ export const getMetricsSummary = protectedProcedure.query(async ({ ctx }) => {
       by: ["disqualificationMotiveId"],
       where: {
         disqualificationMotiveId: { not: null },
-        jobOpening: { status: "Closed" },
       },
       _count: { _all: true },
     }),
