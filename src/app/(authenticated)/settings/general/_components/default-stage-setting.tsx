@@ -25,10 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import {
-  getRequiredStageType,
-  isRequiredStage,
-} from "~/lib/required-stage-types";
+import { isRequiredStage } from "~/lib/required-stage-types";
 import { api } from "~/lib/trpc/react";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
 import { SettingsFetchError } from "./settings-fetch-error";
@@ -317,19 +314,13 @@ function DefaultStageEditor({
                     placeholder="Nombre de la etapa"
                     value={stage.name}
                     readOnly={locked || isRequired}
-                    disabled={index === 0 || index === stages.length - 1}
+                    disabled={locked || isRequired}
                     maxLength={80}
-                    className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none"
+                    className="h-7 w-full border-transparent bg-transparent px-1 font-medium shadow-none disabled:bg-transparent disabled:opacity-100"
                     onChange={(event) => {
                       const name = event.target.value;
-                      const requiredType = persistedStageTypeSchema.safeParse(
-                        getRequiredStageType(name),
-                      );
                       updateStage(stage.key, {
                         name,
-                        ...(requiredType.success
-                          ? { type: requiredType.data }
-                          : {}),
                       });
                     }}
                   />
