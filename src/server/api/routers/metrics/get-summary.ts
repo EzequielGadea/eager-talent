@@ -33,6 +33,7 @@ export const getMetricsSummary = protectedProcedure.query(async ({ ctx }) => {
         applicant.hear_about_us AS "hearAboutUs",
         COUNT(*)::int AS count
       FROM applicant
+      WHERE deleted_at IS NOT NULL
       GROUP BY applicant.hear_about_us
     `,
   ]);
