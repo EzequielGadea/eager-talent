@@ -19,9 +19,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
-  DialogTrigger,
-  DialogTitle,
   DialogTrigger,
   DialogDescription,
 } from "~/components/ui/dialog";
