@@ -5,6 +5,7 @@ import {
   Source,
   HearAboutUs,
   SalaryCurrency,
+  JobOpeningStatus,
 } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -73,6 +74,7 @@ export const createApplicant = protectedProcedure
           select: {
             name: true,
             stages: true,
+            status: true,
           },
         });
 
@@ -80,6 +82,13 @@ export const createApplicant = protectedProcedure
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "La vacante seleccionada no existe",
+          });
+        }
+
+        if (jobOpening.status !== JobOpeningStatus.Open) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Solo se pueden postular candidatos a vacantes abiertas",
           });
         }
 
