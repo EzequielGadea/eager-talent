@@ -113,7 +113,7 @@ export function EditJobOpeningForm({
                 nativeButton={false}
                 variant="outline"
                 size="lg"
-                className="w-full rounded-full px-6 text-text-secondary sm:w-auto"
+
                 render={
                   <Link
                     href={`/job-openings/${defaultValues.id}/pipeline`}
@@ -124,12 +124,7 @@ export function EditJobOpeningForm({
                 Cancelar
               </Button>
 
-              <Button
-                type="submit"
-                size="lg"
-                disabled={isSaving}
-                className="w-full rounded-full px-6 sm:w-auto"
-              >
+              <Button type="submit" size="lg" disabled={isSaving}>
                 {isSaving ? (
                   <>
                     <LoaderCircle
