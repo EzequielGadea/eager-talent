@@ -367,44 +367,58 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
-    return ctx.db.jobOpening.update({
-      where: {
-        id: input.id,
-      },
-      data: {
-        name: input.name,
-        status: nextStatus,
-        hasBeenOpened: hasBeenOpened || nextStatus === "Open",
-        location: input.location,
-        targetClosingDate: nextTargetClosingDate,
-
-        // Unchanged stages are not rewritten.
-        ...(stagesChanged || colorsChanged
-          ? {
-              stages: input.stages.map((stage) =>
-                toPersistedStage(stage, persistedStagesById.get(stage.id)),
-              ),
-            }
-          : {}),
-
-        area: {
-          connect: {
-            id: input.areaId,
+    return ctx.db.$transaction(async (tx) => {
+      const { count } = await tx.jobOpening.updateMany({
+        where: {
+          id: input.id,
+          status: {
+            notIn: ["Closed", "Cancelled"],
           },
         },
+        data: {
+          name: input.name,
+          status: nextStatus,
+          hasBeenOpened: hasBeenOpened || nextStatus === "Open",
+          location: input.location,
+          targetClosingDate: nextTargetClosingDate,
+          areaId: input.areaId,
 
-        seniorities: {
-          set: input.seniorityIds.map((id) => ({ id })),
+          // Unchanged stages are not rewritten.
+          ...(stagesChanged || colorsChanged
+            ? {
+                stages: input.stages.map((stage) =>
+                  toPersistedStage(stage, persistedStagesById.get(stage.id)),
+                ),
+              }
+            : {}),
         },
+      });
 
-        hiringManagers: {
-          set: input.hiringManagerIds.map((id) => ({ id })),
+      if (count !== 1) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No se puede modificar una vacante cerrada o cancelada",
+        });
+      }
+
+      return tx.jobOpening.update({
+        where: {
+          id: input.id,
         },
-      },
-      select: {
-        id: true,
-        name: true,
-        status: true,
-      },
+        data: {
+          seniorities: {
+            set: input.seniorityIds.map((id) => ({ id })),
+          },
+
+          hiringManagers: {
+            set: input.hiringManagerIds.map((id) => ({ id })),
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+        },
+      });
     });
   });

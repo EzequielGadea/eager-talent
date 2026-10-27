@@ -55,7 +55,8 @@ export const updateStatus = protectedProcedure
     ) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "No se puede modificar el estado de una vacante cerrada o cancelada",
+        message:
+          "No se puede modificar el estado de una vacante cerrada o cancelada",
       });
     }
 
@@ -64,18 +65,30 @@ export const updateStatus = protectedProcedure
       jobOpening.status === "Open" ||
       input.status === "Open";
 
-    return ctx.db.jobOpening.update({
+    const { count } = await ctx.db.jobOpening.updateMany({
       where: {
         id: input.jobOpeningId,
+        status: {
+          notIn: [JobOpeningStatus.Closed, JobOpeningStatus.Cancelled],
+        },
       },
       data: {
         status: input.status,
         hasBeenOpened,
       },
-      select: {
-        id: true,
-        status: true,
-        hasBeenOpened: true,
-      },
     });
+
+    if (count !== 1) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "No se puede modificar el estado de una vacante cerrada o cancelada",
+      });
+    }
+
+    return {
+      id: jobOpening.id,
+      status: input.status,
+      hasBeenOpened,
+    };
   });
