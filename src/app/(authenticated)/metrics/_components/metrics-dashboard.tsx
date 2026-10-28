@@ -34,10 +34,19 @@ import { api } from "~/lib/trpc/react";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
 import { keepPreviousData } from "@tanstack/react-query";
+import {
+  defaultMetricsPeriod,
+  type MetricsPeriod,
+} from "~/lib/validations/metrics";
+import { JobOpeningDeviations } from "./job-opening-deviations";
+import { MetricsFilters } from "./metrics-filters";
+import { MetricsSummaryCards } from "./metrics-summary-cards";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 type MetricsSummary = RouterOutputs["metrics"]["getMetricsSummary"];
 type ClosedOpening = RouterOutputs["metrics"]["getClosedOpenings"][number];
+type TimeMetrics = RouterOutputs["metrics"]["getTimeMetrics"];
+type JobOpeningDeviations = RouterOutputs["metrics"]["getJobOpeningDeviations"];
 
 function formatPercentage(value: number | null) {
   return value === null ? "—" : `${Math.round(value)} %`;
@@ -502,19 +511,90 @@ function PipelineChart({
 }
 
 export function MetricsDashboard({
-  summary,
-  closedOpenings,
+  initialSummary,
+  initialClosedOpenings,
+  initialTimeMetrics,
+  initialDeviations,
+  areas,
 }: {
-  summary: MetricsSummary;
-  closedOpenings: ClosedOpening[];
+  initialSummary: MetricsSummary;
+  initialClosedOpenings: ClosedOpening[];
+  initialTimeMetrics: TimeMetrics;
+  initialDeviations: JobOpeningDeviations;
+  areas: Array<{ id: string; name: string }>;
 }) {
+  const [period, setPeriod] = useState<MetricsPeriod>(defaultMetricsPeriod);
+  const [areaId, setAreaId] = useState<string | undefined>();
+  const [page, setPage] = useState(1);
+  const filters = { period, areaId };
+  const isDefaultFilter = period === defaultMetricsPeriod && !areaId;
+
+  const summaryQuery = api.metrics.getMetricsSummary.useQuery(filters, {
+    initialData: isDefaultFilter ? initialSummary : undefined,
+    placeholderData: keepPreviousData,
+  });
+  const closedOpeningsQuery = api.metrics.getClosedOpenings.useQuery(filters, {
+    initialData: isDefaultFilter ? initialClosedOpenings : undefined,
+    placeholderData: keepPreviousData,
+  });
+  const timeMetricsQuery = api.metrics.getTimeMetrics.useQuery(filters, {
+    initialData: isDefaultFilter ? initialTimeMetrics : undefined,
+    placeholderData: keepPreviousData,
+  });
+  const deviationsQuery = api.metrics.getJobOpeningDeviations.useQuery(
+    { ...filters, page },
+    {
+      initialData:
+        isDefaultFilter && page === 1 ? initialDeviations : undefined,
+      placeholderData: keepPreviousData,
+    },
+  );
+
+  const summary = summaryQuery.data ?? initialSummary;
+  const closedOpenings = closedOpeningsQuery.data ?? initialClosedOpenings;
+  const timeMetrics = timeMetricsQuery.data ?? initialTimeMetrics;
+  const deviations = deviationsQuery.data ?? initialDeviations;
+
+  function changePeriod(nextPeriod: MetricsPeriod) {
+    setPeriod(nextPeriod);
+    setPage(1);
+  }
+
+  function changeArea(nextAreaId: string | undefined) {
+    setAreaId(nextAreaId);
+    setPage(1);
+  }
+
   return (
-    <section className="flex flex-col gap-5">
+    <section className="flex flex-col gap-6 [&_[data-slot=card]]:rounded-lg">
       <header>
-        <h1 className="font-heading text-2xl font-semibold text-text-primary">
+        <h1 className="text-balance text-[30px] leading-[1.2] font-bold tracking-[-0.02em] text-text-primary">
           Métricas
         </h1>
       </header>
+
+      <MetricsFilters
+        period={period}
+        areaId={areaId}
+        areas={areas}
+        onPeriodChange={changePeriod}
+        onAreaChange={changeArea}
+      />
+
+      <MetricsSummaryCards
+        metrics={timeMetrics}
+        isPending={
+          timeMetricsQuery.isPending || timeMetricsQuery.isPlaceholderData
+        }
+      />
+
+      <JobOpeningDeviations
+        data={deviations}
+        isLoading={
+          deviationsQuery.isPending || deviationsQuery.isPlaceholderData
+        }
+        onPageChange={setPage}
+      />
 
       <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
         <DisqualificationChart motives={summary.disqualificationMotives} />
