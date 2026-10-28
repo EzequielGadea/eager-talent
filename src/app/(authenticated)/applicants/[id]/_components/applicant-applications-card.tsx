@@ -91,12 +91,15 @@ function getHeaderApplicationStatus(application: { active: boolean }) {
 
 function getInitialSelection(
   applications: ApplicationSummary[],
-  explorationInterviews: Interview[],
-): ApplicationSelection | undefined {
+): ApplicationSelection {
   if (applications[0]) {
-    return { type: "application", jobOpeningId: applications[0].jobOpeningId };
+    return {
+      type: "application",
+      jobOpeningId: applications[0].jobOpeningId,
+    };
   }
-  return explorationInterviews.length > 0 ? { type: "exploration" } : undefined;
+
+  return { type: "exploration" };
 }
 
 export function ApplicantApplicationsCard({
@@ -113,7 +116,7 @@ export function ApplicantApplicationsCard({
   const utils = api.useUtils();
   const [, startTransition] = useTransition();
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
-    () => getInitialSelection(applications, explorationInterviews),
+    () => getInitialSelection(applications),
   );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
 
@@ -125,8 +128,7 @@ export function ApplicantApplicationsCard({
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
   const [showRequalifyDialog, setShowRequalifyDialog] = useState(false);
-  const effectiveSelection =
-    selection ?? getInitialSelection(applications, explorationInterviews);
+  const effectiveSelection = selection;
   const isExploration = effectiveSelection?.type === "exploration";
   const app =
     effectiveSelection?.type === "application"
