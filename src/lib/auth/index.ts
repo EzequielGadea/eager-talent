@@ -110,6 +110,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    disableSignUp: true,
     revokeSessionsOnPasswordReset: true,
     resetPasswordTokenExpiresIn: INVITATION_EXPIRATION,
     minPasswordLength: PASSWORD_MIN_LENGTH,
