@@ -158,8 +158,8 @@ export function CandidateCard({
             ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
             : undefined,
         }}
-        className={`rounded-xl border-border-default bg-card p-3 shadow-none ${
-          canUpdateApplication ? "cursor-grab" : ""
+        className={`rounded-xl border-border-default bg-card p-3 shadow-none transition-[border-color,background-color,box-shadow] duration-150 ${
+          canUpdateApplication ? "cursor-grab hover:border-primary/50  hover:shadow-md active:cursor-grabbing" : ""
         }`}
       >
         <div className="flex items-center gap-3">
