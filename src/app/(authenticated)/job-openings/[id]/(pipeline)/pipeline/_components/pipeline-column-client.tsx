@@ -9,13 +9,13 @@ import { api } from "~/lib/trpc/react";
 import { ApplicantCard } from "./applicant-card";
 import { LoadMoreApplicants } from "./load-more-applicants";
 import { usePipelineMoves } from "./pipeline-dnd-provider";
-import type { PipelineCandidate } from "./types";
+import type { PipelineApplicant } from "./types";
 
 type PipelineColumnClientProps = {
   jobOpeningId: string;
   stageId: string;
   stageName: string;
-  initialCandidates: PipelineCandidate[];
+  initialCandidates: PipelineApplicant[];
   total: number;
   isLastStage: boolean;
   canUpdateApplication: boolean;
@@ -43,7 +43,7 @@ export function PipelineColumnClient({
 
   const { moves, clearMove } = usePipelineMoves();
 
-  const [loadedCandidates, setLoadedCandidates] = useState<PipelineCandidate[]>(
+  const [loadedCandidates, setLoadedCandidates] = useState<PipelineApplicant[]>(
     [],
   );
 

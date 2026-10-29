@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { LoadMoreCandidates } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/load-more-candidates";
+import { LoadMoreApplicants } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/load-more-applicants";
 
 import { DisqualifiedCard } from "./disqualified-card";
 import { DISQUALIFIED_PAGE_SIZE, type DisqualifiedApplication } from "../types";
@@ -61,7 +61,7 @@ export function DisqualifiedColumn({
 
         {/* "+ N candidatos más": muestra las siguientes. */}
         {remaining > 0 && (
-          <LoadMoreCandidates
+          <LoadMoreApplicants
             remaining={remaining}
             loading={false}
             onLoadMore={() =>
