@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function RoleSetting() {
   const [isAddingRole, setIsAddingRole] = useState(false);
@@ -33,8 +34,13 @@ export default function RoleSetting() {
     name: string;
   } | null>(null);
 
-  const { data: roles, isLoading: isRolesLoading } =
-    api.jobRole.getAllRoles.useQuery({});
+  const {
+    data: roles,
+    isLoading: isRolesLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.jobRole.getAllRoles.useQuery({});
 
   const utils = api.useUtils();
 
@@ -117,6 +123,16 @@ export default function RoleSetting() {
     return <GeneralSettingsCardSkeleton title="Roles de candidato" rows={4} />;
   }
 
+  if (isError || !roles) {
+    return (
+      <SettingsFetchError
+        title="Roles de candidato"
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
@@ -174,10 +190,9 @@ export default function RoleSetting() {
           {isAddingRole && (
             <form
               onSubmit={handleCreateRole}
-              className="flex items-end gap-3 border-b border-border-default
-                        py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={roleName}

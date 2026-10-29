@@ -32,8 +32,7 @@ type JobOpeningStatusDropdownProps = {
 };
 
 type TerminalStatus =
-  | typeof JobOpeningStatus.Closed
-  | typeof JobOpeningStatus.Cancelled;
+  typeof JobOpeningStatus.Closed | typeof JobOpeningStatus.Cancelled;
 
 const statusStyles: Record<
   string,
@@ -65,9 +64,7 @@ const fallbackStatusStyle = {
   dotClassName: "bg-muted-foreground",
 };
 
-function isTerminalStatus(
-  value: JobOpeningStatus,
-): value is TerminalStatus {
+function isTerminalStatus(value: JobOpeningStatus): value is TerminalStatus {
   return (
     value === JobOpeningStatus.Closed || value === JobOpeningStatus.Cancelled
   );
