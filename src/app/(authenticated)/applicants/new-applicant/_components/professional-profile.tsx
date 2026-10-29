@@ -101,7 +101,7 @@ export default function ProfessionalProfile() {
               />
             )}
             {errors.role && (
-              <p className="text-danger">{errors.role.message}</p>
+              <p className="text-xs text-danger">{errors.role.message}</p>
             )}
           </div>
 
@@ -254,10 +254,14 @@ export default function ProfessionalProfile() {
                   </div>
                 </div>
                 {errors.currency && (
-                  <p className="text-danger">{errors.currency.message}</p>
+                  <p className="text-xs text-danger">
+                    {errors.currency.message}
+                  </p>
                 )}
                 {errors.desiredSalary && (
-                  <p className="text-danger">{errors.desiredSalary.message}</p>
+                  <p className="text-xs text-danger">
+                    {errors.desiredSalary.message}
+                  </p>
                 )}
               </div>
 

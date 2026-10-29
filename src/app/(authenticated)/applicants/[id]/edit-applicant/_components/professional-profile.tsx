@@ -88,7 +88,7 @@ export default function ProfessionalProfile() {
               />
             )}
             {errors.role && (
-              <p className="text-danger">{errors.role.message}</p>
+              <p className="text-xs text-danger">{errors.role.message}</p>
             )}
           </div>
 

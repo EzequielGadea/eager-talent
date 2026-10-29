@@ -299,11 +299,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   // ETIQUETAS TÉCNICAS (STACK EAGERWORKS) Y DE GESTIÓN
   const skillTagDefs = [
     { name: "Ruby on Rails", color: getTagColor("Ruby on Rails") },
-    { name: "React", color: getTagColor("React")},
+    { name: "React", color: getTagColor("React") },
     { name: "Next.js", color: getTagColor("Next.js") },
     { name: "TypeScript", color: getTagColor("TypeScript") },
     { name: "React Native", color: getTagColor("React Native") },
-    { name: "Node.js", color: getTagColor("Node.js")},
+    { name: "Node.js", color: getTagColor("Node.js") },
     { name: "Python", color: getTagColor("Python") },
     { name: "PostgreSQL", color: getTagColor("PostgreSQL") },
     { name: "Docker", color: getTagColor("Docker") },
@@ -313,13 +313,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     { name: "Tailwind CSS", color: getTagColor("Tailwind CSS") },
   ];
   const otherTagDefs = [
-    { name: "Híbrido Montevideo (Cordón)", color: getTagColor("Híbrido Montevideo (Cordón)") },
+    {
+      name: "Híbrido Montevideo (Cordón)",
+      color: getTagColor("Híbrido Montevideo (Cordón)"),
+    },
     { name: "Remoto Uruguay", color: getTagColor("Remoto Uruguay") },
     { name: "Inglés C1 / Fluido", color: getTagColor("Inglés C1 / Fluido") },
-    { name: "Inglés C2 / Bilingüe", color: getTagColor("Inglés C2 / Bilingüe") },
+    {
+      name: "Inglés C2 / Bilingüe",
+      color: getTagColor("Inglés C2 / Bilingüe"),
+    },
     { name: "Top Talent", color: getTagColor("Top Talent") },
     { name: "Referido Eagerworks", color: getTagColor("Referido Eagerworks") },
-    { name: "Disponible Inmediato", color: getTagColor("Disponible Inmediato") },
+    {
+      name: "Disponible Inmediato",
+      color: getTagColor("Disponible Inmediato"),
+    },
   ];
 
   const tags: Record<string, { id: string; name: string }> = {};

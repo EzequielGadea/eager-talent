@@ -2,11 +2,12 @@
 
 import { useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { Clock } from "lucide-react";
+import { AlertCircle, Clock, RefreshCw } from "lucide-react";
 import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -17,7 +18,6 @@ import {
   CardFooter,
 } from "~/components/ui/card";
 import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
-import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert";
 import {
   Pagination,
   PaginationContent,
@@ -53,25 +53,42 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
   const [page, setPage] = useState(1);
   const [jobOpeningId, setJobOpeningId] = useState<string | undefined>();
 
-  const { data, isLoading, error } = api.activity.getByApplicantId.useQuery({
-    applicantId,
-    jobOpeningId,
-    page,
-  });
+  const { data, isLoading, error, refetch } =
+    api.activity.getByApplicantId.useQuery({
+      applicantId,
+      jobOpeningId,
+      page,
+    });
 
   if (error) {
     return (
       <Card className="min-w-0">
-        <CardContent className="pt-6">
-          <Alert className="flex flex-col items-start gap-3">
-            <AlertTitle>
-              <h2>Error</h2>
-            </AlertTitle>
-            <AlertDescription>
+        <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
+          <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
+            <AlertCircle className="size-6 text-danger" />
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold text-text-primary">
+              No se pudo cargar la actividad
+            </h2>
+
+            <p className="text-sm text-text-secondary">
               La postulación seleccionada no está disponible. Volvé a consultar
               todas las postulaciones.
-            </AlertDescription>
-          </Alert>
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            onClick={() => {
+              setJobOpeningId(undefined);
+              void refetch();
+            }}
+          >
+            <RefreshCw className="size-4" />
+            Intentar nuevamente
+          </Button>
         </CardContent>
       </Card>
     );

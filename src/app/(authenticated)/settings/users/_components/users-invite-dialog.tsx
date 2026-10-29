@@ -115,9 +115,7 @@ export function UsersInviteDialog() {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">
-                  {errors.email.message}
-                </p>
+                <p className="text-xs text-danger">{errors.email.message}</p>
               )}
             </div>
 
@@ -188,9 +186,7 @@ export function UsersInviteDialog() {
                 )}
               />
               {errors.role && (
-                <p className="text-xs text-destructive">
-                  {errors.role.message}
-                </p>
+                <p className="text-xs text-danger">{errors.role.message}</p>
               )}
             </div>
           </div>

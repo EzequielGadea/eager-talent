@@ -334,7 +334,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
               </p>
 
               {imageError && (
-                <p role="alert" className="text-xs text-destructive">
+                <p role="alert" className="text-xs text-danger">
                   {imageError}
                 </p>
               )}

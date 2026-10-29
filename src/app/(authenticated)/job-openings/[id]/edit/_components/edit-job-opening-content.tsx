@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { TRPCError } from "@trpc/server";
 
 import {
   jobOpeningStageTypeSchema,
@@ -8,6 +9,7 @@ import {
   type UpdateJobOpeningInput,
 } from "~/lib/validations/job-opening";
 import { api } from "~/lib/trpc/server";
+import JobOpeningNotFound from "~/app/(authenticated)/job-openings/[id]/not-found";
 
 import { EditJobOpeningForm } from "./edit-job-opening-form";
 import { JobOpeningDatesCard } from "./job-opening-dates-card";
@@ -110,13 +112,27 @@ export async function EditJobOpeningContent({
   jobOpeningId,
 }: EditJobOpeningContentProps) {
   const [jobOpening, areas, seniorities, assignableUsers] = await Promise.all([
-    api.jobOpening.fetchById({
-      id: jobOpeningId,
-    }),
+    api.jobOpening
+      .fetchById({
+        id: jobOpeningId,
+      })
+      .catch((error: unknown) => {
+        if (
+          error instanceof TRPCError &&
+          (error.code === "NOT_FOUND" || error.code === "FORBIDDEN")
+        ) {
+          return null;
+        }
+        throw error;
+      }),
     api.area.getAllAreas({}),
     api.seniority.getAllSeniorities({}),
     api.jobOpening.listAssignableUsers({}),
   ]);
+
+  if (!jobOpening) {
+    return <JobOpeningNotFound />;
+  }
 
   if (jobOpening.status === "Closed" || jobOpening.status === "Cancelled") {
     redirect(`/job-openings/${jobOpening.id}/pipeline`);

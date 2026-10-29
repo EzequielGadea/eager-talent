@@ -272,7 +272,12 @@ export function AddApplicantApplicationForm({
         </div>
 
         {errors.root?.message && (
-          <p className="text-sm text-danger">{errors.root.message}</p>
+          <p
+            role="alert"
+            className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
+          >
+            {errors.root.message}
+          </p>
         )}
 
         <div className="flex justify-end gap-2 border-t border-border-default pt-4">

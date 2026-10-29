@@ -188,8 +188,8 @@ export default function OpeningHiring() {
                         </ComboboxList>
                         <div className="mt-2 border-t border-border-default p-4">
                           <p className="text-xs leading-relaxed text-text-tertiary">
-                            Solo podés asignar usuarios existentes. Invitá nuevos
-                            desde <br />
+                            Solo podés asignar usuarios existentes. Invitá
+                            nuevos desde <br />
                             Configuración → Usuarios.
                           </p>
                         </div>
