@@ -14,11 +14,6 @@ const hearAboutUsLabels: Record<string, string> = {
   Other: "Otro",
 };
 
-type SourceCount = {
-  hearAboutUs: string | null;
-  count: number;
-};
-
 export const getMetricsSummary = protectedProcedure
   .input(metricsFilterSchema)
   .query(async ({ ctx, input }) => {
@@ -26,7 +21,7 @@ export const getMetricsSummary = protectedProcedure
 
     const jobOpeningWhere = getMetricsJobOpeningWhere(input);
 
-    const [motiveCounts, sourceCounts] = await Promise.all([
+    const [motiveCounts, sourceApplications] = await Promise.all([
       ctx.db.application.groupBy({
         by: ["disqualificationMotiveId"],
         where: {
@@ -36,14 +31,19 @@ export const getMetricsSummary = protectedProcedure
         },
         _count: { _all: true },
       }),
-      ctx.db.$queryRaw<SourceCount[]>`
-      SELECT
-        applicant.hear_about_us AS "hearAboutUs",
-        COUNT(*)::int AS count
-      FROM applicant
-      WHERE deleted_at IS NULL
-      GROUP BY applicant.hear_about_us
-    `,
+      ctx.db.application.findMany({
+        where: {
+          active: true,
+          deletedAt: null,
+          jobOpening: jobOpeningWhere,
+          applicant: { deletedAt: null },
+        },
+        select: {
+          applicant: {
+            select: { hearAboutUs: true },
+          },
+        },
+      }),
     ]);
 
     const motiveIds = motiveCounts.flatMap(({ disqualificationMotiveId }) =>
@@ -78,19 +78,23 @@ export const getMetricsSummary = protectedProcedure
       })
       .sort((first, second) => second.count - first.count);
 
-    const totalApplications = sourceCounts.reduce(
-      (total, source) => total + source.count,
-      0,
-    );
-    const applicationSources = sourceCounts
-      .map(({ hearAboutUs, count }) => ({
+    const sourceCounts = new Map<string | null, number>();
+    for (const application of sourceApplications) {
+      const source = application.applicant.hearAboutUs;
+      sourceCounts.set(source, (sourceCounts.get(source) ?? 0) + 1);
+    }
+
+    const totalApplications = sourceApplications.length;
+    const applicationSources = Array.from(
+      sourceCounts,
+      ([hearAboutUs, count]) => ({
         name: hearAboutUs
           ? (hearAboutUsLabels[hearAboutUs] ?? hearAboutUs)
           : "Sin especificar",
         count,
         percentage: totalApplications ? (count / totalApplications) * 100 : 0,
-      }))
-      .sort((first, second) => second.count - first.count);
+      }),
+    ).sort((first, second) => second.count - first.count);
 
     return {
       totalApplications,

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { CheckCircle2, CircleAlert } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -13,7 +12,6 @@ import {
   PaginationPrevious,
 } from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
-import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 import { cn } from "~/lib/utils";
 
 type DeviationItem = {
@@ -64,7 +62,6 @@ export function JobOpeningDeviations({
   onPageChange,
 }: JobOpeningDeviationsProps) {
   const highestDeviation = data.highestDeviation;
-  const [selectedMetric, setSelectedMetric] = useState("total");
 
   return (
     <Card>
@@ -102,51 +99,13 @@ export function JobOpeningDeviations({
           )
         ) : null}
 
-        <ToggleGroup
-          value={[selectedMetric]}
-          onValueChange={(values) => {
-            const nextMetric = values[0];
-
-            if (nextMetric) {
-              setSelectedMetric(nextMetric);
-            }
-          }}
-          variant="outline"
-          spacing={2}
-          className="flex flex-wrap"
-          aria-label="Métrica seleccionada"
+        <div
+          className="flex w-fit items-center gap-1.5 rounded-full bg-slate-900 px-4 py-1.5 text-sm font-medium text-white"
+          aria-label="Métrica mostrada: tiempo total"
         >
-          <ToggleGroupItem
-            value="total"
-            className="h-8 rounded-full px-4 text-sm text-text-secondary hover:bg-surface-hover data-pressed:border-slate-900 data-pressed:bg-slate-900 data-pressed:text-white"
-          >
-            <span
-              className="size-2 rounded-full bg-red-500"
-              aria-hidden="true"
-            />
-            Tiempo total
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="hr"
-            className="h-8 rounded-full px-4 text-sm text-text-secondary hover:bg-surface-hover data-pressed:border-slate-900 data-pressed:bg-slate-900 data-pressed:text-white"
-          >
-            <span
-              className="size-2 rounded-full bg-violet-500"
-              aria-hidden="true"
-            />
-            Desde HR
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="technical"
-            className="h-8 rounded-full px-4 text-sm text-text-secondary hover:bg-surface-hover data-pressed:border-slate-900 data-pressed:bg-slate-900 data-pressed:text-white"
-          >
-            <span
-              className="size-2 rounded-full bg-slate-900"
-              aria-hidden="true"
-            />
-            Resp. técnica
-          </ToggleGroupItem>
-        </ToggleGroup>
+          <span className="size-2 rounded-full bg-red-500" aria-hidden="true" />
+          Tiempo total
+        </div>
 
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs font-medium uppercase text-muted-foreground">
           <span className="flex items-center gap-2">
@@ -242,12 +201,15 @@ export function JobOpeningDeviations({
                 <PaginationPrevious
                   href="#"
                   aria-disabled={data.page === 1}
+                  tabIndex={data.page === 1 ? -1 : undefined}
                   className={cn(
                     data.page === 1 && "pointer-events-none opacity-50",
                   )}
                   onClick={(event) => {
                     event.preventDefault();
-                    onPageChange(data.page - 1);
+                    if (data.page > 1) {
+                      onPageChange(data.page - 1);
+                    }
                   }}
                 />
               </PaginationItem>
@@ -274,13 +236,16 @@ export function JobOpeningDeviations({
                 <PaginationNext
                   href="#"
                   aria-disabled={data.page === data.pageCount}
+                  tabIndex={data.page === data.pageCount ? -1 : undefined}
                   className={cn(
                     data.page === data.pageCount &&
                       "pointer-events-none opacity-50",
                   )}
                   onClick={(event) => {
                     event.preventDefault();
-                    onPageChange(data.page + 1);
+                    if (data.page < data.pageCount) {
+                      onPageChange(data.page + 1);
+                    }
                   }}
                 />
               </PaginationItem>

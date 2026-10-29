@@ -46,7 +46,11 @@ export function MetricsFilters({
   onAreaChange: (areaId: string | undefined) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-4" aria-label="Filtros de métricas">
+    <div
+      className="flex flex-wrap gap-4"
+      role="group"
+      aria-label="Filtros de métricas"
+    >
       <Select
         value={period}
         onValueChange={(value) => {

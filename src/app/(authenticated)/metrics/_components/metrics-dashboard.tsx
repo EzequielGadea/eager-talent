@@ -63,7 +63,7 @@ function EmptyChart({ message }: { message: string }) {
   );
 }
 
-// Mismos colores que el mockup (emerald-500, violet-500, blue-600, amber-500, slate-400)
+// Colors match the mockup (emerald-500, violet-500, blue-600, amber-500, slate-400).
 const MOTIVE_COLORS = [
   "#10b981",
   "#8b5cf6",
@@ -98,7 +98,7 @@ function DisqualificationChart({
 }: {
   motives: MetricsSummary["disqualificationMotives"];
 }) {
-  // Eje Y dinámico: múltiplo de 10 hacia arriba (35% -> 40), mínimo 10
+  // Round the dynamic Y axis up to the next multiple of 10, with a minimum of 10.
   const maxValue = Math.max(
     10,
     Math.ceil(Math.max(...motives.map((m) => m.percentage), 0) / 10) * 10,
@@ -118,7 +118,7 @@ function DisqualificationChart({
           </div>
         ) : (
           <>
-            {/* Leyenda */}
+            {/* Legend */}
             <div className="mb-4 mt-3 flex flex-wrap gap-x-4 gap-y-2.5">
               {motives.map((motive, index) => (
                 <span
@@ -139,7 +139,7 @@ function DisqualificationChart({
               ))}
             </div>
 
-            {/* Gráfico */}
+            {/* Chart */}
             <ChartContainer
               className="mb-1.5 h-42 w-full"
               label="Porcentaje de postulaciones por motivo de descalificación"
@@ -187,7 +187,7 @@ function DisqualificationChart({
               </BarChart>
             </ChartContainer>
 
-            {/* Tabla */}
+            {/* Table */}
             <div className="mt-2 flex flex-1 flex-col">
               <div className="flex items-center justify-between px-0.5 py-1.5 text-[11px] font-bold tracking-[0.06em] text-text-tertiary">
                 <span>MOTIVO</span>
@@ -234,7 +234,7 @@ function SourcesChart({
           </div>
         ) : (
           <>
-            {/* Donut: absorbe el alto sobrante de la card */}
+            {/* The donut fills the remaining card height. */}
             <div className="flex flex-1 items-center justify-center pb-5.5 pt-4">
               <ChartContainer
                 className="size-56 shrink-0"
@@ -266,7 +266,7 @@ function SourcesChart({
               </ChartContainer>
             </div>
 
-            {/* Tabla */}
+            {/* Table */}
             <table className="w-full border-collapse">
               <thead>
                 <tr>
@@ -310,7 +310,7 @@ function SourcesChart({
   );
 }
 
-// Colores por etapa, en el orden del mockup (emerald, blue, violet, amber) + slate de reserva
+// Stage colors follow the mockup order, with slate as a fallback.
 const STAGE_COLORS = ["#10b981", "#2563eb", "#8b5cf6", "#f59e0b", "#94a3b8"];
 
 function PipelineChart({
@@ -322,7 +322,7 @@ function PipelineChart({
     null,
   );
 
-  // Si la elección ya no existe (o no hubo ninguna), cae a la primera vacante
+  // Fall back to the first opening when the selected one is no longer available.
   const selectedOpeningId =
     closedOpenings.find((opening) => opening.id === requestedOpeningId)?.id ??
     closedOpenings[0]?.id ??
@@ -341,7 +341,7 @@ function PipelineChart({
   const firstStage = pipeline?.stages[0];
   const lastStage = pipeline?.stages.at(-1);
   const stages = pipeline?.stages ?? [];
-  // reachedCounts[i] = cuántos llegaron al menos hasta la etapa i
+  // reachedCounts[i] is the number of applications that reached at least stage i.
   const reachedCounts = stages.map((_, i) =>
     stages.slice(i).reduce((sum, s) => sum + s.count, 0),
   );
@@ -397,7 +397,7 @@ function PipelineChart({
           )}
         </div>
 
-        {/* Subtítulo */}
+        {/* Subtitle */}
         {pipeline && firstStage && (
           <p
             className={`mb-5 text-[13px] text-text-secondary transition-opacity ${
@@ -417,7 +417,7 @@ function PipelineChart({
           </p>
         )}
 
-        {/* Contenido */}
+        {/* Content */}
         {closedOpenings.length === 0 ? (
           <EmptyChart message="No hay vacantes cerradas disponibles." />
         ) : pipelineQuery.isError ? (
