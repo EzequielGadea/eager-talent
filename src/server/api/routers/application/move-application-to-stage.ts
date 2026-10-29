@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -55,6 +56,7 @@ export const moveApplicationToStage = protectedProcedure
         },
         select: {
           id: true,
+          status: true,
           stages: true,
         },
       }),
@@ -78,6 +80,14 @@ export const moveApplicationToStage = protectedProcedure
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Job opening not found",
+      });
+    }
+
+    if (jobOpening.status !== JobOpeningStatus.Open) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "No se puede modificar el pipeline de una vacante que no está abierta",
       });
     }
 
@@ -111,6 +121,9 @@ export const moveApplicationToStage = protectedProcedure
           jobOpeningId: input.jobOpeningId,
           currentStageId: fromStageId,
           active: true,
+          jobOpening: {
+            status: JobOpeningStatus.Open,
+          },
         },
         data: {
           currentStageId: targetStage.key,

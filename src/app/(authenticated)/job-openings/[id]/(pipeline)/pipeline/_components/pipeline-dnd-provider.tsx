@@ -13,7 +13,7 @@ import {
 
 import { api } from "~/lib/trpc/react";
 
-import type { PendingMove, PipelineCandidate } from "./types";
+import type { PendingMove, PipelineApplicant } from "./types";
 
 type PipelineMovesContextValue = {
   moves: Record<string, PendingMove>;
@@ -106,7 +106,7 @@ export function PipelineDndProvider({
 
   function handleDragEnd(event: DragEndEvent) {
     const data = event.active.data.current as
-      { candidate: PipelineCandidate; stageId: string } | undefined;
+      { candidate: PipelineApplicant; stageId: string } | undefined;
 
     const targetStageId = event.over ? String(event.over.id) : null;
 

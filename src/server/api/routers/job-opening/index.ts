@@ -1,7 +1,7 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 
 import { fetchById } from "./fetch-by-id";
-import { fetchPipelineCandidates } from "./fetch-pipeline-candidates";
+import { fetchPipelineApplicants } from "./fetch-pipeline-applicants";
 import { getAllJobOpenings } from "./get-all";
 import { getAllOpenJobOpenings } from "./get-all-open";
 import { getAllJobOpeningsDetailed } from "./get-all-detailed";
@@ -14,7 +14,7 @@ import { createJobOpening } from "./create";
 import { fetchDisqualifiedApplications } from "./fetch-disqualified-applications";
 
 export { fetchById };
-export { fetchPipelineCandidates };
+export { fetchPipelineApplicants };
 export { getAllJobOpenings };
 export { getAllOpenJobOpenings };
 export { getAllJobOpeningsDetailed };
@@ -33,7 +33,7 @@ export const jobOpeningRouter = createTRPCRouter({
   getJobOpeningsAmount,
   getJobOpeningHiringManagers,
   fetchById,
-  fetchPipelineCandidates,
+  fetchPipelineCandidates: fetchPipelineApplicants,
   fetchDisqualifiedApplications,
   updateStatus,
   createJobOpening,

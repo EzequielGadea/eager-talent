@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { Suspense } from "react";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { api } from "~/lib/trpc/server";
 import { PipelineSkeleton } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/pipeline-skeleton";
@@ -13,7 +14,10 @@ type DisqualifiedPageProps = {
   searchParams: Promise<{ search?: string | string[] }>;
 };
 
-export default function DisqualifiedPage({ params, searchParams }: DisqualifiedPageProps) {
+export default function DisqualifiedPage({
+  params,
+  searchParams,
+}: DisqualifiedPageProps) {
   return (
     // Mientras cargan los datos se muestra el mismo esqueleto del pipeline.
     <Suspense fallback={<PipelineSkeleton />}>
@@ -22,7 +26,10 @@ export default function DisqualifiedPage({ params, searchParams }: DisqualifiedP
   );
 }
 
-async function DisqualifiedContent({ params, searchParams }: DisqualifiedPageProps) {
+async function DisqualifiedContent({
+  params,
+  searchParams,
+}: DisqualifiedPageProps) {
   const { id } = await params;
   const { search: rawSearch } = await searchParams;
   const search = typeof rawSearch === "string" ? rawSearch : undefined;
@@ -45,7 +52,9 @@ async function DisqualifiedContent({ params, searchParams }: DisqualifiedPagePro
       jobOpeningId={id}
       stages={stages}
       applications={applications}
-      canRequalify={canRequalify.success}
+      canRequalify={
+        canRequalify.success && jobOpening.status === JobOpeningStatus.Open
+      }
     />
   );
 }

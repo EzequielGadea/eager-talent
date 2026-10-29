@@ -3,7 +3,7 @@ import type { PersistedStage } from "~/lib/validations/job-opening";
 
 export type PipelineStage = PersistedStage;
 
-export type PipelineCandidate = {
+export type PipelineApplicant = {
   applicantId: string;
   name: string;
   lastName: string;
@@ -21,7 +21,7 @@ export type PipelineCandidate = {
 };
 
 export type PendingMove = {
-  candidate: PipelineCandidate;
+  candidate: PipelineApplicant;
   fromStageId: string;
   toStageId: string;
 };

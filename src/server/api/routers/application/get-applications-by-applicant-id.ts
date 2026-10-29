@@ -60,6 +60,7 @@ export const getApplicationsByApplicantIdProcedure = protectedProcedure
           select: {
             id: true,
             name: true,
+            status: true,
             stages: true,
           },
         },
@@ -75,7 +76,11 @@ export const getApplicationsByApplicantIdProcedure = protectedProcedure
         ...application,
         currentStageName: currentStage?.name ?? application.currentStageId,
         canScheduleInterview: stageAllowsInterview(currentStage),
-        jobOpening: { id: jobOpening.id, name: jobOpening.name },
+        jobOpening: {
+          id: jobOpening.id,
+          name: jobOpening.name,
+          status: jobOpening.status,
+        },
         desiredSalaryAmount:
           application.desiredSalaryAmount?.toString() ?? null,
       };

@@ -16,8 +16,8 @@ export const englishLevelTranslations = {
 } satisfies Record<EnglishLevel, string>;
 
 export const sourceTranslations = {
-  Inbound: "Entrante",
-  Outbound: "Saliente",
+  Inbound: "Inbound",
+  Outbound: "Outbound",
   Referral: "Referido",
 } satisfies Record<Source, string>;
 

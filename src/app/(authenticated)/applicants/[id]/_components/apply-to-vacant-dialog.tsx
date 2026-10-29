@@ -49,9 +49,14 @@ const applicationFormSchema = z
     jobOpeningId: z.string({ error: "Debe indicar la vacante" }),
     desiredSalary: z.preprocess(
       (value) => (value === "" ? undefined : value),
-      z.coerce.number().positive().optional(),
+      z.coerce
+        .number({ error: "Debe indicar un salario válido." })
+        .positive("El salario debe ser mayor a 0.")
+        .optional(),
     ),
-    currency: z.enum(SalaryCurrency).optional(),
+    currency: z
+      .enum(SalaryCurrency, { error: "Debe elegir una moneda." })
+      .optional(),
     availability: z
       .string({ error: "Debe indicar la disponibilidad" })
       .trim()
@@ -291,8 +296,10 @@ export function ApplyToVacantDialog({
                     <Field>
                       <FieldLabel>Moneda</FieldLabel>
                       <Select
-                        value={field.value ?? null}
-                        onValueChange={field.onChange}
+                        value={field.value ?? ""}
+                        onValueChange={(value) =>
+                          field.onChange(value || undefined)
+                        }
                         disabled={!isJobOpeningSelected}
                       >
                         <SelectTrigger className="w-full">
@@ -304,6 +311,7 @@ export function ApplyToVacantDialog({
                         </SelectTrigger>
 
                         <SelectContent>
+                          <SelectItem value="">Sin seleccionar</SelectItem>
                           {Object.values(SalaryCurrency).map((currency) => (
                             <SelectItem key={currency} value={currency}>
                               {salaryCurrencyTranslations[currency]}

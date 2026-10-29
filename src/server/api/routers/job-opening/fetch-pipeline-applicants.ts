@@ -6,7 +6,7 @@ import { getInterviewName } from "~/lib/get-interview-name";
 import { getApplicantByKeywordWhere } from "~/server/api/procedures/get-applicant-search-where";
 import { protectedProcedure } from "~/server/api/trpc";
 
-export const fetchPipelineCandidates = protectedProcedure
+export const fetchPipelineApplicants = protectedProcedure
   .input(
     z.object({
       jobOpeningId: z.string(),
