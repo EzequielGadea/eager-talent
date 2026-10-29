@@ -423,6 +423,16 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
+  const nowInUruguay = new TZDate(new Date(), "America/Montevideo");
+  const seedDateFromToday = (daysOffset: number) =>
+    new Date(
+      Date.UTC(
+        nowInUruguay.getFullYear(),
+        nowInUruguay.getMonth(),
+        nowInUruguay.getDate() + daysOffset,
+      ),
+    );
+
   const jobOpening1 = await prisma.jobOpening.create({
     data: {
       name: "Senior Full Stack Developer (Rails & React) - US Partner",
@@ -430,8 +440,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
-      openingDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-30),
+      targetClosingDate: seedDateFromToday(30),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
@@ -445,8 +455,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Remoto (Uruguay)",
-      openingDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-20),
+      targetClosingDate: seedDateFromToday(40),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: {
         connect: [
@@ -465,8 +475,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido)",
-      openingDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-15),
+      targetClosingDate: seedDateFromToday(45),
       areaId: areas["Quality Assurance & Testing"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
       hiringManagers: { connect: [{ id: hm2.id }] },
@@ -480,8 +490,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Remoto (Uruguay)",
-      openingDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 50 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-10),
+      targetClosingDate: seedDateFromToday(50),
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm3.id }, { id: hm5.id }] },
@@ -495,8 +505,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
-      openingDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-8),
+      targetClosingDate: seedDateFromToday(35),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
       hiringManagers: { connect: [{ id: hm1.id }, { id: hm4.id }] },
@@ -509,8 +519,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       status: "Open" as JobOpeningStatus,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
-      openingDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-5),
+      targetClosingDate: seedDateFromToday(40),
       areaId: areas["AI Studio & Data"].id,
       seniorities: {
         connect: [
