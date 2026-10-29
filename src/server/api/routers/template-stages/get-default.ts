@@ -1,9 +1,11 @@
 import { TRPCError } from "@trpc/server";
 
 import { persistedStagesSchema } from "~/lib/validations/job-opening";
-import { protectedProcedure } from "~/server/api/trpc";
+import { permissionProcedure } from "~/server/api/trpc";
 
-export const getDefault = protectedProcedure.query(async ({ ctx }) => {
+export const getDefault = permissionProcedure({
+  stageTemplate: ["read"],
+}).query(async ({ ctx }) => {
   const template = await ctx.db.stageTemplate.findFirst({
     select: { stages: true, id: true },
   });
