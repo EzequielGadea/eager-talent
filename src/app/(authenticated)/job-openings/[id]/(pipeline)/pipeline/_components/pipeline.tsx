@@ -53,7 +53,7 @@ export async function Pipeline({
   return (
     <PipelineHorizontalScroll>
       <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
-        <div className="flex min-w-max gap-4 pb-4">
+        <div className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row">
           {stages.map((stage, index) => (
             <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
               <PipelineColumn

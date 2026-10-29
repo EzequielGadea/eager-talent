@@ -35,7 +35,7 @@ export function DisqualifiedColumn({
 
   return (
     <section
-      className="flex w-80 shrink-0 flex-col gap-3 border-t-4 pt-3"
+      className="flex w-full shrink-0 flex-col gap-3 border-t-4 pt-3 sm:w-80"
       style={{ borderTopColor: stageColor }}
     >
       {/* Nombre de la etapa a la izquierda y cantidad a la derecha. */}

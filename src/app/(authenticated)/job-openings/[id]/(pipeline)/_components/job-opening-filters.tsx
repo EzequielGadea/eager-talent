@@ -44,7 +44,7 @@ export function JobOpeningFilters() {
         <Input
           type="text"
           placeholder="Buscar"
-          className="h-8 w-48 rounded-lg pl-8 pr-2.5 text-sm"
+          className="h-8 w-24 sm:w-48 rounded-lg pl-8 pr-2.5 text-sm"
           value={value}
           onChange={(e) => {
             setValue(e.target.value);

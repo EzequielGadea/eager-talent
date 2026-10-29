@@ -43,7 +43,7 @@ const spanishFormatter: typeof baseSpanishFormatter = (
 
 const PENDING_NAME_LABEL = "Pendiente";
 
-function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
+export function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
   if (!lastAccess) {
     return <span>—</span>;
   }

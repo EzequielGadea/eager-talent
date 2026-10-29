@@ -73,7 +73,7 @@ export function JobOpeningHeader({
     status === JobOpeningStatus.Closed || status === JobOpeningStatus.Cancelled;
 
   return (
-    <header className="flex items-center justify-between gap-4">
+    <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-3">
         <Link
           href="/job-openings"
@@ -102,7 +102,7 @@ export function JobOpeningHeader({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex shrink-0 items-center justify-between sm:w-auto sm:justify-end sm:gap-3">
         {canUpdateJobOpening &&
           (isLocked ? (
             <Button
