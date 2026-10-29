@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, type ReactNode } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,14 @@ import { toast } from "~/components/ui/toast";
 
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 type EditJobOpeningFormProps = {
   defaultValues: UpdateJobOpeningInput;
@@ -29,6 +37,9 @@ export function EditJobOpeningForm({
 }: EditJobOpeningFormProps) {
   const router = useRouter();
   const [isNavigationPending, startTransition] = useTransition();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingSubmitValues, setPendingSubmitValues] =
+    useState<UpdateJobOpeningInput | null>(null);
 
   const form = useForm<UpdateJobOpeningInput>({
     resolver: zodResolver(getUpdateJobOpeningFormSchema(defaultValues.stages)),
@@ -43,12 +54,15 @@ export function EditJobOpeningForm({
       });
 
       startTransition(() => {
+        setIsConfirmOpen(false);
         router.push(`/job-openings/${jobOpening.id}/pipeline`);
         router.refresh();
       });
     },
 
     onError: (error) => {
+      setIsConfirmOpen(false);
+
       if (error.data?.code === "CONFLICT") {
         const currentValues = form.getValues();
 
@@ -76,7 +90,21 @@ export function EditJobOpeningForm({
     isNavigationPending;
 
   async function handleSubmit(values: UpdateJobOpeningInput) {
+    if (values.status === "Closed" || values.status === "Cancelled") {
+      setPendingSubmitValues(values);
+      setIsConfirmOpen(true);
+      return;
+    }
+
     await updateJobOpening.mutateAsync(values);
+  }
+
+  async function handleConfirmTerminalSubmit() {
+    if (!pendingSubmitValues || isSaving) {
+      return;
+    }
+
+    await updateJobOpening.mutateAsync(pendingSubmitValues);
   }
 
   function handleInvalidSubmit(errors: FieldErrors<UpdateJobOpeningInput>) {
@@ -97,6 +125,8 @@ export function EditJobOpeningForm({
   function handleCancel() {
     form.reset(defaultValues);
   }
+
+  const isClosing = pendingSubmitValues?.status === "Closed";
 
   return (
     <FormProvider {...form}>
@@ -150,6 +180,55 @@ export function EditJobOpeningForm({
           </Card>
         </footer>
       </form>
+
+      <Dialog
+        open={isConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSaving) {
+            setIsConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {isClosing
+                ? "¿Pasar la vacante a Cerrada?"
+                : "¿Pasar la vacante a Cancelada?"}
+            </DialogTitle>
+            <DialogDescription>
+              Una vez que confirmes el cambio a{" "}
+              <span className="font-semibold text-text-primary">
+                {isClosing ? "Cerrada" : "Cancelada"}
+              </span>
+              , no se podrá volver a modificar el estado ni editar los datos de
+              esta vacante.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSaving}
+              onClick={() => setIsConfirmOpen(false)}
+            >
+              Volver
+            </Button>
+            <Button
+              type="button"
+              disabled={isSaving}
+              onClick={() => void handleConfirmTerminalSubmit()}
+            >
+              {isSaving
+                ? "Confirmando..."
+                : isClosing
+                  ? "Cerrar vacante"
+                  : "Cancelar vacante"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }

@@ -74,6 +74,7 @@ function JobOpeningCard({
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "UTC",
   }).format(new Date(jobOpening.openingDate));
 
   return (
