@@ -356,6 +356,7 @@ export function ChangePasswordDialog() {
                   </div>
                   {errors.currentPassword && (
                     <p className="text-xs text-danger">
+
                       {errors.currentPassword.message}
                     </p>
                   )}
@@ -419,6 +420,7 @@ export function ChangePasswordDialog() {
                       rule.test(newPassword ?? ""),
                     ) && (
                       <p className="text-xs text-danger">
+
                         {errors.newPassword.message}
                       </p>
                     )}
@@ -456,6 +458,7 @@ export function ChangePasswordDialog() {
                   </div>
                   {errors.confirmPassword && (
                     <p className="text-xs text-danger">
+
                       {errors.confirmPassword.message}
                     </p>
                   )}
