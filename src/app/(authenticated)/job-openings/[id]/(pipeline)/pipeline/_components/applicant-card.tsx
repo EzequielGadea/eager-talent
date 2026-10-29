@@ -37,7 +37,7 @@ import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 import { interviewTypeTranslations } from "~/lib/enum-translations";
 
-import type { PipelineCandidate } from "./types";
+import type { PipelineApplicant } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
 
@@ -62,7 +62,7 @@ function formatInterviewDateTime(date: Date) {
 }
 
 type ApplicantCardProps = {
-  candidate: PipelineCandidate;
+  candidate: PipelineApplicant;
   jobOpeningId: string;
   jobOpeningName: string;
   currentStageId: string;
