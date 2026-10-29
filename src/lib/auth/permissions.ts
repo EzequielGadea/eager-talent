@@ -18,6 +18,8 @@ export const accessStatements = {
   disqualificationMotive: CRUD,
   user: CRUD,
 
+  disqualificationMotive: ["read", "create", "delete"],
+
   // Entities with assigned scoping
   activity: [...CRUD, "readAssigned"],
   applicant: [...CRUD, "readAssigned"],

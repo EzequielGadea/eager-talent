@@ -1,6 +1,12 @@
 import { z } from "zod";
 
 import { JobOpeningStatus } from "~/generated/prisma/enums";
+import {
+  FIRST_STAGE,
+  LAST_STAGE,
+  REQUIRED_MIDDLE_STAGES,
+} from "~/lib/required-stage-types";
+import { getRequiredStageErrors } from "~/lib/validations/required-stages";
 
 export const jobOpeningStageTypeSchema = z.enum([
   "none",
@@ -194,15 +200,6 @@ type JobOpeningStage = z.infer<typeof jobOpeningStageSchema>;
 // Lo que define la estructura del flujo. El color no cuenta como cambio de flujo.
 type JobOpeningStageIdentity = Pick<JobOpeningStage, "id" | "name" | "type">;
 
-const FIRST_STAGE = "Aplicado";
-const LAST_STAGE = "Contratado/a";
-// Required between the first and last stages, in any order.
-const REQUIRED_MIDDLE_STAGES = [
-  "Entrevista HR",
-  "Entrevista Técnica",
-  "Oferta",
-];
-
 function normalizeStageName(name: string) {
   return name.trim().replace(/\s+/g, " ").toLocaleLowerCase("es");
 }
@@ -239,34 +236,11 @@ export function addRequiredStagesIssues(
   stages: JobOpeningStage[],
   ctx: z.RefinementCtx,
 ) {
-  const stageNames = stages.map((stage) => normalizeStageName(stage.name));
-
-  if (stageNames[0] !== normalizeStageName(FIRST_STAGE)) {
+  for (const message of getRequiredStageErrors(stages, normalizeStageName)) {
     ctx.addIssue({
       code: "custom",
       path: ["stages"],
-      message: `${FIRST_STAGE} debe ser la primera etapa del flujo`,
-    });
-  }
-
-  if (stageNames.at(-1) !== normalizeStageName(LAST_STAGE)) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["stages"],
-      message: `${LAST_STAGE} debe ser la última etapa del flujo`,
-    });
-  }
-
-  const middleStageNames = new Set(stageNames.slice(1, -1));
-  const missingStages = REQUIRED_MIDDLE_STAGES.filter(
-    (stageName) => !middleStageNames.has(normalizeStageName(stageName)),
-  );
-
-  if (missingStages.length > 0) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["stages"],
-      message: `Faltan etapas obligatorias en el flujo: ${missingStages.join(", ")}`,
+      message,
     });
   }
 }

@@ -35,6 +35,8 @@ import getAvatar from "~/lib/avatar";
 
 const INTERVIEW_TIME_ZONE = "America/Montevideo";
 
+const INTERVIEW_TIME_ZONE = "America/Montevideo";
+
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120];
 
 const MODALITY_OPTIONS = Object.values(InterviewType).map((value) => ({

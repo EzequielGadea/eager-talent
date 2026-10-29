@@ -15,11 +15,18 @@ export const createDisqualificationMotive = protectedProcedure
   .mutation(async ({ ctx, input }) => {
     const permission = await auth.api.hasPermission({
       headers: ctx.headers,
-      body: { permissions: { disqualificationMotive: ["create"] } },
+      body: {
+        permissions: {
+          disqualificationMotive: ["create"],
+        },
+      },
     });
 
     if (!permission.success) {
-      throw new TRPCError({ code: "FORBIDDEN" });
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tienes permisos para crear motivos de descalificación.",
+      });
     }
     const existingMotive = await ctx.db.disqualificationMotive.findFirst({
       where: { name: { equals: input.name, mode: "insensitive" } },
