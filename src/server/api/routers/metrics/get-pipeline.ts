@@ -24,7 +24,11 @@ export const getPipeline = protectedProcedure
 
     const stageCounts = await ctx.db.application.groupBy({
       by: ["currentStageId"],
-      where: { jobOpeningId: jobOpening.id },
+      where: {
+        jobOpeningId: jobOpening.id,
+        active: true,
+        deletedAt: null,
+      },
       _count: { _all: true },
     });
     const countByStage = new Map(
