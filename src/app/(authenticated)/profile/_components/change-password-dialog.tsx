@@ -91,6 +91,10 @@ export function ChangePasswordDialog() {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
+  const [hasSignedOut, setHasSignedOut] = React.useState(false);
+  const [isRedirecting, setIsRedirecting] = React.useState(false);
+  const [signOutError, setSignOutError] = React.useState<string | null>(null);
+  const processingRef = React.useRef(false);
   const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -116,19 +120,23 @@ export function ChangePasswordDialog() {
 
   const newPassword = useWatch({ control, name: "newPassword" });
   const passwordHasError = !!errors.newPassword;
+  const isBusy = isLoading || isRedirecting;
 
-  function handleOpenChange(next: boolean) {
-    setOpen(next);
-    if (!next) {
-      reset();
-      setIsDone(false);
-      setShowCurrentPassword(false);
-      setShowPassword(false);
-      setShowConfirmPassword(false);
-    }
+  function closeAndReset() {
+    if (processingRef.current || isBusy || isDone) return;
+
+    setOpen(false);
+    setShowCancelConfirmation(false);
+    reset();
+    setSignOutError(null);
+    setShowCurrentPassword(false);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   }
 
   function handleCancel() {
+    if (processingRef.current || isBusy || isDone) return;
+
     const values = getValues();
 
     const hasChanges =
@@ -141,10 +149,55 @@ export function ChangePasswordDialog() {
       return;
     }
 
-    handleOpenChange(false);
+    closeAndReset();
+  }
+
+  function handleOpenChange(next: boolean) {
+    if (next) {
+      setOpen(true);
+    } else {
+      handleCancel();
+    }
+  }
+
+  async function finishSignOut() {
+    setSignOutError(null);
+    try {
+      const { error } = await authClient.signOut();
+      if (error) throw error;
+
+      setHasSignedOut(true);
+    } catch {
+      setSignOutError(
+        "Tu contraseña fue actualizada, pero no se pudo cerrar la sesión. Reintentá el cierre de sesión.",
+      );
+    }
+  }
+
+  function handleGoToLogin() {
+    if (processingRef.current || isBusy || !hasSignedOut) return;
+
+    setIsRedirecting(true);
+    window.location.replace("/login");
+  }
+
+  async function handleRetrySignOut() {
+    if (processingRef.current || isBusy) return;
+
+    processingRef.current = true;
+    setIsLoading(true);
+    try {
+      await finishSignOut();
+    } finally {
+      processingRef.current = false;
+      setIsLoading(false);
+    }
   }
 
   async function onSubmit(values: FormData) {
+    if (processingRef.current || isBusy || isDone) return;
+
+    processingRef.current = true;
     try {
       setIsLoading(true);
 
@@ -176,6 +229,11 @@ export function ChangePasswordDialog() {
       }
 
       setIsDone(true);
+      reset();
+      setShowCurrentPassword(false);
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+      await finishSignOut();
     } catch {
       toast.add({
         type: "error",
@@ -183,6 +241,7 @@ export function ChangePasswordDialog() {
         description: "No se pudo cambiar la contraseña. Intentá nuevamente.",
       });
     } finally {
+      processingRef.current = false;
       setIsLoading(false);
     }
   }
@@ -202,7 +261,10 @@ export function ChangePasswordDialog() {
           }
         />
 
-        <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl sm:max-w-110">
+        <DialogContent
+          showCloseButton={!isBusy && !isDone}
+          className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl sm:max-w-110"
+        >
           {isDone ? (
             <div className="p-5.5">
               <div className="mb-6 flex items-center gap-3">
@@ -218,32 +280,43 @@ export function ChangePasswordDialog() {
                 <CircleCheck className="size-5" />
               </div>
 
-              <h1 className="text-xl font-bold tracking-tight text-slate-900">
+              <DialogTitle className="text-xl font-bold tracking-tight text-slate-900">
                 Contraseña restablecida
-              </h1>
+              </DialogTitle>
 
-              <p className="mt-2 text-sm text-slate-500">
-                Tu contraseña fue actualizada correctamente. Ya podés iniciar
-                sesión con la nueva.
+              <p
+                role={signOutError ? "alert" : undefined}
+                className="mt-2 text-sm text-slate-500"
+              >
+                {signOutError ??
+                  (hasSignedOut
+                    ? "Tu contraseña fue actualizada y tu sesión se cerró. Iniciá sesión con la nueva contraseña."
+                    : "Tu contraseña fue actualizada. Estamos cerrando tu sesión.")}
               </p>
 
               <Button
                 type="button"
-                onClick={async () => {
-                  try {
-                    await authClient.signOut();
-                  } catch {}
-
-                  window.location.assign("/login");
-                }}
+                onClick={hasSignedOut ? handleGoToLogin : handleRetrySignOut}
+                disabled={isBusy}
                 className="mt-6 h-11 w-full rounded-full bg-slate-900 text-white hover:bg-slate-800"
               >
-                Ir a iniciar sesión
+                {isRedirecting
+                  ? "Redirigiendo..."
+                  : isBusy
+                    ? "Cerrando sesión..."
+                    : hasSignedOut
+                      ? "Ir a iniciar sesión"
+                      : "Reintentar cerrar sesión"}
                 <ArrowRight className="size-4" />
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form
+              onSubmit={(event) => {
+                void handleSubmit(onSubmit)(event);
+              }}
+              noValidate
+            >
               {/* Header */}
               <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
                 <DialogTitle className="text-base font-bold tracking-tight m-0">
@@ -252,7 +325,10 @@ export function ChangePasswordDialog() {
               </DialogHeader>
 
               {/* Body */}
-              <div className="p-5.5 flex flex-col gap-4">
+              <fieldset
+                disabled={isBusy}
+                className="p-5.5 flex min-w-0 flex-col gap-4"
+              >
                 {/* Contraseña actual */}
                 <div className="space-y-1.5">
                   <Label
@@ -400,7 +476,7 @@ export function ChangePasswordDialog() {
                     </p>
                   )}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-2 px-5.5 py-3.5 border-t bg-muted/30">
@@ -408,16 +484,17 @@ export function ChangePasswordDialog() {
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
+                  disabled={isBusy}
                   className="rounded-full font-semibold text-[13px] h-auto px-3.75 py-2"
                 >
                   Cancelar
                 </Button>
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isBusy}
                   className="rounded-full font-semibold text-[13px] h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 cursor-pointer"
                 >
-                  {isLoading ? (
+                  {isBusy ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Guardando...
@@ -437,7 +514,10 @@ export function ChangePasswordDialog() {
 
       <Dialog
         open={showCancelConfirmation}
-        onOpenChange={setShowCancelConfirmation}
+        onOpenChange={(next) => {
+          if (!processingRef.current && !isBusy)
+            setShowCancelConfirmation(next);
+        }}
       >
         <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
           <div className="border-b border-border-default px-6 py-5">
@@ -454,6 +534,7 @@ export function ChangePasswordDialog() {
             <Button
               type="button"
               variant="outline"
+              disabled={isBusy}
               className="rounded-full px-5"
               onClick={() => setShowCancelConfirmation(false)}
             >
@@ -463,10 +544,8 @@ export function ChangePasswordDialog() {
             <Button
               type="button"
               className="rounded-full px-5"
-              onClick={() => {
-                setShowCancelConfirmation(false);
-                handleOpenChange(false);
-              }}
+              disabled={isBusy}
+              onClick={closeAndReset}
             >
               Descartar cambios
             </Button>
