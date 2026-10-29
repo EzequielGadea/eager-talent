@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { TRPCError } from "@trpc/server";
 
+
 import {
   jobOpeningStageTypeSchema,
   PERSISTED_TO_FORM_STAGE_TYPE,
@@ -133,6 +134,7 @@ export async function EditJobOpeningContent({
   if (!jobOpening) {
     return <JobOpeningNotFound />;
   }
+
 
   if (jobOpening.status === "Closed" || jobOpening.status === "Cancelled") {
     redirect(`/job-openings/${jobOpening.id}/pipeline`);

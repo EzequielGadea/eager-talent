@@ -61,6 +61,7 @@ export const updateStatus = protectedProcedure
     }
 
     const isClosing = input.status === JobOpeningStatus.Closed;
+
     const hasBeenOpened =
       jobOpening.hasBeenOpened ||
       jobOpening.status === "Open" ||
@@ -77,6 +78,7 @@ export const updateStatus = protectedProcedure
         status: input.status,
         hasBeenOpened,
         ...(isClosing ? { closingDate: new Date() } : {}),
+
       },
     });
 

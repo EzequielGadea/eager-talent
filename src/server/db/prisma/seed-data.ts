@@ -444,6 +444,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   const nowInUruguay = new TZDate(seedNow, "America/Montevideo");
   // Vacancy dates represent calendar days in UTC; interviews are local instants.
+
   const seedDateFromToday = (daysOffset: number) =>
     new Date(
       Date.UTC(
@@ -462,6 +463,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: seedDateFromToday(-45),
       targetClosingDate: seedDateFromToday(-7),
+
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
@@ -477,6 +479,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-20),
       targetClosingDate: seedDateFromToday(0),
+
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: {
         connect: [
@@ -512,6 +515,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-10),
       targetClosingDate: seedDateFromToday(-2),
+
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm3.id }, { id: hm5.id }] },
@@ -526,6 +530,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
       openingDate: seedDateFromToday(-18),
+
       targetClosingDate: seedDateFromToday(35),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },

@@ -395,6 +395,7 @@ export const updateJobOpening = protectedProcedure
           status: nextStatus,
           hasBeenOpened: hasBeenOpened || nextStatus === "Open",
           ...(isClosing ? { closingDate: new Date() } : {}),
+
           location: input.location,
           targetClosingDate: nextTargetClosingDate,
           areaId: input.areaId,
