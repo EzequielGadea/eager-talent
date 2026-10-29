@@ -30,11 +30,13 @@ import type { AvailableApplicant } from "./add-applicant-types";
 const addApplicantApplicationSchema = z
   .object({
     desiredSalary: z
-      .number()
+      .number({ error: "Ingresá un salario válido." })
       .positive("El salario debe ser mayor a 0.")
       .optional(),
 
-    currency: z.enum(SalaryCurrency).optional(),
+    currency: z
+      .enum(SalaryCurrency, { error: "Seleccioná una moneda." })
+      .optional(),
 
     availability: z.string(),
   })
@@ -79,6 +81,8 @@ export function AddApplicantApplicationForm({
   const methods = useForm<AddApplicantApplicationFormValues>({
     resolver: zodResolver(addApplicantApplicationSchema),
     defaultValues: {
+      desiredSalary: undefined,
+      currency: undefined,
       availability: "",
     },
   });
@@ -231,7 +235,7 @@ export function AddApplicantApplicationForm({
                   <Select
                     value={field.value ?? ""}
                     onValueChange={(value) =>
-                      field.onChange(value ?? undefined)
+                      field.onChange(value || undefined)
                     }
                   >
                     <SelectTrigger aria-invalid={!!errors.currency}>
@@ -243,6 +247,7 @@ export function AddApplicantApplicationForm({
                     </SelectTrigger>
 
                     <SelectContent>
+                      <SelectItem value="">Sin seleccionar</SelectItem>
                       {Object.values(SalaryCurrency).map((currency) => (
                         <SelectItem key={currency} value={currency}>
                           {salaryCurrencyTranslations[currency]}

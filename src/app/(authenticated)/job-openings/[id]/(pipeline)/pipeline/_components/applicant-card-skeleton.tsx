@@ -1,7 +1,7 @@
 import { Card } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 
-export function CandidateCardSkeleton() {
+export function ApplicantCardSkeleton() {
   return (
     <Card className="rounded-xl border-border-default bg-card p-3 shadow-none">
       <div className="flex items-center gap-3">

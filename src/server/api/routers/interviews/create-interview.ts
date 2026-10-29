@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 
-import { InterviewType } from "~/generated/prisma/enums";
+import { InterviewType, JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 import {
@@ -121,13 +121,21 @@ export const createInterviewProcedure = protectedProcedure
       }
       const jobOpening = await ctx.db.jobOpening.findUnique({
         where: { id: input.jobOpeningId },
-        select: { stages: true },
+        select: { status: true, stages: true },
       });
 
       if (!jobOpening) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Job opening not found",
+        });
+      }
+
+      if (jobOpening.status !== JobOpeningStatus.Open) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se pueden agendar entrevistas en una vacante que no está abierta.",
         });
       }
 

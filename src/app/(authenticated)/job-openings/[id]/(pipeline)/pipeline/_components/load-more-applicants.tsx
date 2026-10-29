@@ -2,17 +2,17 @@
 
 import { Button } from "~/components/ui/button";
 
-type LoadMoreCandidatesProps = {
+type LoadMoreApplicantsProps = {
   remaining: number;
   loading: boolean;
   onLoadMore: () => void;
 };
 
-export function LoadMoreCandidates({
+export function LoadMoreApplicants({
   remaining,
   loading,
   onLoadMore,
-}: LoadMoreCandidatesProps) {
+}: LoadMoreApplicantsProps) {
   return (
     <Button
       type="button"

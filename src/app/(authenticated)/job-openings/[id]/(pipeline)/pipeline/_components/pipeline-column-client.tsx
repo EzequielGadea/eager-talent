@@ -6,8 +6,8 @@ import { useDroppable } from "@dnd-kit/core";
 
 import { api } from "~/lib/trpc/react";
 
-import { CandidateCard } from "./candidate-card";
-import { LoadMoreCandidates } from "./load-more-candidates";
+import { ApplicantCard } from "./applicant-card";
+import { LoadMoreApplicants } from "./load-more-applicants";
 import { usePipelineMoves } from "./pipeline-dnd-provider";
 import type { PipelineCandidate } from "./types";
 
@@ -40,6 +40,7 @@ export function PipelineColumnClient({
 }: PipelineColumnClientProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: stageId,
+    disabled: !canUpdateApplication,
   });
 
   const { moves, clearMove } = usePipelineMoves();
@@ -222,7 +223,7 @@ export function PipelineColumnClient({
         }`}
       >
         {candidates.map((candidate) => (
-          <CandidateCard
+          <ApplicantCard
             key={candidate.applicantId}
             candidate={candidate}
             jobOpeningId={jobOpeningId}
@@ -238,7 +239,7 @@ export function PipelineColumnClient({
         ))}
 
         {hasMore && (
-          <LoadMoreCandidates
+          <LoadMoreApplicants
             remaining={remaining}
             loading={fetchMore.isFetching}
             onLoadMore={handleLoadMore}

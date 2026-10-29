@@ -24,7 +24,11 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Separator } from "~/components/ui/separator";
-import type { InterviewType, SalaryCurrency } from "~/generated/prisma/enums";
+import type {
+  InterviewType,
+  JobOpeningStatus,
+  SalaryCurrency,
+} from "~/generated/prisma/enums";
 import {
   interviewTypeTranslations,
   salaryCurrencyTranslations,
@@ -60,7 +64,7 @@ export type ApplicationSummary = {
   desiredSalaryAmount?: string | null;
   desiredSalaryCurrency?: SalaryCurrency | null;
   availability?: string | null;
-  jobOpening: { id: string; name: string };
+  jobOpening: { id: string; name: string; status?: JobOpeningStatus };
   interviews: Interview[];
 };
 
@@ -182,11 +186,13 @@ export function ApplicantApplicationsCard({
     ? explorationInterviews
     : (app?.interviews ?? []);
 
+  const jobOpening = app?.jobOpening;
+  const isJobOpeningOpen = !jobOpening?.status || jobOpening.status === "Open";
   const canScheduleInterview =
     canCreateInterview &&
-    (isExploration || Boolean(app?.active && app.canScheduleInterview));
-
-  const jobOpening = app?.jobOpening;
+    (isExploration ||
+      Boolean(app?.active && isJobOpeningOpen && app.canScheduleInterview));
+  const canModifyApplication = canUpdateApplication && isJobOpeningOpen;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
 
   const desiredSalary = app
@@ -270,7 +276,7 @@ export function ApplicantApplicationsCard({
 
         {!isExploration &&
           jobOpening &&
-          (canCreatePublicLink || canUpdateApplication) && (
+          (canCreatePublicLink || canModifyApplication) && (
             <div className="flex basis-full flex-wrap items-center justify-start gap-2.5 pt-2">
               {canCreatePublicLink && (
                 <Button
@@ -283,7 +289,7 @@ export function ApplicantApplicationsCard({
                 </Button>
               )}
 
-              {canUpdateApplication && app?.active && (
+              {canModifyApplication && app?.active && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -297,7 +303,7 @@ export function ApplicantApplicationsCard({
                 </Button>
               )}
 
-              {canUpdateApplication && app && !app.active && (
+              {canModifyApplication && app && !app.active && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -339,7 +345,7 @@ export function ApplicantApplicationsCard({
         />
       )}
 
-      {canUpdateApplication && app?.active && (
+      {canModifyApplication && app?.active && (
         <DisqualifyApplicantDialog
           key={`disqualify-${app.jobOpeningId}`}
           open={showDisqualifyDialog}
@@ -353,7 +359,7 @@ export function ApplicantApplicationsCard({
         />
       )}
 
-      {canUpdateApplication && app && !app.active && (
+      {canModifyApplication && app && !app.active && (
         <RequalifyApplicantDialog
           key={`requalify-${app.jobOpeningId}`}
           open={showRequalifyDialog}
@@ -403,6 +409,7 @@ export function ApplicantApplicationsCard({
         {canCreateInterview &&
           app &&
           app.active &&
+          isJobOpeningOpen &&
           !app.canScheduleInterview && (
             <p className="mb-4 text-sm text-text-tertiary">
               Solo se pueden agendar entrevistas cuando la etapa actual es de

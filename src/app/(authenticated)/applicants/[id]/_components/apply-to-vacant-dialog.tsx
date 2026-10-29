@@ -45,13 +45,13 @@ const applicationFormSchema = z
     desiredSalary: z.preprocess(
       (value) => (value === "" ? undefined : value),
       z.coerce
-        .number()
-        .positive({
-          error: "El salario debe ser mayor a 0",
-        })
+        .number({ error: "Debe indicar un salario válido." })
+        .positive("El salario debe ser mayor a 0.")
         .optional(),
     ),
-    currency: z.enum(SalaryCurrency).optional(),
+    currency: z
+      .enum(SalaryCurrency, { error: "Debe elegir una moneda." })
+      .optional(),
     availability: z
       .string(
         /* Este campo es opcional
@@ -338,8 +338,10 @@ export function ApplyToVacantDialog({
                     render={({ field, fieldState }) => (
                       <div className="grid gap-1">
                         <Select
-                          value={field.value ?? null}
-                          onValueChange={field.onChange}
+                          value={field.value ?? ""}
+                          onValueChange={(value) =>
+                            field.onChange(value || undefined)
+                          }
                           disabled={!isJobOpeningSelected}
                         >
                           <SelectTrigger
@@ -375,6 +377,7 @@ export function ApplyToVacantDialog({
                           </SelectTrigger>
 
                           <SelectContent>
+                            <SelectItem value="">Sin seleccionar</SelectItem>
                             {Object.values(SalaryCurrency).map((currency) => (
                               <SelectItem key={currency} value={currency}>
                                 {salaryCurrencyTranslations[currency]}

@@ -61,7 +61,7 @@ function formatInterviewDateTime(date: Date) {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
-type CandidateCardProps = {
+type ApplicantCardProps = {
   candidate: PipelineCandidate;
   jobOpeningId: string;
   jobOpeningName: string;
@@ -74,7 +74,7 @@ type CandidateCardProps = {
   canDeleteInterview: boolean;
 };
 
-export function CandidateCard({
+export function ApplicantCard({
   candidate,
   jobOpeningId,
   jobOpeningName,
@@ -85,7 +85,7 @@ export function CandidateCard({
   canUpdateApplication,
   canCreateInterview,
   canDeleteInterview,
-}: CandidateCardProps) {
+}: ApplicantCardProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
