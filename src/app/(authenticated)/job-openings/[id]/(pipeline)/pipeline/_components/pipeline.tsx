@@ -13,12 +13,14 @@ type PipelineProps = {
   jobOpeningId: string;
   stages: PipelineStage[];
   search?: string;
+  isJobOpeningOpen: boolean;
 };
 
 export async function Pipeline({
   jobOpeningId,
   stages,
   search,
+  isJobOpeningOpen,
 }: PipelineProps) {
   const requestHeaders = await headers();
 
@@ -61,9 +63,15 @@ export async function Pipeline({
                 stage={stage}
                 isLastStage={index === stages.length - 1}
                 search={search}
-                canUpdateApplication={canUpdateApplication.success}
-                canCreateInterview={canCreateInterview.success}
-                canDeleteInterview={canDeleteInterview.success}
+                canUpdateApplication={
+                  canUpdateApplication.success && isJobOpeningOpen
+                }
+                canCreateInterview={
+                  canCreateInterview.success && isJobOpeningOpen
+                }
+                canDeleteInterview={
+                  canDeleteInterview.success && isJobOpeningOpen
+                }
               />
             </Suspense>
           ))}
