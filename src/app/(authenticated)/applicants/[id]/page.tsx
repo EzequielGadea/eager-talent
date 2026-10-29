@@ -47,7 +47,7 @@ async function ApplicantPageContent({ params }: ApplicantPageProps) {
 
   return (
     <ApplicantProfileSessionProvider key={id}>
-      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] selection:bg-tag-green-bg selection:text-tag-green-fg">
+      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)]">
         <div className="flex min-w-0 flex-col gap-4">
           <Suspense fallback={<ApplicantOverviewSkeleton />}>
             <ApplicantOverview applicantPromise={applicantPromise} />

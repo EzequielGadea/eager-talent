@@ -18,6 +18,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { DatePicker } from "~/components/ui/date-picker";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -235,12 +236,23 @@ export function ScheduleInterviewDialog({
                 <label htmlFor="interview-date" className={fieldLabel}>
                   Fecha
                 </label>
-                <Input
-                  id="interview-date"
-                  type="date"
-                  className={fieldControl}
-                  min={getTodayLocalISO()}
-                  {...register("date")}
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePicker
+                      id="interview-date"
+                      name={field.name}
+                      aria-label="Fecha"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      minValue={getTodayLocalISO()}
+                      isInvalid={!!errors.date}
+                      className="[--date-picker-height:2.75rem] [--date-picker-radius:var(--radius-xl)]"
+                    />
+                  )}
                 />
                 {errors.date && (
                   <p className="text-xs text-danger">{errors.date.message}</p>

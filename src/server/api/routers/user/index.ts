@@ -6,6 +6,7 @@ import { getAllHiringManagers } from "./get-all-hm";
 import { deleteUser } from "./delete-user";
 import { sendPasswordReset } from "./send-password-reset";
 import { invite } from "./invite";
+import { updateCurrent } from "./update-current";
 
 export { getCurrent };
 export { listInterviewers };
@@ -18,4 +19,5 @@ export const userRouter = createTRPCRouter({
   delete: deleteUser,
   sendPasswordReset,
   invite,
+  updateCurrent,
 });

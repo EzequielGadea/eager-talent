@@ -82,7 +82,7 @@ export function ApplicantApplicationDropdown({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="group/dropdown-trigger relative flex h-auto min-h-9 w-full max-w-full items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-popup-open:border-accent-green data-popup-open:ring-1 data-popup-open:ring-accent-green sm:w-56 lg:w-72">
+      <DropdownMenuTrigger className="group/dropdown-trigger relative flex h-auto min-h-9 w-full max-w-full items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-popup-open:border-accent-green data-popup-open:ring-1 data-popup-open:ring-accent-green sm:w-56 lg:w-90">
         <Briefcase className="h-4 w-4 shrink-0 text-text-secondary" />
         <span className="min-w-0 flex-1 truncate">{triggerLabel}</span>
         <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 shrink-0 text-text-tertiary transition-transform group-data-popup-open/dropdown-trigger:rotate-180" />

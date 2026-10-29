@@ -14,7 +14,7 @@ import {
 import { Skeleton } from "~/components/ui/skeleton";
 import { Textarea } from "~/components/ui/textarea";
 
-type DisqualifyCandidateDialogProps = {
+type DisqualifyApplicantDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   applicantId: string;
@@ -25,7 +25,7 @@ type DisqualifyCandidateDialogProps = {
   onSuccess: () => void;
 };
 
-export function DisqualifyCandidateDialog({
+export function DisqualifyApplicantDialog({
   open,
   onOpenChange,
   applicantId,
@@ -34,7 +34,7 @@ export function DisqualifyCandidateDialog({
   candidateRole,
   stageName,
   onSuccess,
-}: DisqualifyCandidateDialogProps) {
+}: DisqualifyApplicantDialogProps) {
   const [motiveId, setMotiveId] = useState("");
   const [description, setDescription] = useState("");
 
@@ -207,7 +207,11 @@ export function DisqualifyCandidateDialog({
             type="button"
             variant="outline"
             className="h-9 rounded-full px-5 text-[13px]"
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              resetForm();
+              disqualifyMutation.reset();
+              onOpenChange(false);
+            }}
             disabled={disqualifyMutation.isPending}
           >
             Cancelar
