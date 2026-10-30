@@ -178,14 +178,14 @@ export function ApplyToVacantDialog({
               </DialogDescription>
             </DialogHeader>
             {errors.root && (
-              <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <div className="mb-4 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger">
                 {errors.root.message}
               </div>
             )}
             {jobOpeningsError && (
               <div
                 role="alert"
-                className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="mb-4 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 {jobOpeningsError.message}
               </div>

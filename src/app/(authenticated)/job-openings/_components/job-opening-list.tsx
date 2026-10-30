@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { AlertCircle, Plus, RefreshCw } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { HiringManagerJobOpeningsFallback } from "./hiring-manager-job-openings-fallback";
 import { RecruiterJobOpeningsFallback } from "./recruiter-job-openings-fallback";
@@ -53,6 +53,7 @@ export default function JobOpeningsList({
     data: jobOpenings,
     isLoading: isLoadingJobOpenings,
     isError: isErrorJobOpenings,
+    refetch: refetchJobOpenings,
   } = api.jobOpening.getAllJobOpeningsDetailed.useQuery({
     page: currentPage,
     sort: currentSort,
@@ -67,6 +68,7 @@ export default function JobOpeningsList({
     data: jobOpeningsAmount,
     isLoading: isLoadingAmount,
     isError: isErrorAmount,
+    refetch: refetchAmount,
   } = api.jobOpening.getJobOpeningsAmount.useQuery({
     statuses: currentStatuses,
     areaId: currentAreaId,
@@ -150,9 +152,38 @@ export default function JobOpeningsList({
     !jobOpeningsAmount
   ) {
     return (
-      <div className="text-danger md:p-6">
-        No se pudieron cargar las vacantes.
-      </div>
+      <main className="flex min-h-0 flex-1 items-center justify-center p-6">
+        <div className="relative w-full max-w-105 rounded-3xl border bg-white p-8 shadow-lg">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
+              <AlertCircle className="size-6 text-danger" />
+            </div>
+
+            <div className="space-y-1">
+              <h1 className="text-lg font-semibold text-text-primary">
+                No se pudieron cargar las vacantes
+              </h1>
+
+              <p className="text-sm text-text-secondary">
+                Ocurrió un error inesperado. Intentá nuevamente.
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                void refetchJobOpenings();
+                void refetchAmount();
+              }}
+              className="mt-2 h-11 w-full rounded-full"
+            >
+              <RefreshCw className="size-4" />
+              Intentar nuevamente
+            </Button>
+          </div>
+        </div>
+      </main>
     );
   }
 

@@ -498,7 +498,10 @@ export function ScheduleInterviewDialog({
             </div>
 
             {createInterviewMutation.isError && (
-              <p className="text-sm text-danger">
+              <p
+                role="alert"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
+              >
                 {createInterviewMutation.error.data?.code === "CONFLICT"
                   ? createInterviewMutation.error.message
                   : "No se pudo agendar la entrevista."}

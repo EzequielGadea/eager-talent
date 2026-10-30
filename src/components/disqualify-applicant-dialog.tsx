@@ -121,7 +121,10 @@ export function DisqualifyApplicantDialog({
             </p>
 
             {motivesQuery.isError && (
-              <p className="text-xs text-danger">
+              <p
+                role="alert"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
+              >
                 No se pudieron cargar los motivos.
               </p>
             )}
@@ -196,7 +199,10 @@ export function DisqualifyApplicantDialog({
           </div>
 
           {disqualifyMutation.isError && (
-            <p className="text-xs text-danger">
+            <p
+              role="alert"
+              className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
+            >
               No se pudo descalificar al candidato.
             </p>
           )}

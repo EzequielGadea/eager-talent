@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { Skeleton } from "~/components/ui/skeleton";
 import { api } from "~/lib/trpc/server";
+import { SettingsShell } from "../_components/settings-shell";
 import { UsersTable } from "./_components/users-table";
 import { UsersTableSkeleton } from "./_components/users-table-skeleton";
 import { UsersInviteDialog } from "./_components/users-invite-dialog";
@@ -39,8 +40,10 @@ function UsersPageFallback() {
 
 export default function UsersPage() {
   return (
-    <Suspense fallback={<UsersPageFallback />}>
-      <UsersContent />
-    </Suspense>
+    <SettingsShell>
+      <Suspense fallback={<UsersPageFallback />}>
+        <UsersContent />
+      </Suspense>
+    </SettingsShell>
   );
 }

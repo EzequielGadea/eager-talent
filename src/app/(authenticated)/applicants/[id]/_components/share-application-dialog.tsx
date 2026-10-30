@@ -257,7 +257,7 @@ export function ShareApplicationDialog({
             {linksQuery.error && (
               <div
                 role="alert"
-                className="flex items-center justify-between gap-3 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="flex items-center justify-between gap-3 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 <span>{linksQuery.error.message}</span>
                 <Button
@@ -458,7 +458,7 @@ export function ShareApplicationDialog({
             {errors.root && (
               <div
                 role="alert"
-                className="rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 {errors.root.message}
               </div>
