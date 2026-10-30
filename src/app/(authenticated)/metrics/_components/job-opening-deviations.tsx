@@ -195,10 +195,12 @@ export function JobOpeningDeviations({
         )}
 
         {!isLoading && data.pageCount > 1 ? (
-          <Pagination>
+          <Pagination aria-label="Paginación de desvíos">
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
+                  text="Anterior"
+                  aria-label="Ir a la página anterior"
                   href="#"
                   aria-disabled={data.page === 1}
                   tabIndex={data.page === 1 ? -1 : undefined}
@@ -234,6 +236,8 @@ export function JobOpeningDeviations({
 
               <PaginationItem>
                 <PaginationNext
+                  text="Siguiente"
+                  aria-label="Ir a la página siguiente"
                   href="#"
                   aria-disabled={data.page === data.pageCount}
                   tabIndex={data.page === data.pageCount ? -1 : undefined}
