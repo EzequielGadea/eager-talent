@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { TRPCError } from "@trpc/server";
 
-
 import {
   jobOpeningStageTypeSchema,
   PERSISTED_TO_FORM_STAGE_TYPE,
@@ -135,7 +134,6 @@ export async function EditJobOpeningContent({
     return <JobOpeningNotFound />;
   }
 
-
   if (jobOpening.status === "Closed" || jobOpening.status === "Cancelled") {
     redirect(`/job-openings/${jobOpening.id}/pipeline`);
   }
@@ -158,7 +156,7 @@ export async function EditJobOpeningContent({
   return (
     <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5">
       <header>
-        <h1 className="font-heading text-h1 text-text-primary">
+        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
           Editar vacante
         </h1>
       </header>

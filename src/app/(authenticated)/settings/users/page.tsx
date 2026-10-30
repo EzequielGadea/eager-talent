@@ -64,6 +64,7 @@ export default function UsersPage(props: {
     <SettingsShell>
       <Suspense fallback={<UsersPageFallback />}>
         <UsersContent searchParams={props.searchParams} />
+
       </Suspense>
     </SettingsShell>
   );

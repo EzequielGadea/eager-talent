@@ -34,15 +34,6 @@ async function ProtectedEditApplicantPage() {
     );
   }
 
-  return (
-    <>
-      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
-          Editar candidato
-        </h1>
-      </div>
+  return <EditApplicantForm />;
 
-      <EditApplicantForm />
-    </>
-  );
 }
