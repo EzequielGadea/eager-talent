@@ -29,15 +29,5 @@ async function ProtectedEditApplicantPage() {
     redirect("/dashboard");
   }
 
-  return (
-    <>
-      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-        <h1 className="mb-0 font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
-          Editar candidato
-        </h1>
-      </div>
-
-      <EditApplicantForm />
-    </>
-  );
+  return <EditApplicantForm />;
 }

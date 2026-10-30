@@ -4,7 +4,7 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 
-export default function SettingsError({ reset }: { reset: () => void }) {
+export default function SettingsError({ retry }: { retry: () => void }) {
   return (
     <main className="flex min-h-0 flex-1 items-center justify-center p-6">
       <div className="relative w-full max-w-105 rounded-3xl border bg-white p-8 shadow-lg">
@@ -26,7 +26,7 @@ export default function SettingsError({ reset }: { reset: () => void }) {
           <Button
             type="button"
             variant="outline"
-            onClick={reset}
+            onClick={retry}
             className="mt-2 h-11 w-full rounded-full"
           >
             <RefreshCw className="size-4" />

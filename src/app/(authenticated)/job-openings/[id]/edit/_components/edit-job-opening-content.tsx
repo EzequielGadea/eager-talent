@@ -154,24 +154,32 @@ export async function EditJobOpeningContent({
   };
 
   return (
-    <EditJobOpeningForm defaultValues={defaultValues}>
-      <JobOpeningDetailsCard
-        areaOptions={areas}
-        seniorityOptions={seniorities}
-      />
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+      <header>
+        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
+          Editar vacante
+        </h1>
+      </header>
 
-      <JobOpeningDatesCard />
+      <EditJobOpeningForm defaultValues={defaultValues}>
+        <JobOpeningDetailsCard
+          areaOptions={areas}
+          seniorityOptions={seniorities}
+        />
 
-      <JobOpeningProcessCard
-        canEditStages={
-          !jobOpening.hasBeenOpened && jobOpening.status !== "Open"
-        }
-      />
+        <JobOpeningDatesCard />
 
-      <JobOpeningHiringManagersCard
-        initialHiringManagers={jobOpening.hiringManagers}
-        hiringManagerOptions={assignableUsers}
-      />
-    </EditJobOpeningForm>
+        <JobOpeningProcessCard
+          canEditStages={
+            !jobOpening.hasBeenOpened && jobOpening.status !== "Open"
+          }
+        />
+
+        <JobOpeningHiringManagersCard
+          initialHiringManagers={jobOpening.hiringManagers}
+          hiringManagerOptions={assignableUsers}
+        />
+      </EditJobOpeningForm>
+    </div>
   );
 }

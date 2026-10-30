@@ -9,7 +9,7 @@ import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 import ApplicantEditFormContent from "./edit-applicant-form-content";
-import { EditApplicantFormSkeleton } from "./edit-applicant-skeleton";
+import { EditApplicantPageSkeleton } from "./edit-applicant-skeleton";
 
 const MAX_PHOTO_SIZE = 4 * 1024 * 1024;
 
@@ -109,7 +109,7 @@ export default function EditApplicantForm() {
   });
 
   if (isLoading) {
-    return <EditApplicantFormSkeleton />;
+    return <EditApplicantPageSkeleton />;
   }
 
   if (error || !applicant) {
@@ -146,5 +146,15 @@ export default function EditApplicantForm() {
     );
   }
 
-  return <ApplicantEditFormContent applicant={applicant} />;
+  return (
+    <>
+      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
+        <h1 className="mb-0 font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
+          Editar candidato
+        </h1>
+      </div>
+
+      <ApplicantEditFormContent applicant={applicant} />
+    </>
+  );
 }
