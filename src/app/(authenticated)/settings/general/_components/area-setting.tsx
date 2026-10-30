@@ -53,7 +53,7 @@ export default function AreaSetting() {
     onSuccess: async () => {
       setAreaName("");
       setIsAddingArea(false);
-      toast.add({ title: "Area creada con exito", type: "success" });
+      toast.add({ title: "Área creada correctamente", type: "success" });
       await utils.area.getAllAreas.invalidate();
     },
     onError: (error) => {

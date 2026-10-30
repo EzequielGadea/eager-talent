@@ -54,7 +54,7 @@ export default function DisqualificationMotiveSetting() {
         setMotiveName("");
         setIsAddingMotive(false);
         await utils.disqualificationMotive.getAllDisqualificationMotive.invalidate();
-        toast.add({ title: "Motivo creado con éxito", type: "success" });
+        toast.add({ title: "Motivo creado correctamente", type: "success" });
       },
       onError: (error) => {
         toast.add({ title: error.message, type: "error" });

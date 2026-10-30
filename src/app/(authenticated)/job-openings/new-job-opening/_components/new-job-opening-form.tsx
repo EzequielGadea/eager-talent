@@ -27,6 +27,14 @@ import { dndManager } from "../dnd-manager";
 
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
 import { persistedStageSchema } from "~/lib/validations/job-opening";
@@ -160,13 +168,15 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
       stages: data.stages,
     });
   }
-  function handleCancel() {
+  function handleConfirmCancel() {
     methods.reset();
     setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
+    setIsCancelConfirmOpen(false);
     router.push("/job-openings");
   }
 
   const [stages, setStages] = useState(props.templateStages.stages);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 
   return (
     <FormProvider {...methods}>
@@ -192,7 +202,8 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleCancel}
+                disabled={isSubmitting || createJobOpeningMutation.isPending}
+                onClick={() => setIsCancelConfirmOpen(true)}
                 className="h-8.5 gap-2 rounded-full bg-info-bg px-4 text-[13px] font-semibold shadow-none hover:bg-dashboard-dark-hover"
               >
                 Cancelar
@@ -202,6 +213,38 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
           </CardContent>
         </Card>
       </form>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting && !createJobOpeningMutation.isPending) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar creación?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los datos que hayas
+              ingresado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }

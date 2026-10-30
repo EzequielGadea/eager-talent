@@ -5,12 +5,22 @@ import { useRouter } from "next/navigation";
 import {
   CircleX,
   KeyRound,
+  Loader2,
   LockKeyhole,
   LockOpen,
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
 
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +51,9 @@ const successItemClassName =
 export function UserActionsMenu({ user }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [dialog, setDialog] = useState<"ban" | "delete" | "reset" | null>(null);
+  const [dialog, setDialog] = useState<
+    "ban" | "delete" | "reset" | "cancelInvitation" | null
+  >(null);
 
   const fullName = `${user.name} ${user.lastName}`.trim() || user.email;
 
@@ -65,6 +77,7 @@ export function UserActionsMenu({ user }: Props) {
         return;
       }
 
+      setDialog(null);
       router.refresh();
       toast.add({
         type: "success",
@@ -172,7 +185,7 @@ export function UserActionsMenu({ user }: Props) {
 
               <DropdownMenuItem
                 className={dangerItemClassName}
-                onClick={handleCancelInvitation}
+                onClick={() => setDialog("cancelInvitation")}
                 disabled={isPending}
               >
                 <CircleX className="size-4" />
@@ -203,6 +216,44 @@ export function UserActionsMenu({ user }: Props) {
         userId={user.id}
         userName={fullName}
       />
+
+      <Dialog
+        open={dialog === "cancelInvitation"}
+        onOpenChange={(open) => {
+          if (isPending) return;
+          setDialog(open ? "cancelInvitation" : null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancelar invitación</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar la invitación enviada a {user.email}?
+              El enlace de invitación dejará de funcionar.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDialog(null)}
+              disabled={isPending}
+            >
+              Volver
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleCancelInvitation}
+              disabled={isPending}
+            >
+              {isPending && <Loader2 className="size-4 animate-spin" />}
+              {isPending ? "Cancelando..." : "Cancelar invitación"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
