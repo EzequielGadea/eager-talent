@@ -124,6 +124,9 @@ export function ShareWithHiringManagerDialog({
     HiringManagerOption[]
   >([]);
   const [isManagerListOpen, setIsManagerListOpen] = useState(false);
+  const [managerToRevokeId, setManagerToRevokeId] = useState<string | null>(
+    null,
+  );
 
   const sharingDataQuery = api.applicant.getSharingData.useQuery(
     {
@@ -170,12 +173,14 @@ export function ShareWithHiringManagerDialog({
 
   const revokeMutation = api.applicant.revokeHiringManagerAccess.useMutation({
     onError: (error) => {
+      setManagerToRevokeId(null);
       toast.add({
         title: error.message,
         type: "error",
       });
     },
     onSuccess: async () => {
+      setManagerToRevokeId(null);
       await trpcUtils.applicant.getSharingData.invalidate({
         applicantId,
       });
@@ -215,6 +220,7 @@ export function ShareWithHiringManagerDialog({
     setSearch("");
     setSelectedManagers([]);
     setIsManagerListOpen(false);
+    setManagerToRevokeId(null);
   }
 
   function handleOpenChange(nextOpen: boolean) {
@@ -508,6 +514,7 @@ export function ShareWithHiringManagerDialog({
               >
                 <ul className="flex flex-col gap-2">
                   {currentAccess.map((manager) => {
+                    const isConfirmingRevoke = managerToRevokeId === manager.id;
                     const isRemoving =
                       revokeMutation.isPending &&
                       revokeMutation.variables?.hiringManagerId === manager.id;
@@ -515,31 +522,63 @@ export function ShareWithHiringManagerDialog({
                     return (
                       <li
                         key={manager.id}
-                        className="flex items-center gap-3 rounded-xl border border-border-default bg-card px-4 py-3"
+                        className="flex flex-col gap-2 rounded-xl border border-border-default bg-card px-4 py-3"
                       >
-                        <HiringManagerAvatar manager={manager} />
+                        <div className="flex items-center gap-3">
+                          <HiringManagerAvatar manager={manager} />
 
-                        <div className="flex min-w-0 flex-1 flex-col">
-                          <span className="truncate font-semibold text-text-primary">
-                            {getFullName(manager)}
-                          </span>
+                          <div className="flex min-w-0 flex-1 flex-col">
+                            <span className="truncate font-semibold text-text-primary">
+                              {getFullName(manager)}
+                            </span>
 
-                          <span className="truncate text-xs text-text-tertiary">
-                            {getAccessDescription(manager)}
-                          </span>
+                            <span className="truncate text-xs text-text-tertiary">
+                              {getAccessDescription(manager)}
+                            </span>
+                          </div>
+
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            data-combobox-dialog-action
+                            className="rounded-full"
+                            disabled={isBusy}
+                            onClick={() => setManagerToRevokeId(manager.id)}
+                          >
+                            {isRemoving ? "Quitando..." : "Quitar acceso"}
+                          </Button>
                         </div>
 
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          data-combobox-dialog-action
-                          className="rounded-full"
-                          disabled={isBusy}
-                          onClick={() => handleRemoveAccess(manager.id)}
-                        >
-                          {isRemoving ? "Quitando..." : "Quitar acceso"}
-                        </Button>
+                        {isConfirmingRevoke && (
+                          <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-danger-bg px-3 py-2">
+                            <span className="text-xs text-danger">
+                              ¿Quitar el acceso a {getFullName(manager)}?
+                            </span>
+                            <div className="flex shrink-0 items-center gap-1.5">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="xs"
+                                data-combobox-dialog-action
+                                disabled={isRemoving}
+                                onClick={() => setManagerToRevokeId(null)}
+                              >
+                                Cancelar
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="xs"
+                                data-combobox-dialog-action
+                                disabled={isRemoving}
+                                onClick={() => handleRemoveAccess(manager.id)}
+                              >
+                                {isRemoving ? "Quitando..." : "Confirmar"}
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                       </li>
                     );
                   })}

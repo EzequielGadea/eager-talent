@@ -13,7 +13,16 @@ import {
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 
-const toast = ToastPrimitive.createToastManager();
+const globalForToast = globalThis as unknown as {
+  __eagerTalentToastManager?: ReturnType<
+    typeof ToastPrimitive.createToastManager
+  >;
+};
+
+const toast =
+  globalForToast.__eagerTalentToastManager ??
+  (globalForToast.__eagerTalentToastManager =
+    ToastPrimitive.createToastManager());
 
 function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
   return <ToastPrimitive.Provider {...props} />;

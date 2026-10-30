@@ -59,6 +59,10 @@ export function UsersInviteDialog() {
       });
     },
     onSuccess: () => {
+      toast.add({
+        title: "Invitación enviada correctamente",
+        type: "success",
+      });
       startTransition(() => {
         router.refresh();
         handleOpenChange(false);

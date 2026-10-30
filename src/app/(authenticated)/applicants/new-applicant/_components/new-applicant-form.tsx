@@ -9,6 +9,15 @@ import { api } from "~/lib/trpc/react";
 import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { toast } from "~/components/ui/toast";
 
 import PersonalData from "./personal-data";
 import ProfessionalProfile from "./professional-profile";
@@ -185,6 +194,10 @@ export default function NewApplicantForm() {
     onSuccess: () => {
       methods.reset();
       setPhotoPreview(undefined);
+      toast.add({
+        title: "Candidato creado correctamente",
+        type: "success",
+      });
       startTransition(() => {
         router.push("/applicants");
         router.refresh();
@@ -291,9 +304,12 @@ export default function NewApplicantForm() {
     });
   }
 
-  function handleCancel() {
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
+
+  function handleConfirmCancel() {
     methods.reset();
     setPhotoPreview(undefined);
+    setIsCancelConfirmOpen(false);
     router.push("/applicants");
   }
   return (
@@ -316,7 +332,12 @@ export default function NewApplicantForm() {
           </p>
 
           <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" onClick={handleCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting || createCandidateMutation.isPending}
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
               Cancelar
             </Button>
 
@@ -324,6 +345,38 @@ export default function NewApplicantForm() {
           </div>
         </footer>
       </form>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting && !createCandidateMutation.isPending) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar creación?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los datos que hayas
+              ingresado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }
