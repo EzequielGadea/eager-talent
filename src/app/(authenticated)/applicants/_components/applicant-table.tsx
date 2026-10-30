@@ -191,19 +191,19 @@ export function ApplicantTableHeader() {
         </TableHead>
 
         <TableHead
-          className={`${columns.cv} h-9.75 py-0 text-center text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${columns.cv} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
         >
           CV
         </TableHead>
 
         <TableHead
-          className={`${columns.vacancy} h-9.75 px-3 py-0 text-center text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${columns.linkedin} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
         >
           LinkedIn
         </TableHead>
 
         <TableHead
-          className={`${columns.email} h-9.75 py-0 pr-4 pl-10 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${columns.email} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
         >
           Correo
         </TableHead>

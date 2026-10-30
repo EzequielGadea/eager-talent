@@ -8,14 +8,14 @@ export const avatarPalette = [
 ];
 
 export const columns = {
-  applicant: "w-35 px-4 text-center",
-  tags: "w-32 px-4 text-center",
-  vacancy: "w-30 px-4 text-center",
-  role: "w-28 px-4 text-center",
-  seniority: "w-20 px-3 text-center",
-  area: "w-24 px-3 text-center",
-  source: "w-24 px-3 text-center",
-  cv: "w-8 px-3 text-center text-center",
-  linkedin: "w-15 px-3 text-center text-center",
-  email: "w-36 px-4 text-center",
+  applicant: "w-35 px-4",
+  tags: "w-32 px-4",
+  vacancy: "w-30 px-4",
+  role: "w-28 px-4",
+  seniority: "w-20 px-3",
+  area: "w-24 px-3",
+  source: "w-24 px-3",
+  cv: "w-8 px-3",
+  linkedin: "w-15 px-3",
+  email: "w-36 px-4",
 };

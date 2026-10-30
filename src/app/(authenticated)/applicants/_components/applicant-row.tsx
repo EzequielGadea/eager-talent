@@ -75,7 +75,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Etiquetas */}
       <TableCell className={`${columns.tags} py-2 align-middle`}>
         <div className="@container">
-          <div className="flex flex-col items-center gap-1 @[10px]:flex-row @[10px]:flex-wrap @[10px]:justify-center">
+          <div className="flex flex-col items-start gap-1 @[10px]:flex-row @[10px]:flex-wrap">
             {props.applicant.tags.length > 0 ? (
               props.applicant.tags.map((tag, i) => (
                 <Badge
@@ -100,7 +100,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Vacante */}
       <TableCell className={`${columns.vacancy} py-2 align-middle`}>
         <div
-          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="break-words text-xs leading-tight text-dashboard-text-muted"
           title={
             props.applicant.jobOpening.length <= 1
               ? ""
@@ -124,7 +124,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Rol */}
       <TableCell className={`${columns.role} py-2 align-middle`}>
         <div
-          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="break-words text-xs leading-tight text-dashboard-text-muted"
           title={props.applicant.role || "-"}
         >
           {props.applicant.role || "-"}
@@ -132,9 +132,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Seniority */}
-      <TableCell
-        className={`${columns.seniority} py-2 text-center align-middle`}
-      >
+      <TableCell className={`${columns.seniority} py-2 align-middle`}>
         {props.applicant.seniorityName ? (
           <Badge
             style={{
@@ -157,7 +155,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Área */}
       <TableCell className={`${columns.area} py-2 align-middle`}>
         <div
-          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="break-words text-xs leading-tight text-dashboard-text-muted"
           title={props.applicant.area || "-"}
         >
           {props.applicant.area || "-"}
@@ -166,7 +164,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
 
       {/* Fuente */}
       <TableCell className={`${columns.source} py-2 align-middle`}>
-        <div className="flex min-w-0 items-center justify-center gap-1 text-center text-sm text-dashboard-text-muted">
+        <div className="flex min-w-0 items-center gap-1 text-sm text-dashboard-text-muted">
           {props.applicant.source ? (
             <>
               <span className="shrink-0">
@@ -188,7 +186,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
 
       {/* CV */}
       <TableCell
-        className={`${columns.cv} whitespace-nowrap py-2 text-center align-middle`}
+        className={`${columns.cv} whitespace-nowrap py-2 align-middle`}
       >
         {props.applicant.hasCv && props.applicant.cvUrl ? (
           <a
@@ -210,7 +208,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
 
       {/* LinkedIn */}
       <TableCell
-        className={`${columns.linkedin} whitespace-nowrap px-2 py-2 text-center align-middle`}
+        className={`${columns.linkedin} whitespace-nowrap px-2 py-2 align-middle`}
       >
         {props.applicant.hasLinkedin && props.applicant.linkedinUrl ? (
           <a
@@ -233,7 +231,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Email */}
       <TableCell className={`${columns.email} py-2 align-middle`}>
         <div
-          className="line-clamp-2 break-words whitespace-normal text-center text-xs leading-tight text-dashboard-text-muted [overflow-wrap:anywhere]"
+          className="line-clamp-2 break-words whitespace-normal text-xs leading-tight text-dashboard-text-muted [overflow-wrap:anywhere]"
           title={props.applicant.email || "-"}
         >
           {props.applicant.email || "-"}
