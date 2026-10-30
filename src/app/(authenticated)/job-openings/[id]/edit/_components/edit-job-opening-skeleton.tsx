@@ -1,20 +1,18 @@
 import type { ReactNode } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 
 type LoadingCardProps = {
-  title: string;
+  titleWidth?: string;
   children: ReactNode;
 };
 
-function LoadingCard({ title, children }: LoadingCardProps) {
+function LoadingCard({ titleWidth = "w-36", children }: LoadingCardProps) {
   return (
     <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader>
-        <CardTitle className="font-heading text-[15px] font-bold tracking-[-0.01em] text-text-primary">
-          {title}
-        </CardTitle>
+      <CardHeader className="pb-3">
+        <Skeleton className={`h-4 ${titleWidth}`} />
       </CardHeader>
 
       <CardContent>{children}</CardContent>
@@ -22,94 +20,77 @@ function LoadingCard({ title, children }: LoadingCardProps) {
   );
 }
 
-function FieldSkeleton({ label }: { label: string }) {
+function FieldSkeleton({ labelWidth = "w-28" }: { labelWidth?: string }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-[13px] font-medium text-text-primary">{label}</span>
-
-      <Skeleton className="h-9.5 w-full rounded-lg" />
+      <Skeleton className={`h-3.5 ${labelWidth}`} />
+      <Skeleton className="h-8.5 w-full rounded-lg" />
     </div>
   );
 }
 
 export function EditJobOpeningSkeleton() {
   return (
-    <div
-      className="flex flex-col gap-5"
-      aria-label="Cargando información de la vacante"
-      aria-busy="true"
-    >
-      <LoadingCard title="Datos de la vacante">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="md:col-span-2">
-            <FieldSkeleton label="Nombre de la vacante" />
-          </div>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+      <header>
+        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
+          Editar vacante
+        </h1>
+      </header>
 
-          <FieldSkeleton label="Area" />
-          <FieldSkeleton label="Estado" />
+      <div
+        className="flex flex-col gap-4"
+        aria-label="Cargando información de la vacante"
+        aria-busy="true"
+      >
+        <LoadingCard titleWidth="w-36">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <FieldSkeleton labelWidth="w-36" />
+            </div>
 
-          <div className="flex flex-col gap-2">
-            <span className="text-[13px] font-medium text-text-primary">
-              Seniority
-            </span>
+            <FieldSkeleton labelWidth="w-16" />
+            <FieldSkeleton labelWidth="w-20" />
 
-            <div className="flex flex-wrap gap-2">
-              <Skeleton className="h-8 w-20 rounded-full" />
-              <Skeleton className="h-8 w-28 rounded-full" />
-              <Skeleton className="h-8 w-24 rounded-full" />
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-3.5 w-20" />
+
+              <div className="flex flex-wrap gap-2">
+                <Skeleton className="h-8 w-20 rounded-full" />
+                <Skeleton className="h-8 w-28 rounded-full" />
+                <Skeleton className="h-8 w-24 rounded-full" />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Skeleton className="h-3.5 w-24" />
+
+              <div className="flex flex-wrap gap-2">
+                <Skeleton className="h-8 w-24 rounded-full" />
+                <Skeleton className="h-8 w-24 rounded-full" />
+                <Skeleton className="h-8 w-28 rounded-full" />
+              </div>
             </div>
           </div>
+        </LoadingCard>
 
+        <LoadingCard titleWidth="w-20">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr_auto]">
+            <FieldSkeleton labelWidth="w-32" />
+            <FieldSkeleton labelWidth="w-40" />
+
+            <Skeleton className="h-8.5 w-24 self-end rounded-lg" />
+          </div>
+        </LoadingCard>
+
+        <LoadingCard titleWidth="w-40">
           <div className="flex flex-col gap-2">
-            <span className="text-[13px] font-medium text-text-primary">
-              Ubicacion
-            </span>
-
-            <div className="flex flex-wrap gap-2">
-              <Skeleton className="h-8 w-24 rounded-full" />
-              <Skeleton className="h-8 w-24 rounded-full" />
-              <Skeleton className="h-8 w-28 rounded-full" />
-            </div>
+            {Array.from({ length: 2 }, (_, index) => (
+              <Skeleton key={index} className="h-10 w-full rounded-lg" />
+            ))}
           </div>
-        </div>
-      </LoadingCard>
-
-      <LoadingCard title="Fechas">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr_auto]">
-          <FieldSkeleton label="Fecha de apertura" />
-          <FieldSkeleton label="Fecha objetivo de cierre" />
-
-          <Skeleton className="h-9.5 w-24 self-end rounded-lg" />
-        </div>
-      </LoadingCard>
-
-      <LoadingCard title="Flujo del proceso">
-        <div className="flex flex-col gap-2">
-          {Array.from({ length: 4 }, (_, index) => (
-            <Skeleton key={index} className="h-12 w-full rounded-lg" />
-          ))}
-
-          <Skeleton className="h-10 w-full rounded-lg" />
-        </div>
-      </LoadingCard>
-
-      <LoadingCard title="Hiring Managers">
-        <div className="flex flex-col items-start gap-3">
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-36 rounded-full" />
-            <Skeleton className="h-8 w-32 rounded-full" />
-          </div>
-
-          <Skeleton className="h-10 w-full max-w-sm rounded-lg" />
-        </div>
-      </LoadingCard>
-
-      <Card className="w-full rounded-xl py-5 shadow-sm">
-        <CardContent className="flex justify-end gap-3">
-          <Skeleton className="h-10 w-28 rounded-full" />
-          <Skeleton className="h-10 w-40 rounded-full" />
-        </CardContent>
-      </Card>
+        </LoadingCard>
+      </div>
     </div>
   );
 }

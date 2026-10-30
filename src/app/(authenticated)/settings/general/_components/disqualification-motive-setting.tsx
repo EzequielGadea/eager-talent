@@ -28,8 +28,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
-export default function DescalificationMotiveSetting() {
+export default function DisqualificationMotiveSetting() {
   const [isAddingMotive, setIsAddingMotive] = useState(false);
   const [motiveName, setMotiveName] = useState("");
   const [motiveToDelete, setMotiveToDelete] = useState<{
@@ -39,15 +40,20 @@ export default function DescalificationMotiveSetting() {
 
   const utils = api.useUtils();
 
-  const { data: motives, isLoading: isMotiveLoading } =
-    api.descalificationMotive.getAllDescalificationMotive.useQuery({});
+  const {
+    data: motives,
+    isLoading: isMotiveLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.disqualificationMotive.getAllDisqualificationMotive.useQuery({});
 
   const createMotive =
-    api.descalificationMotive.createDescalificationMotive.useMutation({
+    api.disqualificationMotive.createDisqualificationMotive.useMutation({
       onSuccess: async () => {
         setMotiveName("");
         setIsAddingMotive(false);
-        await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+        await utils.disqualificationMotive.getAllDisqualificationMotive.invalidate();
         toast.add({ title: "Motivo creado con éxito", type: "success" });
       },
       onError: (error) => {
@@ -56,10 +62,10 @@ export default function DescalificationMotiveSetting() {
     });
 
   const deleteMotive =
-    api.descalificationMotive.deleteDescalificationMotive.useMutation({
+    api.disqualificationMotive.deleteDisqualificationMotive.useMutation({
       onSuccess: async () => {
         setMotiveToDelete(null);
-        await utils.descalificationMotive.getAllDescalificationMotive.invalidate();
+        await utils.disqualificationMotive.getAllDisqualificationMotive.invalidate();
         toast.add({ title: "Motivo eliminado con éxito", type: "success" });
       },
       onError: (error) => {
@@ -78,8 +84,7 @@ export default function DescalificationMotiveSetting() {
 
     const normalizedName = name.toLocaleLowerCase("es");
     const alreadyExists = motives?.some(
-      (motive) =>
-        motive.name.trim().toLocaleLowerCase("es") === normalizedName,
+      (motive) => motive.name.trim().toLocaleLowerCase("es") === normalizedName,
     );
 
     if (alreadyExists) {
@@ -125,6 +130,16 @@ export default function DescalificationMotiveSetting() {
       <GeneralSettingsCardSkeleton
         title="Motivos de descalificación"
         rows={4}
+      />
+    );
+  }
+
+  if (isError || !motives) {
+    return (
+      <SettingsFetchError
+        title="Motivos de descalificación"
+        refetch={refetch}
+        isFetching={isFetching}
       />
     );
   }
@@ -191,10 +206,9 @@ export default function DescalificationMotiveSetting() {
           {isAddingMotive && (
             <form
               onSubmit={handleCreateMotive}
-              className="flex items-end gap-3 border-b border-border-default
-              py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={motiveName}

@@ -1,15 +1,16 @@
-import { headers } from "next/headers";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Suspense } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { auth } from "~/lib/auth";
+import getAvatar from "~/lib/avatar";
 import { api } from "~/lib/trpc/server";
+import { cn } from "~/lib/utils";
 import { SettingsIcon } from "./app-icons";
 import { GlobalSearch } from "./global-search";
+import { MobileNavigationTrigger } from "./mobile-navigation";
 import { UserMenu } from "./user-menu";
-
-import getAvatar from "~/lib/avatar";
 
 // "member" (and a missing membership) intentionally has no label.
 const roleLabels: Partial<Record<string, string>> = {
@@ -49,7 +50,14 @@ export function CurrentUserPlaceholder() {
 
 type CurrentUserData = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>;
 
-function CurrentUserDetails({ user }: { user: CurrentUserData }) {
+function CurrentUserDetails({
+  user,
+  avatarOnly = false,
+}: {
+  user: CurrentUserData;
+  // Keeps the name and role for screen readers while only the avatar shows.
+  avatarOnly?: boolean;
+}) {
   const fullName = `${user.name} ${user.lastName}`.trim();
   const roleLabel = user.role ? roleLabels[user.role] : undefined;
 
@@ -63,7 +71,7 @@ function CurrentUserDetails({ user }: { user: CurrentUserData }) {
         </AvatarFallback>
       </Avatar>
 
-      <div className="flex min-w-0 flex-col">
+      <div className={cn("flex min-w-0 flex-col", avatarOnly && "sr-only")}>
         <span className="truncate text-sm font-semibold text-text-primary">
           {fullName}
         </span>
@@ -92,7 +100,7 @@ function HeaderUserAreaFallback() {
     <>
       <div className="h-7 w-px bg-border-default" />
 
-      <div className="flex w-48 shrink-0 items-center p-1">
+      <div className="flex w-10.5 shrink-0 items-center overflow-hidden p-1">
         <CurrentUserPlaceholder />
       </div>
     </>
@@ -118,12 +126,12 @@ async function HeaderUserArea() {
       <div className="h-7 w-px bg-border-default" />
 
       <div
-        className="flex w-48 shrink-0 items-center"
+        className="flex shrink-0 items-center"
         aria-label="Información del usuario"
       >
         <UserMenu side="bottom">
           {user ? (
-            <CurrentUserDetails user={user} />
+            <CurrentUserDetails user={user} avatarOnly />
           ) : (
             <CurrentUserPlaceholder />
           )}
@@ -135,14 +143,17 @@ async function HeaderUserArea() {
 
 export function AppHeader() {
   return (
-    <header className="flex h-15 shrink-0 items-center gap-4 border-b border-border-default bg-surface-card px-6">
+    <header className="flex h-15 shrink-0 items-center gap-2 border-b border-border-default bg-surface-card px-4 md:gap-4 md:px-6">
+      <MobileNavigationTrigger />
+
       <GlobalSearch />
 
-      <div className="flex-1" />
-
-      <Suspense fallback={<HeaderUserAreaFallback />}>
-        <HeaderUserArea />
-      </Suspense>
+      {/* From `md` up, settings and profile live in the sidebar. */}
+      <div className="flex shrink-0 items-center gap-2 md:hidden">
+        <Suspense fallback={<HeaderUserAreaFallback />}>
+          <HeaderUserArea />
+        </Suspense>
+      </div>
     </header>
   );
 }

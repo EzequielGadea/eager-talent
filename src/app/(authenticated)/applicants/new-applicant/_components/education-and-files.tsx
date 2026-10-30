@@ -130,7 +130,7 @@ export default function EducationAndFiles() {
                 )}
               </div>
               {errors.resume && (
-                <p className="text-danger">{errors.resume.message}</p>
+                <p className="text-xs text-danger">{errors.resume.message}</p>
               )}
             </div>
 
@@ -167,7 +167,9 @@ export default function EducationAndFiles() {
                 )}
               </div>
               {errors.education && (
-                <p className="text-danger">{errors.education.message}</p>
+                <p className="text-xs text-danger">
+                  {errors.education.message}
+                </p>
               )}
             </div>
           </div>

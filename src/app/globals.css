@@ -230,7 +230,7 @@
   }
 
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 selection:bg-tag-green-bg selection:text-tag-green-fg;
   }
   body {
     @apply bg-background text-foreground;

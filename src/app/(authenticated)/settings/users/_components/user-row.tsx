@@ -43,7 +43,7 @@ const spanishFormatter: typeof baseSpanishFormatter = (
 
 const PENDING_NAME_LABEL = "Pendiente";
 
-function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
+export function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
   if (!lastAccess) {
     return <span>—</span>;
   }
@@ -84,7 +84,7 @@ export function UserRow({ user }: Props) {
   const avatar = getAvatar(user.name, user.lastName);
 
   return (
-    <TableRow className="border-b border-border-default last:border-b-0">
+    <TableRow className="border-b border-border-default transition-colors last:border-b-0 hover:bg-success-bg">
       <TableCell className="px-4 py-3 pl-6">
         <div className="flex items-center gap-3">
           <div

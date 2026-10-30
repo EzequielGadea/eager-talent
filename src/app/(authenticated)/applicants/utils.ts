@@ -1,6 +1,5 @@
 import { parseStages } from "~/lib/validations/job-opening";
 
-import { getSourceIcon } from "./_components/source-icon";
 import { ApplicantsPromise, SharedApplicantsPromise } from "./types";
 import { avatarPalette } from "./constants";
 
@@ -55,8 +54,7 @@ export async function transformApplicants(
           seniorityName: applicant.seniority?.name || "-",
           seniorityColor: applicant.seniority?.color || "-",
           area: applicant.area?.name || "-",
-          sourceText: applicant.source || "-",
-          sourceIcon: getSourceIcon(applicant.source ?? "null"),
+          source: applicant.source ?? null,
           hasCv: applicant.resume != null,
           hasLinkedin: applicant.linkedin != null,
           cvUrl: applicant.resume ?? "-",

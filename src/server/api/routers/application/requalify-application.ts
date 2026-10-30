@@ -28,6 +28,7 @@ export const requalifyApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
         },
+        deletedAt: null,
       },
       select: {
         active: true,

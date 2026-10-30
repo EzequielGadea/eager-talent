@@ -1,4 +1,4 @@
-﻿import "server-only";
+import "server-only";
 
 import { Suspense } from "react";
 import { headers } from "next/headers";
@@ -11,15 +11,16 @@ import { auth } from "~/lib/auth";
 import { api } from "~/lib/trpc/server";
 
 import {
-  ApplicantTableHeader,
-  HiringManagerApplicantTableHeader,
-} from "./_components/applicant-table";
-import {
   ApplicantAwaiterFilters,
   ApplicantAwaiterHeader,
   ApplicantAwaiterTable,
   SharedApplicantsAwaiter,
 } from "./_components/applicant-awaiter";
+import {
+  ApplicantTableHeader,
+  HiringManagerApplicantTableHeader,
+} from "./_components/applicant-table";
+import { ApplicantCardListFallback } from "./_components/applicant-card-list";
 import {
   ApplicantsPageSkeleton,
   FiltersFallback,
@@ -142,14 +143,14 @@ async function ProtectedApplicantsPage(props: {
     }),
   );
 
-  const roleData = api.role.getAllRoles({});
+  const roleData = api.jobRole.getAllRoles({});
   const seniorityData = api.seniority.getAllSeniorities({});
   const areaData = api.area.getAllAreas({});
   const jobOpeningData = api.jobOpening.getAllJobOpenings({});
   const tagData = api.tag.getAllTags({});
 
   return (
-    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 text-dashboard-text-primary">
+    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden text-dashboard-text-primary md:p-4">
       <Suspense
         fallback={<HeaderFallback isHiringManagerView={isHiringManagerView} />}
       >
@@ -181,7 +182,9 @@ async function ProtectedApplicantsPage(props: {
       <Suspense
         fallback={
           <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-            <div className="w-full overflow-x-auto">
+            <ApplicantCardListFallback />
+
+            <div className="hidden w-full overflow-x-auto md:block">
               <Table
                 className={
                   isHiringManagerView
@@ -215,7 +218,9 @@ async function ProtectedApplicantsPage(props: {
         <Suspense
           fallback={
             <div className="mt-4 w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-              <div className="w-full overflow-x-auto">
+              <ApplicantCardListFallback />
+
+              <div className="hidden w-full overflow-x-auto md:block">
                 <Table className="min-w-200 table-fixed">
                   <HiringManagerApplicantTableHeader showSharedBy={true} />
 

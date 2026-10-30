@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TZDate } from "@date-fns/tz";
+import { parseDateTime, toZoned } from "@internationalized/date";
 import { format } from "date-fns";
 import { Loader2, Pencil, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { DatePicker } from "~/components/ui/date-picker";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -25,16 +27,19 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { toast } from "~/components/ui/toast";
-import type { InterviewType } from "~/generated/prisma/enums";
+import { InterviewType } from "~/generated/prisma/enums";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
 
+const INTERVIEW_TIME_ZONE = "America/Montevideo";
+
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120];
 
-const MODALITY_OPTIONS = [
-  { value: "VideoCall", label: "Videollamada" },
-  { value: "InPerson", label: "Presencial" },
-] as const;
+const MODALITY_OPTIONS = Object.values(InterviewType).map((value) => ({
+  value,
+  label: interviewTypeTranslations[value],
+}));
 
 const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
@@ -93,11 +98,14 @@ const fieldLabel = "text-sm font-medium text-text-secondary";
 const fieldControl =
   "h-11 rounded-xl bg-surface-card focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20";
 
+const datePickerControl =
+  "[--date-picker-height:2.75rem] [--date-picker-radius:var(--radius-xl)]";
+
 function getInitialValues(
   interview: EditableInterview,
 ): EditInterviewFormValues {
   const mvdDate = interview.date
-    ? new TZDate(interview.date, "America/Montevideo")
+    ? new TZDate(interview.date, INTERVIEW_TIME_ZONE)
     : null;
 
   return {
@@ -200,8 +208,10 @@ export function EditInterviewDialog({
   const isPending = updateInterview.isPending || isRefreshing;
 
   function onSubmit(data: EditInterviewFormValues) {
-    const [year, month, day] = data.date.split("-").map(Number);
-    const [hour, minute] = data.time.split(":").map(Number);
+    const date = toZoned(
+      parseDateTime(`${data.date}T${data.time}`),
+      INTERVIEW_TIME_ZONE,
+    ).toDate();
 
     updateInterview.mutate({
       id: interview.id,
@@ -210,16 +220,7 @@ export function EditInterviewDialog({
         : data.exploratoryName?.trim(),
       modality: data.modality as InterviewType,
       duration: data.duration,
-      date: new TZDate(
-        year!,
-        month! - 1,
-        day!,
-        hour!,
-        minute!,
-        0,
-        0,
-        "America/Montevideo",
-      ),
+      date,
       interviewerIds: data.interviewerIds,
     });
   }
@@ -272,11 +273,22 @@ export function EditInterviewDialog({
                 <label htmlFor="edit-interview-date" className={fieldLabel}>
                   Fecha
                 </label>
-                <Input
-                  id="edit-interview-date"
-                  type="date"
-                  className={fieldControl}
-                  {...register("date")}
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePicker
+                      id="edit-interview-date"
+                      name={field.name}
+                      aria-label="Fecha"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      isInvalid={!!errors.date}
+                      className={datePickerControl}
+                    />
+                  )}
                 />
                 {errors.date && (
                   <p className="text-xs text-danger">{errors.date.message}</p>

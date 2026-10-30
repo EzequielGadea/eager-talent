@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -20,19 +19,16 @@ export default function AssignedInterviews() {
     isError,
   } = api.interview.getAssignedInterviews.useQuery();
 
-  return (
-    <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-      <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
-        <CalendarDays size={16} className="text-dashboard-text-muted" />
+  if (isLoading) {
+    return (
+      <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+        <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
+          <Skeleton className="size-4 rounded-sm" />
+          <Skeleton className="h-4 w-44" />
+        </div>
 
-        <h2 className="text-sm font-semibold text-text-primary">
-          Entrevistas asignadas a vos
-        </h2>
-      </div>
-
-      {isLoading ? (
         <div className="flex flex-col divide-y divide-dashboard-border">
-          {Array.from({ length: 3 }).map((_, index) => (
+          {Array.from({ length: 2 }).map((_, index) => (
             <div
               key={index}
               className="flex items-center justify-between gap-4 px-4 py-3"
@@ -46,7 +42,21 @@ export default function AssignedInterviews() {
             </div>
           ))}
         </div>
-      ) : isError ? (
+      </section>
+    );
+  }
+
+  return (
+    <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+      <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
+        <CalendarDays size={16} className="text-dashboard-text-muted" />
+
+        <h2 className="text-sm font-semibold text-text-primary">
+          Entrevistas asignadas a vos
+        </h2>
+      </div>
+
+      {isError ? (
         <p className="px-4 py-6 text-sm text-danger">
           No se pudieron cargar las entrevistas.
         </p>
@@ -79,14 +89,10 @@ export default function AssignedInterviews() {
             return (
               <div
                 key={interview.id}
-                className="flex flex-wrap items-center justify-between gap-4 px-4 py-3"
+                className="flex items-center justify-between gap-4 px-4 py-3"
               >
-                <div className="flex min-w-0 items-center gap-3">
-                  <Link
-                    href={`/applicants/${interview.applicant.id}`}
-
-                    className="group flex min-w-0 items-center gap-3"
-                  >
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
                     <Avatar className="size-9 shrink-0">
                       <AvatarImage
                         src={interview.applicant.photo ?? undefined}
@@ -102,21 +108,27 @@ export default function AssignedInterviews() {
                     </Avatar>
 
                     <div className="flex min-w-0 flex-col gap-1">
-                      <p className="text-sm font-semibold text-text-primary group-hover:text-text-link group-hover:underline">
+                      <p className="text-sm font-semibold text-text-primary">
                         {applicantName}
                       </p>
 
                       <p className="text-xs text-text-secondary">
-                        {interview.name} · {jobOpeningName} · {formattedDate}
+                        {interview.name}
                       </p>
+
+                      <p className="text-xs text-text-secondary">
+                        {jobOpeningName}
+                      </p>
+
+                      <p className="text-xs text-info">{formattedDate}</p>
                     </div>
-                  </Link>
+                  </div>
                 </div>
 
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-2 rounded-full border-dashboard-border"
+                  className="shrink-0 gap-2 rounded-full border-dashboard-border"
                   onClick={() => router.push(`/interviews/${interview.id}`)}
                 >
                   Ver

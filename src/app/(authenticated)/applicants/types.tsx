@@ -1,3 +1,4 @@
+import type { Source } from "~/generated/prisma/enums";
 import { api } from "~/lib/trpc/server";
 import { avatarPalette } from "./constants";
 
@@ -33,7 +34,7 @@ export interface ApplicantInfo {
   seniorityName: string | undefined; //"Senior" | "Mid-Senior" | "Mid";
   seniorityColor: string;
   area: string;
-  sourceText: string;
+  source: Source | null;
   hasCv: boolean;
   cvUrl: string;
   hasLinkedin: boolean;
@@ -50,7 +51,7 @@ export type SharedApplicantsPromise = ReturnType<
 >;
 
 export interface FiltersProps {
-  roleData: Awaited<ReturnType<typeof api.role.getAllRoles>>;
+  roleData: Awaited<ReturnType<typeof api.jobRole.getAllRoles>>;
   seniorityData: Awaited<ReturnType<typeof api.seniority.getAllSeniorities>>;
   areaData: Awaited<ReturnType<typeof api.area.getAllAreas>>;
   jobOpeningData: Awaited<ReturnType<typeof api.jobOpening.getAllJobOpenings>>;

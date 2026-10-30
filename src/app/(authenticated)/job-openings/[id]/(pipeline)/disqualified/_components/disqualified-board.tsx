@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
+import { PipelineHorizontalScroll } from "../../_components/pipeline-horizontal-scroll";
 import type { PipelineStage } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/types";
 
 import { DisqualifiedColumn } from "./disqualified-column";
@@ -49,8 +49,8 @@ export function DisqualifiedBoard({
         </p>
       )}
 
-      <ScrollArea className="w-full">
-        <div className="flex min-w-max gap-4 pb-4">
+      <PipelineHorizontalScroll>
+        <div className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row">
           {stages.map((stage) => (
             <DisqualifiedColumn
               key={stage.name}
@@ -65,9 +65,7 @@ export function DisqualifiedBoard({
             />
           ))}
         </div>
-
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      </PipelineHorizontalScroll>
     </div>
   );
 }

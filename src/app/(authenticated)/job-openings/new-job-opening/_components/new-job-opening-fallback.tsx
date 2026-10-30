@@ -1,28 +1,28 @@
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
-import { Button } from "~/components/ui/button";
 
 function FormSectionFallback({
-  children,
   titleWidth = "w-36",
+  children,
 }: {
-  children: React.ReactNode;
   titleWidth?: string;
+  children: React.ReactNode;
 }) {
   return (
-    <section className="w-full rounded-xl border border-border-default bg-card shadow-sm">
-      <div className="border-b border-border-default px-6 py-4">
+    <Card className="w-full rounded-xl shadow-sm">
+      <CardHeader className="pb-3">
         <Skeleton className={`h-4 ${titleWidth}`} />
-      </div>
-      <div className="p-6">{children}</div>
-    </section>
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
   );
 }
 
 function FieldFallback({ className = "" }: { className?: string }) {
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className={`space-y-1.5 ${className}`}>
       <Skeleton className="h-3.5 w-28" />
-      <Skeleton className="h-8.5 w-full rounded-md" />
+      <Skeleton className="h-8 w-full rounded-lg" />
     </div>
   );
 }
@@ -34,15 +34,15 @@ export default function NewJobOpeningFallback() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FieldFallback className="md:col-span-2" />
           <FieldFallback />
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Skeleton className="h-3.5 w-16" />
-            <div className="flex h-8.5 items-center gap-1 rounded-lg border border-border-default bg-surface-sunken p-1">
+            <div className="flex h-8 items-center gap-1 rounded-lg border border-border-default bg-surface-sunken p-1">
               {Array.from({ length: 4 }).map((_, index) => (
                 <Skeleton key={index} className="h-6 flex-1 rounded-md" />
               ))}
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Skeleton className="h-3.5 w-32" />
             <div className="flex flex-wrap gap-2">
               {Array.from({ length: 3 }).map((_, index) => (
@@ -63,34 +63,22 @@ export default function NewJobOpeningFallback() {
 
       <FormSectionFallback titleWidth="w-40">
         <div className="space-y-2">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-12 w-full rounded-lg" />
+          {Array.from({ length: 2 }).map((_, index) => (
+            <Skeleton key={index} className="h-10 w-full rounded-lg" />
           ))}
-          <Skeleton className="h-11 w-full rounded-lg" />
         </div>
       </FormSectionFallback>
+    </div>
+  );
+}
 
-      <FormSectionFallback titleWidth="w-32">
-        <div className="space-y-5">
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-32 rounded-full" />
-            <Skeleton className="h-8 w-36 rounded-full" />
-          </div>
-          <Skeleton className="h-9 w-full rounded-md md:w-1/2" />
-        </div>
-      </FormSectionFallback>
-
-      <div className="flex flex-col gap-3 border-t border-border-default pt-4 sm:flex-row sm:items-center sm:justify-end">
-        <Button
-          type="button"
-          variant="outline"
-          disabled
-          className="h-8.5 rounded-full px-4 text-[13px]"
-        >
-          Cancelar
-        </Button>
-        <Skeleton className="h-8.5 w-36 rounded-full" />
-      </div>
+export function NewJobOpeningPageFallback() {
+  return (
+    <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
+      <h1 className="mb-0 font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
+        Nueva vacante
+      </h1>
+      <NewJobOpeningFallback />
     </div>
   );
 }

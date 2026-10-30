@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { salaryCurrencyTranslations } from "~/lib/enum-translations";
 import { getInterviewName } from "~/lib/get-interview-name";
 import { parseStages } from "~/lib/validations/job-opening";
 import { publicProcedure } from "~/server/api/trpc";
@@ -28,6 +29,7 @@ export const getByToken = publicProcedure
         },
         application: {
           select: {
+            deletedAt: true,
             active: true,
             currentStageId: true,
             availability: true,
@@ -56,6 +58,7 @@ export const getByToken = publicProcedure
             applicant: {
               select: {
                 id: true,
+                deletedAt: true,
                 name: true,
                 lastName: true,
                 photo: true,
@@ -80,6 +83,7 @@ export const getByToken = publicProcedure
               },
             },
             interviews: {
+              where: { deletedAt: null },
               orderBy: {
                 date: "asc",
               },
@@ -108,7 +112,11 @@ export const getByToken = publicProcedure
       },
     });
 
-    if (!link) {
+    if (
+      !link ||
+      link.application.deletedAt ||
+      link.application.applicant.deletedAt
+    ) {
       return { status: "not_found" as const };
     }
 
@@ -131,7 +139,7 @@ export const getByToken = publicProcedure
     let formattedSalary: string | null = null;
     if (link.includeSalary && application.desiredSalaryAmount) {
       const currency = application.desiredSalaryCurrency ?? "USD";
-      formattedSalary = `${currency} ${application.desiredSalaryAmount.toString()}`;
+      formattedSalary = `${salaryCurrencyTranslations[currency]} ${application.desiredSalaryAmount.toString()}`;
     }
 
     return {
@@ -174,12 +182,7 @@ export const getByToken = publicProcedure
         id: interview.id,
         name: getInterviewName(interview, jobOpening.stages),
         duration: interview.duration,
-        modality:
-          interview.modality === "VideoCall"
-            ? "Virtual"
-            : interview.modality === "InPerson"
-              ? "Presencial"
-              : interview.modality,
+        modality: interview.modality,
         date: interview.date,
         interviewers: interview.interviewers.map((user) =>
           `${user.name} ${user.lastName}`.trim(),
@@ -237,4 +240,3 @@ function extractNoteText(content: unknown): string | null {
   }
   return String(content);
 }
-

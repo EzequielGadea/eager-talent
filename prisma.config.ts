@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 import {
-  getDatabaseUrl,
+  getDirectUrl,
   getShadowDatabaseUrl,
 } from "./src/server/db/database-url";
 
@@ -12,7 +12,7 @@ export default defineConfig({
     seed: "bun run src/server/db/prisma/seed.ts",
   },
   datasource: {
-    url: getDatabaseUrl(),
+    url: getDirectUrl(),
     shadowDatabaseUrl: getShadowDatabaseUrl(),
   },
 });

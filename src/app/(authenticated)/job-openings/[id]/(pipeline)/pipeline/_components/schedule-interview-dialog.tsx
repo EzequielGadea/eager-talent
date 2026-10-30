@@ -6,7 +6,8 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import type { InterviewType } from "~/generated/prisma/enums";
+import { InterviewType } from "~/generated/prisma/enums";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
 
@@ -17,6 +18,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { DatePicker } from "~/components/ui/date-picker";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -29,10 +31,10 @@ import { toast } from "~/components/ui/toast";
 
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120];
 
-const MODALITY_OPTIONS = [
-  { value: "VideoCall", label: "Videollamada" },
-  { value: "InPerson", label: "Presencial" },
-] as const;
+const MODALITY_OPTIONS = Object.values(InterviewType).map((value) => ({
+  value,
+  label: interviewTypeTranslations[value],
+}));
 
 const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
@@ -234,12 +236,23 @@ export function ScheduleInterviewDialog({
                 <label htmlFor="interview-date" className={fieldLabel}>
                   Fecha
                 </label>
-                <Input
-                  id="interview-date"
-                  type="date"
-                  className={fieldControl}
-                  min={getTodayLocalISO()}
-                  {...register("date")}
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePicker
+                      id="interview-date"
+                      name={field.name}
+                      aria-label="Fecha"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      minValue={getTodayLocalISO()}
+                      isInvalid={!!errors.date}
+                      className="[--date-picker-height:2.75rem] [--date-picker-radius:var(--radius-xl)]"
+                    />
+                  )}
                 />
                 {errors.date && (
                   <p className="text-xs text-danger">{errors.date.message}</p>
@@ -485,7 +498,10 @@ export function ScheduleInterviewDialog({
             </div>
 
             {createInterviewMutation.isError && (
-              <p className="text-sm text-danger">
+              <p
+                role="alert"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
+              >
                 {createInterviewMutation.error.data?.code === "CONFLICT"
                   ? createInterviewMutation.error.message
                   : "No se pudo agendar la entrevista."}

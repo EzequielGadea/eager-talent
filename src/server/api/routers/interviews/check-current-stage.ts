@@ -24,7 +24,7 @@ export const checkInterviewCurrentStageProcedure = protectedProcedure
     }
 
     const interview = await ctx.db.interview.findUnique({
-      where: { id: input.interviewId },
+      where: { id: input.interviewId, deletedAt: null },
       select: {
         id: true,
         stageId: true,

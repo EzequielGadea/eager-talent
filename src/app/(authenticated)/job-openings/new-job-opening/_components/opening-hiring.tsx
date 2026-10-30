@@ -6,6 +6,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { X } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
+import { Skeleton } from "~/components/ui/skeleton";
 import Image from "next/image";
 
 import {
@@ -28,7 +29,7 @@ export default function OpeningHiring() {
   const { control } = useFormContext<JobOpeningFormValues>();
 
   const { data: hiringManagers, isLoading: isLoadingManager } =
-    api.users.getAllHiringManagers.useQuery({});
+    api.user.getAllHiringManagers.useQuery({});
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
@@ -105,96 +106,96 @@ export default function OpeningHiring() {
                 </div>
 
                 <div className="w-1/2">
-                  <Combobox
-                    value=""
-                    onInputValueChange={(value) => {
-                      setManagerSearch(value);
-                    }}
-                    onValueChange={(managerId) => {
-                      if (managerId && !field.value.includes(managerId)) {
-                        field.onChange([...field.value, managerId]);
-                        setManagerSearch("");
-                      }
-                    }}
-                    disabled={
-                      isLoadingManager || availableManagers?.length === 0
-                    }
-                  >
-                    <ComboboxInput
-                      className="w-full rounded-md focus-within:!border-border-focus focus-within:!ring-3 focus-within:!ring-accent-green/30"
-                      placeholder={
-                        isLoadingManager
-                          ? "Cargando hiring managers..."
-                          : availableManagers?.length === 0
+                  {isLoadingManager ? (
+                    <Skeleton className="h-9 w-full rounded-md" />
+                  ) : (
+                    <Combobox
+                      value=""
+                      onInputValueChange={(value) => {
+                        setManagerSearch(value);
+                      }}
+                      onValueChange={(managerId) => {
+                        if (managerId && !field.value.includes(managerId)) {
+                          field.onChange([...field.value, managerId]);
+                          setManagerSearch("");
+                        }
+                      }}
+                      disabled={availableManagers?.length === 0}
+                    >
+                      <ComboboxInput
+                        className="w-full rounded-md focus-within:!border-border-focus focus-within:!ring-3 focus-within:!ring-accent-green/30"
+                        placeholder={
+                          availableManagers?.length === 0
                             ? "Todos los hiring managers fueron seleccionados"
                             : "Buscar hiring manager"
-                      }
-                    />
+                        }
+                      />
 
-                    <ComboboxContent>
-                      <ComboboxList>
-                        <ComboboxGroup>
-                          <ComboboxLabel className="px-4 py-3 text-xs font-bold text-text-tertiary">
-                            USUARIOS DEL SISTEMA
-                          </ComboboxLabel>
+                      <ComboboxContent>
+                        <ComboboxList>
+                          <ComboboxGroup>
+                            <ComboboxLabel className="px-4 py-3 text-xs font-bold text-text-tertiary">
+                              USUARIOS DEL SISTEMA
+                            </ComboboxLabel>
 
-                          {filteredManagers?.map((manager) => {
-                            const avatar = getAvatar(
-                              manager.name,
-                              manager.lastName,
-                            );
+                            {filteredManagers?.map((manager) => {
+                              const avatar = getAvatar(
+                                manager.name,
+                                manager.lastName,
+                              );
 
-                            return (
-                              <ComboboxItem
-                                key={manager.id}
-                                value={manager.id}
-                                className="flex items-center justify-between"
-                              >
-                                <span className="flex min-w-0 items-center gap-2">
-                                  {manager.image ? (
-                                    <Image
-                                      src={manager.image}
-                                      alt=""
-                                      width={24}
-                                      height={24}
-                                      className="size-6 shrink-0 rounded-full object-cover"
-                                    />
-                                  ) : (
-                                    <span
-                                      className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${avatar.colorClass}`}
-                                    >
-                                      {avatar.initials}
+                              return (
+                                <ComboboxItem
+                                  key={manager.id}
+                                  value={manager.id}
+                                  className="flex items-center justify-between"
+                                >
+                                  <span className="flex min-w-0 items-center gap-2">
+                                    {manager.image ? (
+                                      <Image
+                                        src={manager.image}
+                                        alt=""
+                                        width={24}
+                                        height={24}
+                                        className="size-6 shrink-0 rounded-full object-cover"
+                                      />
+                                    ) : (
+                                      <span
+                                        className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${avatar.colorClass}`}
+                                      >
+                                        {avatar.initials}
+                                      </span>
+                                    )}
+                                    <span className="truncate">
+                                      {manager.name} {manager.lastName}
                                     </span>
-                                  )}
-                                  <span className="truncate">
-                                    {manager.name} {manager.lastName}
                                   </span>
-                                </span>
-                                <span className="ml-4 shrink-0 text-xs text-text-tertiary">
-                                  {manager._count.assignedJobOpenings}{" "}
-                                  {manager._count.assignedJobOpenings === 1
-                                    ? "vacante"
-                                    : "vacantes"}
-                                </span>
-                              </ComboboxItem>
-                            );
-                          })}
-                          {filteredManagers?.length === 0 && (
-                            <div className="px-4 py-3 text-sm text-muted-foreground">
-                              No hay hiring managers.
-                            </div>
-                          )}
-                        </ComboboxGroup>
-                      </ComboboxList>
-                      <div className="mt-2 border-t border-border-default p-4">
-                        <p className="text-xs leading-relaxed text-text-tertiary">
-                          Solo podés asignar usuarios existentes. Invitá nuevos
-                          desde <br />
-                          Configuración → Usuarios.
-                        </p>
-                      </div>
-                    </ComboboxContent>
-                  </Combobox>
+                                  <span className="ml-4 shrink-0 text-xs text-text-tertiary">
+                                    {manager._count.assignedJobOpenings}{" "}
+                                    {manager._count.assignedJobOpenings === 1
+                                      ? "vacante"
+                                      : "vacantes"}
+                                  </span>
+                                </ComboboxItem>
+                              );
+                            })}
+                            {filteredManagers?.length === 0 && (
+                              <div className="px-4 py-3 text-sm text-muted-foreground">
+                                No hay hiring managers.
+                              </div>
+                            )}
+                          </ComboboxGroup>
+                        </ComboboxList>
+                        <div className="mt-2 border-t border-border-default p-4">
+                          <p className="text-xs leading-relaxed text-text-tertiary">
+                            Solo podés asignar usuarios existentes. Invitá
+                            nuevos desde <br />
+                            Configuración → Usuarios.
+                          </p>
+                        </div>
+                      </ComboboxContent>
+                    </Combobox>
+                  )}
                 </div>
               </div>
             );

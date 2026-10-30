@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function AreaSetting() {
   const [isAddingArea, setIsAddingArea] = useState(false);
@@ -40,8 +41,13 @@ export default function AreaSetting() {
 
   const utils = api.useUtils();
 
-  const { data: areas, isLoading: isAreasLoading } =
-    api.area.getAllAreas.useQuery({});
+  const {
+    data: areas,
+    isLoading: isAreasLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.area.getAllAreas.useQuery({});
 
   const createArea = api.area.createArea.useMutation({
     onSuccess: async () => {
@@ -58,6 +64,7 @@ export default function AreaSetting() {
   const deleteArea = api.area.deleteArea.useMutation({
     onSuccess: async () => {
       setAreaToDelete(null);
+      toast.add({ title: "Área eliminada con éxito", type: "success" });
       await utils.area.getAllAreas.invalidate();
     },
     onError: (error) => {
@@ -120,6 +127,16 @@ export default function AreaSetting() {
 
   if (isAreasLoading) {
     return <GeneralSettingsCardSkeleton title="Áreas" rows={4} />;
+  }
+
+  if (isError || !areas) {
+    return (
+      <SettingsFetchError
+        title="Áreas"
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
   }
 
   return (
@@ -187,10 +204,9 @@ export default function AreaSetting() {
           {isAddingArea && (
             <form
               onSubmit={handleCreateArea}
-              className="flex items-end gap-3 border-b border-border-default
-              py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={areaName}

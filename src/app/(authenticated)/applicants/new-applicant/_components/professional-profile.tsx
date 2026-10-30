@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Skeleton } from "~/components/ui/skeleton";
 
 import {
   Select,
@@ -19,12 +20,16 @@ import {
 
 import type { ApplicantFormValues } from "./new-applicant-form";
 
-import { EnglishLevel } from "~/generated/prisma/enums";
+import { EnglishLevel, SalaryCurrency } from "~/generated/prisma/enums";
+import {
+  englishLevelTranslations,
+  salaryCurrencyTranslations,
+} from "~/lib/enum-translations";
 
 export default function ProfessionalProfile() {
   const englishLevels = Object.values(EnglishLevel).map((englishLevel) => ({
     value: englishLevel,
-    label: englishLevel,
+    label: englishLevelTranslations[englishLevel],
   }));
 
   const {
@@ -37,13 +42,13 @@ export default function ProfessionalProfile() {
     api.area.getAllAreas.useQuery({});
 
   const { data: roles, isLoading: isLoadingRole } =
-    api.role.getAllRoles.useQuery({});
+    api.jobRole.getAllRoles.useQuery({});
 
   const { data: seniorities, isLoading: isLoadingSeniority } =
     api.seniority.getAllSeniorities.useQuery({});
 
   const { data: jobOpenings, isLoading: isLoadingJobOpening } =
-    api.jobOpening.getAllJobOpenings.useQuery({});
+    api.jobOpening.getAllOpenJobOpenings.useQuery({});
 
   const jobOpening = useWatch({
     control,
@@ -69,159 +74,137 @@ export default function ProfessionalProfile() {
               Rol <span className="text-danger">*</span>
             </Label>
 
-            <Controller
-              name="role"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isLoadingRole}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={
-                        isLoadingRole
-                          ? "Cargando roles..."
-                          : "Seleccionar roles"
-                      }
-                    >
-                      {roles?.find((rol) => rol.id === field.value)?.name}
-                    </SelectValue>
-                  </SelectTrigger>
+            {isLoadingRole ? (
+              <Skeleton className="h-8 w-full rounded-lg" />
+            ) : (
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar roles">
+                        {roles?.find((rol) => rol.id === field.value)?.name}
+                      </SelectValue>
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    <SelectItem value="">Sin seleccionar</SelectItem>
-                    {roles?.map((rol) => (
-                      <SelectItem key={rol.id} value={rol.id}>
-                        {rol.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+                    <SelectContent>
+                      <SelectItem value="">Sin seleccionar</SelectItem>
+                      {roles?.map((rol) => (
+                        <SelectItem key={rol.id} value={rol.id}>
+                          {rol.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            )}
             {errors.role && (
-              <p className="text-danger">{errors.role.message}</p>
+              <p className="text-xs text-danger">{errors.role.message}</p>
             )}
           </div>
 
           <div className="space-y-1">
             <Label>Vacante</Label>
 
-            <Controller
-              name="jobOpening"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isLoadingJobOpening}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={
-                        isLoadingJobOpening
-                          ? "Cargando vacantes..."
-                          : "Seleccionar vacante"
-                      }
-                    >
-                      {
-                        jobOpenings?.find(
-                          (jobOpening) => jobOpening.id === field.value,
-                        )?.name
-                      }
-                    </SelectValue>
-                  </SelectTrigger>
+            {isLoadingJobOpening ? (
+              <Skeleton className="h-8 w-full rounded-lg" />
+            ) : (
+              <Controller
+                name="jobOpening"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar vacante">
+                        {
+                          jobOpenings?.find(
+                            (jobOpening) => jobOpening.id === field.value,
+                          )?.name
+                        }
+                      </SelectValue>
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    <SelectItem value="">Sin seleccionar</SelectItem>
-                    {jobOpenings?.map((jobOpening) => (
-                      <SelectItem key={jobOpening.id} value={jobOpening.id}>
-                        {jobOpening.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+                    <SelectContent>
+                      <SelectItem value="">Sin seleccionar</SelectItem>
+                      {jobOpenings?.map((jobOpening) => (
+                        <SelectItem key={jobOpening.id} value={jobOpening.id}>
+                          {jobOpening.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            )}
           </div>
 
           <div className="space-y-1">
             <Label>Seniority</Label>
 
-            <Controller
-              name="seniority"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isLoadingSeniority}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={
-                        isLoadingSeniority
-                          ? "Cargando seniorities..."
-                          : "Seleccionar seniority"
-                      }
-                    >
-                      {
-                        seniorities?.find(
-                          (seniority) => seniority.id === field.value,
-                        )?.name
-                      }
-                    </SelectValue>
-                  </SelectTrigger>
+            {isLoadingSeniority ? (
+              <Skeleton className="h-8 w-full rounded-lg" />
+            ) : (
+              <Controller
+                name="seniority"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar seniority">
+                        {
+                          seniorities?.find(
+                            (seniority) => seniority.id === field.value,
+                          )?.name
+                        }
+                      </SelectValue>
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    <SelectItem value="">Sin seleccionar</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="">Sin seleccionar</SelectItem>
 
-                    {seniorities?.map((seniority) => (
-                      <SelectItem key={seniority.id} value={seniority.id}>
-                        {seniority.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+                      {seniorities?.map((seniority) => (
+                        <SelectItem key={seniority.id} value={seniority.id}>
+                          {seniority.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            )}
           </div>
 
           <div className="space-y-1">
             <Label>Área</Label>
 
-            <Controller
-              name="area"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isLoadingArea}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={
-                        isLoadingArea ? "Cargando áreas..." : "Seleccionar área"
-                      }
-                    >
-                      {areas?.find((area) => area.id === field.value)?.name}
-                    </SelectValue>
-                  </SelectTrigger>
+            {isLoadingArea ? (
+              <Skeleton className="h-8 w-full rounded-lg" />
+            ) : (
+              <Controller
+                name="area"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Seleccionar área">
+                        {areas?.find((area) => area.id === field.value)?.name}
+                      </SelectValue>
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    <SelectItem value="">Sin seleccionar</SelectItem>
-                    {areas?.map((area) => (
-                      <SelectItem key={area.id} value={area.id}>
-                        {area.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+                    <SelectContent>
+                      <SelectItem value="">Sin seleccionar</SelectItem>
+                      {areas?.map((area) => (
+                        <SelectItem key={area.id} value={area.id}>
+                          {area.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            )}
           </div>
 
           {jobOpening && (
@@ -239,13 +222,20 @@ export default function ProfessionalProfile() {
                           onValueChange={field.onChange}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Moneda" />
+                            <SelectValue placeholder="Moneda">
+                              {field.value
+                                ? salaryCurrencyTranslations[field.value]
+                                : undefined}
+                            </SelectValue>
                           </SelectTrigger>
 
                           <SelectContent>
                             <SelectItem value="">Sin seleccionar</SelectItem>
-                            <SelectItem value="USD">USD</SelectItem>
-                            <SelectItem value="UYU">UYU</SelectItem>
+                            {Object.values(SalaryCurrency).map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {salaryCurrencyTranslations[currency]}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       )}
@@ -264,10 +254,14 @@ export default function ProfessionalProfile() {
                   </div>
                 </div>
                 {errors.currency && (
-                  <p className="text-danger">{errors.currency.message}</p>
+                  <p className="text-xs text-danger">
+                    {errors.currency.message}
+                  </p>
                 )}
                 {errors.desiredSalary && (
-                  <p className="text-danger">{errors.desiredSalary.message}</p>
+                  <p className="text-xs text-danger">
+                    {errors.desiredSalary.message}
+                  </p>
                 )}
               </div>
 
@@ -292,7 +286,11 @@ export default function ProfessionalProfile() {
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccionar nivel" />
+                    <SelectValue placeholder="Seleccionar nivel">
+                      {field.value
+                        ? englishLevelTranslations[field.value]
+                        : undefined}
+                    </SelectValue>
                   </SelectTrigger>
 
                   <SelectContent>

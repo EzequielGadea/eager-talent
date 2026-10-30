@@ -5,10 +5,11 @@ import { redirect } from "next/navigation";
 import { auth } from "~/lib/auth";
 
 import EditApplicantForm from "./_components/edit-applicant-form";
+import { EditApplicantPageSkeleton } from "./_components/edit-applicant-skeleton";
 
 export default function EditApplicantPage() {
   return (
-    <Suspense fallback={<div>Cargando candidato...</div>}>
+    <Suspense fallback={<EditApplicantPageSkeleton />}>
       <ProtectedEditApplicantPage />
     </Suspense>
   );
@@ -28,13 +29,5 @@ async function ProtectedEditApplicantPage() {
     redirect("/dashboard");
   }
 
-  return (
-    <>
-      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-        <h1 className="mb-0 text-2xl --text-primary">Editar candidato</h1>
-      </div>
-
-      <EditApplicantForm />
-    </>
-  );
+  return <EditApplicantForm />;
 }

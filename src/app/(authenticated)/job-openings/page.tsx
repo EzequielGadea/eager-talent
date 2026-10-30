@@ -5,7 +5,6 @@ import { z } from "zod";
 import { HiringManagerJobOpeningsFallback } from "./_components/hiring-manager-job-openings-fallback";
 import { RecruiterJobOpeningsFallback } from "./_components/recruiter-job-openings-fallback";
 import { auth } from "~/lib/auth";
-import { Skeleton } from "~/components/ui/skeleton";
 import JobOpeningsList from "./_components/job-opening-list";
 import {
   defaultJobOpeningSort,
@@ -17,6 +16,7 @@ import {
   jobOpeningHiringManagerIdSchema,
   jobOpeningStatusSchema,
 } from "~/server/api/routers/job-opening/filter";
+import { Skeleton } from "~/components/ui/skeleton";
 
 const jobOpeningsSearchParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -53,7 +53,7 @@ export default function JobOpeningsPage(props: JobOpeningsPageProps) {
 
 function JobOpeningsRoleFallback() {
   return (
-    <div role="status" className="mx-auto flex w-full flex-col gap-5 p-6">
+    <div role="status" className="mx-auto flex w-full flex-col gap-5 md:p-6">
       <span className="sr-only">Cargando vacantes</span>
       <Skeleton className="h-8 w-44" />
       <Skeleton className="h-4 w-64" />

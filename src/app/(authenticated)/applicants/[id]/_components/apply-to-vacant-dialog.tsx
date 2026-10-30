@@ -31,6 +31,7 @@ import { z } from "zod";
 
 import { api } from "~/lib/trpc/react";
 import { SalaryCurrency } from "~/generated/prisma/enums";
+import { salaryCurrencyTranslations } from "~/lib/enum-translations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import {
@@ -177,14 +178,14 @@ export function ApplyToVacantDialog({
               </DialogDescription>
             </DialogHeader>
             {errors.root && (
-              <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <div className="mb-4 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger">
                 {errors.root.message}
               </div>
             )}
             {jobOpeningsError && (
               <div
                 role="alert"
-                className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="mb-4 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 {jobOpeningsError.message}
               </div>
@@ -295,12 +296,19 @@ export function ApplyToVacantDialog({
                         disabled={!isJobOpeningSelected}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Moneda" />
+                          <SelectValue placeholder="Moneda">
+                            {field.value
+                              ? salaryCurrencyTranslations[field.value]
+                              : undefined}
+                          </SelectValue>
                         </SelectTrigger>
 
                         <SelectContent>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="UYU">UYU</SelectItem>
+                          {Object.values(SalaryCurrency).map((currency) => (
+                            <SelectItem key={currency} value={currency}>
+                              {salaryCurrencyTranslations[currency]}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       {fieldState.invalid && isJobOpeningSelected && (

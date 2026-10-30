@@ -19,8 +19,8 @@ export const deleteRole = protectedProcedure
       throw new TRPCError({ code: "FORBIDDEN" });
     }
 
-    const role = await ctx.db.jobRole.findFirst({
-      where: { id: input.id, deletedAt: null },
+    const role = await ctx.db.jobRole.findUnique({
+      where: { id: input.id },
       select: { _count: { select: { applicants: true } } },
     });
 
@@ -31,12 +31,12 @@ export const deleteRole = protectedProcedure
     if (role._count.applicants > 0) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "No se puede eliminar el rol porque tiene candidatos asignados.",
+        message:
+          "No se puede eliminar el rol porque tiene candidatos asignados.",
       });
     }
 
-    await ctx.db.jobRole.update({
+    await ctx.db.jobRole.delete({
       where: { id: input.id },
-      data: { deletedAt: new Date() },
     });
   });
