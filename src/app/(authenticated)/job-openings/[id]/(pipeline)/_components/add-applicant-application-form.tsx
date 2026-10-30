@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { toast } from "~/components/ui/toast";
 
 import getAvatar from "~/lib/avatar";
 
@@ -72,6 +74,7 @@ export function AddApplicantApplicationForm({
   onSuccess,
 }: AddApplicantApplicationFormProps) {
   const router = useRouter();
+  const [isTransitionPending, startTransition] = useTransition();
 
   const methods = useForm<AddApplicantApplicationFormValues>({
     resolver: zodResolver(addApplicantApplicationSchema),
@@ -90,8 +93,14 @@ export function AddApplicantApplicationForm({
   const createApplicationMutation =
     api.application.createApplication.useMutation({
       onSuccess: () => {
-        router.refresh();
-        onSuccess();
+        startTransition(() => {
+          onSuccess();
+          router.refresh();
+        });
+        toast.add({
+          title: "Candidato postulado correctamente",
+          type: "success",
+        });
       },
       onError: (error) => {
         if (error.data?.code === "PRECONDITION_FAILED") {
@@ -285,13 +294,15 @@ export function AddApplicantApplicationForm({
             type="button"
             variant="outline"
             onClick={onBack}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isTransitionPending}
           >
             Volver
           </Button>
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+          <Button type="submit" disabled={isSubmitting || isTransitionPending}>
+            {(isSubmitting || isTransitionPending) && (
+              <Loader2 className="size-4 animate-spin" />
+            )}
             Postular
           </Button>
         </div>

@@ -122,7 +122,9 @@ export function ApplicantApplicationsCard({
 
   function refreshApplicantData() {
     void utils.activity.getByApplicantId.invalidate({ applicantId });
-    router.refresh();
+    startTransition(() => {
+      router.refresh();
+    });
   }
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);

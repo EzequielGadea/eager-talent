@@ -13,6 +13,7 @@ import {
 } from "~/components/ui/dialog";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Textarea } from "~/components/ui/textarea";
+import { toast } from "~/components/ui/toast";
 
 type DisqualifyApplicantDialogProps = {
   open: boolean;
@@ -53,6 +54,10 @@ export function DisqualifyApplicantDialog({
 
   const disqualifyMutation = api.application.disqualifyApplication.useMutation({
     onSuccess: () => {
+      toast.add({
+        title: "Candidato descalificado correctamente",
+        type: "success",
+      });
       resetForm();
       onOpenChange(false);
       onSuccess();

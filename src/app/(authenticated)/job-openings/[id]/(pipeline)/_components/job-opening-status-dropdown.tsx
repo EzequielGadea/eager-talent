@@ -64,6 +64,13 @@ const fallbackStatusStyle = {
   dotClassName: "bg-muted-foreground",
 };
 
+const statusSuccessMessages: Record<JobOpeningStatus, string> = {
+  Open: "Vacante abierta correctamente",
+  Paused: "Vacante pausada correctamente",
+  Closed: "Vacante cerrada correctamente",
+  Cancelled: "Vacante cancelada correctamente",
+};
+
 function isTerminalStatus(value: JobOpeningStatus): value is TerminalStatus {
   return (
     value === JobOpeningStatus.Closed || value === JobOpeningStatus.Cancelled
@@ -82,7 +89,11 @@ export function JobOpeningStatusDropdown({
     useState<TerminalStatus>(JobOpeningStatus.Closed);
 
   const updateStatusMutation = api.jobOpening.updateStatus.useMutation({
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      toast.add({
+        title: statusSuccessMessages[variables.status],
+        type: "success",
+      });
       startTransition(() => {
         setIsConfirmOpen(false);
         router.refresh();

@@ -74,7 +74,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
       setIsAddingSeniority(false);
       setSeniorityName("");
       await utils.seniority.getAllSeniorities.invalidate();
-      toast.add({ title: "Seniority creada con éxito", type: "success" });
+      toast.add({ title: "Seniority creada correctamente", type: "success" });
     },
     onError: (error) => {
       toast.add({ title: error.message, type: "error" });
