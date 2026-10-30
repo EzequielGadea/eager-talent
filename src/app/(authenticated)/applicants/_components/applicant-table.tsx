@@ -125,20 +125,30 @@ export function HiringManagerApplicantTableHeader({
 }) {
   return (
     <TableHeader>
-      <TableRow>
-        <TableHead className={showSharedBy ? "w-[30%]" : "w-[35%]"}>
+      <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+        <TableHead
+          className={`${showSharedBy ? "w-[30%]" : "w-[35%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+        >
           Candidato
         </TableHead>
 
-        <TableHead className={showSharedBy ? "w-[25%]" : "w-[35%]"}>
+        <TableHead
+          className={`${showSharedBy ? "w-[25%]" : "w-[35%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+        >
           Vacante
         </TableHead>
 
-        <TableHead className={showSharedBy ? "w-[25%]" : "w-[30%]"}>
+        <TableHead
+          className={`${showSharedBy ? "w-[25%]" : "w-[30%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+        >
           Etapa / Estado
         </TableHead>
 
-        {showSharedBy && <TableHead className="w-[20%]">Enviado por</TableHead>}
+        {showSharedBy && (
+          <TableHead className="h-9.75 w-[20%] pr-4 py-0 pl-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+            Enviado por
+          </TableHead>
+        )}
       </TableRow>
     </TableHeader>
   );
