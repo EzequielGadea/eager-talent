@@ -4,10 +4,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useTransition } from "react";
 import { Share2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
+import { ListPagination } from "~/components/list-pagination";
 
 import type { ApplicantInfo } from "../types";
+import { ITEMS_PER_PAGE } from "../constants";
 import { ApplicantCardList } from "./applicant-card-list";
-import { ApplicantPagination } from "./applicant-pagination";
 import { HiringManagerApplicantTableHeader } from "./applicant-table";
 import { HiringManagerApplicantRow } from "./hiring-manager-applicant-row";
 import { TableFallback } from "./fallbacks";
@@ -93,9 +94,11 @@ export function SharedApplicantsTable(props: {
           </Table>
         </div>
 
-        <ApplicantPagination
-          countApplicants={props.countApplicants}
+        <ListPagination
+          totalItems={props.countApplicants}
+          pageSize={ITEMS_PER_PAGE}
           currentPage={props.currentPage}
+          itemLabel="candidatos"
           onPageChange={updatePage}
         />
       </div>

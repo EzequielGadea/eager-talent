@@ -11,15 +11,15 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { ListPagination } from "~/components/list-pagination";
 
 import { ApplicantCardList } from "./applicant-card-list";
-import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantRow } from "./applicant-row";
 import { HiringManagerApplicantRow } from "./hiring-manager-applicant-row";
 import { TableFallback } from "./fallbacks";
 
 import type { ApplicantInfo } from "../types";
-import { columns } from "../constants";
+import { columns, ITEMS_PER_PAGE } from "../constants";
 
 export function ApplicantTable(props: {
   applicantsData: ApplicantInfo[];
@@ -109,9 +109,11 @@ export function ApplicantTable(props: {
         </Table>
       </div>
 
-      <ApplicantPagination
-        countApplicants={props.countApplicants}
+      <ListPagination
+        totalItems={props.countApplicants}
+        pageSize={ITEMS_PER_PAGE}
         currentPage={props.currentPage}
+        itemLabel="candidatos"
         onPageChange={updatePage}
       />
     </div>
