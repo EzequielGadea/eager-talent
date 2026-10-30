@@ -14,7 +14,7 @@ export const metricsPeriodSchema = z.enum([
 
 export type MetricsPeriod = z.infer<typeof metricsPeriodSchema>;
 
-export const defaultMetricsPeriod: MetricsPeriod = "all";
+export const defaultMetricsPeriod: MetricsPeriod = "currentMonth";
 
 export const metricsFilterSchema = z.object({
   period: metricsPeriodSchema.default(defaultMetricsPeriod),
