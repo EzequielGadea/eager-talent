@@ -378,12 +378,16 @@ function PipelineChart({
               >
                 <SelectTrigger
                   id="metrics-job-opening"
-                  className="h-auto w-auto min-w-0 max-w-full gap-2 rounded-md bg-card px-3.25 py-1.75 text-[13px] font-medium text-text-primary [&_svg:last-child]:size-3.25 [&_svg:last-child]:text-text-tertiary"
+                  className="h-auto w-72 min-w-0 max-w-full gap-2 rounded-md bg-card px-3.25 py-1.75 text-[13px] font-medium text-text-primary [&_svg:last-child]:size-3.25 [&_svg:last-child]:text-text-tertiary"
                 >
                   <Briefcase className="size-3.5 shrink-0" aria-hidden="true" />
                   <SelectValue placeholder="Seleccioná una vacante" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent
+                  alignItemWithTrigger={false}
+                  align="end"
+                  className="w-max min-w-[var(--anchor-width)] max-w-[calc(100vw-2rem)]"
+                >
                   <SelectGroup>
                     {closedOpenings.map((opening) => (
                       <SelectItem key={opening.id} value={opening.id}>
