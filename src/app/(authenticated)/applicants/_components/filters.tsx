@@ -17,6 +17,7 @@ import {
 import { FilterKey, FiltersProps } from "../types";
 import { Source } from "~/generated/prisma/enums";
 import { sourceTranslations } from "~/lib/enum-translations";
+import { getTagStyles } from "~/lib/tags/get-tag-styles";
 import { cn } from "~/lib/utils";
 
 export function Filters({
@@ -257,15 +258,14 @@ export function Filters({
 
                           {config.key === "tag" ? (
                             <Badge
-                              variant="secondary"
-                              className="rounded-full border-transparent px-2 py-0.5 text-xs font-bold"
-                              style={{
-                                backgroundColor:
-                                  "color" in option &&
+                              variant="tag"
+                              className="rounded-full px-2 py-0.5 text-xs font-bold"
+                              style={getTagStyles(
+                                "color" in option &&
                                   typeof option.color === "string"
-                                    ? option.color
-                                    : "#e5e7eb",
-                              }}
+                                  ? option.color
+                                  : "gray",
+                              )}
                             >
                               {option.label}
                             </Badge>
