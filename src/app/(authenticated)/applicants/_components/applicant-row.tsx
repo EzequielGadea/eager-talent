@@ -64,7 +64,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
           )}
 
           <span
-            className="min-w-0 line-clamp-2 break-words whitespace-normal text-xs font-semibold leading-tight text-dashboard-dark"
+            className="min-w-0 line-clamp-2 wrap-break-word whitespace-normal text-xs font-semibold leading-tight text-dashboard-dark"
             title={props.applicant.name || "-"}
           >
             {props.applicant.name || "-"}
@@ -83,7 +83,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
                   variant="tag"
                   style={getTagStyles(tag.color ?? "gray")}
                   title={tag.label || "-"}
-                  className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
+                  className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4 align-middle"
                 >
                   {tag.label || "-"}
                 </Badge>
@@ -100,14 +100,14 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Vacante */}
       <TableCell className={`${columns.vacancy} py-2 align-middle`}>
         <div
-          className="break-words text-xs leading-tight text-dashboard-text-muted"
+          className="wrap-break-word text-xs leading-tight text-dashboard-text-muted"
           title={
             props.applicant.jobOpening.length <= 1
               ? ""
               : props.applicant.jobOpening.join(", ")
           }
         >
-          <span className="break-words">
+          <span className="wrap-break-word">
             {props.applicant.jobOpening[
               props.applicant.jobOpening.length - 1
             ] || "-"}
@@ -124,7 +124,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Rol */}
       <TableCell className={`${columns.role} py-2 align-middle`}>
         <div
-          className="break-words text-xs leading-tight text-dashboard-text-muted"
+          className="wrap-break-word text-xs leading-tight text-dashboard-text-muted"
           title={props.applicant.role || "-"}
         >
           {props.applicant.role || "-"}
@@ -141,7 +141,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             }}
             variant="secondary"
             title={props.applicant.seniorityName}
-            className="whitespace-nowrap rounded-md border-transparent px-2 py-0.5 text-[10px] font-bold leading-4"
+            className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4 align-middle"
           >
             {props.applicant.seniorityName}
           </Badge>
@@ -155,7 +155,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Área */}
       <TableCell className={`${columns.area} py-2 align-middle`}>
         <div
-          className="break-words text-xs leading-tight text-dashboard-text-muted"
+          className="wrap-break-word text-xs leading-tight text-dashboard-text-muted"
           title={props.applicant.area || "-"}
         >
           {props.applicant.area || "-"}
@@ -172,7 +172,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
               </span>
 
               <span
-                className="min-w-0 line-clamp-2 break-words leading-tight text-xs"
+                className="min-w-0 line-clamp-2 wrap-break-word leading-tight text-xs"
                 title={sourceTranslations[props.applicant.source]}
               >
                 {sourceTranslations[props.applicant.source]}
@@ -231,7 +231,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Email */}
       <TableCell className={`${columns.email} py-2 align-middle`}>
         <div
-          className="line-clamp-2 break-words whitespace-normal text-xs leading-tight text-dashboard-text-muted [overflow-wrap:anywhere]"
+          className="line-clamp-2 wrap-break-word whitespace-normal text-xs leading-tight text-dashboard-text-muted"
           title={props.applicant.email || "-"}
         >
           {props.applicant.email || "-"}
