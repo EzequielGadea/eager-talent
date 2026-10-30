@@ -26,6 +26,7 @@ export function Filters({
   areaData,
   jobOpeningData,
   tagData,
+  countApplicants,
   isHiringManagerView,
 }: FiltersProps) {
   const router = useRouter();
@@ -164,7 +165,7 @@ export function Filters({
       </div>
 
       {/* Scrolls horizontally on mobile; from `md` up the filters wrap as before. */}
-      <div className="flex w-full gap-2 overflow-x-auto pb-1 md:contents">
+      <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 md:contents">
         {filterGroups.map((config) => {
           const activeValues = new Set(searchParams.getAll(config.key));
           const activeFilterCount = activeValues.size;
@@ -304,6 +305,13 @@ export function Filters({
             </Popover>
           );
         })}
+
+        {isHiringManagerView && (
+          <span className="ml-auto shrink-0 text-sm text-text-secondary">
+            {countApplicants}{" "}
+            {countApplicants === 1 ? "candidato" : "candidatos"}
+          </span>
+        )}
       </div>
     </>
   );
