@@ -1,4 +1,9 @@
-import { Card, CardAction, CardContent, CardHeader } from "~/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+} from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 
 export function InterviewHeaderSkeleton() {
@@ -85,4 +90,3 @@ export function InterviewPageSkeleton() {
     </div>
   );
 }
-
