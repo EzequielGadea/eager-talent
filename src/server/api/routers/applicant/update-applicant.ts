@@ -7,6 +7,7 @@ import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 
 import { Prisma } from "~/generated/prisma/client";
 import { protectedProcedure } from "~/server/api/trpc";
+import { uploadthingUrlSchema } from "~/lib/validations/uploadthing-url";
 
 export const updateApplicant = protectedProcedure
   .input(
@@ -18,7 +19,7 @@ export const updateApplicant = protectedProcedure
       email: z.string().optional(),
       phone: optionalE164PhoneSchema,
 
-      photo: z.string().nullable().optional(),
+      photo: uploadthingUrlSchema.nullable().optional(),
 
       country: z.string().optional(),
       linkedin: z.string().optional(),
@@ -32,8 +33,8 @@ export const updateApplicant = protectedProcedure
       careerStartYear: z.number().nullable().optional(),
       careerEndYear: z.number().nullable().optional(),
 
-      education: z.string().nullable().optional(),
-      resume: z.string().nullable().optional(),
+      education: uploadthingUrlSchema.nullable().optional(),
+      resume: uploadthingUrlSchema.nullable().optional(),
 
       roleId: z.string().min(1),
       areaId: z.string().nullable().optional(),
