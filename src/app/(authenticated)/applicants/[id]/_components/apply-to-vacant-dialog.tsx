@@ -172,6 +172,15 @@ export function ApplyToVacantDialog({
     name: "jobOpeningId",
   });
 
+  /*
+   *  con los siguientes watch y effect puedo hacer que el error de
+   *  monedas/salario se muestre al ingresar datos a los campos, comentarlos
+   *  junto con los disabled del boton de subida:
+   *  jobOpeningsError != null e isValid (lineas 392 y 393 al escribir esto)
+   *  si se prefiere que se bloquee el intento de submit si hay errores,
+   *  esas condiciones impiden se suba el form cuando zod encuentra algun error
+   */
+
   const desiredSalary = useWatch({
     control,
     name: "desiredSalary",
@@ -387,7 +396,10 @@ export function ApplyToVacantDialog({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setShowDialog(false)}
+                onClick={() => {
+                  reset();
+                  setShowDialog(false);
+                }}
               >
                 Cancelar
               </Button>
