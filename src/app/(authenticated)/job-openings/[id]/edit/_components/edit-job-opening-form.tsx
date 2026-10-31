@@ -138,12 +138,10 @@ export function EditJobOpeningForm({
         {children}
         <footer className="pb-6">
           <Card className="w-full rounded-xl py-5 shadow-sm">
-            <CardContent className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+            <CardContent className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
               <Button
                 nativeButton={false}
                 variant="outline"
-                size="lg"
-
                 render={
                   <Link
                     href={`/job-openings/${defaultValues.id}/pipeline`}
@@ -154,7 +152,7 @@ export function EditJobOpeningForm({
                 Cancelar
               </Button>
 
-              <Button type="submit" size="lg" disabled={isSaving}>
+              <Button type="submit" disabled={isSaving}>
                 {isSaving ? (
                   <>
                     <LoaderCircle

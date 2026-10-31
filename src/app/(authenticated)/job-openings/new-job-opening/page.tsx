@@ -56,7 +56,7 @@ async function ProtectedNewJobOpeningPage() {
   return (
     <>
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5">
-        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">5880d3 (incidencia i61 fix: Se uniformó estilo de botones y titulos, además de acomodar el titulo de nueva vacnate)
+        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
           Nueva vacante
         </h1>
         <Suspense fallback={<NewJobOpeningFallback />}>
