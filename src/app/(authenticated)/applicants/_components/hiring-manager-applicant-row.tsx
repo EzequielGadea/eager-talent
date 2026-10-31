@@ -102,7 +102,11 @@ export function HiringManagerApplicantRow({
         )}
       </TableCell>
 
-      {showSharedBy && <TableCell>{applicant.sharedBy ?? "-"}</TableCell>}
+      {showSharedBy && (
+        <TableCell className="py-3 pr-4 pl-0">
+          {applicant.sharedBy ?? "-"}
+        </TableCell>
+      )}
     </TableRow>
   );
 }
