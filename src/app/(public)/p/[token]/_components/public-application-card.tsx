@@ -1,12 +1,7 @@
 import { Briefcase, CircleAlert } from "lucide-react";
 
 import type { JobOpeningStatus } from "~/generated/prisma/enums";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { getApplicationStatusBadge } from "../utils";
 
@@ -93,7 +88,7 @@ export function PublicApplicationCard({
               Disponibilidad
             </p>
             <p className="mt-1 text-sm font-medium text-text-primary">
-              {availability ?? "Sin información"}
+              {availability?.trim() || "Sin información"}
             </p>
           </div>
 
