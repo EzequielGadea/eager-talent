@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { getUploadthingAppId } from "./src/lib/uploadthing-app-id";
+
+const uploadthingAppId = getUploadthingAppId();
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -17,6 +20,15 @@ const nextConfig: NextConfig = {
         hostname: "utfs.io",
         pathname: "/f/**",
       },
+      ...(uploadthingAppId
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: `${uploadthingAppId}.ufs.sh`,
+              pathname: "/f/**",
+            },
+          ]
+        : []),
     ],
   },
   experimental: {
