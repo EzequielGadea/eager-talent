@@ -27,6 +27,20 @@ export const getInterviewAmount = protectedProcedure.query(async ({ ctx }) => {
   const [amount, today] = await Promise.all([
     ctx.db.interview.count({
       where: {
+        deletedAt: null,
+        applicant: { deletedAt: null },
+        OR: [
+          { jobOpeningId: null },
+          {
+            application: {
+              is: {
+                jobOpening: {
+                  status: "Open",
+                },
+              },
+            },
+          },
+        ],
         date: {
           gte: weekStart,
           lt: nextWeekStart,
@@ -35,6 +49,20 @@ export const getInterviewAmount = protectedProcedure.query(async ({ ctx }) => {
     }),
     ctx.db.interview.count({
       where: {
+        deletedAt: null,
+        applicant: { deletedAt: null },
+        OR: [
+          { jobOpeningId: null },
+          {
+            application: {
+              is: {
+                jobOpening: {
+                  status: "Open",
+                },
+              },
+            },
+          },
+        ],
         date: {
           gte: todayStart,
           lt: tomorrowStart,

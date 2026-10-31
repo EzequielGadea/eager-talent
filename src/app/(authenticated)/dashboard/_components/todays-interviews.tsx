@@ -1,21 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
 import { format } from "date-fns";
 import { TZDate } from "@date-fns/tz";
 import { Clock } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "~/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import getAvatar from "~/lib/avatar";
 import { getTagColor } from "~/lib/tags/get-tag-color";
 import { getTagStyles } from "~/lib/tags/get-tag-styles";
-import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
+import { DashboardFetchError } from "./dashboard-fetch-error";
 
 function InterviewPlaceholder() {
   return (
@@ -32,18 +27,15 @@ function InterviewPlaceholder() {
 }
 
 export function TodaysInterviews() {
-  const { data, isLoading, isError, error } = api.interview.today.useQuery();
+  const { data, isLoading, isError, isFetching, refetch } =
+    api.interview.today.useQuery();
   const interviews = data?.interviews ?? [];
-
-  useEffect(() => {
-    if (isError) toast.add({ title: error.message, type: "error" });
-  }, [error, isError]);
 
   return (
     <section
       aria-label="Entrevistas de hoy"
       aria-busy={isLoading}
-      className="rounded-lg border border-border-default bg-white p-5 shadow-sm"
+      className="rounded-lg border border-border-default --surfa-card p-5 shadow-sm"
     >
       <header className="mb-1 flex items-center gap-2">
         <Clock className="size-4.5 text-text-secondary" aria-hidden="true" />
@@ -61,9 +53,12 @@ export function TodaysInterviews() {
           <InterviewPlaceholder />
         </div>
       ) : isError ? (
-        <p role="alert" className="py-5 text-sm text-destructive">
-          No se pudieron cargar las entrevistas de hoy.
-        </p>
+        <div className="flex justify-center py-5">
+          <DashboardFetchError
+            refetch={refetch}
+            isFetching={isFetching}
+          />
+        </div>
       ) : interviews.length > 0 ? (
         interviews.map((interview) => {
           const avatar = getAvatar(

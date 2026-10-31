@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import { PipelineIcon } from "../../_components/app-icons";
-import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
+import { DashboardFetchError } from "./dashboard-fetch-error";
 
 function PipelineRowPlaceholder() {
   return (
@@ -18,19 +17,20 @@ function PipelineRowPlaceholder() {
 }
 
 export function SelectionPipeline() {
-  const { data: stages, isLoading, isError, error } =
-    api.jobOpening.getSelectionPipeline.useQuery();
+  const {
+    data: stages,
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+  } = api.jobOpening.getSelectionPipeline.useQuery();
   const maxCount = Math.max(...(stages ?? []).map((stage) => stage.count), 1);
-
-  useEffect(() => {
-    if (isError) toast.add({ title: error.message, type: "error" });
-  }, [error, isError]);
 
   return (
     <section
       aria-label="Pipeline de selección"
       aria-busy={isLoading}
-      className="rounded-lg border border-border-default bg-white p-5 shadow-sm"
+      className="rounded-lg border border-border-default --surfa-card p-5 shadow-sm"
     >
       <header className="mb-4.5 flex items-center gap-2">
         <PipelineIcon
@@ -52,9 +52,10 @@ export function SelectionPipeline() {
           <PipelineRowPlaceholder />
         </div>
       ) : isError ? (
-        <p role="alert" className="py-5 text-sm text-destructive">
-          No se pudo cargar el pipeline de selección.
-        </p>
+        <DashboardFetchError
+          refetch={refetch}
+          isFetching={isFetching}
+        />
       ) : stages && stages.length > 0 ? (
         <div className="flex flex-col gap-4">
           {stages.map((stage) => (

@@ -1,26 +1,32 @@
 "use client";
 
-import { useEffect } from "react";
-import { Check } from "lucide-react";
+import { Check, CircleAlert } from "lucide-react";
 import { InterviewsIcon } from "../../_components/app-icons";
-import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
+import { DashboardFetchError } from "./dashboard-fetch-error";
 
 export function DashboardInterviews() {
-  const { data: interviews, isLoading, isError, error } =
-    api.interview.getInterviewAmount.useQuery();
-
-  useEffect(() => {
-    if (isError) toast.add({ title: error.message, type: "error" });
-  }, [error, isError]);
+  const {
+    data: interviews,
+    isLoading,
+    isError,
+    isFetching,
+    refetch,
+  } = api.interview.getInterviewAmount.useQuery();
 
   return (
-    <article className="flex min-h-32 items-start gap-4 rounded-lg border border-border-default bg-white p-5 shadow-sm">
-      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-tag-purple-bg">
-        <InterviewsIcon
-          className="size-5.5 text-tag-purple-fg"
-          aria-hidden="true"
-        />
+    <article className="flex min-h-32 items-start gap-4 rounded-lg border border-border-default --surfa-card p-5 shadow-sm">
+      <div
+        className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${isError ? "bg-danger-bg" : "bg-tag-purple-bg"}`}
+      >
+        {isError ? (
+          <CircleAlert className="size-5.5 text-danger" aria-hidden="true" />
+        ) : (
+          <InterviewsIcon
+            className="size-5.5 text-tag-purple-fg"
+            aria-hidden="true"
+          />
+        )}
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -37,9 +43,10 @@ export function DashboardInterviews() {
             <div className="mt-2 h-3 w-32 rounded-full bg-surface-sunken" />
           </>
         ) : isError ? (
-          <p role="alert" className="mt-2 text-sm text-destructive">
-            No se pudieron cargar las entrevistas.
-          </p>
+          <DashboardFetchError
+            refetch={refetch}
+            isFetching={isFetching}
+          />
         ) : (
           <>
             <p className="mt-1 text-3xl leading-none font-semibold text-text-primary">

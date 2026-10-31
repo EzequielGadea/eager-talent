@@ -28,10 +28,20 @@ export const getTodayInterview = protectedProcedure.query(async ({ ctx }) => {
 
   const interviews = await ctx.db.interview.findMany({
     where: {
+      deletedAt: null,
+      applicant: { deletedAt: null },
       date: {
         gte: todayStart,
         lt: tomorrowStart,
       },
+      OR: [
+        { jobOpeningId: null },
+        {
+          application: {
+            is: { jobOpening: { status: "Open" } },
+          },
+        },
+      ],
     },
     select: {
       id: true,

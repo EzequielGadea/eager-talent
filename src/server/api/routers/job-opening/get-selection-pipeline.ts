@@ -1,7 +1,10 @@
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
-import { parseStages } from "~/lib/validations/job-opening";
+import {
+  parseStages,
+  isRequiredStageName,
+} from "~/lib/validations/job-opening";
 import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -15,36 +18,26 @@ function normalizeStageName(name: string) {
 
 export const getSelectionPipeline = protectedProcedure.query(
   async ({ ctx }) => {
-    const [canReadAllResult, canReadAssignedResult] = await Promise.all([
+    const [canReadAllResult] = await Promise.all([
       auth.api.hasPermission({
         headers: ctx.headers,
         body: { permissions: { jobOpening: ["read"] } },
       }),
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { jobOpening: ["readAssigned"] } },
-      }),
     ]);
 
-    if (!canReadAllResult.success && !canReadAssignedResult.success) {
+    if (!canReadAllResult.success) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "No tenés permiso para consultar vacantes",
       });
     }
 
-    const accessWhere = canReadAllResult.success
-      ? {}
-      : isHiringManagerAssignedToJobOpening(ctx.session.user.id);
-
     const jobOpenings = await ctx.db.jobOpening.findMany({
-      where: {
-        AND: [accessWhere, { status: "Open" }],
-      },
+      where: {},
       select: {
         stages: true,
         applications: {
-          where: { active: true },
+          where: { active: true, deletedAt: null, applicant: { deletedAt: null } },
           select: { currentStageId: true },
         },
       },
@@ -56,7 +49,9 @@ export const getSelectionPipeline = protectedProcedure.query(
     >();
 
     for (const jobOpening of jobOpenings) {
-      const stages = parseStages(jobOpening.stages);
+      const stages = parseStages(jobOpening.stages).filter((stage) =>
+        isRequiredStageName(stage.name),
+      );
       const stageById = new Map(stages.map((stage) => [stage.key, stage]));
 
       for (const stage of stages) {
