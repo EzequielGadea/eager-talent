@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
+  DialogFooter,
 } from "~/components/ui/dialog";
 import {
   Select,
@@ -24,6 +25,12 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "~/components/ui/combobox2";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "~/components/ui/field";
 
 import { z } from "zod";
 
@@ -170,12 +177,12 @@ export function ApplyToVacantDialog({
   });
 
   /*
-   *  con los siguientes watch y effect puedo hacer que el error de
-   *  monedas/salario se muestre al ingresar datos a los campos, comentarlos
-   *  junto con los disabled del boton de subida:
-   *  jobOpeningsError != null e isValid (lineas 392 y 393 al escribir esto)
-   *  si se prefiere que se bloquee el intento de submit si hay errores,
-   *  esas condiciones impiden se suba el form cuando zod encuentra algun error
+   * con los siguientes watch y effect puedo hacer que el error de
+   * monedas/salario se muestre al ingresar datos a los campos, comentarlos
+   * junto con los disabled del boton de subida:
+   * jobOpeningsError != null e isValid (lineas 392 y 393 al escribir esto)
+   * si se prefiere que se bloquee el intento de submit si hay errores,
+   * esas condiciones impiden se suba el form cuando zod encuentra algun error
    */
 
   const desiredSalary = useWatch({
@@ -190,6 +197,7 @@ export function ApplyToVacantDialog({
   useEffect(() => {
     void trigger(["desiredSalary", "currency"]);
   }, [desiredSalary, currency, trigger]);
+
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
@@ -290,137 +298,128 @@ export function ApplyToVacantDialog({
               }}
             />
 
-            <div className="grid gap-2">
-              <label
-                htmlFor="apply-desired-salary"
-                className="text-sm font-medium text-text-primary"
-              >
-                Salario deseado
-              </label>
+            <FieldGroup>
+              <div className="grid gap-2">
+                <label
+                  htmlFor="apply-desired-salary"
+                  className="text-sm font-medium text-text-primary"
+                >
+                  Salario deseado
+                </label>
 
-              <div className="grid grid-cols-[1fr_120px] gap-2">
-                <Controller
-                  control={control}
-                  name="desiredSalary"
-                  render={({ field, fieldState }) => (
-                    <div className="grid gap-1">
-                      <Input
-                        id="apply-desired-salary"
-                        type="number"
-                        step="0.01"
-                        placeholder="Ej. 3500"
-                        disabled={!isJobOpeningSelected}
-                        min={0}
-                        aria-invalid={
-                          fieldState.invalid && !!isJobOpeningSelected
-                        }
-                        {...field}
-                        value={
-                          (field.value as string | number | undefined) ?? ""
-                        }
-                      />
-
-                      {fieldState.invalid && isJobOpeningSelected && (
-                        <p className="text-xs text-danger">
-                          {fieldState.error?.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-
-                <Controller
-                  control={control}
-                  name="currency"
-                  render={({ field, fieldState }) => (
-                    <div className="grid gap-1">
-                      <Select
-                        value={field.value ?? null}
-                        onValueChange={field.onChange}
-                        disabled={!isJobOpeningSelected}
-                      >
-                        <SelectTrigger
-                          aria-label="Moneda"
+                <div className="grid grid-cols-[1fr_120px] gap-2">
+                  <Controller
+                    control={control}
+                    name="desiredSalary"
+                    render={({ field, fieldState }) => (
+                      <div className="grid gap-1">
+                        <Input
+                          id="apply-desired-salary"
+                          type="number"
+                          step="0.01"
+                          placeholder="Ej. 3500"
+                          disabled={!isJobOpeningSelected}
+                          min={0}
                           aria-invalid={
                             fieldState.invalid && !!isJobOpeningSelected
                           }
-                          className="w-full disabled:bg-input/50 dark:disabled:bg-input/80"
-                        >
-                          <SelectValue placeholder="Moneda">
-                            {field.value
-                              ? salaryCurrencyTranslations[field.value]
-                              : undefined}
-                          </SelectValue>
-                          {field.value && (
-                            <span
-                              role="button"
-                              tabIndex={isJobOpeningSelected ? 0 : -1}
-                              onPointerDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                field.onChange(undefined);
-                              }}
-                              aria-label="Quitar moneda"
-                              className="ml-auto rounded-sm p-1 text-muted-foreground hover:text-foreground"
-                            >
-                              <X className="h-4 w-4" />
-                            </span>
-                          )}
-                        </SelectTrigger>
+                          {...field}
+                          value={
+                            (field.value as string | number | undefined) ?? ""
+                          }
+                        />
 
-                        <SelectContent>
-                          {Object.values(SalaryCurrency).map((currency) => (
-                            <SelectItem key={currency} value={currency}>
-                              {salaryCurrencyTranslations[currency]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      {fieldState.invalid && isJobOpeningSelected && (
-                        <p className="text-xs text-danger">
-                          {fieldState.error?.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              </div>
-            </div>
-
-            <Controller
-              control={control}
-              name="availability"
-              render={({ field, fieldState }) => (
-                <div className="grid gap-2">
-                  <label
-                    htmlFor="apply-availability"
-                    className="text-sm font-medium text-text-primary"
-                  >
-                    Disponibilidad
-                  </label>
-
-                  <Input
-                    id="apply-availability"
-                    placeholder="Ej. Inmediata, 15 días, 1 mes"
-                    disabled={!isJobOpeningSelected}
-                    aria-invalid={fieldState.invalid && !!isJobOpeningSelected}
-                    {...field}
+                        {fieldState.invalid && isJobOpeningSelected && (
+                          <p className="text-xs text-danger">
+                            {fieldState.error?.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   />
 
-                  {fieldState.invalid && isJobOpeningSelected && (
-                    <p className="text-xs text-danger">
-                      {fieldState.error?.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
+                  <Controller
+                    control={control}
+                    name="currency"
+                    render={({ field, fieldState }) => (
+                      <div className="grid gap-1">
+                        <Select
+                          value={field.value ?? null}
+                          onValueChange={field.onChange}
+                          disabled={!isJobOpeningSelected}
+                        >
+                          <SelectTrigger
+                            aria-label="Moneda"
+                            aria-invalid={
+                              fieldState.invalid && !!isJobOpeningSelected
+                            }
+                            className="w-full disabled:bg-input/50 dark:disabled:bg-input/80"
+                          >
+                            <SelectValue placeholder="Moneda">
+                              {field.value
+                                ? salaryCurrencyTranslations[field.value]
+                                : undefined}
+                            </SelectValue>
+                            {field.value && (
+                              <span
+                                role="button"
+                                tabIndex={isJobOpeningSelected ? 0 : -1}
+                                onPointerDown={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  field.onChange(undefined);
+                                }}
+                                aria-label="Quitar moneda"
+                                className="ml-auto rounded-sm p-1 text-muted-foreground hover:text-foreground"
+                              >
+                                <X className="h-4 w-4" />
+                              </span>
+                            )}
+                          </SelectTrigger>
 
-            <div className="flex justify-end gap-2 border-t border-border-default pt-4">
+                          <SelectContent>
+                            {Object.values(SalaryCurrency).map((currency) => (
+                              <SelectItem key={currency} value={currency}>
+                                {salaryCurrencyTranslations[currency]}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        {fieldState.invalid && isJobOpeningSelected && (
+                          <p className="text-xs text-danger">
+                            {fieldState.error?.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <Controller
+                control={control}
+                name="availability"
+                render={({ field, fieldState }) => (
+                  <Field className="mb-5">
+                    <FieldLabel>Disponibilidad</FieldLabel>
+                    <Input
+                      placeholder="Ej. Inmediata, 15 días, 1 mes"
+                      disabled={!isJobOpeningSelected}
+                      {...field}
+                    />
+                    {fieldState.invalid && isJobOpeningSelected && (
+                      <FieldError>{fieldState.error?.message}</FieldError>
+                    )}
+                  </Field>
+                )}
+              />
+            </FieldGroup>
+
+            <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
@@ -450,7 +449,7 @@ export function ApplyToVacantDialog({
                 )}
                 Postular
               </Button>
-            </div>
+            </DialogFooter>
           </div>
         </form>
       </DialogContent>
