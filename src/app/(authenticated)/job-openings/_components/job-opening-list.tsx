@@ -23,9 +23,10 @@ import {
 
 import JobOpeningRow from "./job-opening-row";
 import { JobOpeningCardList } from "./job-opening-card-list";
-import { JobOpeningPagination } from "./job-opening-pagination";
+import { ListPagination } from "~/components/list-pagination";
 import type { JobOpeningSortValue } from "~/server/api/routers/job-opening/sort";
 import type { JobOpeningStatus } from "~/generated/prisma/enums";
+import { ITEMS_PER_PAGE } from "../constants";
 
 export default function JobOpeningsList({
   currentPage,
@@ -314,9 +315,11 @@ export default function JobOpeningsList({
           </Table>
         </div>
 
-        <JobOpeningPagination
-          countJobOpenings={jobOpeningsAmount.total}
+        <ListPagination
+          totalItems={jobOpeningsAmount.total}
+          pageSize={ITEMS_PER_PAGE}
           currentPage={currentPage}
+          itemLabel="vacantes"
           onPageChange={updatePage}
         />
       </div>

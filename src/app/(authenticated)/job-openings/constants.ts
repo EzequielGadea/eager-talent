@@ -1,6 +1,8 @@
 import type { JobOpeningStatus } from "~/generated/prisma/enums";
 import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 
+export const ITEMS_PER_PAGE = 8;
+
 export const statusConfig = {
   Open: {
     label: jobOpeningStatusTranslations.Open,
