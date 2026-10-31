@@ -10,6 +10,7 @@ import { InterviewType } from "~/generated/prisma/enums";
 import { interviewTypeTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
+import getAvatar from "~/lib/avatar";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -423,7 +424,15 @@ export function ScheduleInterviewDialog({
                                   }}
                                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-hover"
                                 >
-                                  <span className="flex size-7 items-center justify-center rounded-full bg-dashboard-purple-avatar text-[11px] font-semibold text-dashboard-purple-text">
+                                  <span
+                                    className={cn(
+                                      "flex size-7 items-center justify-center rounded-full text-[11px] font-semibold",
+                                      getAvatar(
+                                        interviewer.name,
+                                        interviewer.lastName,
+                                      ).colorClass,
+                                    )}
+                                  >
                                     {initialsOf(
                                       interviewer.name,
                                       interviewer.lastName,
@@ -458,7 +467,15 @@ export function ScheduleInterviewDialog({
                               key={interviewer.id}
                               className="flex items-center gap-2 rounded-full border border-border-default bg-surface-subtle py-1 pr-1 pl-1"
                             >
-                              <span className="flex size-6 items-center justify-center rounded-full bg-dashboard-purple-avatar text-[10px] font-semibold text-dashboard-purple-text">
+                              <span
+                                className={cn(
+                                  "flex size-6 items-center justify-center rounded-full text-[10px] font-semibold",
+                                  getAvatar(
+                                    interviewer.name,
+                                    interviewer.lastName,
+                                  ).colorClass,
+                                )}
+                              >
                                 {initialsOf(
                                   interviewer.name,
                                   interviewer.lastName,

@@ -87,6 +87,30 @@ export const createJobOpening = protectedProcedure
         message: "FORBIDDEN",
       });
     }
+    const organizationId = ctx.session.session.activeOrganizationId;
+
+    if (!organizationId) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "No hay una organización activa",
+      });
+    }
+
+    const validHiringManagerCount = await ctx.db.member.count({
+      where: {
+        organizationId,
+        role: "hiringManager",
+        userId: { in: input.hiringManagerIds },
+        user: { banned: false, deletedAt: null },
+      },
+    });
+
+    if (validHiringManagerCount !== new Set(input.hiringManagerIds).size) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Uno o más Hiring Managers no son válidos",
+      });
+    }
     try {
       // creating the job opening
       const jobOpening = await ctx.db.$transaction(async (tx) => {
