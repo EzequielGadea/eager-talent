@@ -412,7 +412,9 @@ export function ApplyToVacantDialog({
                       {...field}
                     />
                     {fieldState.invalid && isJobOpeningSelected && (
-                      <FieldError>{fieldState.error?.message}</FieldError>
+                      <p className="text-xs text-danger">
+                        {fieldState.error?.message}
+                      </p>
                     )}
                   </Field>
                 )}
