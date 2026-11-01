@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { PDFDocument, PDFName } from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
 import sharp from "sharp";
 import { UTApi } from "uploadthing/server";
 
