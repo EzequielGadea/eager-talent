@@ -5,7 +5,6 @@ import {
   parseStages,
   isRequiredStageName,
 } from "~/lib/validations/job-opening";
-import { isHiringManagerAssignedToJobOpening } from "~/server/api/procedures/is-hiring-manager-assigned-to-job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
 function normalizeStageName(name: string) {
@@ -37,7 +36,11 @@ export const getSelectionPipeline = protectedProcedure.query(
       select: {
         stages: true,
         applications: {
-          where: { active: true, deletedAt: null, applicant: { deletedAt: null } },
+          where: {
+            active: true,
+            deletedAt: null,
+            applicant: { deletedAt: null },
+          },
           select: { currentStageId: true },
         },
       },

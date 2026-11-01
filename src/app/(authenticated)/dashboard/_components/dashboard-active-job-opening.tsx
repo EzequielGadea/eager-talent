@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, CircleAlert, X } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import { VacanciesIcon } from "../../_components/app-icons";
 import { api } from "~/lib/trpc/react";
 import { DashboardFetchError } from "./dashboard-fetch-error";
@@ -15,18 +15,12 @@ export function DashboardActiveJobOpening() {
   } = api.jobOpening.getJobOpeningsAmount.useQuery({});
 
   return (
-    <article className="flex min-h-32 items-start gap-4 rounded-lg border border-border-default --surfa-card p-5 shadow-sm">
-      <div
-        className={`flex size-11 shrink-0 items-center justify-center rounded-xl ${isError ? "bg-danger-bg" : "bg-success-bg"}`}
-      >
-        {isError ? (
-          <CircleAlert className="size-5.5 text-danger" aria-hidden="true" />
-        ) : (
-          <VacanciesIcon
-            className="size-5.5 text-accent-green-strong"
-            aria-hidden="true"
-          />
-        )}
+    <article className="flex min-h-32 items-start gap-4 rounded-lg border border-border-default bg-surface-card p-5 shadow-sm">
+      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-success-bg">
+        <VacanciesIcon
+          className="size-5.5 text-accent-green-strong"
+          aria-hidden="true"
+        />
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -43,10 +37,7 @@ export function DashboardActiveJobOpening() {
             <div className="mt-2 h-3 w-32 rounded-full bg-surface-sunken" />
           </>
         ) : isError ? (
-          <DashboardFetchError
-            refetch={refetch}
-            isFetching={isFetching}
-          />
+          <DashboardFetchError refetch={refetch} isFetching={isFetching} />
         ) : (
           <>
             <p className="mt-1 text-3xl leading-none font-semibold text-text-primary">

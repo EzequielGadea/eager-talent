@@ -16,9 +16,7 @@ export function DashboardHeader() {
         { locale: es },
       );
 
-      setFormattedDate(
-        date.charAt(0).toLocaleUpperCase("es") + date.slice(1),
-      );
+      setFormattedDate(date.charAt(0).toLocaleUpperCase("es") + date.slice(1));
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
@@ -26,7 +24,7 @@ export function DashboardHeader() {
 
   return (
     <header>
-      <h1 className="text-4xl leading-tight font-bold tracking-tight text-text-primary">
+      <h1 className="font-heading text-3xl font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
         Dashboard
       </h1>
       {formattedDate ? (

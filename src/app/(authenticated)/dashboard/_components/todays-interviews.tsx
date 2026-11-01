@@ -35,7 +35,7 @@ export function TodaysInterviews() {
     <section
       aria-label="Entrevistas de hoy"
       aria-busy={isLoading}
-      className="rounded-lg border border-border-default --surfa-card p-5 shadow-sm"
+      className="rounded-lg border border-border-default bg-surface-card p-5 shadow-sm"
     >
       <header className="mb-1 flex items-center gap-2">
         <Clock className="size-4.5 text-text-secondary" aria-hidden="true" />
@@ -54,10 +54,7 @@ export function TodaysInterviews() {
         </div>
       ) : isError ? (
         <div className="flex justify-center py-5">
-          <DashboardFetchError
-            refetch={refetch}
-            isFetching={isFetching}
-          />
+          <DashboardFetchError refetch={refetch} isFetching={isFetching} />
         </div>
       ) : interviews.length > 0 ? (
         interviews.map((interview) => {

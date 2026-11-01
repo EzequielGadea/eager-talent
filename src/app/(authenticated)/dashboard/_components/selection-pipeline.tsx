@@ -30,7 +30,7 @@ export function SelectionPipeline() {
     <section
       aria-label="Pipeline de selección"
       aria-busy={isLoading}
-      className="rounded-lg border border-border-default --surfa-card p-5 shadow-sm"
+      className="rounded-lg border border-border-default bg-surface-card p-5 shadow-sm"
     >
       <header className="mb-4.5 flex items-center gap-2">
         <PipelineIcon
@@ -52,10 +52,7 @@ export function SelectionPipeline() {
           <PipelineRowPlaceholder />
         </div>
       ) : isError ? (
-        <DashboardFetchError
-          refetch={refetch}
-          isFetching={isFetching}
-        />
+        <DashboardFetchError refetch={refetch} isFetching={isFetching} />
       ) : stages && stages.length > 0 ? (
         <div className="flex flex-col gap-4">
           {stages.map((stage) => (

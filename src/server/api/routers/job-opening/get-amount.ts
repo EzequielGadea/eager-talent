@@ -41,7 +41,15 @@ export const getJobOpeningsAmount = protectedProcedure
       : isHiringManagerAssignedToJobOpening(ctx.session.user.id);
 
     const filteredWhere = {
-      AND: [accessWhere, getJobOpeningFilterWhere(input)],
+      AND: [
+        accessWhere,
+        getJobOpeningFilterWhere({
+          ...input,
+          hiringManagerId: canReadAllResult.success
+            ? input.hiringManagerId
+            : undefined,
+        }),
+      ],
     };
 
     const now = new TZDate(Date.now(), "America/Montevideo");

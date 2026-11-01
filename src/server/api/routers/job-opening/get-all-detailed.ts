@@ -80,7 +80,12 @@ export const getAllJobOpeningsDetailed = protectedProcedure
       ? {}
       : isHiringManagerAssignedToJobOpening(ctx.session.user.id);
 
-    const filterWhere = getJobOpeningFilterWhere(input);
+    const filterWhere = getJobOpeningFilterWhere({
+      ...input,
+      hiringManagerId: canReadAllResult.success
+        ? input.hiringManagerId
+        : undefined,
+    });
 
     const where = {
       AND: [accessWhere, filterWhere],
