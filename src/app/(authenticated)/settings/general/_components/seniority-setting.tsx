@@ -232,7 +232,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="max-md:size-9 cursor-grab active:cursor-grabbing"
+                  className="max-md:size-9 cursor-grab hover:cursor-grab active:cursor-grabbing"
                   draggable={!isAddingSeniority}
                   disabled={isAddingSeniority}
                   onDragStart={(event) => {

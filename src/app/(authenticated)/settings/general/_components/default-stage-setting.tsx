@@ -245,7 +245,7 @@ function DefaultStageEditor({
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="max-md:size-9 cursor-grab active:cursor-grabbing"
+                  className="max-md:size-9 cursor-grab hover:cursor-grab active:cursor-grabbing"
                   draggable={!locked}
                   disabled={locked}
                   aria-label={
@@ -280,10 +280,10 @@ function DefaultStageEditor({
                       alignItems: "center",
                       padding: "0 16px",
                       boxSizing: "border-box",
-                      border: "1px solid #e2e8f0",
+                      border: "1px solid var(--border-default)",
                       borderRadius: "8px",
-                      backgroundColor: "#ffffff",
-                      color: "#111827",
+                      backgroundColor: "var(--surface-card)",
+                      color: "var(--text-primary)",
                       fontSize: "14px",
                       fontWeight: "500",
                       position: "fixed",
