@@ -541,6 +541,92 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
+  const metricsSeedNow = new Date();
+  const metricsDateDaysAgo = (days: number) =>
+    new Date(metricsSeedNow.getTime() - days * 24 * 60 * 60 * 1000);
+
+  await prisma.jobOpening.createMany({
+    data: [
+      {
+        name: "Senior Node.js Developer",
+        status: "Closed" as JobOpeningStatus,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Montevideo, Uruguay",
+        openingDate: metricsDateDaysAgo(52),
+        targetClosingDate: metricsDateDaysAgo(15),
+        closingDate: metricsDateDaysAgo(5),
+        areaId: areas["Ingeniería Web & Mobile"].id,
+      },
+      {
+        name: "Product Manager",
+        status: "Closed" as JobOpeningStatus,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Remoto (Uruguay)",
+        openingDate: metricsDateDaysAgo(55),
+        targetClosingDate: metricsDateDaysAgo(18),
+        closingDate: metricsDateDaysAgo(12),
+        areaId: areas["Diseño de Producto & UX"].id,
+      },
+      {
+        name: "UX Designer Senior",
+        status: "Closed" as JobOpeningStatus,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Montevideo, Uruguay (Híbrido)",
+        openingDate: metricsDateDaysAgo(62),
+        targetClosingDate: metricsDateDaysAgo(24),
+        closingDate: metricsDateDaysAgo(20),
+        areaId: areas["Diseño de Producto & UX"].id,
+      },
+      {
+        name: "QA Engineer",
+        status: "Closed" as JobOpeningStatus,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Montevideo, Uruguay",
+        openingDate: metricsDateDaysAgo(78),
+        targetClosingDate: metricsDateDaysAgo(35),
+        closingDate: metricsDateDaysAgo(40),
+        areaId: areas["Quality Assurance & Testing"].id,
+      },
+      {
+        name: "AI Developer",
+        status: "Closed" as JobOpeningStatus,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Remoto (Uruguay)",
+        openingDate: metricsDateDaysAgo(112),
+        targetClosingDate: metricsDateDaysAgo(65),
+        closingDate: metricsDateDaysAgo(70),
+        areaId: areas["AI Studio & Data"].id,
+      },
+      {
+        name: "Cloud Security Engineer",
+        status: "Closed" as JobOpeningStatus,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Remoto (Uruguay)",
+        openingDate: metricsDateDaysAgo(165),
+        targetClosingDate: metricsDateDaysAgo(125),
+        closingDate: metricsDateDaysAgo(120),
+        areaId: areas["Infraestructura Cloud & DevOps"].id,
+      },
+      {
+        name: "Data Analyst",
+        status: "Closed" as JobOpeningStatus,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Montevideo, Uruguay (Híbrido)",
+        openingDate: metricsDateDaysAgo(245),
+        targetClosingDate: metricsDateDaysAgo(205),
+        closingDate: metricsDateDaysAgo(200),
+        areaId: areas["AI Studio & Data"].id,
+      },
+    ],
+  });
+
   // ==========================================================================
   // CANDIDATOS FIJOS (SELECCIÓN URUGUAYA USA 2026 CON FOTOS Y PDFS REALES)
   // ==========================================================================

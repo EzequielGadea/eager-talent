@@ -244,24 +244,7 @@ export function ApplyToVacantDialog({
                   );
                 }}
               />
-              <Controller
-                control={control}
-                name="availability"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Disponibilidad</FieldLabel>
-                    <Input
-                      placeholder="Ej. Inmediata, 15 días, 1 mes"
-                      disabled={!isJobOpeningSelected}
-                      {...field}
-                    />
-                    {fieldState.invalid && isJobOpeningSelected && (
-                      <FieldError>{fieldState.error?.message}</FieldError>
-                    )}
-                  </Field>
-                )}
-              />
-              <div className="flex flex-col gap-4 sm:flex-row mb-5">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 <Controller
                   control={control}
                   name="desiredSalary"
@@ -318,6 +301,23 @@ export function ApplyToVacantDialog({
                   )}
                 />
               </div>
+              <Controller
+                control={control}
+                name="availability"
+                render={({ field, fieldState }) => (
+                  <Field className="mb-5">
+                    <FieldLabel>Disponibilidad</FieldLabel>
+                    <Input
+                      placeholder="Ej. Inmediata, 15 días, 1 mes"
+                      disabled={!isJobOpeningSelected}
+                      {...field}
+                    />
+                    {fieldState.invalid && isJobOpeningSelected && (
+                      <FieldError>{fieldState.error?.message}</FieldError>
+                    )}
+                  </Field>
+                )}
+              />
             </FieldGroup>
             <DialogFooter>
               <Button
