@@ -49,7 +49,7 @@ export default function RoleSetting() {
       setRoleName("");
       setIsAddingRole(false);
       await utils.jobRole.getAllRoles.invalidate();
-      toast.add({ title: "Rol creado con éxito", type: "success" });
+      toast.add({ title: "Rol creado correctamente", type: "success" });
     },
     onError: (error) => {
       toast.add({ title: error.message, type: "error" });

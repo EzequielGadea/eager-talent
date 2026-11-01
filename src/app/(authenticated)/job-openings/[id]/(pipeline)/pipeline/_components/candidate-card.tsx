@@ -10,7 +10,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { format, isToday, isTomorrow } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -32,6 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 import { interviewTypeTranslations } from "~/lib/enum-translations";
 
@@ -83,6 +84,7 @@ export function CandidateCard({
   canDeleteInterview,
 }: CandidateCardProps) {
   const router = useRouter();
+  const [, startTransition] = useTransition();
 
   const [isDisqualifyDialogOpen, setIsDisqualifyDialogOpen] = useState(false);
   const [isScheduleInterviewDialogOpen, setIsScheduleInterviewDialogOpen] =
@@ -114,15 +116,22 @@ export function CandidateCard({
 
   const deleteInterviewMutation = api.interview.delete.useMutation({
     onSuccess: () => {
+      toast.add({
+        title: "Entrevista eliminada correctamente",
+        type: "success",
+      });
+
       if (candidate.scheduledInterviews.length <= 1) {
         setIsInterviewsDialogOpen(false);
       }
 
       setInterviewToDelete(null);
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     },
     onError: (error) => {
-      console.error("Error al eliminar la entrevista:", error);
+      toast.add({ title: error.message, type: "error" });
     },
   });
 
@@ -398,7 +407,11 @@ export function CandidateCard({
           candidateName={`${candidate.name} ${candidate.lastName}`}
           candidateRole={candidate.role}
           stageName={currentStageName}
-          onSuccess={() => router.refresh()}
+          onSuccess={() =>
+            startTransition(() => {
+              router.refresh();
+            })
+          }
         />
       )}
 
@@ -409,7 +422,11 @@ export function CandidateCard({
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
-          onSuccess={() => router.refresh()}
+          onSuccess={() =>
+            startTransition(() => {
+              router.refresh();
+            })
+          }
         />
       )}
     </>

@@ -121,9 +121,8 @@ export function ApplyToVacantDialog({
           router.refresh();
         });
         toast.add({
-          title: "Postulación creada correctamente",
+          title: "Candidato postulado correctamente",
           type: "success",
-          timeout: 8000,
         });
       },
       onError: (e) => {
