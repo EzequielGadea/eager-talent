@@ -274,25 +274,6 @@ export function ApplyToVacantDialog({
                   );
                 }}
               />
-              <Controller
-                control={control}
-                name="availability"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Disponibilidad</FieldLabel>
-                    <Input
-                      placeholder="Ej. Inmediata, 15 días, 1 mes"
-                      disabled={!isJobOpeningSelected}
-                      {...field}
-                    />
-                    {fieldState.invalid && isJobOpeningSelected && (
-                      <p className="text-xs text-danger">
-                        {fieldState.error?.message}
-                      </p>
-                    )}
-                  </Field>
-                )}
-              />
               <div className="flex flex-col gap-4 sm:flex-row mb-5">
                 <Controller
                   control={control}
