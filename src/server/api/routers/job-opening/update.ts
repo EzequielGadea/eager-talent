@@ -304,6 +304,7 @@ export const updateJobOpening = protectedProcedure
     );
     // Estado y ubicación son opcionales: si no llegan, se conservan.
     const nextStatus = input.status ?? currentJobOpening.status;
+    const isClosing = nextStatus === "Closed";
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
     if (hasBeenOpened && stagesChanged) {
@@ -379,6 +380,7 @@ export const updateJobOpening = protectedProcedure
           name: input.name,
           status: nextStatus,
           hasBeenOpened: hasBeenOpened || nextStatus === "Open",
+          ...(isClosing ? { closingDate: new Date() } : {}),
           location: input.location,
           targetClosingDate: nextTargetClosingDate,
           areaId: input.areaId,
