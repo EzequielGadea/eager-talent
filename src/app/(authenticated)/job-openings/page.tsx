@@ -1,5 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { z } from "zod";
 import { HiringManagerJobOpeningsFallback } from "./_components/hiring-manager-job-openings-fallback";
@@ -40,6 +41,7 @@ type JobOpeningsPageProps = {
     hiringManager?: string | string[];
     openingDate?: string | string[];
     withActiveCandidates?: string | string[];
+    notice?: string | string[];
   }>;
 };
 
@@ -97,7 +99,23 @@ async function JobOpeningsListContent(
     isHiringManagerView: boolean;
   },
 ) {
-  const rawParams = await (props.searchParams ?? Promise.resolve({}));
+  const rawParams: Awaited<NonNullable<JobOpeningsPageProps["searchParams"]>> =
+    await (props.searchParams ?? Promise.resolve({}));
+
+  if (props.isHiringManagerView && rawParams.hiringManager !== undefined) {
+    const cleanParams = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(rawParams)) {
+      if (key === "hiringManager" || value === undefined) continue;
+      for (const entry of Array.isArray(value) ? value : [value]) {
+        cleanParams.append(key, entry);
+      }
+    }
+
+    cleanParams.set("page", "1");
+    cleanParams.set("notice", "hiring-manager-filter-unavailable");
+    redirect(`/job-openings?${cleanParams.toString()}`);
+  }
 
   const params = jobOpeningsSearchParamsSchema.parse(rawParams);
 
@@ -108,15 +126,24 @@ async function JobOpeningsListContent(
     : [];
 
   return (
-    <JobOpeningsList
-      currentPage={params.page}
-      currentSort={params.sort}
-      currentStatuses={currentStatuses}
-      currentAreaId={params.area}
-      currentHiringManagerId={params.hiringManager}
-      currentOpeningDateRange={params.openingDate}
-      currentOnlyWithActiveCandidates={Boolean(params.withActiveCandidates)}
-      isHiringManagerView={props.isHiringManagerView}
-    />
+    <>
+      {props.isHiringManagerView &&
+        rawParams.notice === "hiring-manager-filter-unavailable" && (
+          <p role="status" className="px-6 pt-6 text-sm text-text-secondary">
+            Se quitó el filtro por Hiring Manager porque no está disponible para
+            tu perfil.
+          </p>
+        )}
+      <JobOpeningsList
+        currentPage={params.page}
+        currentSort={params.sort}
+        currentStatuses={currentStatuses}
+        currentAreaId={params.area}
+        currentHiringManagerId={params.hiringManager}
+        currentOpeningDateRange={params.openingDate}
+        currentOnlyWithActiveCandidates={Boolean(params.withActiveCandidates)}
+        isHiringManagerView={props.isHiringManagerView}
+      />
+    </>
   );
 }

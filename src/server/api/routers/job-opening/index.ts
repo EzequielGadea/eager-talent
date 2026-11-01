@@ -12,6 +12,7 @@ import { updateJobOpening } from "./update";
 import { updateStatus } from "./update-status";
 import { createJobOpening } from "./create";
 import { fetchDisqualifiedApplications } from "./fetch-disqualified-applications";
+import { getSelectionPipeline } from "./get-selection-pipeline";
 
 export { fetchById };
 export { fetchPipelineCandidates };
@@ -31,6 +32,7 @@ export const jobOpeningRouter = createTRPCRouter({
   getAllOpenJobOpenings,
   getAllJobOpeningsDetailed,
   getJobOpeningsAmount,
+  getSelectionPipeline,
   getJobOpeningHiringManagers,
   fetchById,
   fetchPipelineCandidates,
