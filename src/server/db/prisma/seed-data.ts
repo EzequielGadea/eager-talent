@@ -535,7 +535,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "federico.valverde@eagerworks.uy",
       phone: "+598 99 150 815",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/369081-1731018042.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hS7DqKQ5YM7tyGVwXUhg0CpjeTif489HFoEk5",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/federico-valverde-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -706,7 +706,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "darwin.nunez@eagerworks.uy",
       phone: "+598 98 210 999",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/546543-1681827179.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hkYvYoX3XdzP1NJlRHcF3DtjxfyqubTOC9UwZ",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/darwin-nunez-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -764,7 +764,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "sergio.rochet@eagerworks.uy",
       phone: "+598 91 330 001",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/264014-1668501221.jpg",
+        "https://utfs.io/f/VhAxbky2qk3h8BkUtDVdIEjDRhr3Yz6UXPeATNBvqZyca1sS",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/sergio-rochet-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -807,7 +807,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "ronald.araujo@eagerworks.uy",
       phone: "+598 99 444 333",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/480267-1736431980.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hEFgyl9UC7dLf3W4TEAvkoq8lcuNxaeYHzR9S",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/ronald-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -882,7 +882,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "manuel.ugarte@eagerworks.uy",
       phone: "+598 94 555 123",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/476701-1715107512.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hY1GsOMeQXvDzslnLwk9IaYdoxtTWEqGVAmM1",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/manuel-ugarte-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -949,7 +949,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "rodrigo.bentancur@eagerworks.uy",
       phone: "+598 99 777 888",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/354362-1740605779.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hF5T75zRWYAcky6ed9mqzOE25xsvSGp7lrCwQ",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/rodrigo-bentancur-uy/",
       englishLevel: "Native" as EnglishLevel,
@@ -1027,7 +1027,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "facundo.pellistri@eagerworks.uy",
       phone: "+598 92 444 333",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/676318-1785512941.png",
+        "https://utfs.io/f/VhAxbky2qk3hxZ39eZHctJ7nl52QYgGXioHpreFd9Vkw8SLE",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/facundo-pellistri-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1093,7 +1093,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "nicolas.delacruz@eagerworks.uy",
       phone: "+598 98 111 222",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/397458-1719565799.jpg",
+        "https://utfs.io/f/VhAxbky2qk3h6uzQMw8sL9ThuagzKURZvq2iw5dGmtANW7XE",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/nicolas-delacruz-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1150,7 +1150,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "mathias.olivera@eagerworks.uy",
       phone: "+598 99 666 555",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/376514-1681910576.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hb3iHOh9qiFzhLjlwE21Z5JSCyDsKr7o8e09B",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/mathias-olivera-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1207,7 +1207,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "maxi.araujo@eagerworks.uy",
       phone: "+598 91 888 999",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/572675-1773786535.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hj1a6hotpb6XPDqKdmk3ASGB5Uc1V4i2YHElv",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/maxi-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1272,7 +1272,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "ferran.torres@eagerworks.uy",
       phone: "+34 612 345 678",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/398184-1779789996.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hfgekFqp0uHCs47vntZDgTcPNoGhXaOEJSQzj",
       country: "España",
       linkedin: "https://www.linkedin.com/in/ferran-torres/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1357,7 +1357,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "anthony.gordon@eagerworks.uy",
       phone: "+44 7700 900123",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/503733-1761080304.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hILwDe406oLm35rVec4ExMlU7JanGFtpukD8s",
       country: "Reino Unido",
       linkedin: "https://www.linkedin.com/in/anthony-gordon/",
       englishLevel: "Native" as EnglishLevel,
@@ -1425,7 +1425,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "cristiano.ronaldo@eagerworks.uy",
       phone: "+351 912 345 678",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/8198-1748102259.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hJSBO6qKxCloiza6nN0m9qyMsXHQWYpEvx38V",
       country: "Portugal",
       linkedin: "https://www.linkedin.com/in/cristiano-ronaldo/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1511,7 +1511,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "julian.alvarez@eagerworks.uy",
       phone: "+54 9 11 2345 6789",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/576024-1684920938.jpg",
+        "https://utfs.io/f/VhAxbky2qk3hpCdelFcquTlk7rY1FIR3XSa4EtVLB2mWD0qh",
       country: "Argentina",
       linkedin: "https://www.linkedin.com/in/julian-alvarez/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1580,7 +1580,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "fernando.muslera@eagerworks.uy",
       phone: "+598 99 123 456",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/58088-1671035581.png",
+        "https://utfs.io/f/VhAxbky2qk3hm9bA7960OcI1GqZb2moKAUtwz7uEeFnXxV8D",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/fernando-muslera-uy/",
       englishLevel: "Advanced" as EnglishLevel,
