@@ -102,6 +102,9 @@ export const createJobOpening = protectedProcedure
             location: input.location,
             openingDate: input.openingDate,
             targetClosingDate: input.closingDate,
+            ...(input.status === JobOpeningStatus.Closed
+              ? { closingDate: new Date() }
+              : {}),
             // hiringManagers: input.hiringManagers
 
             area: {

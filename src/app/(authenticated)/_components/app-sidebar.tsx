@@ -100,6 +100,7 @@ function RecruiterNavigation() {
       <NavigationItem
         icon={<MetricsIcon className="size-4.5" aria-hidden="true" />}
         label="Métricas"
+        href="/metrics"
       />
 
       <NavigationItem
