@@ -33,7 +33,6 @@ export const getMetricsSummary = protectedProcedure
       }),
       ctx.db.application.findMany({
         where: {
-          active: true,
           deletedAt: null,
           jobOpening: jobOpeningWhere,
           applicant: { deletedAt: null },

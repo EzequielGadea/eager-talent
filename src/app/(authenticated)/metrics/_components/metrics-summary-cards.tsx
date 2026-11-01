@@ -16,6 +16,7 @@ type TimeMetrics = {
   onTimePercentage: number | null;
   onTimeCount: number;
   totalClosed: number;
+  totalConsidered: number;
 };
 
 function formatDays(value: number) {
@@ -154,8 +155,8 @@ export function MetricsSummaryCards({
             : `${metrics.onTimePercentage}%`
         }
         detail={
-          metrics.totalClosed > 0
-            ? `${metrics.onTimeCount} de ${metrics.totalClosed} cerradas`
+          metrics.totalConsidered > 0
+            ? `${metrics.onTimeCount} de ${metrics.totalConsidered} vacantes en plazo`
             : undefined
         }
         highlighted={metrics.onTimePercentage !== null}

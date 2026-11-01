@@ -26,7 +26,6 @@ export const getPipeline = protectedProcedure
       by: ["currentStageId"],
       where: {
         jobOpeningId: jobOpening.id,
-        active: true,
         deletedAt: null,
       },
       _count: { _all: true },

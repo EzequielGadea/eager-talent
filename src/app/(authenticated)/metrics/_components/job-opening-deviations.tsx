@@ -12,6 +12,12 @@ import {
   PaginationPrevious,
 } from "~/components/ui/pagination";
 import { Skeleton } from "~/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { cn } from "~/lib/utils";
 
 type DeviationItem = {
@@ -38,6 +44,10 @@ type JobOpeningDeviationsProps = {
   isLoading: boolean;
   onPageChange: (page: number) => void;
 };
+
+function formatDays(days: number) {
+  return `${days} ${Math.abs(days) === 1 ? "día" : "días"}`;
+}
 
 function DeviationRowsSkeleton() {
   return (
@@ -126,72 +136,88 @@ export function JobOpeningDeviations({
             No hay datos para este filtro
           </div>
         ) : (
-          <div className="space-y-5">
-            {data.items.map((item, index) => {
-              const actualWidth = Math.max(
-                (item.durationDays / data.scaleMaximumDays) * 100,
-                1,
-              );
-              const targetPosition = Math.min(
-                (item.targetDurationDays / data.scaleMaximumDays) * 100,
-                100,
-              );
+          <TooltipProvider>
+            <div className="space-y-5">
+              {data.items.map((item, index) => {
+                const actualWidth = Math.max(
+                  (item.durationDays / data.scaleMaximumDays) * 100,
+                  1,
+                );
+                const targetPosition = Math.min(
+                  (item.targetDurationDays / data.scaleMaximumDays) * 100,
+                  100,
+                );
 
-              return (
-                <div
-                  key={item.id}
-                  className="grid gap-2 md:grid-cols-[220px_1fr_80px] md:items-center"
-                >
+                return (
                   <div
-                    className="truncate text-sm font-semibold"
-                    title={item.name}
-                  >
-                    <span className="mr-2 text-muted-foreground">
-                      {(data.page - 1) * data.pageSize + index + 1}
-                    </span>
-                    {item.name}
-                  </div>
-
-                  <div
-                    className="relative h-4 overflow-visible rounded-full bg-slate-100"
-                    aria-label={
-                      item.name +
-                      ": " +
-                      item.durationDays +
-                      " días reales, objetivo " +
-                      item.targetDurationDays +
-                      " días"
-                    }
+                    key={item.id}
+                    className="grid gap-2 md:grid-cols-[220px_1fr_80px] md:items-center"
                   >
                     <div
-                      className={cn(
-                        "h-full rounded-full",
-                        item.isOnTime ? "bg-emerald-500" : "bg-red-500",
-                      )}
-                      style={{ width: String(actualWidth) + "%" }}
-                    />
-                    <span
-                      className="absolute top-1/2 h-7 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-foreground"
-                      style={{ left: String(targetPosition) + "%" }}
-                      aria-hidden="true"
-                    />
-                  </div>
+                      className="truncate text-sm font-semibold"
+                      title={item.name}
+                    >
+                      <span className="mr-2 text-muted-foreground">
+                        {(data.page - 1) * data.pageSize + index + 1}
+                      </span>
+                      {item.name}
+                    </div>
 
-                  <span
-                    className={cn(
-                      "text-sm font-semibold md:justify-self-end",
-                      item.deviationDays > 0
-                        ? "text-red-500"
-                        : "text-emerald-600",
-                    )}
-                  >
-                    {item.deviationDays > 0 ? "+" : ""}
-                    {item.deviationDays} días
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                    <Tooltip>
+                      <TooltipTrigger
+                        type="button"
+                        className="relative block h-4 w-full overflow-visible rounded-full bg-slate-100 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        aria-label={
+                          item.name +
+                          ": " +
+                          item.durationDays +
+                          " días reales, objetivo " +
+                          item.targetDurationDays +
+                          " días"
+                        }
+                      >
+                        <span
+                          className={cn(
+                            "block h-full rounded-full",
+                            item.isOnTime ? "bg-emerald-500" : "bg-red-500",
+                          )}
+                          style={{ width: String(actualWidth) + "%" }}
+                        />
+                        <span
+                          className="absolute top-1/2 h-7 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-foreground"
+                          style={{ left: String(targetPosition) + "%" }}
+                          aria-hidden="true"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="flex flex-col gap-1">
+                          <p className="font-medium">{item.name}</p>
+                          <p>Objetivo: {formatDays(item.targetDurationDays)}</p>
+                          <p>Real: {formatDays(item.durationDays)}</p>
+                          <p>
+                            Desvío: {item.deviationDays > 0 ? "+" : ""}
+                            {formatDays(item.deviationDays)}
+                          </p>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <span
+                      className={cn(
+                        "text-sm font-semibold md:justify-self-end",
+                        item.deviationDays > 0
+                          ? "text-red-500"
+                          : "text-emerald-600",
+                      )}
+                    >
+                      {item.deviationDays > 0 ? "+" : ""}
+                      {item.deviationDays} días
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </TooltipProvider>
         )}
 
         {!isLoading && data.pageCount > 1 ? (

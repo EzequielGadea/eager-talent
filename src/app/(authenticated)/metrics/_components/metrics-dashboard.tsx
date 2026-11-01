@@ -49,7 +49,7 @@ type TimeMetrics = RouterOutputs["metrics"]["getTimeMetrics"];
 type JobOpeningDeviations = RouterOutputs["metrics"]["getJobOpeningDeviations"];
 
 function formatPercentage(value: number | null) {
-  return value === null ? "—" : `${Math.round(value)} %`;
+  return value === null ? "—" : `${Math.round(value)}%`;
 }
 
 function EmptyChart({ message }: { message: string }) {
@@ -72,6 +72,61 @@ const MOTIVE_COLORS = [
   "#06b6d4",
   "#94a3b8",
 ];
+
+function DistributionTable({
+  label,
+  items,
+}: {
+  label: "Motivo" | "Fuente";
+  items: Array<{ name: string; percentage: number }>;
+}) {
+  return (
+    <table
+      className="mt-2 w-full table-fixed border-collapse"
+      aria-label={`Distribución por ${label.toLowerCase()}`}
+    >
+      <thead>
+        <tr>
+          <th
+            scope="col"
+            className="px-0.5 py-1.5 text-left text-[11px] font-bold tracking-[0.06em] text-text-tertiary uppercase"
+          >
+            {label}
+          </th>
+          <th
+            scope="col"
+            className="w-16 px-0.5 py-1.5 text-right text-[11px] font-bold tracking-[0.06em] text-text-tertiary"
+          >
+            %
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((item, index) => (
+          <tr key={item.name} className="border-t border-slate-100">
+            <td className="px-0.5 py-2.75 text-[13px] text-text-primary">
+              <span className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="size-2 shrink-0 rounded-xs"
+                  style={{
+                    backgroundColor:
+                      MOTIVE_COLORS[index % MOTIVE_COLORS.length],
+                  }}
+                />
+                <span className="min-w-0 break-words">{item.name}</span>
+              </span>
+            </td>
+            <td className="px-0.5 py-2.75 text-right text-[13px] font-semibold text-text-primary tabular-nums">
+              {formatPercentage(item.percentage)}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 function TruncatedTick({
   x = 0,
   y = 0,
@@ -107,7 +162,7 @@ function DisqualificationChart({
 
   return (
     <Card className="h-full gap-0">
-      <CardContent className="flex flex-1 flex-col">
+      <CardContent className="flex flex-col">
         <CardTitle className="text-base font-bold tracking-[-0.01em]">
           Motivos de descalificación
         </CardTitle>
@@ -118,97 +173,60 @@ function DisqualificationChart({
           </div>
         ) : (
           <>
-            {/* Legend */}
-            <div className="mb-4 mt-3 flex flex-wrap gap-x-4 gap-y-2.5">
-              {motives.map((motive, index) => (
-                <span
-                  key={motive.name}
-                  className="inline-flex items-center gap-1.25 text-xs text-text-secondary"
-                >
-                  <span
-                    className="size-2.25 rounded-xs"
-                    style={{
-                      background: MOTIVE_COLORS[index % MOTIVE_COLORS.length],
-                    }}
-                  />
-                  {motive.name}
-                  <strong className="font-bold text-text-primary">
-                    {formatPercentage(motive.percentage)}
-                  </strong>
-                </span>
-              ))}
-            </div>
-
-            {/* Chart */}
-            <ChartContainer
-              className="mb-1.5 h-42 w-full"
-              label="Porcentaje de postulaciones por motivo de descalificación"
-            >
-              <BarChart
-                data={motives}
-                margin={{ top: 0, right: 4, bottom: 0, left: 0 }}
-                barCategoryGap={10}
+            <div className="mt-4 flex h-64 shrink-0 items-center justify-center">
+              <ChartContainer
+                className="h-56 w-full"
+                label="Porcentaje de postulaciones por motivo de descalificación"
               >
-                <CartesianGrid vertical={false} stroke="#f1f5f9" />
-                <XAxis
-                  dataKey="name"
-                  interval={0}
-                  axisLine={false}
-                  tickLine={false}
-                  height={28}
-                  tick={<TruncatedTick />}
-                />
-                <YAxis
-                  type="number"
-                  domain={[0, maxValue]}
-                  ticks={ticks}
-                  width={46}
-                  tickMargin={16}
-                  tickFormatter={(value: number) => `${value}%`}
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 11, fill: "var(--text-tertiary)" }}
-                />
-                <Tooltip
-                  cursor={false}
-                  formatter={(value) => [
-                    `${Number(value).toFixed(1)} %`,
-                    "Porcentaje",
-                  ]}
-                />
-                <Bar dataKey="percentage" radius={[6, 6, 0, 0]} maxBarSize={58}>
-                  {motives.map((motive, index) => (
-                    <Cell
-                      key={motive.name}
-                      fill={MOTIVE_COLORS[index % MOTIVE_COLORS.length]}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ChartContainer>
-
-            {/* Table */}
-            <div className="mt-2 flex flex-1 flex-col">
-              <div className="flex items-center justify-between px-0.5 py-1.5 text-[11px] font-bold tracking-[0.06em] text-text-tertiary">
-                <span>MOTIVO</span>
-                <span>%</span>
-              </div>
-              <div className="flex flex-1 flex-col">
-                {motives.map((motive) => (
-                  <div
-                    key={motive.name}
-                    className="flex min-h-10.75 flex-1 items-center justify-between gap-3 border-t border-slate-100 px-0.5 text-[13px] text-text-primary"
+                <BarChart
+                  data={motives}
+                  margin={{ top: 12, right: 4, bottom: 0, left: 0 }}
+                  barCategoryGap={10}
+                >
+                  <CartesianGrid vertical={false} stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="name"
+                    interval={0}
+                    axisLine={false}
+                    tickLine={false}
+                    height={28}
+                    tick={<TruncatedTick />}
+                  />
+                  <YAxis
+                    type="number"
+                    domain={[0, maxValue]}
+                    ticks={ticks}
+                    interval={0}
+                    width={46}
+                    tickMargin={16}
+                    tickFormatter={(value: number) => `${value}%`}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: "var(--text-tertiary)" }}
+                  />
+                  <Tooltip
+                    cursor={false}
+                    formatter={(value) => [
+                      `${Number(value).toFixed(1)} %`,
+                      "Porcentaje",
+                    ]}
+                  />
+                  <Bar
+                    dataKey="percentage"
+                    radius={[6, 6, 0, 0]}
+                    maxBarSize={58}
                   >
-                    <span className="min-w-0 truncate" title={motive.name}>
-                      {motive.name}
-                    </span>
-                    <span className="shrink-0 font-semibold">
-                      {formatPercentage(motive.percentage)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                    {motives.map((motive, index) => (
+                      <Cell
+                        key={motive.name}
+                        fill={MOTIVE_COLORS[index % MOTIVE_COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
             </div>
+            <DistributionTable label="Motivo" items={motives} />
           </>
         )}
       </CardContent>
@@ -223,8 +241,8 @@ function SourcesChart({
 }) {
   return (
     <Card className="h-full gap-0">
-      <CardContent className="flex flex-1 flex-col">
-        <CardTitle className="mb-1.5 text-base font-bold tracking-[-0.01em]">
+      <CardContent className="flex flex-col">
+        <CardTitle className="text-base font-bold tracking-[-0.01em]">
           Fuentes de postulación
         </CardTitle>
 
@@ -234,8 +252,7 @@ function SourcesChart({
           </div>
         ) : (
           <>
-            {/* The donut fills the remaining card height. */}
-            <div className="flex flex-1 items-center justify-center pb-5.5 pt-4">
+            <div className="mt-4 flex h-64 shrink-0 items-center justify-center">
               <ChartContainer
                 className="size-56 shrink-0"
                 label="Distribución de postulaciones por fuente"
@@ -266,43 +283,7 @@ function SourcesChart({
               </ChartContainer>
             </div>
 
-            {/* Table */}
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="px-0.5 py-1.5 text-left text-[11px] font-bold tracking-[0.06em] text-text-tertiary">
-                    FUENTE
-                  </th>
-                  <th className="px-0.5 py-1.5 text-right text-[11px] font-bold tracking-[0.06em] text-text-tertiary">
-                    %
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sources.map((source, index) => (
-                  <tr key={source.name} className="border-t border-slate-100">
-                    <td className="px-0.5 py-2.75 text-[13px] text-text-primary">
-                      <span className="flex items-center gap-2">
-                        <span
-                          aria-hidden="true"
-                          className="size-2 shrink-0 rounded-xs"
-                          style={{
-                            backgroundColor:
-                              MOTIVE_COLORS[index % MOTIVE_COLORS.length],
-                          }}
-                        />
-                        <span className="min-w-0 truncate" title={source.name}>
-                          {source.name}
-                        </span>
-                      </span>
-                    </td>
-                    <td className="px-0.5 py-2.75 text-right text-[13px] font-semibold text-text-primary">
-                      {Math.round(source.percentage)}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DistributionTable label="Fuente" items={sources} />
           </>
         )}
       </CardContent>

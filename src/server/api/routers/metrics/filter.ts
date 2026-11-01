@@ -93,8 +93,9 @@ export function getMetricsClosingDateRange(
 
 export function getMetricsJobOpeningWhere(
   filters: MetricsFilterInput,
+  now = new Date(),
 ): Prisma.JobOpeningWhereInput {
-  const closingDateRange = getMetricsClosingDateRange(filters.period);
+  const closingDateRange = getMetricsClosingDateRange(filters.period, now);
 
   return {
     status: "Closed",
@@ -102,6 +103,19 @@ export function getMetricsJobOpeningWhere(
       not: null,
       ...closingDateRange,
     },
+    ...(filters.areaId ? { areaId: filters.areaId } : {}),
+  };
+}
+
+export function getMetricsOpenJobOpeningWhere(
+  filters: MetricsFilterInput,
+  now = new Date(),
+): Prisma.JobOpeningWhereInput {
+  const openingDateRange = getMetricsClosingDateRange(filters.period, now);
+
+  return {
+    status: "Open",
+    ...(openingDateRange ? { openingDate: openingDateRange } : {}),
     ...(filters.areaId ? { areaId: filters.areaId } : {}),
   };
 }
