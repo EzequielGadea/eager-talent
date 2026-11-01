@@ -245,10 +245,9 @@ function DefaultStageEditor({
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="max-md:size-9"
+                  className="max-md:size-9 cursor-grab active:cursor-grabbing"
                   draggable={!locked}
                   disabled={locked}
-                  className="cursor-grab active:cursor-grabbing"
                   aria-label={
                     locked
                       ? `${stage.name} es una etapa fija`
