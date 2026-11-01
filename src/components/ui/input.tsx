@@ -46,9 +46,7 @@ function Input({
         )}
       </div>
 
-      {errorMessage && (
-        <p className="text-sm text-destructive">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="text-xs text-danger">{errorMessage}</p>}
     </div>
   );
 }

@@ -1,13 +1,28 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { z } from "zod";
 
 import { Skeleton } from "~/components/ui/skeleton";
 import { api } from "~/lib/trpc/server";
+import { SettingsShell } from "../_components/settings-shell";
 import { UsersTable } from "./_components/users-table";
 import { UsersTableSkeleton } from "./_components/users-table-skeleton";
 import { UsersInviteDialog } from "./_components/users-invite-dialog";
 
-async function UsersContent() {
-  const users = await api.user.getAllUsers({});
+const usersSearchParamsSchema = z.object({
+  page: z.coerce.number().int().min(1).catch(1),
+});
+
+async function UsersContent(props: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { page } = usersSearchParamsSchema.parse(await props.searchParams);
+  const { users, total, pageSize } = await api.user.getAllUsers({ page });
+  const lastPage = Math.max(1, Math.ceil(total / pageSize));
+
+  if (page > lastPage) {
+    redirect(`/settings/users?page=${lastPage}`);
+  }
 
   return (
     <section className="flex flex-col gap-5">
@@ -19,7 +34,12 @@ async function UsersContent() {
         <UsersInviteDialog />
       </div>
 
-      <UsersTable users={users} />
+      <UsersTable
+        users={users}
+        totalUsers={total}
+        pageSize={pageSize}
+        currentPage={page}
+      />
     </section>
   );
 }
@@ -37,10 +57,14 @@ function UsersPageFallback() {
   );
 }
 
-export default function UsersPage() {
+export default function UsersPage(props: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   return (
-    <Suspense fallback={<UsersPageFallback />}>
-      <UsersContent />
-    </Suspense>
+    <SettingsShell>
+      <Suspense fallback={<UsersPageFallback />}>
+        <UsersContent searchParams={props.searchParams} />
+      </Suspense>
+    </SettingsShell>
   );
 }

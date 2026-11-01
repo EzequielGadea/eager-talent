@@ -190,7 +190,7 @@ export default function PersonalData({
             )}
 
             {errors.photo && (
-              <p className="text-danger">{errors.photo.message}</p>
+              <p className="text-xs text-danger">{errors.photo.message}</p>
             )}
           </div>
 
@@ -206,7 +206,7 @@ export default function PersonalData({
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-danger">{errors.name.message}</p>
+                <p className="text-xs text-danger">{errors.name.message}</p>
               )}
             </div>
 
@@ -221,7 +221,7 @@ export default function PersonalData({
                 {...register("lastname")}
               />
               {errors.lastname && (
-                <p className="text-danger">{errors.lastname.message}</p>
+                <p className="text-xs text-danger">{errors.lastname.message}</p>
               )}
             </div>
 
@@ -237,7 +237,7 @@ export default function PersonalData({
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-danger">{errors.email.message}</p>
+                <p className="text-xs text-danger">{errors.email.message}</p>
               )}
             </div>
 
@@ -250,7 +250,7 @@ export default function PersonalData({
                 {...register("phone")}
               />
               {errors.phone && (
-                <p className="text-danger">{errors.phone.message}</p>
+                <p className="text-xs text-danger">{errors.phone.message}</p>
               )}
             </div>
 
@@ -287,7 +287,7 @@ export default function PersonalData({
                 {...register("linkedin")}
               />
               {errors.linkedin && (
-                <p className="text-danger">{errors.linkedin.message}</p>
+                <p className="text-xs text-danger">{errors.linkedin.message}</p>
               )}
             </div>
           </div>

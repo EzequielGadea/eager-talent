@@ -194,9 +194,7 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-1.5 text-xs text-dashboard-text-muted">
           {applicant.source && (
-            <span className="shrink-0">
-              {getSourceIcon(applicant.source)}
-            </span>
+            <span className="shrink-0">{getSourceIcon(applicant.source)}</span>
           )}
 
           <span className="truncate">

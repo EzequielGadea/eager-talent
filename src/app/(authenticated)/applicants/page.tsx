@@ -174,6 +174,7 @@ async function ProtectedApplicantsPage(props: {
             promiseAreaData={areaData}
             promiseJobOpeningData={jobOpeningData}
             promiseTagData={tagData}
+            promiseCountApplicants={countApplicants}
             isHiringManagerView={isHiringManagerView}
           />
         </Suspense>

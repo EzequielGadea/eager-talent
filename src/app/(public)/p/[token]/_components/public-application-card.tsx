@@ -1,12 +1,7 @@
 import { Briefcase, CircleAlert } from "lucide-react";
 
 import type { JobOpeningStatus } from "~/generated/prisma/enums";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { getApplicationStatusBadge } from "../utils";
 

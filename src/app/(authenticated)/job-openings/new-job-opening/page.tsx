@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { ShieldAlert } from "lucide-react";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 import { api } from "~/lib/trpc/server";
@@ -33,13 +34,21 @@ async function ProtectedNewJobOpeningPage() {
   if (!permission.success) {
     return (
       <main className="flex min-h-0 flex-1 items-center justify-center p-6">
-        <div className="text-center">
-          <h1 className="text-lg font-semibold text-text-primary">
-            No se puede crear la vacante
-          </h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            No tenés permisos para crear una vacante.
-          </p>
+        <div className="relative w-full max-w-105 rounded-3xl border bg-white p-8 shadow-lg">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
+              <ShieldAlert className="size-6 text-danger" />
+            </div>
+
+            <div className="space-y-1">
+              <h1 className="text-lg font-semibold text-text-primary">
+                No se puede crear la vacante
+              </h1>
+              <p className="text-sm text-text-secondary">
+                No tenés permisos para crear una vacante.
+              </p>
+            </div>
+          </div>
         </div>
       </main>
     );
@@ -47,7 +56,7 @@ async function ProtectedNewJobOpeningPage() {
   return (
     <>
       <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-        <h1 className="mb-0 text-2xl --text-primary --font-heading">
+        <h1 className="mb-0 font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
           Nueva vacante
         </h1>
         <Suspense fallback={<NewJobOpeningFallback />}>

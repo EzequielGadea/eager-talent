@@ -299,11 +299,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   // ETIQUETAS TÉCNICAS (STACK EAGERWORKS) Y DE GESTIÓN
   const skillTagDefs = [
     { name: "Ruby on Rails", color: getTagColor("Ruby on Rails") },
-    { name: "React", color: getTagColor("React")},
+    { name: "React", color: getTagColor("React") },
     { name: "Next.js", color: getTagColor("Next.js") },
     { name: "TypeScript", color: getTagColor("TypeScript") },
     { name: "React Native", color: getTagColor("React Native") },
-    { name: "Node.js", color: getTagColor("Node.js")},
+    { name: "Node.js", color: getTagColor("Node.js") },
     { name: "Python", color: getTagColor("Python") },
     { name: "PostgreSQL", color: getTagColor("PostgreSQL") },
     { name: "Docker", color: getTagColor("Docker") },
@@ -313,13 +313,22 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     { name: "Tailwind CSS", color: getTagColor("Tailwind CSS") },
   ];
   const otherTagDefs = [
-    { name: "Híbrido Montevideo (Cordón)", color: getTagColor("Híbrido Montevideo (Cordón)") },
+    {
+      name: "Híbrido Montevideo (Cordón)",
+      color: getTagColor("Híbrido Montevideo (Cordón)"),
+    },
     { name: "Remoto Uruguay", color: getTagColor("Remoto Uruguay") },
     { name: "Inglés C1 / Fluido", color: getTagColor("Inglés C1 / Fluido") },
-    { name: "Inglés C2 / Bilingüe", color: getTagColor("Inglés C2 / Bilingüe") },
+    {
+      name: "Inglés C2 / Bilingüe",
+      color: getTagColor("Inglés C2 / Bilingüe"),
+    },
     { name: "Top Talent", color: getTagColor("Top Talent") },
     { name: "Referido Eagerworks", color: getTagColor("Referido Eagerworks") },
-    { name: "Disponible Inmediato", color: getTagColor("Disponible Inmediato") },
+    {
+      name: "Disponible Inmediato",
+      color: getTagColor("Disponible Inmediato"),
+    },
   ];
 
   const tags: Record<string, { id: string; name: string }> = {};
@@ -423,6 +432,16 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
+  const nowInUruguay = new TZDate(new Date(), "America/Montevideo");
+  const seedDateFromToday = (daysOffset: number) =>
+    new Date(
+      Date.UTC(
+        nowInUruguay.getFullYear(),
+        nowInUruguay.getMonth(),
+        nowInUruguay.getDate() + daysOffset,
+      ),
+    );
+
   const jobOpening1 = await prisma.jobOpening.create({
     data: {
       name: "Senior Full Stack Developer (Rails & React) - US Partner",
@@ -430,8 +449,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
-      openingDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-30),
+      targetClosingDate: seedDateFromToday(30),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
@@ -445,8 +464,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Remoto (Uruguay)",
-      openingDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-20),
+      targetClosingDate: seedDateFromToday(40),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: {
         connect: [
@@ -465,8 +484,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido)",
-      openingDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-15),
+      targetClosingDate: seedDateFromToday(45),
       areaId: areas["Quality Assurance & Testing"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
       hiringManagers: { connect: [{ id: hm2.id }] },
@@ -480,8 +499,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Remoto (Uruguay)",
-      openingDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 50 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-10),
+      targetClosingDate: seedDateFromToday(50),
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm3.id }, { id: hm5.id }] },
@@ -495,8 +514,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
-      openingDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-8),
+      targetClosingDate: seedDateFromToday(35),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
       hiringManagers: { connect: [{ id: hm1.id }, { id: hm4.id }] },
@@ -509,8 +528,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       status: "Open" as JobOpeningStatus,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
-      openingDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      targetClosingDate: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000),
+      openingDate: seedDateFromToday(-5),
+      targetClosingDate: seedDateFromToday(40),
       areaId: areas["AI Studio & Data"].id,
       seniorities: {
         connect: [

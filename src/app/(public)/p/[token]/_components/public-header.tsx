@@ -18,7 +18,13 @@ export function PublicHeader({ recruiterName }: PublicHeaderProps) {
             className="shrink-0"
           >
             <defs>
-              <linearGradient id="public-logo-gradient" x1="0" y1="1" x2="1" y2="0">
+              <linearGradient
+                id="public-logo-gradient"
+                x1="0"
+                y1="1"
+                x2="1"
+                y2="0"
+              >
                 <stop offset="0" stopColor="#8B5CF6" />
                 <stop offset="1" stopColor="#10B981" />
               </linearGradient>
@@ -31,7 +37,11 @@ export function PublicHeader({ recruiterName }: PublicHeaderProps) {
 
             <g stroke="#FFFFFF" strokeLinecap="round" strokeLinejoin="round">
               <path d="M13 22L20 15L27 22" strokeWidth="4" />
-              <path d="M13 29.5L20 22.5L27 29.5" strokeWidth="4" opacity="0.5" />
+              <path
+                d="M13 29.5L20 22.5L27 29.5"
+                strokeWidth="4"
+                opacity="0.5"
+              />
             </g>
           </svg>
 

@@ -188,7 +188,7 @@ export function LoginForm() {
           <p
             role="alert"
             aria-live="polite"
-            className="rounded-md bg-danger-bg px-3 py-2 text-sm text-danger"
+            className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
           >
             {errors.root.message}
           </p>

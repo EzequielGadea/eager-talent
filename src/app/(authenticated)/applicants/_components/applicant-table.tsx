@@ -11,15 +11,15 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { ListPagination } from "~/components/list-pagination";
 
 import { ApplicantCardList } from "./applicant-card-list";
-import { ApplicantPagination } from "./applicant-pagination";
 import { ApplicantRow } from "./applicant-row";
 import { HiringManagerApplicantRow } from "./hiring-manager-applicant-row";
 import { TableFallback } from "./fallbacks";
 
 import type { ApplicantInfo } from "../types";
-import { columns } from "../constants";
+import { columns, ITEMS_PER_PAGE } from "../constants";
 
 export function ApplicantTable(props: {
   applicantsData: ApplicantInfo[];
@@ -109,9 +109,11 @@ export function ApplicantTable(props: {
         </Table>
       </div>
 
-      <ApplicantPagination
-        countApplicants={props.countApplicants}
+      <ListPagination
+        totalItems={props.countApplicants}
+        pageSize={ITEMS_PER_PAGE}
         currentPage={props.currentPage}
+        itemLabel="candidatos"
         onPageChange={updatePage}
       />
     </div>
@@ -125,20 +127,30 @@ export function HiringManagerApplicantTableHeader({
 }) {
   return (
     <TableHeader>
-      <TableRow>
-        <TableHead className={showSharedBy ? "w-[30%]" : "w-[35%]"}>
+      <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+        <TableHead
+          className={`${showSharedBy ? "w-[30%]" : "w-[35%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+        >
           Candidato
         </TableHead>
 
-        <TableHead className={showSharedBy ? "w-[25%]" : "w-[35%]"}>
+        <TableHead
+          className={`${showSharedBy ? "w-[25%]" : "w-[35%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+        >
           Vacante
         </TableHead>
 
-        <TableHead className={showSharedBy ? "w-[25%]" : "w-[30%]"}>
+        <TableHead
+          className={`${showSharedBy ? "w-[25%]" : "w-[30%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+        >
           Etapa / Estado
         </TableHead>
 
-        {showSharedBy && <TableHead className="w-[20%]">Enviado por</TableHead>}
+        {showSharedBy && (
+          <TableHead className="h-9.75 w-[20%] pr-4 py-0 pl-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+            Enviado por
+          </TableHead>
+        )}
       </TableRow>
     </TableHeader>
   );
@@ -191,19 +203,19 @@ export function ApplicantTableHeader() {
         </TableHead>
 
         <TableHead
-          className={`${columns.cv} h-9.75 py-0 text-center text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${columns.cv} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
         >
           CV
         </TableHead>
 
         <TableHead
-          className={`${columns.vacancy} h-9.75 px-3 py-0 text-center text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${columns.linkedin} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
         >
           LinkedIn
         </TableHead>
 
         <TableHead
-          className={`${columns.email} h-9.75 py-0 pr-4 pl-10 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${columns.email} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
         >
           Correo
         </TableHead>

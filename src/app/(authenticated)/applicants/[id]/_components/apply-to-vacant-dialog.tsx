@@ -178,14 +178,14 @@ export function ApplyToVacantDialog({
               </DialogDescription>
             </DialogHeader>
             {errors.root && (
-              <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <div className="mb-4 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger">
                 {errors.root.message}
               </div>
             )}
             {jobOpeningsError && (
               <div
                 role="alert"
-                className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="mb-4 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 {jobOpeningsError.message}
               </div>
@@ -244,24 +244,7 @@ export function ApplyToVacantDialog({
                   );
                 }}
               />
-              <Controller
-                control={control}
-                name="availability"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Disponibilidad</FieldLabel>
-                    <Input
-                      placeholder="Ej. Inmediata, 15 días, 1 mes"
-                      disabled={!isJobOpeningSelected}
-                      {...field}
-                    />
-                    {fieldState.invalid && isJobOpeningSelected && (
-                      <FieldError>{fieldState.error?.message}</FieldError>
-                    )}
-                  </Field>
-                )}
-              />
-              <div className="flex flex-col gap-4 sm:flex-row mb-5">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 <Controller
                   control={control}
                   name="desiredSalary"
@@ -318,6 +301,23 @@ export function ApplyToVacantDialog({
                   )}
                 />
               </div>
+              <Controller
+                control={control}
+                name="availability"
+                render={({ field, fieldState }) => (
+                  <Field className="mb-5">
+                    <FieldLabel>Disponibilidad</FieldLabel>
+                    <Input
+                      placeholder="Ej. Inmediata, 15 días, 1 mes"
+                      disabled={!isJobOpeningSelected}
+                      {...field}
+                    />
+                    {fieldState.invalid && isJobOpeningSelected && (
+                      <FieldError>{fieldState.error?.message}</FieldError>
+                    )}
+                  </Field>
+                )}
+              />
             </FieldGroup>
             <DialogFooter>
               <Button

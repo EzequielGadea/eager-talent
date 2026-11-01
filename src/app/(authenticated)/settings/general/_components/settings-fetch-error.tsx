@@ -20,16 +20,21 @@ export function SettingsFetchError({
       </CardHeader>
 
       <CardContent className="flex flex-col items-center text-center">
-        <div role="alert" className="flex w-full max-w-md flex-col gap-4 text-center">
+        <div
+          role="alert"
+          className="flex w-full max-w-md flex-col gap-4 text-center"
+        >
           <div className="flex flex-col items-center gap-4">
             <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
               <CircleAlert className="size-6 text-danger" aria-hidden="true" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-text-primary">
-              Error inesperado
+                Error inesperado
               </h3>
-              <p className="text-sm text-text-secondary">Algo salió mal, intentalo de nuevo más tarde.</p>
+              <p className="text-sm text-text-secondary">
+                Algo salió mal, intentalo de nuevo más tarde.
+              </p>
             </div>
           </div>
           <div>

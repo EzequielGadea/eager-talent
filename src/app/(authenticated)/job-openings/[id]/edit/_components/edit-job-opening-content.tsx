@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+import { TRPCError } from "@trpc/server";
+
 import {
   jobOpeningStageTypeSchema,
   PERSISTED_TO_FORM_STAGE_TYPE,
@@ -6,6 +9,7 @@ import {
   type UpdateJobOpeningInput,
 } from "~/lib/validations/job-opening";
 import { api } from "~/lib/trpc/server";
+import JobOpeningNotFound from "~/app/(authenticated)/job-openings/[id]/not-found";
 
 import { EditJobOpeningForm } from "./edit-job-opening-form";
 import { JobOpeningDatesCard } from "./job-opening-dates-card";
@@ -108,13 +112,31 @@ export async function EditJobOpeningContent({
   jobOpeningId,
 }: EditJobOpeningContentProps) {
   const [jobOpening, areas, seniorities, assignableUsers] = await Promise.all([
-    api.jobOpening.fetchById({
-      id: jobOpeningId,
-    }),
+    api.jobOpening
+      .fetchById({
+        id: jobOpeningId,
+      })
+      .catch((error: unknown) => {
+        if (
+          error instanceof TRPCError &&
+          (error.code === "NOT_FOUND" || error.code === "FORBIDDEN")
+        ) {
+          return null;
+        }
+        throw error;
+      }),
     api.area.getAllAreas({}),
     api.seniority.getAllSeniorities({}),
     api.jobOpening.listAssignableUsers({}),
   ]);
+
+  if (!jobOpening) {
+    return <JobOpeningNotFound />;
+  }
+
+  if (jobOpening.status === "Closed" || jobOpening.status === "Cancelled") {
+    redirect(`/job-openings/${jobOpening.id}/pipeline`);
+  }
 
   const defaultValues: UpdateJobOpeningInput = {
     id: jobOpening.id,
@@ -132,24 +154,32 @@ export async function EditJobOpeningContent({
   };
 
   return (
-    <EditJobOpeningForm defaultValues={defaultValues}>
-      <JobOpeningDetailsCard
-        areaOptions={areas}
-        seniorityOptions={seniorities}
-      />
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+      <header>
+        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
+          Editar vacante
+        </h1>
+      </header>
 
-      <JobOpeningDatesCard />
+      <EditJobOpeningForm defaultValues={defaultValues}>
+        <JobOpeningDetailsCard
+          areaOptions={areas}
+          seniorityOptions={seniorities}
+        />
 
-      <JobOpeningProcessCard
-        canEditStages={
-          !jobOpening.hasBeenOpened && jobOpening.status !== "Open"
-        }
-      />
+        <JobOpeningDatesCard />
 
-      <JobOpeningHiringManagersCard
-        initialHiringManagers={jobOpening.hiringManagers}
-        hiringManagerOptions={assignableUsers}
-      />
-    </EditJobOpeningForm>
+        <JobOpeningProcessCard
+          canEditStages={
+            !jobOpening.hasBeenOpened && jobOpening.status !== "Open"
+          }
+        />
+
+        <JobOpeningHiringManagersCard
+          initialHiringManagers={jobOpening.hiringManagers}
+          hiringManagerOptions={assignableUsers}
+        />
+      </EditJobOpeningForm>
+    </div>
   );
 }

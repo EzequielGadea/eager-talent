@@ -3,7 +3,6 @@
 import { AlertCircle, RefreshCw } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
 
 type JobOpeningErrorProps = {
   reset: () => void;
@@ -12,8 +11,8 @@ type JobOpeningErrorProps = {
 export default function JobOpeningError({ reset }: JobOpeningErrorProps) {
   return (
     <main className="flex min-h-0 flex-1 items-center justify-center p-6">
-      <Card className="w-full max-w-md">
-        <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
+      <div className="relative w-full max-w-105 rounded-3xl border bg-white p-8 shadow-lg">
+        <div className="flex flex-col items-center gap-4 text-center">
           <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
             <AlertCircle className="size-6 text-danger" />
           </div>
@@ -29,12 +28,17 @@ export default function JobOpeningError({ reset }: JobOpeningErrorProps) {
             </p>
           </div>
 
-          <Button type="button" onClick={reset}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={reset}
+            className="mt-2 h-11 w-full rounded-full"
+          >
             <RefreshCw className="size-4" />
             Intentar nuevamente
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </main>
   );
 }
