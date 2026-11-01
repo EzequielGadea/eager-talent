@@ -49,6 +49,9 @@ export const updateStatus = protectedProcedure
       });
     }
 
+    const isClosing =
+      jobOpening.status !== JobOpeningStatus.Closed &&
+      input.status === JobOpeningStatus.Closed;
     const hasBeenOpened =
       jobOpening.hasBeenOpened ||
       jobOpening.status === "Open" ||
@@ -61,6 +64,7 @@ export const updateStatus = protectedProcedure
       data: {
         status: input.status,
         hasBeenOpened,
+        ...(isClosing ? { closingDate: new Date() } : {}),
       },
       select: {
         id: true,
