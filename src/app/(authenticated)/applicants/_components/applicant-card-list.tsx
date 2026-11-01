@@ -5,7 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { FaLinkedin } from "react-icons/fa";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 
+import { getTagStyles } from "~/lib/tags/get-tag-styles";
 import { Badge } from "~/components/ui/badge";
 
 import type { ApplicantInfo } from "../types";
@@ -131,23 +137,47 @@ function JobOpeningLine({
   jobOpening: string[];
   showFirst?: boolean;
 }) {
+  const visibleIndex = showFirst ? 0 : jobOpening.length - 1;
+
+  const otherJobOpenings = jobOpening.filter(
+    (_, index) => index !== visibleIndex,
+  );
+
   return (
-    <p className="flex min-w-0 items-center gap-1 text-xs text-dashboard-text-muted">
+    <div className="flex min-w-0 items-center gap-1 text-xs text-dashboard-text-muted">
       {jobOpening.length > 0 ? (
         <>
-          <span className="min-w-0 truncate">
-            {jobOpening[showFirst ? 0 : jobOpening.length - 1]}
-          </span>
-          {jobOpening.length > 1 && (
-            <span className="shrink-0 whitespace-nowrap">
-              +{jobOpening.length - 1}
-            </span>
+          <span className="min-w-0 truncate">{jobOpening[visibleIndex]}</span>
+
+          {otherJobOpenings.length > 0 && (
+            <Popover>
+              <PopoverTrigger className="relative z-10 shrink-0 cursor-pointer whitespace-nowrap text-text-link hover:underline">
+                +{otherJobOpenings.length}
+              </PopoverTrigger>
+
+              <PopoverContent className="w-56 p-3">
+                <p className="mb-2 text-xs font-semibold text-text-primary">
+                  Otras vacantes
+                </p>
+
+                <div className="flex flex-col gap-2">
+                  {otherJobOpenings.map((vacancy, index) => (
+                    <span
+                      key={`${vacancy}-${index}`}
+                      className="text-sm text-text-secondary"
+                    >
+                      {vacancy}
+                    </span>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           )}
         </>
       ) : (
         "Sin vacante"
       )}
-    </p>
+    </div>
   );
 }
 
@@ -174,20 +204,46 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
       <JobOpeningLine jobOpening={applicant.jobOpening} />
 
       {applicant.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {applicant.tags.map((tag, index) => (
+        <div className="flex flex-wrap items-center gap-1">
+          {applicant.tags.slice(0, 3).map((tag, index) => (
             <Badge
               key={index}
-              variant="secondary"
-              style={{
-                color: tag.color,
-                backgroundColor: `${tag.color}26`,
-              }}
-              className="whitespace-nowrap rounded-full border-transparent px-2 py-0.5 text-[10px] font-semibold leading-4"
+              variant="tag"
+              style={getTagStyles(tag.color ?? "gray")}
+              title={tag.label || "-"}
+              className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
             >
               {tag.label || "-"}
             </Badge>
           ))}
+
+          {applicant.tags.length > 3 && (
+            <Popover>
+              <PopoverTrigger className="relative z-10 cursor-pointer text-xs text-text-link hover:underline">
+                +{applicant.tags.length - 3}
+              </PopoverTrigger>
+
+              <PopoverContent className="w-56 p-3">
+                <p className="mb-2 text-xs font-semibold text-text-primary">
+                  Otras etiquetas
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  {applicant.tags.slice(3).map((tag, index) => (
+                    <Badge
+                      key={index}
+                      variant="tag"
+                      style={getTagStyles(tag.color ?? "gray")}
+                      title={tag.label || "-"}
+                      className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
+                    >
+                      {tag.label || "-"}
+                    </Badge>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
       )}
 
