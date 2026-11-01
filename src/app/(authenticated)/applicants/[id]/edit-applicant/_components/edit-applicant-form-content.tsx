@@ -159,23 +159,29 @@ export default function EditApplicantFormContent({ applicant }: Props) {
     const newEducationUrl = educationResult?.[0]?.ufsUrl;
     const newPhotoUrl = photoResult?.[0]?.ufsUrl;
 
+    // When there's no new upload and no explicit removal, send undefined
+    // instead of the applicant's current URL. The mutation's schema
+    // validates photo/resume/education against uploadthingUrlSchema (which
+    // only accepts this app's own UploadThing bucket), and Prisma treats an
+    // undefined field as "leave as is" (see the comment in updateApplicant's
+    // nextValues). Re-sending the unchanged URL would re-run that
+    // validation on every edit for no reason, and fails outright for
+    // applicants whose photo/resume/education were never a real UploadThing
+    // URL to begin with (e.g. seeded data) even when the user isn't
+    // touching that field at all.
     const resumeUrl = newResumeUrl
       ? newResumeUrl
       : removeResume
         ? null
-        : applicant.resume;
+        : undefined;
 
     const educationUrl = newEducationUrl
       ? newEducationUrl
       : removeEducation
         ? null
-        : applicant.education;
+        : undefined;
 
-    const photoUrl = newPhotoUrl
-      ? newPhotoUrl
-      : removePhoto
-        ? null
-        : applicant.photo;
+    const photoUrl = newPhotoUrl ? newPhotoUrl : removePhoto ? null : undefined;
 
     await updateApplicantMutation.mutateAsync({
       id: applicant.id,
