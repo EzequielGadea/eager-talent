@@ -139,8 +139,8 @@ function InfoCard({ icon, title, children }: InfoCardProps) {
       <CardHeader className="flex items-start gap-2">
         <span className="mt-0.5 shrink-0">{icon}</span>
 
-        <CardTitle className="min-w-0 wrap-anywhere text-xs font-semibold text-text-secondary group-data-[size=sm]/card:text-xs">
-          <h2>{title}</h2>
+        <CardTitle className="min-w-0 wrap-anywhere font-sans text-xs font-semibold text-text-secondary group-data-[size=sm]/card:text-xs">
+          <h2 className="font-sans">{title}</h2>
         </CardTitle>
       </CardHeader>
 

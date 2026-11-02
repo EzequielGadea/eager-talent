@@ -61,7 +61,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-text-primary">
+            <h2 className="text-h3 text-text-primary">
               No se pudo cargar la actividad
             </h2>
 

@@ -27,17 +27,15 @@ async function ProtectedNewApplicantPage() {
     redirect("/dashboard");
   }
   return (
-    <>
-      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4 mb-0">
-        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
-          Nuevo candidato
-        </h1>
-        <p className="text-text-secondary mt-0 text-sm">
-          Cargá los datos del candidato manualmente. Nombre, apellido email y
-          rol son obligatorios.
-        </p>
-      </div>
+    <div className="mx-auto w-full max-w-210">
+      <h1 className="mb-1 font-heading text-h1 text-text-primary">
+        Nuevo candidato
+      </h1>
+      <p className="mb-5.5 text-sm text-text-secondary">
+        Cargá los datos del candidato manualmente. Nombre, apellido email y rol
+        son obligatorios.
+      </p>
       <NewApplicantForm />
-    </>
+    </div>
   );
 }

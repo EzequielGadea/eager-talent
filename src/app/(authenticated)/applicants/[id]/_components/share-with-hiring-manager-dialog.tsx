@@ -282,7 +282,7 @@ export function ShareWithHiringManagerDialog({
               <UserRoundPlus className="size-5" aria-hidden="true" />
             </div>
 
-            <DialogTitle className="text-xl font-bold text-text-primary">
+            <DialogTitle className="text-h3 text-text-primary">
               Compartir con un Hiring Manager
             </DialogTitle>
           </div>
@@ -474,7 +474,7 @@ export function ShareWithHiringManagerDialog({
 
           <section className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-4">
-              <h3 className="text-xs font-bold tracking-wide text-text-tertiary">
+              <h3 className="font-sans text-xs font-bold tracking-wide text-text-tertiary">
                 YA TIENE ACCESO
               </h3>
 

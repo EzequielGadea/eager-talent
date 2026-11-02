@@ -208,7 +208,7 @@ export function ApplicantApplicationsCard({
     <Card className="bg-card p-0">
       <CardHeader className="flex flex-wrap items-center gap-x-3 gap-y-3 px-6 py-4">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
-          <CardTitle className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
+          <CardTitle className="font-sans text-xs font-bold uppercase tracking-wider text-text-tertiary">
             Postulación
           </CardTitle>
 
@@ -278,7 +278,7 @@ export function ApplicantApplicationsCard({
                   onClick={() => setShowDisqualifyDialog(true)}
                 >
                   <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
-                    <X className="h-2.5 w-2.5" strokeWidth={2.5} />
+                    <X className="h-2.5 w-2.5" />
                   </span>
                   Descalificar
                 </Button>
@@ -290,7 +290,7 @@ export function ApplicantApplicationsCard({
                   className="gap-1.5 rounded-full border-info bg-background px-3.5 text-xs font-medium text-info shadow-none hover:bg-info-bg hover:text-text-link"
                   onClick={() => setShowRequalifyDialog(true)}
                 >
-                  <RotateCcw className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  <RotateCcw className="h-3.5 w-3.5" />
                   Recalificar
                 </Button>
               )}
@@ -367,7 +367,7 @@ export function ApplicantApplicationsCard({
 
       <CardContent className="p-0 px-6 pb-6 pt-4">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-          <h3 className="min-w-0 text-base font-bold text-text-primary">
+          <h3 className="min-w-0 text-h3 text-text-primary">
             Historial de entrevistas
           </h3>
           {canScheduleInterview && (

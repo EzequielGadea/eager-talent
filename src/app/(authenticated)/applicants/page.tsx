@@ -150,7 +150,7 @@ async function ProtectedApplicantsPage(props: {
   const tagData = api.tag.getAllTags({});
 
   return (
-    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden text-dashboard-text-primary md:p-4">
+    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden text-text-primary">
       <Suspense
         fallback={<HeaderFallback isHiringManagerView={isHiringManagerView} />}
       >
@@ -182,7 +182,7 @@ async function ProtectedApplicantsPage(props: {
 
       <Suspense
         fallback={
-          <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+          <div className="w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
             <ApplicantCardListFallback />
 
             <div className="hidden w-full overflow-x-auto md:block">
@@ -199,7 +199,7 @@ async function ProtectedApplicantsPage(props: {
                   <ApplicantTableHeader />
                 )}
 
-                <TableBody className="divide-y divide-dashboard-border">
+                <TableBody className="divide-y divide-border-default">
                   <TableFallback isHiringManagerView={isHiringManagerView} />
                 </TableBody>
               </Table>
@@ -218,14 +218,14 @@ async function ProtectedApplicantsPage(props: {
       {isHiringManagerView && sharedData && (
         <Suspense
           fallback={
-            <div className="mt-4 w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+            <div className="mt-4 w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
               <ApplicantCardListFallback />
 
               <div className="hidden w-full overflow-x-auto md:block">
                 <Table className="min-w-200 table-fixed">
                   <HiringManagerApplicantTableHeader showSharedBy={true} />
 
-                  <TableBody className="divide-y divide-dashboard-border">
+                  <TableBody className="divide-y divide-border-default">
                     <TableFallback isHiringManagerView showSharedBy />
                   </TableBody>
                 </Table>

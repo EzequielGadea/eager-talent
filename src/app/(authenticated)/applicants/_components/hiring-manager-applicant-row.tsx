@@ -38,7 +38,7 @@ export function HiringManagerApplicantRow({
   return (
     <TableRow
       onClick={() => router.push(`/applicants/${applicant.id}`)}
-      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-success-bg last:border-0"
+      className="group cursor-pointer border-b border-border-default transition-colors hover:bg-success-bg last:border-0"
     >
       <TableCell className="px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
@@ -61,11 +61,11 @@ export function HiringManagerApplicantRow({
           )}
 
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-dashboard-dark">
+            <p className="truncate text-sm font-semibold text-text-primary">
               {applicant.name}
             </p>
 
-            <p className="truncate text-xs text-dashboard-text-muted">
+            <p className="truncate text-xs text-text-secondary">
               {applicant.role}
             </p>
           </div>
@@ -74,7 +74,7 @@ export function HiringManagerApplicantRow({
 
       <TableCell className="px-4 py-3">
         {hasJobOpening ? (
-          <div className="text-sm text-dashboard-text-muted">
+          <div className="text-sm text-text-secondary">
             <span>{applicant.jobOpening[0]}</span>
 
             {applicant.jobOpening.length > 1 && (
@@ -84,7 +84,7 @@ export function HiringManagerApplicantRow({
             )}
           </div>
         ) : (
-          <span className="text-sm text-dashboard-text-muted">Sin vacante</span>
+          <span className="text-sm text-text-secondary">Sin vacante</span>
         )}
       </TableCell>
 

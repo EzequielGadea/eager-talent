@@ -115,14 +115,14 @@ export default function EditApplicantForm() {
   if (error || !applicant) {
     return (
       <main className="flex min-h-0 flex-1 items-center justify-center p-6">
-        <div className="relative w-full max-w-105 rounded-3xl border bg-white p-8 shadow-lg">
+        <div className="relative w-full max-w-105 rounded-3xl border bg-surface-card p-8 shadow-lg">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
               <AlertCircle className="size-6 text-danger" />
             </div>
 
             <div className="space-y-1">
-              <h1 className="text-lg font-semibold text-text-primary">
+              <h1 className="text-h3 text-text-primary">
                 No se pudo cargar el candidato
               </h1>
 
@@ -147,14 +147,12 @@ export default function EditApplicantForm() {
   }
 
   return (
-    <>
-      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
-          Editar candidato
-        </h1>
-      </div>
+    <div className="mx-auto w-full max-w-210">
+      <h1 className="mb-5.5 font-heading text-h1 text-text-primary">
+        Editar candidato
+      </h1>
 
       <ApplicantEditFormContent applicant={applicant} />
-    </>
+    </div>
   );
 }

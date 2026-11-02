@@ -49,14 +49,14 @@ export function SharedApplicantsTable(props: {
 
   return (
     <div className="mt-4 w-full">
-      <div className="rounded-t-xl border border-dashboard-border bg-tag-purple-bg px-4 py-2">
-        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.06em] text-tag-purple-fg">
+      <div className="rounded-t-xl border border-border-default bg-tag-purple-bg px-4 py-2">
+        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-tag-purple-fg">
           <Share2 className="size-3.5 shrink-0" />
           <span>Compartidos con vos · Sin vacante</span>
         </div>
       </div>
 
-      <div className="w-full overflow-hidden rounded-b-xl border-x border-b border-dashboard-border bg-white shadow-sm">
+      <div className="w-full overflow-hidden rounded-b-xl border-x border-b border-border-default bg-surface-card shadow-sm">
         <ApplicantCardList
           applicants={props.applicantsData}
           isPending={isPending}
@@ -69,14 +69,14 @@ export function SharedApplicantsTable(props: {
           <Table className="min-w-200 table-fixed">
             <HiringManagerApplicantTableHeader showSharedBy={true} />
 
-            <TableBody className="divide-y divide-dashboard-border">
+            <TableBody className="divide-y divide-border-default">
               {isPending ? (
                 <TableFallback isHiringManagerView />
               ) : props.applicantsData.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={5}
-                    className="h-24 text-center text-dashboard-text-muted"
+                    className="h-24 text-center text-text-secondary"
                   >
                     No hay perfiles compartidos con vos.
                   </TableCell>

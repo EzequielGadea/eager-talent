@@ -68,7 +68,7 @@ export function ApplicantOverviewCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <CardTitle className="min-w-0 text-xl font-bold tracking-tight">
+            <CardTitle className="min-w-0 text-h2">
               <h1 className="truncate" title={`${name} ${lastName}`}>
                 {name} {lastName}
               </h1>
@@ -172,7 +172,7 @@ type ApplicantAttributeProps = {
 function ApplicantAttribute({ label, value }: ApplicantAttributeProps) {
   return (
     <div className="min-w-0 wrap-anywhere">
-      <p className="text-xs font-semibold uppercase text-text-tertiary">
+      <p className="text-label font-bold uppercase tracking-wider text-text-tertiary">
         {label}
       </p>
       <p className="mt-1 text-sm font-medium">{value}</p>

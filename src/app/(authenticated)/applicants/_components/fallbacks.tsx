@@ -9,9 +9,7 @@ export function HeaderFallback({
   return (
     <header className="mb-4.5 flex items-start justify-between gap-4">
       <div className="min-w-0 flex-1">
-        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
-          Candidatos
-        </h1>
+        <h1 className="font-heading text-h1 text-text-primary">Candidatos</h1>
 
         <Skeleton className="mt-2 h-4 w-96 max-w-full" />
       </div>
@@ -46,9 +44,9 @@ export function FiltersFallback({
 export function ApplicantsTableSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className={`w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm ${className ?? ""}`}
+      className={`w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm ${className ?? ""}`}
     >
-      <div className="border-b border-dashboard-border bg-(--surface-subtle) px-4 py-3">
+      <div className="border-b border-border-default bg-surface-subtle px-4 py-3">
         <div className="flex gap-8">
           <Skeleton className="h-3 w-28" />
           <Skeleton className="h-3 w-24" />
@@ -60,7 +58,7 @@ export function ApplicantsTableSkeleton({ className }: { className?: string }) {
       {Array.from({ length: 5 }).map((_, index) => (
         <div
           key={index}
-          className="flex h-17.5 items-center gap-8 border-b border-dashboard-border px-4 last:border-b-0"
+          className="flex h-17.5 items-center gap-8 border-b border-border-default px-4 last:border-b-0"
         >
           <div className="flex w-48 items-center gap-3">
             <Skeleton className="size-9 shrink-0 rounded-full" />
@@ -82,7 +80,7 @@ export function ApplicantsTableSkeleton({ className }: { className?: string }) {
 
 export function ApplicantsPageSkeleton() {
   return (
-    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 text-dashboard-text-primary">
+    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden text-text-primary">
       <HeaderFallback />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">

@@ -148,7 +148,7 @@ export function Filters({
       <div className="relative w-full shrink-0 md:w-56">
         <Search
           size={15}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-dashboard-text-muted"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
         />
 
         <Input
@@ -160,7 +160,7 @@ export function Filters({
             handleSearch(value);
           }}
           placeholder="Buscar por nombre..."
-          className="h-8.5 rounded-lg border-dashboard-border bg-surface-card pl-9 text-[13px] font-normal shadow-none"
+          className="h-8.5 rounded-lg border-border-default bg-surface-card pl-9 text-small font-normal shadow-none"
         />
       </div>
 
@@ -192,9 +192,9 @@ export function Filters({
             >
               <PopoverTrigger
                 className={cn(
-                  "flex h-8.5 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-dashboard-border bg-surface-card px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text",
+                  "flex h-8.5 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-border-default bg-surface-card px-4 text-small font-normal text-text-secondary shadow-none transition-colors hover:bg-success-bg hover:text-tag-green-fg",
                   activeFilterCount > 0 &&
-                    "border-dashboard-success-light font-semibold bg-dashboard-success-light text-dashboard-success-text",
+                    "border-tag-green-bg font-semibold bg-success-bg text-tag-green-fg",
                 )}
               >
                 <span>{config.label}</span>
@@ -208,15 +208,15 @@ export function Filters({
                 <ChevronDown
                   size={14}
                   className={cn(
-                    "text-dashboard-text-muted",
-                    activeFilterCount > 0 && "text-dashboard-success-text",
+                    "text-text-secondary",
+                    activeFilterCount > 0 && "text-tag-green-fg",
                   )}
                 />
               </PopoverTrigger>
 
               <PopoverContent align="start" className="w-56 rounded-xl p-3">
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <p className="text-xs font-bold uppercase tracking-wider text-dashboard-text-light">
+                  <p className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
                     Filtrar por {config.label.toLowerCase()}
                   </p>
                 </div>
@@ -227,13 +227,13 @@ export function Filters({
                     value={optionSearch}
                     onChange={(event) => setOptionSearch(event.target.value)}
                     placeholder="Buscar etiqueta..."
-                    className="mb-3 h-8 rounded-lg border-dashboard-border bg-white text-sm"
+                    className="mb-3 h-8 rounded-lg border-border-default bg-surface-card text-sm"
                   />
                 )}
 
                 <div className="mb-3 flex max-h-56 flex-col gap-2.5 overflow-y-auto pr-1">
                   {visibleOptions.length === 0 ? (
-                    <p className="text-xs text-dashboard-text-muted">
+                    <p className="text-xs text-text-secondary">
                       Sin opciones disponibles
                     </p>
                   ) : (
@@ -271,7 +271,7 @@ export function Filters({
                               {option.label}
                             </Badge>
                           ) : (
-                            <span className="text-sm font-medium text-dashboard-text-muted">
+                            <span className="text-sm font-medium text-text-secondary">
                               {option.label}
                             </span>
                           )}
@@ -280,13 +280,13 @@ export function Filters({
                     })
                   )}
                 </div>
-                <div className="flex items-center justify-between border-t border-dashboard-border pt-2">
+                <div className="flex items-center justify-between border-t border-border-default pt-2">
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     disabled={activeFilterCount === 0}
-                    className="h-7 px-1 text-xs font-semibold text-dashboard-text-muted hover:bg-transparent hover:text-dashboard-success-text"
+                    className="h-7 px-1 text-xs font-semibold text-text-secondary hover:bg-transparent hover:text-tag-green-fg"
                     onClick={() => clearFilter(config.key)}
                   >
                     Limpiar
@@ -295,7 +295,7 @@ export function Filters({
                   <Button
                     type="button"
                     size="sm"
-                    className="h-7 rounded-lg bg-dashboard-dark px-4 text-xs font-semibold text-white hover:bg-dashboard-dark/90"
+                    className="h-7 rounded-lg bg-surface-dark px-4 text-xs font-semibold text-text-on-dark hover:bg-surface-dark/90"
                     onClick={() => setOpenFilter(null)}
                   >
                     Aplicar

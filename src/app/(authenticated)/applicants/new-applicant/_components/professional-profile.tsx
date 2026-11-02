@@ -56,8 +56,8 @@ export default function ProfessionalProfile() {
   });
 
   return (
-    <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader className="gap-1 pb-3">
+    <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+      <CardHeader className="gap-1">
         <CardTitle className="text-sm font-semibold">
           Perfil profesional
         </CardTitle>
