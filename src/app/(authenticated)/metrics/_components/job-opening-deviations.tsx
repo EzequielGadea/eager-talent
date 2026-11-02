@@ -66,7 +66,7 @@ export function JobOpeningDeviations({
   const highestDeviation = data.highestDeviation;
 
   return (
-    <Card>
+    <Card className="pb-0">
       <CardHeader className="gap-1">
         <CardTitle>Desvíos por vacante y etapa</CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -211,13 +211,15 @@ export function JobOpeningDeviations({
         )}
 
         {!isLoading ? (
-          <ListPagination
-            totalItems={data.total}
-            pageSize={data.pageSize}
-            currentPage={data.page}
-            itemLabel="vacantes"
-            onPageChange={onPageChange}
-          />
+          <div className="-mx-(--card-spacing)">
+            <ListPagination
+              totalItems={data.total}
+              pageSize={data.pageSize}
+              currentPage={data.page}
+              itemLabel="vacantes"
+              onPageChange={onPageChange}
+            />
+          </div>
         ) : null}
       </CardContent>
     </Card>
