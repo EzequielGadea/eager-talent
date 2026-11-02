@@ -80,7 +80,7 @@ export function ApplicantsTableSkeleton({ className }: { className?: string }) {
 
 export function ApplicantsPageSkeleton() {
   return (
-    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden text-text-primary">
+    <div className="-mx-1 min-w-0 w-[calc(100%+0.5rem)] max-w-none flex-1 overflow-x-hidden px-1 text-text-primary">
       <HeaderFallback />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">

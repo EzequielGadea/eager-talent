@@ -147,8 +147,8 @@ export function Filters({
     <>
       <div className="relative w-full shrink-0 md:w-56">
         <Search
-          size={15}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
+          className="pointer-events-none absolute left-3 top-1/2 z-10 size-4 -translate-y-1/2 text-text-tertiary"
+          aria-hidden="true"
         />
 
         <Input
@@ -160,6 +160,7 @@ export function Filters({
             handleSearch(value);
           }}
           placeholder="Buscar por nombre..."
+          aria-label="Buscar por nombre"
           className="h-8.5 rounded-lg border-border-default bg-surface-card pl-9 text-small font-normal shadow-none"
         />
       </div>
