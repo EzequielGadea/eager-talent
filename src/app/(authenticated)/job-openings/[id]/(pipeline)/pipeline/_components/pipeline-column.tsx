@@ -6,6 +6,7 @@ import type { PipelineStage } from "./types";
 
 type PipelineColumnProps = {
   jobOpeningId: string;
+  jobOpeningName: string;
   stage: PipelineStage;
   isLastStage: boolean;
   search?: string;
@@ -16,6 +17,7 @@ type PipelineColumnProps = {
 
 export async function PipelineColumn({
   jobOpeningId,
+  jobOpeningName,
   stage,
   isLastStage,
   search,
@@ -40,6 +42,7 @@ export async function PipelineColumn({
     >
       <PipelineColumnClient
         jobOpeningId={jobOpeningId}
+        jobOpeningName={jobOpeningName}
         stageId={stage.key}
         stageName={stage.name}
         initialCandidates={data.candidates}

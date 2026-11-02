@@ -333,6 +333,7 @@ export function ApplicantApplicationsCard({
           applicantId={app.applicantId}
           jobOpeningId={app.jobOpeningId}
           candidateName={applicantName}
+          jobOpeningName={app.jobOpening.name}
           stageName={app.currentStageName}
           onSuccess={refreshApplicantData}
         />

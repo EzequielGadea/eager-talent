@@ -11,12 +11,14 @@ import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
 
 type PipelineProps = {
   jobOpeningId: string;
+  jobOpeningName: string;
   stages: PipelineStage[];
   search?: string;
 };
 
 export async function Pipeline({
   jobOpeningId,
+  jobOpeningName,
   stages,
   search,
 }: PipelineProps) {
@@ -58,6 +60,7 @@ export async function Pipeline({
             <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
               <PipelineColumn
                 jobOpeningId={jobOpeningId}
+                jobOpeningName={jobOpeningName}
                 stage={stage}
                 isLastStage={index === stages.length - 1}
                 search={search}

@@ -20,7 +20,7 @@ type DisqualifyApplicantDialogProps = {
   applicantId: string;
   jobOpeningId: string;
   candidateName: string;
-  candidateRole?: string | null;
+  jobOpeningName: string;
   stageName: string;
   onSuccess: () => void;
 };
@@ -31,7 +31,7 @@ export function DisqualifyApplicantDialog({
   applicantId,
   jobOpeningId,
   candidateName,
-  candidateRole,
+  jobOpeningName,
   stageName,
   onSuccess,
 }: DisqualifyApplicantDialogProps) {
@@ -95,14 +95,10 @@ export function DisqualifyApplicantDialog({
 
             <DialogDescription className="mt-0.5 text-small text-text-secondary">
               {candidateName}
-              {candidateRole && (
-                <>
-                  {" · "}
-                  <span className="font-semibold text-text-primary">
-                    {candidateRole}
-                  </span>
-                </>
-              )}
+              {" · "}
+              <span className="font-semibold text-text-primary">
+                {jobOpeningName}
+              </span>
               {" · "}
               {stageName}
             </DialogDescription>

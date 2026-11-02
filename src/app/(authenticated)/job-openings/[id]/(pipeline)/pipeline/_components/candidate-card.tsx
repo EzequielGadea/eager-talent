@@ -62,6 +62,7 @@ function formatInterviewDateTime(date: Date) {
 type CandidateCardProps = {
   candidate: PipelineCandidate;
   jobOpeningId: string;
+  jobOpeningName: string;
   currentStageId: string;
   currentStageName: string;
   isLastStage: boolean;
@@ -74,6 +75,7 @@ type CandidateCardProps = {
 export function CandidateCard({
   candidate,
   jobOpeningId,
+  jobOpeningName,
   currentStageId,
   currentStageName,
   isLastStage,
@@ -396,7 +398,7 @@ export function CandidateCard({
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
-          candidateRole={candidate.role}
+          jobOpeningName={jobOpeningName}
           stageName={currentStageName}
           onSuccess={() => router.refresh()}
         />

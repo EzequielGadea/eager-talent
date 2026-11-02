@@ -83,7 +83,12 @@ async function PipelineContent({ params, searchParams }: PipelinePageProps) {
 
       <JobOpeningTabs jobOpeningId={jobOpening.id} />
 
-      <Pipeline jobOpeningId={jobOpening.id} stages={stages} search={search} />
+      <Pipeline
+        jobOpeningId={jobOpening.id}
+        jobOpeningName={jobOpening.name}
+        stages={stages}
+        search={search}
+      />
     </main>
   );
 }

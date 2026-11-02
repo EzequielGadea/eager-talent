@@ -13,6 +13,7 @@ import type { PipelineCandidate } from "./types";
 
 type PipelineColumnClientProps = {
   jobOpeningId: string;
+  jobOpeningName: string;
   stageId: string;
   stageName: string;
   initialCandidates: PipelineCandidate[];
@@ -26,6 +27,7 @@ type PipelineColumnClientProps = {
 
 export function PipelineColumnClient({
   jobOpeningId,
+  jobOpeningName,
   stageId,
   stageName,
   initialCandidates,
@@ -224,6 +226,7 @@ export function PipelineColumnClient({
             key={candidate.applicantId}
             candidate={candidate}
             jobOpeningId={jobOpeningId}
+            jobOpeningName={jobOpeningName}
             currentStageId={stageId}
             currentStageName={stageName}
             isLastStage={isLastStage}
