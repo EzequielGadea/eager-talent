@@ -115,21 +115,27 @@ export function ApplicantApplicationsCard({
   const router = useRouter();
   const utils = api.useUtils();
   const [, startTransition] = useTransition();
+
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
     () => getInitialSelection(applications),
   );
+
   const [showApplyDialog, setShowApplyDialog] = useState(false);
 
   function refreshApplicantData() {
     void utils.activity.getByApplicantId.invalidate({ applicantId });
     router.refresh();
   }
+
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
   const [showRequalifyDialog, setShowRequalifyDialog] = useState(false);
+
   const effectiveSelection = selection ?? getInitialSelection(applications);
+
   const isExploration = effectiveSelection?.type === "exploration";
+
   const app =
     effectiveSelection?.type === "application"
       ? (applications.find(
@@ -173,11 +179,14 @@ export function ApplicantApplicationsCard({
   const interviews = isExploration
     ? explorationInterviews
     : (app?.interviews ?? []);
+
   const canScheduleInterview =
     canCreateInterview &&
     (isExploration || Boolean(app?.active && app.canScheduleInterview));
+
   const jobOpening = app?.jobOpening;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
+
   const desiredSalary = app
     ? [
         app.desiredSalaryCurrency &&
@@ -238,6 +247,7 @@ export function ApplicantApplicationsCard({
               {headerStatus.label}
             </Badge>
           )}
+
           {isExploration && (
             <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg">
               <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-tag-purple-fg" />
@@ -270,6 +280,7 @@ export function ApplicantApplicationsCard({
                   <Share2 className="h-3.5 w-3.5" /> Compartir
                 </Button>
               )}
+
               {canUpdateApplication && app?.active && (
                 <Button
                   variant="outline"
@@ -283,6 +294,7 @@ export function ApplicantApplicationsCard({
                   Descalificar
                 </Button>
               )}
+
               {canUpdateApplication && app && !app.active && (
                 <Button
                   variant="outline"
@@ -370,6 +382,7 @@ export function ApplicantApplicationsCard({
           <h3 className="min-w-0 text-base font-bold text-text-primary">
             Historial de entrevistas
           </h3>
+
           {canScheduleInterview && (
             <Button
               type="button"
@@ -383,6 +396,7 @@ export function ApplicantApplicationsCard({
             </Button>
           )}
         </div>
+
         {canCreateInterview &&
           app &&
           app.active &&
@@ -437,6 +451,7 @@ export function ApplicantApplicationsCard({
                 </TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {interviews.map((interview) => (
                 <TableRow

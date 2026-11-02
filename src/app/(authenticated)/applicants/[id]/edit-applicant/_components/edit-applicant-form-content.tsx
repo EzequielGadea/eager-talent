@@ -32,6 +32,9 @@ type Props = {
   applicant: Applicant;
 };
 
+const UPLOAD_ERROR_MESSAGE =
+  "No se pudo subir el archivo: verificá que sea un PDF o una imagen (PNG, JPG, WEBP o GIF) de hasta 4 MB.";
+
 function getApplicantDefaultValues(applicant: Applicant): ApplicantFormValues {
   return {
     name: applicant.name,
@@ -63,7 +66,13 @@ function getApplicantDefaultValues(applicant: Applicant): ApplicantFormValues {
 }
 
 export default function EditApplicantFormContent({ applicant }: Props) {
-  const { startUpload } = useUploadThing("applicantFiles");
+  const { startUpload } = useUploadThing("applicantFiles", {
+    onUploadError: (error) => {
+      // Field-level errors are set from the per-field result below; this is
+      // only so the real reason shows up while debugging.
+      console.error("Error uploading file:", error);
+    },
+  });
 
   const router = useRouter();
 
@@ -71,6 +80,8 @@ export default function EditApplicantFormContent({ applicant }: Props) {
     applicant.photo ?? undefined,
   );
   const [removePhoto, setRemovePhoto] = useState(false);
+  const [removeResume, setRemoveResume] = useState(false);
+  const [removeEducation, setRemoveEducation] = useState(false);
 
   const methods = useForm<ApplicantFormValues>({
     resolver: zodResolver(applicantFormSchema),
@@ -100,33 +111,77 @@ export default function EditApplicantFormContent({ applicant }: Props) {
   });
 
   async function onSubmit(data: ApplicantFormValues) {
+    const resumeFile = data.resume?.[0];
+    const educationFile = data.education?.[0];
+    const photoFile = data.photo?.[0];
+
     const [resumeResult, educationResult, photoResult] = await Promise.all([
-      data.resume?.[0] ? startUpload([data.resume[0]]) : undefined,
-      data.education?.[0] ? startUpload([data.education[0]]) : undefined,
-      data.photo?.[0] ? startUpload([data.photo[0]]) : undefined,
+      resumeFile ? startUpload([resumeFile]) : undefined,
+      educationFile ? startUpload([educationFile]) : undefined,
+      photoFile ? startUpload([photoFile]) : undefined,
     ]);
+
+    // startUpload() never throws: on failure it resolves to undefined. A file
+    // was attempted but has no result means that specific upload failed, as
+    // opposed to the field simply having no new file selected.
+    const resumeFailed = Boolean(resumeFile) && !resumeResult;
+    const educationFailed = Boolean(educationFile) && !educationResult;
+    const photoFailed = Boolean(photoFile) && !photoResult;
+
+    if (resumeFailed || educationFailed || photoFailed) {
+      if (resumeFailed) {
+        methods.setError("resume", {
+          type: "server",
+          message: UPLOAD_ERROR_MESSAGE,
+        });
+      }
+
+      if (educationFailed) {
+        methods.setError("education", {
+          type: "server",
+          message: UPLOAD_ERROR_MESSAGE,
+        });
+      }
+
+      if (photoFailed) {
+        methods.setError("photo", {
+          type: "server",
+          message: UPLOAD_ERROR_MESSAGE,
+        });
+      }
+
+      // Stop here: don't save any field (not even the ones that have
+      // nothing to do with files) until every attached file is resolved.
+      return;
+    }
 
     const newResumeUrl = resumeResult?.[0]?.ufsUrl;
     const newEducationUrl = educationResult?.[0]?.ufsUrl;
     const newPhotoUrl = photoResult?.[0]?.ufsUrl;
 
+    // When there's no new upload and no explicit removal, send undefined
+    // instead of the applicant's current URL. The mutation's schema
+    // validates photo/resume/education against uploadthingUrlSchema (which
+    // only accepts this app's own UploadThing bucket), and Prisma treats an
+    // undefined field as "leave as is" (see the comment in updateApplicant's
+    // nextValues). Re-sending the unchanged URL would re-run that
+    // validation on every edit for no reason, and fails outright for
+    // applicants whose photo/resume/education were never a real UploadThing
+    // URL to begin with (e.g. seeded data) even when the user isn't
+    // touching that field at all.
     const resumeUrl = newResumeUrl
       ? newResumeUrl
       : removeResume
         ? null
-        : applicant.resume;
+        : undefined;
 
     const educationUrl = newEducationUrl
       ? newEducationUrl
       : removeEducation
         ? null
-        : applicant.education;
+        : undefined;
 
-    const photoUrl = newPhotoUrl
-      ? newPhotoUrl
-      : removePhoto
-        ? null
-        : applicant.photo;
+    const photoUrl = newPhotoUrl ? newPhotoUrl : removePhoto ? null : undefined;
 
     await updateApplicantMutation.mutateAsync({
       id: applicant.id,
@@ -169,8 +224,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
 
     router.push(`/applicants/${applicant.id}`);
   }
-  const [removeResume, setRemoveResume] = useState(false);
-  const [removeEducation, setRemoveEducation] = useState(false);
+
   return (
     <FormProvider {...methods}>
       <form

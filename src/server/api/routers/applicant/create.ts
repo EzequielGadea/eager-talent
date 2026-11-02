@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { uploadthingUrlSchema } from "~/lib/validations/uploadthing-url";
+
 import {
   EnglishLevel,
   Source,
@@ -19,7 +21,7 @@ export const createApplicant = protectedProcedure
       lastname: z.string().min(1),
       email: z.string().optional(),
       phone: z.string().optional(),
-      photo: z.string().optional(),
+      photo: uploadthingUrlSchema.optional(),
       country: z.string().optional(),
       linkedin: z.string().optional(),
 
@@ -31,8 +33,8 @@ export const createApplicant = protectedProcedure
       academicInstitution: z.string().optional(),
       careerStartYear: z.number().optional(),
       careerEndYear: z.number().optional(),
-      education: z.string().optional(),
-      resume: z.string().optional(),
+      education: uploadthingUrlSchema.optional(),
+      resume: uploadthingUrlSchema.optional(),
 
       roleId: z.string(),
       areaId: z.string().optional(),
