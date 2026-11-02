@@ -246,8 +246,7 @@ export function ChangePasswordDialog() {
     }
   }
 
-  const inputClassName =
-    "h-10 px-3.25 text-sm bg-card border-input rounded-md focus-visible:border-border-focus! focus-visible:ring-1! focus-visible:ring-accent-green/30!";
+  const inputClassName = "h-10 px-3.25 text-sm bg-card rounded-md";
 
   return (
     <>

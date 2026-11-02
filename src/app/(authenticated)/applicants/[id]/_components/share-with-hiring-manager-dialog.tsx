@@ -376,7 +376,7 @@ export function ShareWithHiringManagerDialog({
             >
               <ComboboxChips
                 ref={comboboxAnchor}
-                className="min-h-12 rounded-xl px-3 py-2 focus-within:border-border-focus focus-within:ring-4 focus-within:ring-border-focus/20"
+                className="min-h-12 rounded-xl px-3 py-2"
               >
                 <ComboboxValue>
                   {(value: HiringManagerOption[]) => (

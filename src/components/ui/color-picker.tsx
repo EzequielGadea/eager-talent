@@ -47,7 +47,7 @@ const ColorPickerInput = React.forwardRef<
   <input
     type={type}
     className={cn(
-      "flex w-[200px] h-fit px-1 py-1 mt-0.5 bg-transparent transition-colors uppercase text-base md:text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+      "flex w-[200px] h-fit mt-0.5 rounded-lg border border-border-default bg-transparent px-2 py-1 transition-[border-color,box-shadow] duration-150 uppercase text-base md:text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground hover:not-focus-visible:border-border-strong focus-visible:outline-none focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20 disabled:cursor-not-allowed disabled:opacity-50",
       className,
     )}
     ref={ref}

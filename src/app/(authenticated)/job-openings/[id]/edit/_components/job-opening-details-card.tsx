@@ -126,7 +126,7 @@ export function JobOpeningDetailsCard({
         </div>
 
         <fieldset className="flex flex-col gap-1.5">
-          <legend className="text-small font-medium text-text-primary">
+          <legend className="mb-2 text-small font-medium text-text-primary">
             Estado
           </legend>
 
@@ -174,7 +174,7 @@ export function JobOpeningDetailsCard({
         </fieldset>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-small font-medium text-text-primary">
+          <legend className="mb-2 text-small font-medium text-text-primary">
             Seniority
             <span className="ml-1 text-danger">*</span>
             <span className="ml-1 font-normal text-text-tertiary">
@@ -224,7 +224,7 @@ export function JobOpeningDetailsCard({
         </fieldset>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-small font-medium text-text-primary">
+          <legend className="mb-2 text-small font-medium text-text-primary">
             Ubicación
           </legend>
 

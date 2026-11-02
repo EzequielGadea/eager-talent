@@ -125,7 +125,7 @@ export default function OpeningHiring() {
                       disabled={availableManagers?.length === 0}
                     >
                       <ComboboxInput
-                        className="w-full rounded-md focus-within:!border-border-focus focus-within:!ring-3 focus-within:!ring-accent-green/30"
+                        className="w-full rounded-md"
                         placeholder={
                           availableManagers?.length === 0
                             ? "Todos los hiring managers fueron seleccionados"

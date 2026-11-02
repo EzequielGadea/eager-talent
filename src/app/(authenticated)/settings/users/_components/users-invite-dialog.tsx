@@ -107,7 +107,7 @@ export function UsersInviteDialog() {
               <Label>Email</Label>
               <Input
                 placeholder="camila.torres@eagerworks.com"
-                className="h-10 px-3.25 text-sm bg-card border-input rounded-md focus-visible:border-border-focus! focus-visible:ring-1! focus-visible:ring-accent-green/30!"
+                className="h-10 px-3.25 text-sm bg-card rounded-md"
                 {...register("email")}
               />
               {errors.email && (

@@ -155,7 +155,7 @@ export function LoginForm() {
           label="Correo electrónico"
           autoComplete="email"
           errorMessage={errors.email?.message}
-          className="h-9.5 rounded-md border-border-default px-3 focus-visible:border-border-focus focus-visible:ring-border-focus/20"
+          className="h-9.5 rounded-md px-3"
           {...register("email")}
         />
 
@@ -182,7 +182,7 @@ export function LoginForm() {
               )}
             </button>
           }
-          className="h-9.5 rounded-md border-border-default px-3 focus-visible:border-border-focus focus-visible:ring-border-focus/20"
+          className="h-9.5 rounded-md px-3"
           {...register("password")}
         />
 

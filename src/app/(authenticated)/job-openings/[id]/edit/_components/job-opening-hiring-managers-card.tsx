@@ -181,7 +181,7 @@ export function JobOpeningHiringManagersCard({
             aria-expanded={showSearchResults}
             aria-controls="hiring-manager-results"
             placeholder="Buscar usuario..."
-            className="h-10 border-border-default bg-card text-sm focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20"
+            className="h-10 bg-card text-sm"
             onChange={(event) => setManagerSearch(event.target.value)}
           />
 

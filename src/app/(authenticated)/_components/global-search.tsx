@@ -167,7 +167,7 @@ export function GlobalSearch() {
           onBlur={() => setIsFocused(false)}
           aria-label="Buscar"
           placeholder="Buscar candidatos, vacantes o etiquetas…"
-          className="h-9.5 w-full min-w-0 rounded-md border border-border-default bg-surface-subtle py-2 pr-3 pl-9 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-focus md:pr-14"
+          className="h-9.5 w-full min-w-0 rounded-md border border-border-default bg-surface-subtle py-2 pr-3 pl-9 text-sm text-text-primary outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-text-tertiary hover:not-focus-visible:border-border-strong focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20 md:pr-14"
         />
 
         <kbd className="absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-border-default bg-surface-card px-1.5 py-0.5 text-xs text-text-tertiary md:block">
