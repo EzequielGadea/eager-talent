@@ -74,7 +74,7 @@ export function JobOpeningSort({ value, onValueChange }: JobOpeningSortProps) {
             type="button"
             variant="outline"
             size="sm"
-            className="h-8 gap-2 px-4 text-[13px] font-normal text-text-secondary"
+            className="h-8 gap-2 px-4 bg-surface-card hover:bg-dashboard-success-light hover:text-dashboard-success-text text-[13px] font-normal text-text-secondary"
           />
         }
       >

@@ -160,7 +160,7 @@ export function Filters({
             handleSearch(value);
           }}
           placeholder="Buscar por nombre..."
-          className="h-8.5 rounded-lg border-dashboard-border bg-white pl-9 text-[13px] font-normal shadow-none"
+          className="h-8.5 rounded-lg border-dashboard-border bg-surface-card pl-9 text-[13px] font-normal shadow-none"
         />
       </div>
 
@@ -192,7 +192,7 @@ export function Filters({
             >
               <PopoverTrigger
                 className={cn(
-                  "flex h-8.5 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text",
+                  "flex h-8.5 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-dashboard-border bg-surface-card px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text",
                   activeFilterCount > 0 &&
                     "border-dashboard-success-light font-semibold bg-dashboard-success-light text-dashboard-success-text",
                 )}
