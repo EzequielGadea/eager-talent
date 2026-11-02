@@ -63,14 +63,14 @@ function EmptyChart({ message }: { message: string }) {
   );
 }
 
-// Colors match the mockup (emerald-500, violet-500, blue-600, amber-500, slate-400).
+// Colors follow the semantic palette (green, purple, info, warning, tertiary).
 const MOTIVE_COLORS = [
-  "#10b981",
-  "#8b5cf6",
-  "#2563eb",
-  "#f59e0b",
-  "#06b6d4",
-  "#94a3b8",
+  "var(--accent-green)",
+  "var(--accent-purple)",
+  "var(--info)",
+  "var(--warning)",
+  "var(--accent-purple-strong)",
+  "var(--text-tertiary)",
 ];
 
 function DistributionTable({
@@ -89,13 +89,13 @@ function DistributionTable({
         <tr>
           <th
             scope="col"
-            className="px-0.5 py-1.5 text-left text-[11px] font-bold tracking-[0.06em] text-text-tertiary uppercase"
+            className="px-0.5 py-1.5 text-left text-label font-bold tracking-wider text-text-tertiary uppercase"
           >
             {label}
           </th>
           <th
             scope="col"
-            className="w-16 px-0.5 py-1.5 text-right text-[11px] font-bold tracking-[0.06em] text-text-tertiary"
+            className="w-16 px-0.5 py-1.5 text-right text-label font-bold tracking-wider text-text-tertiary uppercase"
           >
             %
           </th>
@@ -103,8 +103,8 @@ function DistributionTable({
       </thead>
       <tbody>
         {items.map((item, index) => (
-          <tr key={item.name} className="border-t border-slate-100">
-            <td className="px-0.5 py-2.75 text-[13px] text-text-primary">
+          <tr key={item.name} className="border-t border-border-default">
+            <td className="px-0.5 py-2.75 text-small text-text-primary">
               <span className="flex items-center gap-2">
                 <span
                   aria-hidden="true"
@@ -117,7 +117,7 @@ function DistributionTable({
                 <span className="min-w-0 break-words">{item.name}</span>
               </span>
             </td>
-            <td className="px-0.5 py-2.75 text-right text-[13px] font-semibold text-text-primary tabular-nums">
+            <td className="px-0.5 py-2.75 text-right text-small font-semibold text-text-primary tabular-nums">
               {formatPercentage(item.percentage)}
             </td>
           </tr>
@@ -140,7 +140,7 @@ function TruncatedTick({
     <foreignObject x={x - 35} y={y + 2} width={70} height={20}>
       <div
         title={payload?.value}
-        className="hidden truncate text-center text-[11px] text-text-tertiary sm:block"
+        className="hidden truncate text-center text-label text-text-tertiary sm:block"
       >
         {payload?.value}
       </div>
@@ -163,9 +163,7 @@ function DisqualificationChart({
   return (
     <Card className="h-full gap-0">
       <CardContent className="flex flex-col">
-        <CardTitle className="text-base font-bold tracking-[-0.01em]">
-          Motivos de descalificación
-        </CardTitle>
+        <CardTitle>Motivos de descalificación</CardTitle>
 
         {motives.length === 0 ? (
           <div className="mt-4">
@@ -183,7 +181,10 @@ function DisqualificationChart({
                   margin={{ top: 12, right: 4, bottom: 0, left: 0 }}
                   barCategoryGap={10}
                 >
-                  <CartesianGrid vertical={false} stroke="#f1f5f9" />
+                  <CartesianGrid
+                    vertical={false}
+                    stroke="var(--border-default)"
+                  />
                   <XAxis
                     dataKey="name"
                     interval={0}
@@ -242,9 +243,7 @@ function SourcesChart({
   return (
     <Card className="h-full gap-0">
       <CardContent className="flex flex-col">
-        <CardTitle className="text-base font-bold tracking-[-0.01em]">
-          Fuentes de postulación
-        </CardTitle>
+        <CardTitle>Fuentes de postulación</CardTitle>
 
         {sources.length === 0 ? (
           <div className="mt-4">
@@ -291,8 +290,14 @@ function SourcesChart({
   );
 }
 
-// Stage colors follow the mockup order, with slate as a fallback.
-const STAGE_COLORS = ["#10b981", "#2563eb", "#8b5cf6", "#f59e0b", "#94a3b8"];
+// Stage colors follow the mockup order, with the tertiary text color as a fallback.
+const STAGE_COLORS = [
+  "var(--accent-green)",
+  "var(--info)",
+  "var(--accent-purple)",
+  "var(--warning)",
+  "var(--text-tertiary)",
+];
 
 function PipelineChart({
   closedOpenings,
@@ -339,9 +344,7 @@ function PipelineChart({
       <CardContent>
         {/* Header */}
         <div className="mb-1 flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
-          <CardTitle className="text-base font-bold tracking-[-0.01em]">
-            Pipeline por vacante
-          </CardTitle>
+          <CardTitle>Pipeline por vacante</CardTitle>
           {closedOpenings.length > 0 && (
             <div className="min-w-0 max-w-full">
               <label htmlFor="metrics-job-opening" className="sr-only">
@@ -359,7 +362,7 @@ function PipelineChart({
               >
                 <SelectTrigger
                   id="metrics-job-opening"
-                  className="h-auto w-72 min-w-0 max-w-full gap-2 rounded-md bg-card px-3.25 py-1.75 text-[13px] font-medium text-text-primary [&_svg:last-child]:size-3.25 [&_svg:last-child]:text-text-tertiary"
+                  className="h-auto w-72 min-w-0 max-w-full gap-2 rounded-md bg-card px-3.25 py-1.75 text-small font-medium text-text-primary [&_svg:last-child]:size-3.25 [&_svg:last-child]:text-text-tertiary"
                 >
                   <Briefcase className="size-3.5 shrink-0" aria-hidden="true" />
                   <SelectValue placeholder="Seleccioná una vacante" />
@@ -385,14 +388,14 @@ function PipelineChart({
         {/* Subtitle */}
         {pipeline && firstStage && (
           <p
-            className={`mb-5 text-[13px] text-text-secondary transition-opacity ${
+            className={`mb-5 text-small text-text-secondary transition-opacity ${
               isRefreshing ? "opacity-50" : ""
             }`}
           >
             Conversión de punta a punta:{" "}
             <strong
               className={
-                globalConversion > 0 ? "text-emerald-700" : "text-red-600"
+                globalConversion > 0 ? "text-tag-green-fg" : "text-tag-red-fg"
               }
             >
               {hasConversion ? `${Math.round(globalConversion)}%` : "—"}
@@ -449,12 +452,12 @@ function PipelineChart({
                 <Fragment key={stage.id}>
                   <div className="grid grid-cols-[118px_1fr_40px] items-center gap-3.5">
                     <span
-                      className="truncate text-[13px] font-medium text-text-primary"
+                      className="truncate text-small font-medium text-text-primary"
                       title={stage.name}
                     >
                       {stage.name}
                     </span>
-                    <span className="relative h-3.5 rounded-full bg-slate-100">
+                    <span className="relative h-3.5 rounded-full bg-surface-sunken">
                       <span
                         className="absolute left-0 top-0 h-full rounded-full"
                         style={{
@@ -463,7 +466,7 @@ function PipelineChart({
                         }}
                       />
                     </span>
-                    <span className="order-2 text-right text-[15px] font-bold text-text-primary sm:order-3">
+                    <span className="order-2 text-right text-sm font-bold text-text-primary sm:order-3">
                       {reached}
                     </span>
                   </div>
@@ -472,13 +475,13 @@ function PipelineChart({
                     <div className="grid grid-cols-[118px_1fr_40px]">
                       <span />
                       <span
-                        className={`inline-flex items-center gap-1.5 py-px text-[11px] font-semibold ${
-                          advances ? "text-emerald-700" : "text-red-600"
+                        className={`inline-flex items-center gap-1.5 py-px text-label font-semibold ${
+                          advances ? "text-tag-green-fg" : "text-tag-red-fg"
                         }`}
                       >
                         <span
                           className={`h-3 w-0.75 rounded-xs ${
-                            advances ? "bg-emerald-500" : "bg-red-500"
+                            advances ? "bg-success" : "bg-danger"
                           }`}
                         />
                         {Math.round(advancePercentage)}% avanza
@@ -553,7 +556,7 @@ export function MetricsDashboard({
   return (
     <section className="flex flex-col gap-6 [&_[data-slot=card]]:rounded-lg">
       <header>
-        <h1 className="text-balance text-[30px] leading-[1.2] font-bold tracking-[-0.02em] text-text-primary">
+        <h1 className="font-heading text-balance text-h1 text-text-primary">
           Métricas
         </h1>
       </header>

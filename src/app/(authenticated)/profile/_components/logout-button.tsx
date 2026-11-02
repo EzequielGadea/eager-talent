@@ -36,9 +36,7 @@ export function LogoutButton() {
 
       <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl sm:max-w-110">
         <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
-          <DialogTitle className="text-base font-bold tracking-tight m-0">
-            Cerrar sesión
-          </DialogTitle>
+          <DialogTitle className="m-0">Cerrar sesión</DialogTitle>
         </DialogHeader>
 
         <div className="p-5.5">
@@ -54,7 +52,7 @@ export function LogoutButton() {
               <Button
                 type="button"
                 variant="outline"
-                className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-[13px] font-semibold"
+                className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-small font-semibold"
               >
                 Cancelar
               </Button>
@@ -63,7 +61,7 @@ export function LogoutButton() {
           <Button
             type="button"
             onClick={handleLogout}
-            className="rounded-full font-semibold text-[13px] h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
+            className="rounded-full font-semibold text-small h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 cursor-pointer"
           >
             Cerrar sesión
             <ArrowRight size={14} />

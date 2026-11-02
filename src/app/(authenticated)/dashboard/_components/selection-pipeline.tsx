@@ -37,7 +37,7 @@ export function SelectionPipeline() {
           className="size-4.5 text-text-secondary"
           aria-hidden="true"
         />
-        <h2 className="text-[15px] font-semibold text-text-primary">
+        <h2 className="font-heading text-h3 text-text-primary">
           Pipeline de selección
         </h2>
       </header>
@@ -60,7 +60,7 @@ export function SelectionPipeline() {
               key={stage.name}
               className="grid grid-cols-[minmax(110px,220px)_1fr_32px] items-center gap-4"
             >
-              <span className="truncate text-base text-text-secondary">
+              <span className="truncate text-sm text-text-secondary">
                 {stage.name}
               </span>
               <div
@@ -75,7 +75,7 @@ export function SelectionPipeline() {
                   }}
                 />
               </div>
-              <span className="text-right text-base font-semibold text-text-primary">
+              <span className="text-right text-sm font-semibold text-text-primary">
                 {stage.count}
               </span>
             </div>

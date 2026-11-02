@@ -102,14 +102,14 @@ export function ProfileCard({ user }: ProfileCardProps) {
             ) : (
               <div
                 aria-hidden="true"
-                className={`flex size-18 shrink-0 items-center justify-center rounded-xl font-heading text-2xl font-semibold ${avatar.colorClass}`}
+                className={`flex size-18 shrink-0 items-center justify-center rounded-xl text-h2 ${avatar.colorClass}`}
               >
                 {avatar.initials}
               </div>
             )}
 
             <div className="min-w-0 flex-1 space-y-2">
-              <h2 className="truncate font-heading text-[21px] font-bold leading-tight text-text-primary">
+              <h2 className="truncate font-heading text-h2 text-text-primary">
                 {fullName}
               </h2>
 
@@ -159,7 +159,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
         </div>
 
         <section className="space-y-4 rounded-xl border border-border-default bg-surface-card p-6 shadow-sm">
-          <h2 className="text-[11px] font-bold uppercase tracking-wider text-text-tertiary">
+          <h2 className="font-sans text-label font-bold uppercase tracking-wider text-text-tertiary">
             Cuenta
           </h2>
 
@@ -172,7 +172,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 
       {isImageZoomed && imageSrc && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-surface-dark/80 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Foto de perfil ampliada"
@@ -208,7 +208,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 function ProfileField({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 space-y-1">
-      <dt className="text-[11px] font-bold uppercase tracking-wider text-text-tertiary">
+      <dt className="text-label font-bold uppercase tracking-wider text-text-tertiary">
         {label}
       </dt>
       <dd className="truncate text-sm font-semibold text-text-primary">

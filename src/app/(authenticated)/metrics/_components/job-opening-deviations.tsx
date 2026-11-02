@@ -76,10 +76,8 @@ export function JobOpeningDeviations({
   return (
     <Card>
       <CardHeader className="gap-1">
-        <CardTitle className="text-2xl font-semibold tracking-tight">
-          Desvíos por vacante y etapa
-        </CardTitle>
-        <p className="text-base text-muted-foreground">
+        <CardTitle>Desvíos por vacante y etapa</CardTitle>
+        <p className="text-sm text-muted-foreground">
           Ordenado de mayor a menor desvío
         </p>
       </CardHeader>
@@ -87,20 +85,20 @@ export function JobOpeningDeviations({
       <CardContent className="space-y-6">
         {!isLoading && highestDeviation ? (
           highestDeviation.deviationDays > 0 ? (
-            <div className="flex items-start gap-3 border-l-4 border-red-500 bg-red-50 px-4 py-3 text-sm text-red-950">
-              <CircleAlert className="mt-0.5 size-4 shrink-0 text-red-500" />
+            <div className="flex items-start gap-3 border-l-4 border-danger bg-danger-bg px-4 py-3 text-sm text-tag-red-fg">
+              <CircleAlert className="mt-0.5 size-4 shrink-0 text-danger" />
               <p>
                 <span className="font-semibold">{highestDeviation.name}</span>{" "}
                 es la vacante con mayor desvío total:{" "}
-                <span className="font-semibold text-red-500">
+                <span className="font-semibold text-danger">
                   +{highestDeviation.deviationDays} días
                 </span>{" "}
                 sobre la fecha objetivo de cierre.
               </p>
             </div>
           ) : (
-            <div className="flex items-start gap-3 border-l-4 border-emerald-500 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
-              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+            <div className="flex items-start gap-3 border-l-4 border-success bg-success-bg px-4 py-3 text-sm text-tag-green-fg">
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent-green-strong" />
               <p>
                 Todas las vacantes cerradas del filtro finalizaron dentro del
                 plazo.
@@ -110,10 +108,10 @@ export function JobOpeningDeviations({
         ) : null}
 
         <div
-          className="flex w-fit items-center gap-1.5 rounded-full bg-slate-900 px-4 py-1.5 text-sm font-medium text-white"
+          className="flex w-fit items-center gap-1.5 rounded-full bg-surface-dark px-4 py-1.5 text-sm font-medium text-text-on-dark"
           aria-label="Métrica mostrada: tiempo total"
         >
-          <span className="size-2 rounded-full bg-red-500" aria-hidden="true" />
+          <span className="size-2 rounded-full bg-danger" aria-hidden="true" />
           Tiempo total
         </div>
 
@@ -122,10 +120,10 @@ export function JobOpeningDeviations({
             <span className="h-4 w-0.5 bg-foreground" /> Objetivo
           </span>
           <span className="flex items-center gap-2">
-            <span className="size-2.5 bg-emerald-500" /> En plazo
+            <span className="size-2.5 bg-success" /> En plazo
           </span>
           <span className="flex items-center gap-2">
-            <span className="size-2.5 bg-red-500" /> Atrasado
+            <span className="size-2.5 bg-danger" /> Atrasado
           </span>
         </div>
 
@@ -166,7 +164,7 @@ export function JobOpeningDeviations({
                     <Tooltip>
                       <TooltipTrigger
                         type="button"
-                        className="relative block h-4 w-full overflow-visible rounded-full bg-slate-100 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        className="relative block h-4 w-full overflow-visible rounded-full bg-surface-sunken outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                         aria-label={
                           item.name +
                           ": " +
@@ -179,7 +177,7 @@ export function JobOpeningDeviations({
                         <span
                           className={cn(
                             "block h-full rounded-full",
-                            item.isOnTime ? "bg-emerald-500" : "bg-red-500",
+                            item.isOnTime ? "bg-success" : "bg-danger",
                           )}
                           style={{ width: String(actualWidth) + "%" }}
                         />
@@ -206,8 +204,8 @@ export function JobOpeningDeviations({
                       className={cn(
                         "text-sm font-semibold md:justify-self-end",
                         item.deviationDays > 0
-                          ? "text-red-500"
-                          : "text-emerald-600",
+                          ? "text-danger"
+                          : "text-accent-green-strong",
                       )}
                     >
                       {item.deviationDays > 0 ? "+" : ""}

@@ -268,25 +268,25 @@ export function ChangePasswordDialog() {
           {isDone ? (
             <div className="p-5.5">
               <div className="mb-6 flex items-center gap-3">
-                <div className="flex size-8 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-violet-500 text-white">
+                <div className="flex size-8 items-center justify-center rounded-full bg-linear-to-br from-info to-accent-purple text-text-on-dark">
                   <ArrowRight className="size-4 -rotate-90" />
                 </div>
-                <span className="text-2xl font-bold tracking-tight text-slate-900">
+                <span className="font-heading text-h2 tracking-[-0.03em] text-text-primary">
                   EagerTalent
                 </span>
               </div>
 
-              <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+              <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-success-bg text-accent-green-strong">
                 <CircleCheck className="size-5" />
               </div>
 
-              <DialogTitle className="text-xl font-bold tracking-tight text-slate-900">
+              <DialogTitle className="text-h2 text-text-primary">
                 Contraseña restablecida
               </DialogTitle>
 
               <p
                 role={signOutError ? "alert" : undefined}
-                className="mt-2 text-sm text-slate-500"
+                className="mt-2 text-sm text-text-secondary"
               >
                 {signOutError ??
                   (hasSignedOut
@@ -298,7 +298,7 @@ export function ChangePasswordDialog() {
                 type="button"
                 onClick={hasSignedOut ? handleGoToLogin : handleRetrySignOut}
                 disabled={isBusy}
-                className="mt-6 h-11 w-full rounded-full bg-slate-900 text-white hover:bg-slate-800"
+                className="mt-6 h-11 w-full rounded-full bg-surface-dark text-text-on-dark hover:bg-surface-dark/90"
               >
                 {isRedirecting
                   ? "Redirigiendo..."
@@ -319,9 +319,7 @@ export function ChangePasswordDialog() {
             >
               {/* Header */}
               <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
-                <DialogTitle className="text-base font-bold tracking-tight m-0">
-                  Cambiar contraseña
-                </DialogTitle>
+                <DialogTitle className="m-0">Cambiar contraseña</DialogTitle>
               </DialogHeader>
 
               {/* Body */}
@@ -331,12 +329,7 @@ export function ChangePasswordDialog() {
               >
                 {/* Contraseña actual */}
                 <div className="space-y-1.5">
-                  <Label
-                    htmlFor="current-password"
-                    className="text-xs font-semibold text-muted-foreground"
-                  >
-                    Contraseña actual
-                  </Label>
+                  <Label htmlFor="current-password">Contraseña actual</Label>
                   <div className="relative">
                     <Input
                       id="current-password"
@@ -353,7 +346,7 @@ export function ChangePasswordDialog() {
                           ? "Ocultar contraseña"
                           : "Mostrar contraseña"
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
                     >
                       {showCurrentPassword ? (
                         <EyeOff className="size-4" />
@@ -371,12 +364,7 @@ export function ChangePasswordDialog() {
 
                 {/* Nueva contraseña */}
                 <div className="space-y-1.5">
-                  <Label
-                    htmlFor="new-password"
-                    className="text-xs font-semibold text-muted-foreground"
-                  >
-                    Nueva contraseña
-                  </Label>
+                  <Label htmlFor="new-password">Nueva contraseña</Label>
                   <div className="relative">
                     <Input
                       id="new-password"
@@ -394,7 +382,7 @@ export function ChangePasswordDialog() {
                           ? "Ocultar contraseña"
                           : "Mostrar contraseña"
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
                     >
                       {showPassword ? (
                         <EyeOff className="size-4" />
@@ -411,10 +399,10 @@ export function ChangePasswordDialog() {
                           key={rule.id}
                           className={`flex items-center gap-1.5 text-xs ${
                             ok
-                              ? "text-emerald-600"
+                              ? "text-accent-green-strong"
                               : passwordHasError
-                                ? "text-red-600"
-                                : "text-slate-400"
+                                ? "text-tag-red-fg"
+                                : "text-text-tertiary"
                           }`}
                         >
                           {ok ? (
@@ -439,10 +427,7 @@ export function ChangePasswordDialog() {
 
                 {/* Confirmar contraseña */}
                 <div className="space-y-1.5">
-                  <Label
-                    htmlFor="confirm-password"
-                    className="text-xs font-semibold text-muted-foreground"
-                  >
+                  <Label htmlFor="confirm-password">
                     Confirmar nueva contraseña
                   </Label>
                   <div className="relative">
@@ -461,7 +446,7 @@ export function ChangePasswordDialog() {
                           ? "Ocultar contraseña"
                           : "Mostrar contraseña"
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="size-4" />
@@ -485,14 +470,14 @@ export function ChangePasswordDialog() {
                   variant="outline"
                   onClick={handleCancel}
                   disabled={isBusy}
-                  className="rounded-full font-semibold text-[13px] h-auto px-3.75 py-2"
+                  className="rounded-full font-semibold text-small h-auto px-3.75 py-2"
                 >
                   Cancelar
                 </Button>
                 <Button
                   type="submit"
                   disabled={isBusy}
-                  className="rounded-full font-semibold text-[13px] h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 cursor-pointer"
+                  className="rounded-full font-semibold text-small h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 cursor-pointer"
                 >
                   {isBusy ? (
                     <>
@@ -521,7 +506,7 @@ export function ChangePasswordDialog() {
       >
         <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
           <div className="border-b border-border-default px-6 py-5">
-            <DialogTitle className="text-lg font-semibold text-text-primary">
+            <DialogTitle className="text-text-primary">
               Descartar cambios
             </DialogTitle>
             <DialogDescription className="mt-1 text-sm text-text-secondary">

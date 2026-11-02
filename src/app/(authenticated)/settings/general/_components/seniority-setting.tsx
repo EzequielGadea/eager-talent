@@ -117,7 +117,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
     createSeniority.mutate({
       name,
       order: seniorities.length + 1,
-      color: "#000000",
+      color: "#94A3B8",
     });
   }
 
@@ -197,7 +197,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-baseline gap-2">
-          <CardTitle className="text-sm font-semibold">Seniorities</CardTitle>
+          <CardTitle>Seniorities</CardTitle>
         </div>
       </CardHeader>
 
@@ -256,7 +256,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                     className="size-5 md:size-3"
                   />
                 </Button>
-                <span className="w-3.5 text-center font-mono text-[11px] text-text-tertiary">
+                <span className="w-3.5 text-center font-mono text-label text-text-tertiary">
                   {" "}
                   {index + 1}
                 </span>
@@ -336,7 +336,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
         {!isAddingSeniority && !hasChanges && (
           <button
             type="button"
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
             onClick={() => setIsAddingSeniority(true)}
           >
             <Plus className="h-4 w-4" aria-hidden="true" />

@@ -10,7 +10,7 @@ export default function MetricsError({
 }) {
   return (
     <section className="flex min-h-80 flex-col items-center justify-center gap-4 text-center">
-      <h1 className="font-heading text-xl font-semibold text-text-primary">
+      <h1 className="font-heading text-h1 text-text-primary">
         No se pudieron cargar las métricas
       </h1>
       <p className="max-w-md text-sm text-text-secondary">

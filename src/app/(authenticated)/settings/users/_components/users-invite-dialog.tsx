@@ -84,7 +84,7 @@ export function UsersInviteDialog() {
           <button
             className={cn(
               buttonVariants({ size: "sm" }),
-              "gap-2 rounded-full bg-dashboard-dark text-text-on-dark hover:bg-dashboard-dark-hover cursor-pointer",
+              "gap-2 rounded-full bg-surface-dark text-text-on-dark hover:bg-surface-dark/90 cursor-pointer",
             )}
           >
             <Plus size={16} />
@@ -97,18 +97,14 @@ export function UsersInviteDialog() {
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Header */}
           <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
-            <DialogTitle className="text-base font-bold tracking-tight m-0">
-              Agregar usuario
-            </DialogTitle>
+            <DialogTitle className="m-0">Agregar usuario</DialogTitle>
           </DialogHeader>
 
           {/* Body */}
           <div className="p-5.5 flex flex-col gap-4">
             {/* Email */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-muted-foreground">
-                Email
-              </Label>
+              <Label>Email</Label>
               <Input
                 placeholder="camila.torres@eagerworks.com"
                 className="h-10 px-3.25 text-sm bg-card border-input rounded-md focus-visible:border-border-focus! focus-visible:ring-1! focus-visible:ring-accent-green/30!"
@@ -121,9 +117,7 @@ export function UsersInviteDialog() {
 
             {/* Rol */}
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-muted-foreground">
-                Rol
-              </Label>
+              <Label>Rol</Label>
               <Controller
                 control={control}
                 name="role"
@@ -148,7 +142,7 @@ export function UsersInviteDialog() {
                         className="mt-0.5 data-checked:border-2 data-checked:border-accent-green data-checked:bg-accent-green"
                       />
                       <div className="grid gap-0.5">
-                        <span className="text-[13px] font-semibold">
+                        <span className="text-small font-semibold">
                           Recruiter
                         </span>
                         <span className="text-xs text-muted-foreground">
@@ -173,7 +167,7 @@ export function UsersInviteDialog() {
                         className="mt-0.5 data-checked:border-2 data-checked:border-accent-green data-checked:bg-accent-green"
                       />
                       <div className="grid gap-0.5">
-                        <span className="text-[13px] font-semibold">
+                        <span className="text-small font-semibold">
                           Hiring Manager
                         </span>
                         <span className="text-xs text-muted-foreground">
@@ -198,7 +192,7 @@ export function UsersInviteDialog() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="rounded-full font-semibold text-[13px] h-auto px-3.75 py-2"
+                  className="rounded-full font-semibold text-small h-auto px-3.75 py-2"
                 >
                   Cancelar
                 </Button>
@@ -207,7 +201,7 @@ export function UsersInviteDialog() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="rounded-full font-semibold text-[13px] h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 cursor-pointer"
+              className="rounded-full font-semibold text-small h-auto px-4.25 py-2 bg-foreground text-background hover:bg-foreground/90 inline-flex items-center gap-2 cursor-pointer"
             >
               {isLoading ? (
                 <>

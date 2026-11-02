@@ -44,7 +44,7 @@ const STAGE_TYPE_OPTIONS = [
   { value: "Contratado", label: "Contratado" },
 ];
 
-const STAGE_COLORS = ["#64748B", "#3B82F6", "#F59E0B", "#22C55E"];
+const STAGE_COLORS = ["#64748B", "#2563EB", "#F59E0B", "#10B981"];
 const STAGE_DRAG_TYPE = "application/x-default-stage-index";
 
 function isBoundaryStage(index: number, total: number) {
@@ -200,9 +200,7 @@ function DefaultStageEditor({
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-baseline gap-2">
-          <CardTitle className="text-sm font-semibold">
-            Flujo por defecto
-          </CardTitle>
+          <CardTitle>Flujo por defecto</CardTitle>
           <span className="text-xs text-text-tertiary">
             {hasChanges ? "hay cambios sin guardar" : ""}
           </span>
@@ -316,7 +314,7 @@ function DefaultStageEditor({
                     className="size-5 md:size-3"
                   />
                 </Button>
-                <span className="w-3.5 text-center font-mono text-[11px] text-text-tertiary">
+                <span className="w-3.5 text-center font-mono text-label text-text-tertiary">
                   {index + 1}
                 </span>
                 <Popover
@@ -414,7 +412,7 @@ function DefaultStageEditor({
 
         <button
           type="button"
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
           onClick={addStage}
         >
           <Plus className="h-4 w-4" aria-hidden="true" />
