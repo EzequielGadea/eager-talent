@@ -84,16 +84,16 @@ export function DisqualifyApplicantDialog({
       <DialogContent className="flex max-h-[90vh] w-full min-w-0 flex-col gap-0 overflow-hidden rounded-2xl p-0 sm:max-w-[540px]">
         {/* Header: ícono rojo, título y contexto del candidato. */}
         <div className="flex shrink-0 items-start gap-3 border-b border-border-default px-[22px] py-5 pr-12">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#fcf2f2] text-[#ca3a31]">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-danger-bg text-danger">
             <CircleX className="size-4" />
           </div>
 
           <div className="min-w-0">
-            <DialogTitle className="text-base font-semibold text-text-primary">
+            <DialogTitle className="text-h3 text-text-primary">
               Descalificar candidato
             </DialogTitle>
 
-            <DialogDescription className="mt-0.5 text-[13px] text-text-secondary">
+            <DialogDescription className="mt-0.5 text-small text-text-secondary">
               {candidateName}
               {candidateRole && (
                 <>
@@ -116,8 +116,7 @@ export function DisqualifyApplicantDialog({
               id={motivesLabelId}
               className="text-xs font-medium text-text-secondary"
             >
-              Motivo de descalificación{" "}
-              <span className="text-[#ca3a31]">*</span>
+              Motivo de descalificación <span className="text-danger">*</span>
             </p>
 
             {motivesQuery.isError && (
@@ -149,21 +148,21 @@ export function DisqualifyApplicantDialog({
                         aria-checked={isSelected}
                         title={motive.name}
                         onClick={() => setMotiveId(motive.id)}
-                        className={`flex h-10 items-center gap-2.5 rounded-lg border px-3 text-left text-[13px] transition-colors ${
+                        className={`flex h-10 items-center gap-2.5 rounded-lg border px-3 text-left text-small transition-colors ${
                           isSelected
-                            ? "border-[#dd524c] bg-[#fcf2f2] font-medium text-text-primary"
-                            : "border-[#e3e8ef] text-text-primary hover:bg-accent"
+                            ? "border-danger bg-danger-bg font-medium text-text-primary"
+                            : "border-border-default text-text-primary hover:bg-accent"
                         }`}
                       >
                         <span
                           className={`flex size-[15px] shrink-0 items-center justify-center rounded-full border ${
                             isSelected
-                              ? "border-[#dd524c] bg-[#dd524c]"
-                              : "border-[#cbd5e1] bg-white"
+                              ? "border-danger bg-danger"
+                              : "border-border-strong bg-surface-card"
                           }`}
                         >
                           {isSelected && (
-                            <span className="size-1.5 rounded-full bg-white" />
+                            <span className="size-1.5 rounded-full bg-surface-card" />
                           )}
                         </span>
 
@@ -194,7 +193,7 @@ export function DisqualifyApplicantDialog({
               onChange={(event) => setDescription(event.target.value)}
               placeholder="Escribí un detalle para el equipo..."
               rows={3}
-              className="h-[120px] w-full min-w-0 max-w-full resize-none overflow-x-hidden overflow-y-auto text-[13px] whitespace-pre-wrap [field-sizing:fixed] [overflow-wrap:anywhere]"
+              className="h-[120px] w-full min-w-0 max-w-full resize-none overflow-x-hidden overflow-y-auto text-small whitespace-pre-wrap [field-sizing:fixed] [overflow-wrap:anywhere]"
             />
           </div>
 
@@ -212,7 +211,7 @@ export function DisqualifyApplicantDialog({
           <Button
             type="button"
             variant="outline"
-            className="h-9 rounded-full px-5 text-[13px]"
+            className="h-9 rounded-full px-5 text-small"
             onClick={() => {
               resetForm();
               disqualifyMutation.reset();
@@ -225,7 +224,7 @@ export function DisqualifyApplicantDialog({
 
           <Button
             type="button"
-            className="h-9 rounded-full bg-[#ca3a31] px-5 text-[13px] font-medium text-white hover:bg-[#b3322a] disabled:opacity-50"
+            className="h-9 rounded-full bg-danger px-5 text-small font-medium text-text-on-dark hover:bg-danger/90 disabled:opacity-50"
             onClick={handleConfirm}
             disabled={disqualifyMutation.isPending || !motiveId}
           >

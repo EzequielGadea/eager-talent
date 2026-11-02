@@ -11,7 +11,7 @@ import {
 } from "~/components/ui/pagination";
 
 const controlClassName =
-  "h-7.5 w-7.5 rounded-lg border border-dashboard-border bg-white p-0 text-dashboard-text-muted shadow-none hover:bg-dashboard-track hover:text-black";
+  "h-7.5 w-7.5 rounded-lg border border-border-default bg-surface-card p-0 text-text-secondary shadow-none hover:bg-surface-sunken hover:text-text-primary";
 
 export function ListPagination(props: {
   totalItems: number;
@@ -36,8 +36,8 @@ export function ListPagination(props: {
   const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
   return (
-    <div className="flex flex-col items-center gap-3 border-t border-dashboard-border px-4 py-3 sm:flex-row sm:justify-between">
-      <p className="text-[13px] font-normal leading-5 text-dashboard-text-muted">
+    <div className="flex flex-col items-center gap-3 border-t border-border-default px-4 py-3 sm:flex-row sm:justify-between">
+      <p className="text-small font-normal text-text-secondary">
         Mostrando {startItem} - {endItem} de {props.totalItems}{" "}
         {props.itemLabel}
       </p>
@@ -62,7 +62,7 @@ export function ListPagination(props: {
           {currentPage >= 4 && (
             <>
               <PageLink page={1} onSelect={goToPage} />
-              <PaginationEllipsis className="h-7.5 w-7.5 text-dashboard-text-muted" />
+              <PaginationEllipsis className="h-7.5 w-7.5 text-text-secondary" />
             </>
           )}
 
@@ -88,7 +88,7 @@ export function ListPagination(props: {
 
           {currentPage <= totalPages - 3 && (
             <>
-              <PaginationEllipsis className="h-7.5 w-7.5 text-dashboard-text-muted" />
+              <PaginationEllipsis className="h-7.5 w-7.5 text-text-secondary" />
               <PageLink page={totalPages} onSelect={goToPage} />
             </>
           )}
@@ -138,10 +138,10 @@ function PageLinkButton(props: {
         e.preventDefault();
         props.onSelect(props.page);
       }}
-      className={`h-7.5 w-7.5 rounded-lg border p-0 text-[13px] shadow-none ${
+      className={`h-7.5 w-7.5 rounded-lg border p-0 text-small shadow-none ${
         props.isActive
-          ? "border-dashboard-dark bg-dashboard-dark font-semibold text-white hover:bg-dashboard-dark hover:text-white"
-          : "border-dashboard-border bg-white font-normal text-dashboard-text-muted hover:bg-dashboard-track hover:text-black"
+          ? "border-surface-dark bg-surface-dark font-semibold text-text-on-dark hover:bg-surface-dark hover:text-text-on-dark"
+          : "border-border-default bg-surface-card font-normal text-text-secondary hover:bg-surface-sunken hover:text-text-primary"
       }`}
     >
       {props.page}

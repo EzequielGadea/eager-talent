@@ -185,7 +185,7 @@ function ToastList() {
         toast={toastItem}
         className={
           isSuccess
-            ? "border-success bg-success text-white focus-visible:border-success"
+            ? "border-success bg-success text-text-on-dark focus-visible:border-success"
             : undefined
         }
       >
@@ -194,12 +194,16 @@ function ToastList() {
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <ToastTitle />
             <ToastDescription
-              className={isSuccess ? "text-white/90" : undefined}
+              className={isSuccess ? "text-text-on-dark/90" : undefined}
             />
           </div>
           <ToastAction />
           <ToastClose
-            className={isSuccess ? "text-white hover:text-white" : undefined}
+            className={
+              isSuccess
+                ? "text-text-on-dark hover:text-text-on-dark"
+                : undefined
+            }
           />
         </ToastContent>
       </Toast>

@@ -293,10 +293,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // SENIORITIES
   const seniorityDefs = [
-    { name: "Junior", order: 1, color: "#60A5FA" },
-    { name: "Semi Senior", order: 2, color: "#34D399" },
-    { name: "Senior", order: 3, color: "#FBBF24" },
-    { name: "Staff / Lead", order: 4, color: "#F87171" },
+    { name: "Junior", order: 1, color: "#2563EB" },
+    { name: "Semi Senior", order: 2, color: "#10B981" },
+    { name: "Senior", order: 3, color: "#F59E0B" },
+    { name: "Staff / Lead", order: 4, color: "#EF4444" },
   ];
   const seniorities: Record<string, { id: string; name: string }> = {};
   for (const s of seniorityDefs) {
@@ -378,49 +378,49 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       key: "24534",
       name: "Aplicado",
       type: "Ninguna",
-      color: "#94a3b8",
+      color: "#64748B",
       label: "Aplicó",
     },
     {
       key: "55678",
       name: "Entrevista HR",
       type: "Entrevista",
-      color: "#3c73ed",
+      color: "#2563EB",
       label: "Entrevista HR",
     },
     {
       key: "61245",
       name: "Psicotécnico",
       type: "Entrevista",
-      color: "#f59e0b",
+      color: "#8B5CF6",
       label: "Psicotécnico",
     },
     {
       key: "75365",
       name: "Revisión de perfil",
       type: "Ninguna",
-      color: "#8b5cf6",
+      color: "#8B5CF6",
       label: "En revisión",
     },
     {
       key: "83412",
       name: "Entrevista técnica",
       type: "Entrevista",
-      color: "#0284c7",
+      color: "#F59E0B",
       label: "Entrevista técnica",
     },
     {
       key: "92156",
       name: "Oferta",
       type: "Oferta",
-      color: "#10b981",
+      color: "#F59E0B",
       label: "Ofertado",
     },
     {
       key: "98721",
       name: "Contratado/a",
       type: "Contratado",
-      color: "#059669",
+      color: "#10B981",
       label: "Contratado",
     },
   ];
