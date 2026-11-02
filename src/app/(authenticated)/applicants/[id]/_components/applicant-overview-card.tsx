@@ -143,21 +143,20 @@ export function ApplicantOverviewCard({
 
         <ApplicantAttribute
           label="Seniority"
-          value={seniority?.name ?? "Sin seniority"}
+          value={seniority?.name}
+          emptyMessage="Sin seniority"
         />
 
         <ApplicantAttribute
           label="Nivel de inglés"
-          value={
-            englishLevel
-              ? englishLevelTranslations[englishLevel]
-              : "Sin información"
-          }
+          value={englishLevel ? englishLevelTranslations[englishLevel] : null}
+          emptyMessage="Sin información"
         />
 
         <ApplicantAttribute
           label="Fuente"
-          value={source ? sourceTranslations[source] : "Sin fuente"}
+          value={source ? sourceTranslations[source] : null}
+          emptyMessage="Sin fuente"
         />
       </CardContent>
     </Card>
@@ -166,16 +165,25 @@ export function ApplicantOverviewCard({
 
 type ApplicantAttributeProps = {
   label: string;
-  value: string;
+  value?: string | null;
+  emptyMessage?: string;
 };
 
-function ApplicantAttribute({ label, value }: ApplicantAttributeProps) {
+function ApplicantAttribute({
+  label,
+  value,
+  emptyMessage,
+}: ApplicantAttributeProps) {
   return (
     <div className="min-w-0 wrap-anywhere">
       <p className="text-label font-bold uppercase tracking-wider text-text-tertiary">
         {label}
       </p>
-      <p className="mt-1 text-sm font-medium">{value}</p>
+      {value ? (
+        <p className="mt-1 text-sm font-medium">{value}</p>
+      ) : (
+        <p className="mt-1 text-sm text-muted-foreground">{emptyMessage}</p>
+      )}
     </div>
   );
 }
