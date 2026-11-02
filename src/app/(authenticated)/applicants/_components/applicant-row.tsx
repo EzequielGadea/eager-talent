@@ -202,7 +202,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             {props.applicant.seniorityName}
           </Badge>
         ) : (
-          <span className="text-sm font-medium text-text-secondary">-</span>
+          <span className="text-xs leading-tight text-text-secondary">-</span>
         )}
       </TableCell>
 
