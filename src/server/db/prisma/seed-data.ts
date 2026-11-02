@@ -4,7 +4,14 @@ import { admin, organization } from "better-auth/plugins";
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { faker } from "@faker-js/faker";
 import { TZDate } from "@date-fns/tz";
-import { format } from "date-fns";
+import {
+  addDays,
+  format,
+  startOfMonth,
+  startOfQuarter,
+  startOfYear,
+  subDays,
+} from "date-fns";
 import { getTagColor } from "~/lib/tags/get-tag-color";
 import type {
   PrismaClient,
@@ -20,7 +27,7 @@ const ORGANIZATION_NAME = "EagerWorks";
 const ORGANIZATION_SLUG = "eagerworks";
 
 // ============================================================================
-// 1. USUARIOS DEFINIDOS (3 RECRUITERS + 3 HIRING MANAGERS)
+// Seed accounts: 3 recruiters and 5 hiring managers.
 // ============================================================================
 export const SEED_USERS = [
   // 3 Recruiters (Contraseña: admin123)
@@ -97,6 +104,7 @@ function getSeedAuth(prisma: PrismaClient) {
 }
 
 export async function seedDatabase(prisma: PrismaClient): Promise<void> {
+  const seedNow = new Date();
   const auth = getSeedAuth(prisma);
   // ==========================================================================
   // GESTIÓN DE USUARIOS CON BETTER-AUTH (IDEMPOTENCIA)
@@ -206,7 +214,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   }
 
   // ==========================================================================
-  // LIMPIEZA PREVIA PARA IDEMPOTENCIA (Conserva solo los 6 usuarios del seed)
+  // Replace application data, preserving the eight seed accounts.
   // ==========================================================================
   await prisma.$transaction([
     prisma.publicLink.deleteMany(),
@@ -354,10 +362,12 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     "Rechazó la propuesta",
   ];
 
+  const disqualificationMotives = [];
   for (const name of disqualificationMotiveDefs) {
-    await prisma.disqualificationMotive.create({
+    const motive = await prisma.disqualificationMotive.create({
       data: { name },
     });
+    disqualificationMotives.push(motive);
   }
 
   // ==========================================================================
@@ -432,7 +442,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  const nowInUruguay = new TZDate(new Date(), "America/Montevideo");
+  const nowInUruguay = new TZDate(seedNow, "America/Montevideo");
+  // Vacancy dates represent calendar days in UTC; interviews are local instants.
   const seedDateFromToday = (daysOffset: number) =>
     new Date(
       Date.UTC(
@@ -449,8 +460,8 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
-      openingDate: seedDateFromToday(-30),
-      targetClosingDate: seedDateFromToday(30),
+      openingDate: seedDateFromToday(-45),
+      targetClosingDate: seedDateFromToday(-7),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
@@ -465,7 +476,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       stages: defaultStages,
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-20),
-      targetClosingDate: seedDateFromToday(40),
+      targetClosingDate: seedDateFromToday(0),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: {
         connect: [
@@ -500,7 +511,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       stages: defaultStages,
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-10),
-      targetClosingDate: seedDateFromToday(50),
+      targetClosingDate: seedDateFromToday(-2),
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm3.id }, { id: hm5.id }] },
@@ -514,7 +525,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
-      openingDate: seedDateFromToday(-8),
+      openingDate: seedDateFromToday(-18),
       targetClosingDate: seedDateFromToday(35),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
@@ -526,6 +537,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       name: "AI Solutions & Full Stack Engineer (Python & React) - GenAI Studio",
       status: "Open" as JobOpeningStatus,
+      hasBeenOpened: true,
       stages: defaultStages,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: seedDateFromToday(-5),
@@ -541,91 +553,147 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   });
 
-  const metricsSeedNow = new Date();
-  const metricsDateDaysAgo = (days: number) =>
-    new Date(metricsSeedNow.getTime() - days * 24 * 60 * 60 * 1000);
-
-  await prisma.jobOpening.createMany({
-    data: [
-      {
-        name: "Senior Node.js Developer",
-        status: "Closed" as JobOpeningStatus,
-        hasBeenOpened: true,
-        stages: defaultStages,
-        location: "Montevideo, Uruguay",
-        openingDate: metricsDateDaysAgo(52),
-        targetClosingDate: metricsDateDaysAgo(15),
-        closingDate: metricsDateDaysAgo(5),
-        areaId: areas["Ingeniería Web & Mobile"].id,
-      },
-      {
-        name: "Product Manager",
-        status: "Closed" as JobOpeningStatus,
-        hasBeenOpened: true,
-        stages: defaultStages,
-        location: "Remoto (Uruguay)",
-        openingDate: metricsDateDaysAgo(55),
-        targetClosingDate: metricsDateDaysAgo(18),
-        closingDate: metricsDateDaysAgo(12),
-        areaId: areas["Diseño de Producto & UX"].id,
-      },
-      {
-        name: "UX Designer Senior",
-        status: "Closed" as JobOpeningStatus,
-        hasBeenOpened: true,
-        stages: defaultStages,
-        location: "Montevideo, Uruguay (Híbrido)",
-        openingDate: metricsDateDaysAgo(62),
-        targetClosingDate: metricsDateDaysAgo(24),
-        closingDate: metricsDateDaysAgo(20),
-        areaId: areas["Diseño de Producto & UX"].id,
-      },
-      {
-        name: "QA Engineer",
-        status: "Closed" as JobOpeningStatus,
-        hasBeenOpened: true,
-        stages: defaultStages,
-        location: "Montevideo, Uruguay",
-        openingDate: metricsDateDaysAgo(78),
-        targetClosingDate: metricsDateDaysAgo(35),
-        closingDate: metricsDateDaysAgo(40),
-        areaId: areas["Quality Assurance & Testing"].id,
-      },
-      {
-        name: "AI Developer",
-        status: "Closed" as JobOpeningStatus,
-        hasBeenOpened: true,
-        stages: defaultStages,
-        location: "Remoto (Uruguay)",
-        openingDate: metricsDateDaysAgo(112),
-        targetClosingDate: metricsDateDaysAgo(65),
-        closingDate: metricsDateDaysAgo(70),
-        areaId: areas["AI Studio & Data"].id,
-      },
-      {
-        name: "Cloud Security Engineer",
-        status: "Closed" as JobOpeningStatus,
-        hasBeenOpened: true,
-        stages: defaultStages,
-        location: "Remoto (Uruguay)",
-        openingDate: metricsDateDaysAgo(165),
-        targetClosingDate: metricsDateDaysAgo(125),
-        closingDate: metricsDateDaysAgo(120),
-        areaId: areas["Infraestructura Cloud & DevOps"].id,
-      },
-      {
-        name: "Data Analyst",
-        status: "Closed" as JobOpeningStatus,
-        hasBeenOpened: true,
-        stages: defaultStages,
-        location: "Montevideo, Uruguay (Híbrido)",
-        openingDate: metricsDateDaysAgo(245),
-        targetClosingDate: metricsDateDaysAgo(205),
-        closingDate: metricsDateDaysAgo(200),
-        areaId: areas["AI Studio & Data"].id,
-      },
-    ],
+  const jobOpening7 = await prisma.jobOpening.create({
+    data: {
+      name: "Mobile Developer (React Native) - EagerWorks Delivery",
+      status: "Open",
+      hasBeenOpened: true,
+      stages: defaultStages,
+      location: "Montevideo, Uruguay (Híbrido Cordón)",
+      openingDate: seedDateFromToday(0),
+      targetClosingDate: seedDateFromToday(21),
+      areaId: areas["Ingeniería Web & Mobile"].id,
+      seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
+      hiringManagers: { connect: [{ id: hm1.id }, { id: hm4.id }] },
+    },
   });
+
+  const today = new TZDate(seedDateFromToday(0), "UTC");
+  const previousMonthEnd = subDays(startOfMonth(today), 1);
+  const previousQuarterEnd = subDays(startOfQuarter(today), 1);
+  const previousSemesterEnd = new Date(
+    Date.UTC(today.getFullYear(), today.getMonth() < 6 ? 0 : 6, 0),
+  );
+  const previousYearEnd = subDays(startOfYear(today), 1);
+  // Seven closures today keep the default month populated even on its first day.
+  // Extra closures cover every previous period without scheduling future closes.
+  const closedOpeningDefs = [
+    {
+      name: "Senior Node.js Developer",
+      area: areaDefs[0],
+      duration: 24,
+      deviation: 10,
+      closing: today,
+    },
+    {
+      name: "Product Manager",
+      area: areaDefs[4],
+      duration: 30,
+      deviation: 6,
+      closing: today,
+    },
+    {
+      name: "UX Designer Senior",
+      area: areaDefs[4],
+      duration: 18,
+      deviation: 4,
+      closing: today,
+    },
+    {
+      name: "QA Engineer",
+      area: areaDefs[3],
+      duration: 21,
+      deviation: -5,
+      closing: today,
+    },
+    {
+      name: "AI Developer",
+      area: areaDefs[1],
+      duration: 35,
+      deviation: -5,
+      closing: today,
+    },
+    {
+      name: "Cloud Security Engineer",
+      area: areaDefs[2],
+      duration: 28,
+      deviation: 0,
+      closing: today,
+    },
+    {
+      name: "Data Analyst",
+      area: areaDefs[1],
+      duration: 40,
+      deviation: 5,
+      closing: today,
+    },
+    {
+      name: "React Native Developer - Delivery anterior",
+      area: areaDefs[0],
+      duration: 33,
+      deviation: -3,
+      closing: previousMonthEnd,
+    },
+    {
+      name: "QA Automation Engineer - Partner anterior",
+      area: areaDefs[3],
+      duration: 40,
+      deviation: 8,
+      closing: previousQuarterEnd,
+    },
+    {
+      name: "Data Engineer - Analytics anterior",
+      area: areaDefs[1],
+      duration: 36,
+      deviation: -4,
+      closing: previousSemesterEnd,
+    },
+    {
+      name: "Product Designer - Discovery anterior",
+      area: areaDefs[4],
+      duration: 25,
+      deviation: 0,
+      closing: previousYearEnd,
+    },
+  ];
+  const closedOpenings = [];
+  for (const definition of closedOpeningDefs) {
+    const opening = await prisma.jobOpening.create({
+      data: {
+        name: definition.name,
+        status: "Closed",
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Montevideo, Uruguay (Híbrido / Remoto)",
+        openingDate: subDays(definition.closing, definition.duration),
+        targetClosingDate: subDays(definition.closing, definition.deviation),
+        closingDate: definition.closing,
+        areaId: areas[definition.area].id,
+        seniorities: { connect: [{ id: seniorities["Senior"].id }] },
+        hiringManagers: { connect: [{ id: hm1.id }] },
+      },
+    });
+    closedOpenings.push(opening);
+  }
+
+  for (const status of ["Paused", "Cancelled"] as const) {
+    await prisma.jobOpening.create({
+      data: {
+        name:
+          status === "Paused"
+            ? "QA Automation Engineer - Proyecto en pausa"
+            : "Product Designer - Proyecto cancelado",
+        status,
+        hasBeenOpened: true,
+        stages: defaultStages,
+        location: "Remoto (Uruguay)",
+        openingDate: seedDateFromToday(-14),
+        targetClosingDate: seedDateFromToday(14),
+        areaId: areas[status === "Paused" ? areaDefs[3] : areaDefs[4]].id,
+        hiringManagers: { connect: [{ id: hm2.id }] },
+      },
+    });
+  }
 
   // ==========================================================================
   // CANDIDATOS FIJOS (SELECCIÓN URUGUAYA USA 2026 CON FOTOS Y PDFS REALES)
@@ -640,7 +708,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "federico.valverde@eagerworks.uy",
       phone: "+598 99 150 815",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/369081-1731018042.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImJt88e7duWENHGaTLgeYFv7r2dZABOCXKpxQ3",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/federico-valverde-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -682,10 +750,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening1.id,
-      applicationDate: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 28 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Entrevista técnica"),
-      stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 10 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4500,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -696,10 +764,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: federico.id,
       jobOpeningId: jobOpening2.id,
-      applicationDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 16 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Aplicado"),
-      stageEntryDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 16 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4200,
       desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
@@ -708,7 +776,9 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // Fecha de la entrevista de Valverde: se usa en la entrevista y en su Activity
   // para que el log muestre exactamente la misma fecha y hora.
-  const fedeInterviewDate = new Date(Date.now() - 11 * 24 * 60 * 60 * 1000);
+  const fedeInterviewDate = new Date(
+    seedNow.getTime() - 11 * 24 * 60 * 60 * 1000,
+  );
   const fedeInterviewDateLabel = format(
     new TZDate(fedeInterviewDate, "America/Montevideo"),
     "dd/MM/yyyy 'a las' HH:mm",
@@ -797,7 +867,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
         createdById: admin1.id,
         jobOpeningId: act.jobOp,
         description: act.desc,
-        date: new Date(Date.now() - act.daysAgo * 24 * 60 * 60 * 1000),
+        date: new Date(seedNow.getTime() - act.daysAgo * 24 * 60 * 60 * 1000),
       },
     });
   }
@@ -811,7 +881,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "darwin.nunez@eagerworks.uy",
       phone: "+598 98 210 999",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/546543-1681827179.jpg",
+        "https://utfs.io/f/hR8lYSLGKWIm1Et5K6jFocWOCMilxSKvI6ygLh3w5ubHNEZa",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/darwin-nunez-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -850,10 +920,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: darwin.id,
       jobOpeningId: jobOpening3.id,
-      applicationDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 6 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Aplicado"),
-      stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 6 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3200,
       desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
@@ -869,7 +939,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "sergio.rochet@eagerworks.uy",
       phone: "+598 91 330 001",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/264014-1668501221.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImVY1SU8NEPatwQzNrSK9G6WUHpdAuIx7knmCs",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/sergio-rochet-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -912,7 +982,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "ronald.araujo@eagerworks.uy",
       phone: "+598 99 444 333",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/480267-1736431980.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImm5e42wQ3HCd9j6AlTfn0bFLrExghtROmV4oQ",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/ronald-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -958,10 +1028,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: ronald.id,
       jobOpeningId: jobOpening2.id,
-      applicationDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 14 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Entrevista técnica"),
-      stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 5 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3800,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -974,7 +1044,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening2.id,
       description: 'movió la postulación de "Aplicado" a "Entrevista técnica"',
-      date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 5 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -987,7 +1057,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "manuel.ugarte@eagerworks.uy",
       phone: "+598 94 555 123",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/476701-1715107512.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImfFzhXOSfu8Kth6YjTSgR72dGzlyXbwqoIaPe",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/manuel-ugarte-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1026,10 +1096,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: ugarte.id,
       jobOpeningId: jobOpening2.id,
-      applicationDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 12 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Revisión de perfil"),
-      stageEntryDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 12 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3500,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -1042,7 +1112,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin2.id,
       jobOpeningId: jobOpening2.id,
       description: 'movió la postulación de "Aplicado" a "Revisión de perfil"',
-      date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 12 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1054,7 +1124,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "rodrigo.bentancur@eagerworks.uy",
       phone: "+598 99 777 888",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/354362-1740605779.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImQv9jFwhjHLUiJaSAu37prKRqVDtfBbxPIg9O",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/rodrigo-bentancur-uy/",
       englishLevel: "Native" as EnglishLevel,
@@ -1103,10 +1173,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: bentancur.id,
       jobOpeningId: jobOpening1.id,
-      applicationDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 18 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Entrevista HR"),
-      stageEntryDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 4 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 6000,
       desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
@@ -1119,7 +1189,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
       description: 'movió la postulación de "Aplicado" a "Entrevista HR"',
-      date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 4 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1132,7 +1202,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "facundo.pellistri@eagerworks.uy",
       phone: "+598 92 444 333",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/676318-1785512941.png",
+        "https://utfs.io/f/hR8lYSLGKWImViU69cBNEPatwQzNrSK9G6WUHpdAuIx7knmC",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/facundo-pellistri-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1180,10 +1250,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: pellistri.id,
       jobOpeningId: jobOpening5.id,
-      applicationDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 7 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Aplicado"),
-      stageEntryDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 7 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3400,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -1198,7 +1268,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "nicolas.delacruz@eagerworks.uy",
       phone: "+598 98 111 222",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/397458-1719565799.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImTduAftczqbAuclI6LrEMdvGJaHT2gYfNeD97",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/nicolas-delacruz-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1237,10 +1307,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: delacruz.id,
       jobOpeningId: jobOpening1.id,
-      applicationDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 15 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Entrevista técnica"),
-      stageEntryDate: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 6 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4300,
       desiredSalaryCurrency: "USD",
       availability: "2 semanas de aviso",
@@ -1255,7 +1325,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "mathias.olivera@eagerworks.uy",
       phone: "+598 99 666 555",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/376514-1681910576.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImL7hwMPv5WnhSyidITwVUm73A0KlDjR8ekaHJ",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/mathias-olivera-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1294,10 +1364,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: olivera.id,
       jobOpeningId: jobOpening4.id,
-      applicationDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 9 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Revisión de perfil"),
-      stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 9 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4800,
       desiredSalaryCurrency: "USD",
       availability: "1 mes de aviso",
@@ -1312,7 +1382,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "maxi.araujo@eagerworks.uy",
       phone: "+598 91 888 999",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/572675-1773786535.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImLJiQNsv5WnhSyidITwVUm73A0KlDjR8ekaHJ",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/maxi-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1359,10 +1429,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: maxi.id,
       jobOpeningId: jobOpening1.id,
-      applicationDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 10 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Aplicado"),
-      stageEntryDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 10 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3600,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -1377,7 +1447,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "ferran.torres@eagerworks.uy",
       phone: "+34 612 345 678",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/398184-1779789996.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImHhb13cEm6P0IYWAc5JoVdwyXaKQZESumLf87",
       country: "España",
       linkedin: "https://www.linkedin.com/in/ferran-torres/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1425,10 +1495,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: ferran.id,
       jobOpeningId: jobOpening5.id,
-      applicationDate: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 12 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Entrevista técnica"),
-      stageEntryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 3 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3200,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -1441,7 +1511,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening5.id,
       description: `agregó el candidato a "${jobOpening5.name}"`,
-      date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 12 * 24 * 60 * 60 * 1000),
     },
   });
   await prisma.activity.create({
@@ -1450,7 +1520,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening5.id,
       description: 'movió la postulación de "Aplicado" a "Entrevista técnica"',
-      date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 3 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1462,7 +1532,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "anthony.gordon@eagerworks.uy",
       phone: "+44 7700 900123",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/503733-1761080304.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImeW38mUIrBaxbc3UnuwtRP6K92fSCLpE5DdGj",
       country: "Reino Unido",
       linkedin: "https://www.linkedin.com/in/anthony-gordon/",
       englishLevel: "Native" as EnglishLevel,
@@ -1502,10 +1572,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: gordon.id,
       jobOpeningId: jobOpening3.id,
-      applicationDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 7 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Revisión de perfil"),
-      stageEntryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 5 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 3500,
       desiredSalaryCurrency: "USD",
       availability: "1 mes de preaviso",
@@ -1518,7 +1588,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening3.id,
       description: `agregó el candidato a "${jobOpening3.name}"`,
-      date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 7 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1530,7 +1600,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "cristiano.ronaldo@eagerworks.uy",
       phone: "+351 912 345 678",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/8198-1748102259.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImrJaXOo8bsQ056OqKNWVH1zT9JPCL2F48aoXh",
       country: "Portugal",
       linkedin: "https://www.linkedin.com/in/cristiano-ronaldo/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1579,10 +1649,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: cristiano.id,
       jobOpeningId: jobOpening1.id,
-      applicationDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 18 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Oferta"),
-      stageEntryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 2 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 7000,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -1595,7 +1665,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
       description: 'movió la postulación de "Aplicado" a "Entrevista técnica"',
-      date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 8 * 24 * 60 * 60 * 1000),
     },
   });
   await prisma.activity.create({
@@ -1604,7 +1674,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening1.id,
       description: 'movió la postulación de "Entrevista técnica" a "Oferta"',
-      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 2 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1616,7 +1686,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "julian.alvarez@eagerworks.uy",
       phone: "+54 9 11 2345 6789",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/576024-1684920938.jpg",
+        "https://utfs.io/f/hR8lYSLGKWImn1zAAatBlvSoOUGZk97AQs2P03wdbX6itycE",
       country: "Argentina",
       linkedin: "https://www.linkedin.com/in/julian-alvarez/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1657,10 +1727,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: julian.id,
       jobOpeningId: jobOpening6.id,
-      applicationDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 4 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Entrevista HR"),
-      stageEntryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 2 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4000,
       desiredSalaryCurrency: "USD",
       availability: "2 semanas",
@@ -1673,7 +1743,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening6.id,
       description: `agregó el candidato a "${jobOpening6.name}"`,
-      date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 4 * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -1685,7 +1755,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "fernando.muslera@eagerworks.uy",
       phone: "+598 99 123 456",
       photo:
-        "https://img.a.transfermarkt.technology/portrait/header/58088-1671035581.png",
+        "https://utfs.io/f/hR8lYSLGKWImT1x2nYczqbAuclI6LrEMdvGJaHT2gYfNeD97",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/fernando-muslera-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1732,10 +1802,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     data: {
       applicantId: muslera.id,
       jobOpeningId: jobOpening4.id,
-      applicationDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      applicationDate: new Date(seedNow.getTime() - 9 * 24 * 60 * 60 * 1000),
       active: true,
       currentStageId: stageKey("Aplicado"),
-      stageEntryDate: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      stageEntryDate: new Date(seedNow.getTime() - 9 * 24 * 60 * 60 * 1000),
       desiredSalaryAmount: 4800,
       desiredSalaryCurrency: "USD",
       availability: "Inmediata",
@@ -1748,13 +1818,158 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       createdById: admin1.id,
       jobOpeningId: jobOpening4.id,
       description: `agregó el candidato a "${jobOpening4.name}"`,
-      date: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000),
+      date: new Date(seedNow.getTime() - 9 * 24 * 60 * 60 * 1000),
     },
   });
 
-  // ==========================================================================
-  // ENTREVISTAS Y NOTAS DE EJEMPLO
-  // ==========================================================================
+  // Historical outcomes populate sources, motives and every pipeline stage.
+  // Rochet deliberately keeps no applications, preserving the existing profile case.
+  const historicalApplicants = [
+    federico,
+    darwin,
+    ronald,
+    ugarte,
+    bentancur,
+    pellistri,
+    delacruz,
+    olivera,
+    maxi,
+    ferran,
+    gordon,
+    cristiano,
+    julian,
+    muslera,
+  ];
+  const historicalStageIndexes = [0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 5, 6];
+  for (const opening of closedOpenings) {
+    const closingDate = opening.closingDate!;
+    for (const [index, applicant] of historicalApplicants.entries()) {
+      const stage = defaultStages[historicalStageIndexes[index]];
+      const hired = stage.type === "Contratado";
+      const motive =
+        disqualificationMotives[index % disqualificationMotives.length];
+      // One legacy rejection has no motive, exercising the fallback label.
+      const hasMotive = index !== 0;
+      const applicationDate = addDays(opening.openingDate, 1);
+      const stageEntryDate = hired
+        ? closingDate
+        : subDays(closingDate, 8 - historicalStageIndexes[index]);
+      const disqualificationDate = hired ? null : subDays(closingDate, 1);
+      await prisma.application.create({
+        data: {
+          applicantId: applicant.id,
+          jobOpeningId: opening.id,
+          applicationDate,
+          currentStageId: stage.key,
+          stageEntryDate,
+          active: hired,
+          disqualificationDate,
+          disqualificationMotiveId: !hired && hasMotive ? motive.id : null,
+          disqualificationDescription: hired
+            ? null
+            : hasMotive
+              ? `${motive.name}. Proceso finalizado para ${opening.name}.`
+              : "Descalificación histórica sin motivo registrado.",
+          desiredSalaryAmount: 2800 + index * 200,
+          desiredSalaryCurrency: "USD",
+          availability: "2 semanas de aviso",
+        },
+      });
+      await prisma.activity.createMany({
+        data: [
+          {
+            applicantId: applicant.id,
+            jobOpeningId: opening.id,
+            createdById: admin1.id,
+            description: `agregó el candidato a "${opening.name}"`,
+            date: applicationDate,
+          },
+          {
+            applicantId: applicant.id,
+            jobOpeningId: opening.id,
+            createdById: admin1.id,
+            description: hired
+              ? 'movió la postulación de "Oferta" a "Contratado/a"'
+              : `descalificó la postulación: ${hasMotive ? motive.name : "sin motivo registrado"}`,
+            date: disqualificationDate ?? stageEntryDate,
+          },
+        ],
+      });
+    }
+  }
+
+  await prisma.application.createMany({
+    data: [
+      {
+        applicantId: pellistri.id,
+        jobOpeningId: jobOpening1.id,
+        applicationDate: seedDateFromToday(-10),
+        currentStageId: stageKey("Psicotécnico"),
+        stageEntryDate: seedDateFromToday(-2),
+        active: true,
+      },
+      {
+        applicantId: muslera.id,
+        jobOpeningId: jobOpening7.id,
+        applicationDate: seedDateFromToday(0),
+        currentStageId: stageKey("Aplicado"),
+        stageEntryDate: seedDateFromToday(0),
+        active: true,
+      },
+    ],
+  });
+
+  const openRejections = [
+    {
+      applicant: delacruz,
+      opening: jobOpening4,
+      stage: "Entrevista técnica",
+      motive: 0,
+    },
+    {
+      applicant: gordon,
+      opening: jobOpening6,
+      stage: "Entrevista HR",
+      motive: 2,
+    },
+    { applicant: maxi, opening: jobOpening5, stage: "Aplicado", motive: 1 },
+  ];
+  for (const rejection of openRejections) {
+    const motive = disqualificationMotives[rejection.motive];
+    await prisma.application.create({
+      data: {
+        applicantId: rejection.applicant.id,
+        jobOpeningId: rejection.opening.id,
+        applicationDate: seedDateFromToday(-3),
+        currentStageId: stageKey(rejection.stage),
+        stageEntryDate: seedDateFromToday(-2),
+        active: false,
+        disqualificationDate: seedDateFromToday(-1),
+        disqualificationMotiveId: motive.id,
+        disqualificationDescription: `${motive.name}. Continuar con otros perfiles.`,
+      },
+    });
+    await prisma.activity.create({
+      data: {
+        applicantId: rejection.applicant.id,
+        jobOpeningId: rejection.opening.id,
+        createdById: admin2.id,
+        description: `descalificó la postulación: ${motive.name}`,
+        date: seedDateFromToday(-1),
+      },
+    });
+  }
+
+  // Interviews use Montevideo time, independently of the machine's timezone.
+  const interviewDate = (dayOffset: number, hour: number, minute = 0) =>
+    new TZDate(
+      nowInUruguay.getFullYear(),
+      nowInUruguay.getMonth(),
+      nowInUruguay.getDate() + dayOffset,
+      hour,
+      minute,
+      "America/Montevideo",
+    );
   await prisma.interview.create({
     data: {
       stageId: "83412", // "Entrevista técnica" in defaultStages
@@ -1777,7 +1992,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       exploratoryName: "Charla exploratoria",
       duration: 30,
       modality: "VideoCall" as InterviewType,
-      date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      date: interviewDate(1, 15),
       status: "Scheduled" as InterviewStatus,
       applicantId: muslera.id,
       interviewers: { connect: [{ id: hm1.id }] },
@@ -1786,6 +2001,148 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       },
     },
   });
+
+  const dashboardInterviews = [
+    {
+      applicant: ronald,
+      opening: jobOpening2,
+      stage: "Entrevista técnica",
+      date: interviewDate(0, 9),
+      interviewer: hm1,
+    },
+    {
+      applicant: bentancur,
+      opening: jobOpening1,
+      stage: "Entrevista HR",
+      date: seedNow,
+      interviewer: admin1,
+      completed: true,
+    },
+    {
+      applicant: pellistri,
+      opening: jobOpening1,
+      stage: "Psicotécnico",
+      date: interviewDate(0, 12),
+      interviewer: hm2,
+    },
+    {
+      applicant: rochet,
+      opening: null,
+      stage: null,
+      date: interviewDate(0, 14),
+      interviewer: hm3,
+    },
+    {
+      applicant: julian,
+      opening: jobOpening6,
+      stage: "Entrevista HR",
+      date: interviewDate(0, 16, 30),
+      interviewer: hm4,
+    },
+    {
+      applicant: federico,
+      opening: jobOpening1,
+      stage: "Entrevista técnica",
+      date: interviewDate(1, 9, 30),
+      interviewer: hm1,
+    },
+    {
+      applicant: ferran,
+      opening: jobOpening5,
+      stage: "Entrevista técnica",
+      date: interviewDate(1, 11),
+      interviewer: hm4,
+    },
+    {
+      applicant: julian,
+      opening: jobOpening6,
+      stage: "Entrevista HR",
+      date: interviewDate(1, 14),
+      interviewer: hm5,
+    },
+    {
+      applicant: olivera,
+      opening: jobOpening4,
+      stage: "Entrevista técnica",
+      date: interviewDate(3, 10),
+      interviewer: hm3,
+    },
+    {
+      applicant: muslera,
+      opening: jobOpening7,
+      stage: "Entrevista HR",
+      date: null,
+      interviewer: admin2,
+    },
+  ];
+  for (const definition of dashboardInterviews) {
+    const stageId = definition.stage ? stageKey(definition.stage) : null;
+    const dateLabel = definition.date
+      ? format(
+          new TZDate(definition.date, "America/Montevideo"),
+          "dd/MM/yyyy 'a las' HH:mm",
+        )
+      : "pendiente de coordinar";
+    await prisma.interview.create({
+      data: {
+        applicantId: definition.applicant.id,
+        jobOpeningId: definition.opening?.id,
+        stageId,
+        exploratoryName: stageId ? null : "Charla exploratoria Cloud & DevOps",
+        duration: definition.stage === "Entrevista técnica" ? 60 : 30,
+        modality:
+          definition.applicant.id === pellistri.id ? "InPerson" : "VideoCall",
+        date: definition.date,
+        status: definition.completed
+          ? "Completed"
+          : definition.date
+            ? "Scheduled"
+            : "Pending",
+        interviewers: { connect: [{ id: definition.interviewer.id }] },
+        assignments: {
+          create: [
+            {
+              interviewerId: definition.interviewer.id,
+              assignedById: admin1.id,
+              assignedAt: seedNow,
+            },
+          ],
+        },
+        ...(definition.completed
+          ? {
+              note: {
+                create: {
+                  content: {
+                    type: "doc",
+                    content: [
+                      {
+                        type: "paragraph",
+                        content: [
+                          {
+                            type: "text",
+                            text: "Buen nivel de comunicación e inglés. Avanzar con la evaluación técnica.",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  lastModifiedById: admin1.id,
+                },
+              },
+            }
+          : {}),
+      },
+    });
+    await prisma.activity.create({
+      data: {
+        applicantId: definition.applicant.id,
+        jobOpeningId: definition.opening?.id,
+        createdById: admin1.id,
+        description: `agendó la entrevista "${definition.stage ?? "Charla exploratoria"}" ${dateLabel}`,
+        date: seedNow,
+      },
+    });
+  }
 
   await prisma.applicantNote.create({
     data: {
