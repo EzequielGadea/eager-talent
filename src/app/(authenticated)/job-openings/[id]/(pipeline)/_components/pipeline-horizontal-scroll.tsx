@@ -30,6 +30,10 @@ export function PipelineHorizontalScroll({
 
     const target = event.target as HTMLElement;
 
+    // Events from portals (dialogs, select popups) bubble through the React
+    // tree but are not inside this container, so they must not start a drag.
+    if (!event.currentTarget.contains(target)) return;
+
     // No desplazar el tablero cuando se interactúa con una card o con controles
     if (
       target.closest(
