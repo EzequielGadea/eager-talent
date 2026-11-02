@@ -242,7 +242,6 @@ export function JobOpeningFilters({
                   <Checkbox
                     checked={draftFilters.statuses.includes(status)}
                     onCheckedChange={(checked) => updateStatus(status, checked)}
-                    className="data-checked:border-accent-green data-checked:bg-accent-green"
                   />
                   <span>{config.label}</span>
                 </label>
@@ -422,7 +421,6 @@ export function JobOpeningFilters({
             <Checkbox
               checked={draftFilters.onlyWithActiveCandidates}
               onCheckedChange={updateOnlyWithActiveCandidates}
-              className="data-checked:border-accent-green data-checked:bg-accent-green"
             />
             <span>Solo con candidatos en proceso</span>
           </label>
