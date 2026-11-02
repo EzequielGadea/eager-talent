@@ -274,7 +274,7 @@ export function ShareWithHiringManagerDialog({
       <DialogContent
         data-applicant-id={applicantId}
         showCloseButton={false}
-        className="grid max-h-[calc(100dvh-2rem)] w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        className="grid max-h-[calc(100dvh-2rem)] w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden bg-card p-0 sm:max-w-2xl"
       >
         <DialogHeader className="relative gap-3 px-6 py-5 pr-16">
           <div className="flex items-center gap-3">
@@ -441,7 +441,7 @@ export function ShareWithHiringManagerDialog({
                     <ComboboxItem
                       key={manager.id}
                       value={manager}
-                      className="min-h-16 rounded-lg px-3 py-2"
+                      className="min-h-16 rounded-lg px-3 py-2 data-highlighted:bg-surface-hover data-highlighted:text-text-primary"
                     >
                       <HiringManagerAvatar manager={manager} />
 
