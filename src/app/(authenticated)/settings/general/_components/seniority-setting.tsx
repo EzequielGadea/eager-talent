@@ -232,7 +232,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="max-md:size-9"
+                  className="max-md:size-9 cursor-grab hover:cursor-grab active:cursor-grabbing"
                   draggable={!isAddingSeniority}
                   disabled={isAddingSeniority}
                   onDragStart={(event) => {
@@ -240,8 +240,15 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                       event.preventDefault();
                       return;
                     }
+
                     event.dataTransfer.effectAllowed = "move";
                     event.dataTransfer.setData("text/plain", String(index));
+
+                    const row = event.currentTarget.closest("li");
+
+                    if (row) {
+                      event.dataTransfer.setDragImage(row, 20, 20);
+                    }
                   }}
                 >
                   <GripVertical

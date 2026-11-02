@@ -245,7 +245,7 @@ function DefaultStageEditor({
                   type="button"
                   variant="ghost"
                   size="icon-xs"
-                  className="max-md:size-9"
+                  className="max-md:size-9 cursor-grab hover:cursor-grab active:cursor-grabbing"
                   draggable={!locked}
                   disabled={locked}
                   aria-label={
@@ -261,6 +261,44 @@ function DefaultStageEditor({
 
                     event.dataTransfer.effectAllowed = "move";
                     event.dataTransfer.setData(STAGE_DRAG_TYPE, String(index));
+
+                    const row = event.currentTarget.closest("li");
+
+                    if (!row) return;
+
+                    const { width, height } = row.getBoundingClientRect();
+
+                    // Creamos una vista previa sencilla.
+                    const preview = document.createElement("div");
+
+                    preview.textContent = stage.name;
+
+                    Object.assign(preview.style, {
+                      width: `${width}px`,
+                      height: `${height}px`,
+                      display: "flex",
+                      alignItems: "center",
+                      padding: "0 16px",
+                      boxSizing: "border-box",
+                      border: "1px solid var(--border-default)",
+                      borderRadius: "8px",
+                      backgroundColor: "var(--surface-card)",
+                      color: "var(--text-primary)",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      position: "fixed",
+                      top: "0",
+                      left: "0",
+                      pointerEvents: "none",
+                    });
+
+                    document.body.appendChild(preview);
+
+                    event.dataTransfer.setDragImage(preview, 20, 20);
+
+                    requestAnimationFrame(() => {
+                      preview.remove();
+                    });
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "ArrowUp") {
