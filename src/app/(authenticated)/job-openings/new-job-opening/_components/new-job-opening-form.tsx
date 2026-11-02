@@ -172,7 +172,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4"
+        className="flex w-full flex-col gap-4"
       >
         <OpeningData />
         <OpeningDate />
@@ -189,12 +189,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
         <Card className="w-full items-end rounded-x1 shadow-sm">
           <CardContent>
             <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleCancel}
-                className="h-8.5 gap-2 rounded-full bg-info-bg px-4 text-[13px] font-semibold shadow-none hover:bg-dashboard-dark-hover"
-              >
+              <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancelar
               </Button>
               <NewJobOpeningButtonProps disabled={isSubmitting} />
