@@ -136,13 +136,16 @@ function TruncatedTick({
   y?: number;
   payload?: { value: string };
 }) {
+  const value = payload?.value ?? "";
+  const label = value.length > 10 ? `${value.slice(0, 9)}…` : value;
+
   return (
-    <foreignObject x={x - 35} y={y + 2} width={70} height={20}>
+    <foreignObject x={x - 24} y={y + 2} width={48} height={20}>
       <div
-        title={payload?.value}
-        className="hidden truncate text-center text-label text-text-tertiary sm:block"
+        title={value}
+        className="truncate text-center text-label text-text-tertiary"
       >
-        {payload?.value}
+        {label}
       </div>
     </foreignObject>
   );
