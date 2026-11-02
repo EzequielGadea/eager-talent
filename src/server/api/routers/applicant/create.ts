@@ -12,16 +12,64 @@ import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
 import { TRPCError } from "@trpc/server";
 
+import { paises } from "~/lib/countries";
+
+function parseUrl(value: string) {
+  try {
+    return new URL(value);
+  } catch {
+    return null;
+  }
+}
+
+function isUploadthingUrl(value: string) {
+  const url = parseUrl(value);
+  return (
+    url?.protocol === "https:" &&
+    (url.hostname === "utfs.io" || url.hostname.endsWith(".ufs.sh"))
+  );
+}
+
+function isLinkedinUrl(value: string) {
+  const url = parseUrl(value);
+  return (
+    (url?.protocol === "https:" || url?.protocol === "http:") &&
+    (url.hostname === "linkedin.com" || url.hostname.endsWith(".linkedin.com"))
+  );
+}
+
+const uploadthingUrlSchema = z
+  .string()
+  .refine(
+    isUploadthingUrl,
+    "El archivo debe estar subido al servicio de archivos",
+  );
+
+const careerYearSchema = z.number().int().min(1900).max(2100);
+
 export const createApplicant = protectedProcedure
   .input(
     z.object({
       name: z.string().min(1),
       lastname: z.string().min(1),
-      email: z.string().optional(),
+      email: z.email("Correo inválido").optional(),
       phone: z.string().optional(),
-      photo: z.string().optional(),
-      country: z.string().optional(),
-      linkedin: z.string().optional(),
+      photo: uploadthingUrlSchema.optional(),
+      country: z
+        .string()
+        .refine(
+          (value) =>
+            value === "" || paises.some((pais) => pais.nombre === value),
+          "País inválido",
+        )
+        .optional(),
+      linkedin: z
+        .string()
+        .refine(
+          (value) => value === "" || isLinkedinUrl(value),
+          "Debe ingresar una URL de LinkedIn válida",
+        )
+        .optional(),
 
       englishLevel: z.enum(EnglishLevel).optional(),
       source: z.enum(Source).optional(),
@@ -29,10 +77,10 @@ export const createApplicant = protectedProcedure
 
       title: z.string().optional(),
       academicInstitution: z.string().optional(),
-      careerStartYear: z.number().optional(),
-      careerEndYear: z.number().optional(),
-      education: z.string().optional(),
-      resume: z.string().optional(),
+      careerStartYear: careerYearSchema.optional(),
+      careerEndYear: careerYearSchema.optional(),
+      education: uploadthingUrlSchema.optional(),
+      resume: uploadthingUrlSchema.optional(),
 
       roleId: z.string(),
       areaId: z.string().optional(),

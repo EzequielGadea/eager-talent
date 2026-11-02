@@ -192,7 +192,7 @@ export default function EducationAndFiles({
               <input
                 id="education"
                 type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".pdf"
                 className="hidden"
                 {...register("education")}
               />

@@ -88,7 +88,7 @@ export function PublicApplicationCard({
               Disponibilidad
             </p>
             <p className="mt-1 text-sm font-medium text-text-primary">
-              {availability ?? "Sin información"}
+              {availability?.trim() || "Sin información"}
             </p>
           </div>
 
