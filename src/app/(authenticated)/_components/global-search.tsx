@@ -17,8 +17,6 @@ import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { VacanciesIcon } from "./app-icons";
 
-const commandGroupClassName =
-  "**:[[cmdk-group-heading]]:font-sans **:[[cmdk-group-heading]]:font-bold **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-wider";
 const resultItemClassName =
   "gap-3 rounded-lg px-3 py-2.5 data-selected:bg-success-bg";
 
@@ -189,10 +187,7 @@ export function GlobalSearch() {
               </CommandEmpty>
 
               {!isDebouncing && hasApplicants && (
-                <CommandGroup
-                  heading="CANDIDATOS"
-                  className={`px-2 pt-2 ${commandGroupClassName}`}
-                >
+                <CommandGroup heading="CANDIDATOS" className="px-2 pt-2">
                   {data?.applicants.map((applicant) => (
                     <ResultItem
                       key={applicant.id}
@@ -225,10 +220,7 @@ export function GlobalSearch() {
               )}
 
               {!isDebouncing && hasJobOpenings && (
-                <CommandGroup
-                  heading="VACANTES"
-                  className={`px-2 pb-2 ${commandGroupClassName}`}
-                >
+                <CommandGroup heading="VACANTES" className="px-2 pb-2">
                   {data?.jobOpenings.map((jobOpening) => (
                     <ResultItem
                       key={jobOpening.id}

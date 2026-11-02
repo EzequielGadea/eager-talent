@@ -174,15 +174,9 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
             </colgroup>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="py-3 pr-3 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Fecha
-                </TableHead>
-                <TableHead className="py-3 pr-3 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Evento
-                </TableHead>
-                <TableHead className="py-3 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Postulación
-                </TableHead>
+                <TableHead className="py-3 pr-3">Fecha</TableHead>
+                <TableHead className="py-3 pr-3">Evento</TableHead>
+                <TableHead className="py-3">Postulación</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
