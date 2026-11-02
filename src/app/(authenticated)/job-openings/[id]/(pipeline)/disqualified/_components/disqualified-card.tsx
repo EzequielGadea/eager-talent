@@ -44,6 +44,8 @@ export function DisqualifiedCard({
 
   const initials = avatar.initials;
   const avatarColor = avatar.colorClass;
+  const motiveLabel =
+    application.disqualificationMotive ?? "(sin motivo especificado)";
   return (
     <>
       {/* Borde izquierdo rojo: marca visual de que fue descartado. */}
@@ -74,11 +76,7 @@ export function DisqualifiedCard({
             <div className="flex items-start justify-between gap-2">
               <p className="flex min-w-0 items-start gap-1.5 text-sm font-medium text-destructive">
                 <CircleAlert className="mt-0.5 size-3.5 shrink-0" />
-                {application.disqualificationMotive && (
-                  <span className="line-clamp-2">
-                    {application.disqualificationMotive}
-                  </span>
-                )}
+                <span className="line-clamp-2">{motiveLabel}</span>
               </p>
 
               {/* Comentario opcional: solo un "+" que abre el diálogo. */}
@@ -139,7 +137,7 @@ export function DisqualifiedCard({
               </DialogTitle>
 
               <DialogDescription className="mt-1 text-sm text-text-secondary">
-                {fullName} · {application.disqualificationMotive}
+                {fullName} · {motiveLabel}
               </DialogDescription>
             </div>
 
