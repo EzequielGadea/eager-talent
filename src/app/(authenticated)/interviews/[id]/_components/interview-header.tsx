@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { auth } from "~/lib/auth";
+import getAvatar from "~/lib/avatar";
 import { api } from "~/lib/trpc/server";
 import {
   NO_APPLICATION_LABEL,
@@ -30,8 +31,7 @@ export async function InterviewHeader({
       ? await api.interview.checkCurrentStage({ interviewId: interview.id })
       : null;
   const applicantName = `${applicant.name} ${applicant.lastName}`;
-  const initials =
-    `${applicant.name.charAt(0)}${applicant.lastName.charAt(0)}`.toUpperCase();
+  const avatar = getAvatar(applicant.name, applicant.lastName);
 
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -42,8 +42,10 @@ export async function InterviewHeader({
             alt={applicantName}
             className="object-cover"
           />
-          <AvatarFallback className="bg-tag-green-bg text-sm font-semibold text-tag-green-fg">
-            {initials}
+          <AvatarFallback
+            className={`text-sm font-semibold ${avatar.colorClass}`}
+          >
+            {avatar.initials}
           </AvatarFallback>
         </Avatar>
 
