@@ -57,9 +57,9 @@ export function DeleteUserDialog({
         <DialogHeader>
           <DialogTitle>Eliminar usuario</DialogTitle>
           <DialogDescription>
-            Esta acción es irreversible. {userName} será baneado, perderá el
-            acceso al sistema y dejará de aparecer en todo el sistema. Su correo
-            electrónico quedará liberado.
+            Esta acción es irreversible. {userName} perderá el acceso y dejará
+            de aparecer en todo el sistema. Su correo electrónico quedará
+            liberado.
           </DialogDescription>
         </DialogHeader>
 
