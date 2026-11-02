@@ -1,10 +1,12 @@
 "use client";
 
-import { GripVertical, Plus, X } from "lucide-react";
+import { arrayMove } from "@dnd-kit/sortable";
+import { Plus, X } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 
+import { DragHandle, SortableList } from "~/components/sortable-list";
 import { Button } from "~/components/ui/button";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -13,6 +15,7 @@ import { Input } from "~/components/ui/input";
 
 import { toast } from "~/components/ui/toast";
 
+import { cn } from "~/lib/utils";
 import { api } from "~/lib/trpc/react";
 import type { AppRouter } from "~/server/api/root";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
@@ -152,20 +155,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
     JSON.stringify(savedSeniorities.map((seniority) => seniority.id));
 
   function moveSeniority(fromIndex: number, toIndex: number) {
-    if (
-      fromIndex < 0 ||
-      toIndex < 0 ||
-      fromIndex >= seniorities.length ||
-      toIndex >= seniorities.length
-    ) {
-      return;
-    }
-    setSeniorities((current) => {
-      const next = [...current];
-      const [seniority] = next.splice(fromIndex, 1);
-      if (seniority) next.splice(toIndex, 0, seniority);
-      return next;
-    });
+    setSeniorities((current) => arrayMove(current, fromIndex, toIndex));
   }
 
   const updateOrder = api.seniority.updateOrderSeniority.useMutation({
@@ -202,8 +192,12 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
       </CardHeader>
 
       <CardContent className="flex flex-col gap-2">
-        <ol className="flex flex-col gap-2">
-          {seniorities?.map((seniority, index) => {
+        <SortableList
+          items={seniorities}
+          disabled={isAddingSeniority}
+          onMove={moveSeniority}
+          getLabel={(seniority) => `la seniority ${seniority.name}`}
+          renderRow={(seniority, index, row) => {
             const deleteRestrictions = [
               seniority._count.applicants > 0 ? "candidatos asignados" : null,
               seniority._count.jobOpenings > 0 ? "vacantes asociadas" : null,
@@ -214,50 +208,17 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
 
             return (
               <li
-                key={seniority.id}
-                className="flex items-center gap-2.5 rounded-lg border border-border-default px-2 py-2 w-full"
-                onDragOver={(event) => {
-                  if (!isAddingSeniority) event.preventDefault();
-                }}
-                onDrop={(event) => {
-                  event.preventDefault();
-                  if (isAddingSeniority) return;
-                  moveSeniority(
-                    Number(event.dataTransfer.getData("text/plain")),
-                    index,
-                  );
-                }}
+                {...row.rowProps}
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-lg border border-border-default px-2 py-2",
+                  row.rowProps.className,
+                )}
               >
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-xs"
-                  className="max-md:size-9 cursor-grab hover:cursor-grab active:cursor-grabbing"
-                  draggable={!isAddingSeniority}
-                  disabled={isAddingSeniority}
-                  onDragStart={(event) => {
-                    if (isAddingSeniority) {
-                      event.preventDefault();
-                      return;
-                    }
-
-                    event.dataTransfer.effectAllowed = "move";
-                    event.dataTransfer.setData("text/plain", String(index));
-
-                    const row = event.currentTarget.closest("li");
-
-                    if (row) {
-                      event.dataTransfer.setDragImage(row, 20, 20);
-                    }
-                  }}
-                >
-                  <GripVertical
-                    aria-hidden="true"
-                    className="size-5 md:size-3"
-                  />
-                </Button>
+                <DragHandle
+                  {...row.handle}
+                  label={`seniority ${seniority.name}`}
+                />
                 <span className="w-3.5 text-center font-mono text-label text-text-tertiary">
-                  {" "}
                   {index + 1}
                 </span>
                 <span
@@ -284,6 +245,7 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                     variant="ghost"
                     size="icon-sm"
                     disabled={isDeleteDisabled}
+                    aria-label={`Eliminar seniority ${seniority.name}`}
                     onClick={() =>
                       setSeniorityToDel({
                         id: seniority.id,
@@ -296,42 +258,38 @@ function SeniorityEditor({ data }: { data: Seniority[] }) {
                 </span>
               </li>
             );
-          })}
-          {isAddingSeniority && (
-            <form
-              className="flex items-end gap-3 border-b border-border-default
-                        py-4"
-              onSubmit={handleCreateSeniority}
+          }}
+        />
+
+        {isAddingSeniority && (
+          <form
+            className="flex w-full flex-col gap-2.5 rounded-lg border border-border-default px-2 py-2 md:flex-row md:items-center"
+            onSubmit={handleCreateSeniority}
+          >
+            <div className="w-full min-w-0 md:flex-1">
+              <Input
+                type="text"
+                value={seniorityName}
+                onChange={(event) => setSeniorityName(event.target.value)}
+                placeholder="Nombre de seniority"
+                autoFocus
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={!seniorityName.trim() || createSeniority.isPending}
             >
-              <li className="flex w-full flex-col gap-2.5 rounded-lg border border-border-default px-2 py-2 md:flex-row md:items-center">
-                <div className="w-full min-w-0 md:flex-1">
-                  <Input
-                    type="text"
-                    value={seniorityName}
-                    onChange={(event) => setSeniorityName(event.target.value)}
-                    placeholder="Nombre de seniority"
-                    autoFocus
-                  />
-                </div>{" "}
-                <Button
-                  type="submit"
-                  disabled={!seniorityName.trim() || createSeniority.isPending}
-                >
-                  {createSeniority.isPending
-                    ? "Guardando..."
-                    : "Crear seniority"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCancelSeniority}
-                >
-                  Cancelar
-                </Button>
-              </li>
-            </form>
-          )}
-        </ol>
+              {createSeniority.isPending ? "Guardando..." : "Crear seniority"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancelSeniority}
+            >
+              Cancelar
+            </Button>
+          </form>
+        )}
 
         {!isAddingSeniority && !hasChanges && (
           <button

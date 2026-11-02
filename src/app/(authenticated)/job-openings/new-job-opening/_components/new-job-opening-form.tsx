@@ -22,13 +22,11 @@ import { Card, CardContent } from "~/components/ui/card";
 
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
-import { DndProvider } from "react-dnd";
-import { dndManager } from "../dnd-manager";
-
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
+import { isRequiredStage } from "~/lib/required-stage-types";
 import { persistedStageSchema } from "~/lib/validations/job-opening";
 import { useState } from "react";
 
@@ -168,6 +166,14 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
 
   const [stages, setStages] = useState(props.templateStages.stages);
 
+  // Required stages as loaded from the template, by key, so typing one of
+  // those names in a new stage does not lock it.
+  const requiredStageKeys = new Set(
+    props.templateStages.stages.flatMap((stage) =>
+      isRequiredStage(stage) ? [stage.key] : [],
+    ),
+  );
+
   return (
     <FormProvider {...methods}>
       <form
@@ -176,17 +182,13 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
       >
         <OpeningData />
         <OpeningDate />
-        <DndProvider manager={dndManager}>
-          {
-            <OpeningStage
-              stages={stages}
-              setStages={setStages}
-              form={methods}
-            />
-          }
-        </DndProvider>
+        <OpeningStage
+          stages={stages}
+          setStages={setStages}
+          requiredStageKeys={requiredStageKeys}
+        />
         <OpeningHiring />
-        <Card className="w-full items-end rounded-x1 shadow-sm">
+        <Card className="w-full items-end rounded-xl shadow-sm">
           <CardContent>
             <div className="flex items-center gap-2">
               <Button type="button" variant="outline" onClick={handleCancel}>
