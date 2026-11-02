@@ -4,6 +4,7 @@ import type { JobOpeningStatus } from "~/generated/prisma/enums";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { getApplicationStatusBadge } from "../utils";
+import { PublicAttribute } from "./public-attribute";
 
 type PublicApplicationCardProps = {
   jobOpeningName: string;
@@ -56,60 +57,18 @@ export function PublicApplicationCard({
 
       <CardContent className="flex flex-col gap-4 pt-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="min-w-0 wrap-anywhere">
-            <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-              Vacante
-            </p>
-            <p className="mt-1 text-sm font-medium text-text-primary">
-              {jobOpeningName}
-            </p>
-          </div>
+          <PublicAttribute label="Vacante" value={jobOpeningName} />
 
-          <div className="min-w-0 wrap-anywhere">
-            <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-              Área
-            </p>
-            <p className="mt-1 text-sm font-medium text-text-primary">
-              {areaName ?? "Sin área"}
-            </p>
-          </div>
+          <PublicAttribute label="Área" value={areaName} />
 
-          <div className="min-w-0 wrap-anywhere">
-            <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-              Etapa actual
-            </p>
-            <p className="mt-1 text-sm font-medium text-text-primary">
-              {currentStage}
-            </p>
-          </div>
+          <PublicAttribute label="Etapa actual" value={currentStage} />
 
-          <div className="min-w-0 wrap-anywhere">
-            <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-              Disponibilidad
-            </p>
-            <p className="mt-1 text-sm font-medium text-text-primary">
-              {availability ?? "Sin información"}
-            </p>
-          </div>
+          <PublicAttribute label="Disponibilidad" value={availability} />
 
-          <div className="min-w-0 wrap-anywhere">
-            <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-              Modalidad
-            </p>
-            <p className="mt-1 text-sm font-medium text-text-primary">
-              {location ?? "Sin información"}
-            </p>
-          </div>
+          <PublicAttribute label="Modalidad" value={location} />
 
           {includeSalary && (
-            <div className="min-w-0 wrap-anywhere">
-              <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-                Salario pretendido
-              </p>
-              <p className="mt-1 text-sm font-medium text-text-primary">
-                {salary ?? "Sin información"}
-              </p>
-            </div>
+            <PublicAttribute label="Salario pretendido" value={salary} />
           )}
         </div>
 

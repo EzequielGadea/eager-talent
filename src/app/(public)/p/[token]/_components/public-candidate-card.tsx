@@ -6,6 +6,7 @@ import { englishLevelTranslations } from "~/lib/enum-translations";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { getApplicationStatusBadge } from "../utils";
+import { PublicAttribute } from "./public-attribute";
 
 type PublicCandidateCardProps = {
   name: string;
@@ -40,9 +41,7 @@ export function PublicCandidateCard({
 }: PublicCandidateCardProps) {
   const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   const fullName = `${name} ${lastName}`;
-  const formation =
-    [title, academicInstitution].filter(Boolean).join(" · ") ||
-    "Sin información";
+  const formation = [title, academicInstitution].filter(Boolean).join(" · ");
   const status = getApplicationStatusBadge(active, jobOpeningStatus);
 
   return (
@@ -113,34 +112,14 @@ export function PublicCandidateCard({
       <Separator />
 
       <CardContent className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
-        <div className="min-w-0 wrap-anywhere">
-          <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-            Seniority
-          </p>
-          <p className="mt-1 text-sm font-medium text-text-primary">
-            {seniorityName ?? "Sin seniority"}
-          </p>
-        </div>
+        <PublicAttribute label="Seniority" value={seniorityName} />
 
-        <div className="min-w-0 wrap-anywhere">
-          <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-            Nivel de inglés
-          </p>
-          <p className="mt-1 text-sm font-medium text-text-primary">
-            {englishLevel
-              ? englishLevelTranslations[englishLevel]
-              : "Sin información"}
-          </p>
-        </div>
+        <PublicAttribute
+          label="Nivel de inglés"
+          value={englishLevel ? englishLevelTranslations[englishLevel] : null}
+        />
 
-        <div className="min-w-0 wrap-anywhere">
-          <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
-            Formación
-          </p>
-          <p className="mt-1 text-sm font-medium text-text-primary">
-            {formation}
-          </p>
-        </div>
+        <PublicAttribute label="Formación" value={formation} />
       </CardContent>
     </Card>
   );

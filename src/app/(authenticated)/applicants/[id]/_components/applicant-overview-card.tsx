@@ -82,7 +82,7 @@ export function ApplicantOverviewCard({
               <span className="flex min-w-0 max-w-full items-center gap-1.5">
                 <Mail className="size-4 shrink-0" />
                 <span className="min-w-0 wrap-anywhere">
-                  {email ?? "Sin email"}
+                  {email ?? "Sin información"}
                 </span>
               </span>
 
@@ -144,7 +144,7 @@ export function ApplicantOverviewCard({
         <ApplicantAttribute
           label="Seniority"
           value={seniority?.name}
-          emptyMessage="Sin seniority"
+          emptyMessage="Sin información"
         />
 
         <ApplicantAttribute
@@ -156,7 +156,7 @@ export function ApplicantOverviewCard({
         <ApplicantAttribute
           label="Fuente"
           value={source ? sourceTranslations[source] : null}
-          emptyMessage="Sin fuente"
+          emptyMessage="Sin información"
         />
       </CardContent>
     </Card>
