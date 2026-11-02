@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -164,12 +164,16 @@ export default function NewApplicantForm() {
   });
 
   const { isSubmitting } = methods.formState;
+  const [isNavigating, startTransition] = useTransition();
 
   const createCandidateMutation = api.applicant.createApplicant.useMutation({
     onSuccess: () => {
       methods.reset();
       setPhotoPreview(undefined);
-      router.push("/applicants");
+      startTransition(() => {
+        router.push("/applicants");
+        router.refresh();
+      });
     },
     onError: (error) => {
       if (error.data?.code === "CONFLICT") {
@@ -262,7 +266,7 @@ export default function NewApplicantForm() {
               Cancelar
             </Button>
 
-            <NewCandidateButton disabled={isSubmitting} />
+            <NewCandidateButton disabled={isSubmitting || isNavigating} />
           </div>
         </footer>
       </form>
