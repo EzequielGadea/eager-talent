@@ -186,7 +186,7 @@ export function JobOpeningFilters({
             variant="outline"
             size="sm"
             aria-label="Filtrar vacantes"
-            className="h-8 gap-2 bg-surface-card px-4 text-small font-normal text-text-secondary transition-colors hover:bg-success-bg hover:text-tag-green-fg has-data-[icon=inline-start]:pl-4"
+            className="h-8 gap-2 px-4 text-small font-normal border-border-default bg-card text-text-secondary shadow-none transition-[border-color,box-shadow] hover:bg-card hover:text-text-secondary aria-expanded:bg-card aria-expanded:text-text-secondary data-popup-open:border-border-focus data-popup-open:ring-4 data-popup-open:ring-border-focus/20 has-data-[icon=inline-start]:pl-4"
           />
         }
       >

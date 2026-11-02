@@ -84,7 +84,7 @@ export function UsersInviteDialog() {
           <button
             className={cn(
               buttonVariants({ size: "sm" }),
-              "gap-2 rounded-full bg-surface-dark text-text-on-dark hover:bg-surface-dark/90 cursor-pointer",
+              "cursor-pointer gap-2 rounded-full bg-surface-dark text-small font-semibold text-text-on-dark shadow-none hover:bg-surface-dark/90",
             )}
           >
             <Plus size={16} />

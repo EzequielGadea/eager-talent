@@ -52,7 +52,7 @@ export function RecruiterJobOpeningsFallback() {
           <Button
             size="sm"
             disabled
-            className="h-8.5 w-8.5 rounded-full bg-surface-dark px-0 text-text-on-dark md:h-7 md:w-auto md:px-2.5"
+            className="h-8.5 w-8.5 gap-2 px-0 rounded-full bg-surface-dark text-small font-semibold text-text-on-dark shadow-none hover:bg-surface-dark/90 md:h-7 md:w-auto md:px-2.5"
           >
             <Plus data-icon="inline-start" />
             <span className="sr-only md:not-sr-only">Nueva vacante</span>

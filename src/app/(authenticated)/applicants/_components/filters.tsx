@@ -193,9 +193,7 @@ export function Filters({
             >
               <PopoverTrigger
                 className={cn(
-                  "flex h-8.5 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-border-default bg-surface-card px-4 text-small font-normal text-text-secondary shadow-none transition-colors hover:bg-success-bg hover:text-tag-green-fg",
-                  activeFilterCount > 0 &&
-                    "border-tag-green-bg font-semibold bg-success-bg text-tag-green-fg",
+                  "flex h-8.5 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border px-4 text-small font-normal border-border-default bg-card text-text-secondary shadow-none transition-[border-color,box-shadow] hover:bg-card hover:text-text-secondary aria-expanded:bg-card aria-expanded:text-text-secondary data-popup-open:border-border-focus data-popup-open:ring-4 data-popup-open:ring-border-focus/20",
                 )}
               >
                 <span>{config.label}</span>
@@ -206,13 +204,7 @@ export function Filters({
                   </span>
                 )}
 
-                <ChevronDown
-                  size={14}
-                  className={cn(
-                    "text-text-secondary",
-                    activeFilterCount > 0 && "text-tag-green-fg",
-                  )}
-                />
+                <ChevronDown size={14} className="text-text-secondary" />
               </PopoverTrigger>
 
               <PopoverContent align="start" className="w-56 rounded-xl p-3">

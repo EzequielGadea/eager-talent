@@ -228,7 +228,7 @@ export default function JobOpeningsList({
 
             <Button
               size="sm"
-              className="h-8.5 w-8.5 gap-2 rounded-full bg-surface-dark px-0 text-text-on-dark hover:bg-surface-dark/90 md:h-7 md:w-auto md:px-2.5"
+              className="h-8.5 w-8.5 gap-2 px-0 rounded-full bg-surface-dark text-small font-semibold text-text-on-dark shadow-none hover:bg-surface-dark/90 md:h-7 md:w-auto md:px-2.5"
               onClick={() => router.push("/job-openings/new-job-opening")}
             >
               <Plus size={16} />

@@ -63,7 +63,7 @@ export function AddApplicantDialog({
       >
         <Button
           type="button"
-          className="h-10 gap-2 rounded-full px-5"
+          className="h-10 gap-2 px-5 rounded-full bg-surface-dark text-small font-semibold text-text-on-dark shadow-none hover:bg-surface-dark/90"
           disabled={disabled}
           onClick={() => setOpen(true)}
         >
