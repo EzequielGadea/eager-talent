@@ -86,19 +86,19 @@ export function ApplicantOverviewCard({
                 </span>
               </span>
 
-              <span className="flex min-w-0 max-w-full items-center gap-1.5">
-                <Phone className="size-4 shrink-0" />
-                <span className="min-w-0 wrap-anywhere">
-                  {phone ?? "Sin teléfono"}
+              {phone?.trim() && (
+                <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                  <Phone className="size-4 shrink-0" />
+                  <span className="min-w-0 wrap-anywhere">{phone}</span>
                 </span>
-              </span>
+              )}
 
-              <span className="flex min-w-0 max-w-full items-center gap-1.5">
-                <MapPin className="size-4 shrink-0" />
-                <span className="min-w-0 wrap-anywhere">
-                  {country ?? "Sin país"}
+              {country?.trim() && (
+                <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                  <MapPin className="size-4 shrink-0" />
+                  <span className="min-w-0 wrap-anywhere">{country}</span>
                 </span>
-              </span>
+              )}
 
               {linkedinUrl && (
                 <a
