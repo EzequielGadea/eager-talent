@@ -2,6 +2,7 @@
 
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { api } from "~/lib/trpc/react";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 import { useParams } from "next/navigation";
 
 import { z } from "zod";
@@ -17,14 +18,7 @@ export const applicantFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastname: z.string().min(1, "El apellido es obligatorio"),
   email: z.string().min(1, "El correo es obligatorio").email("Correo inválido"),
-  phone: z
-    .string()
-    .regex(
-      /^\+[1-9]\d{1,14}$/,
-      "El teléfono debe tener formato E.164 (ej. +59899000000)",
-    )
-    .optional()
-    .or(z.literal("")),
+  phone: optionalE164PhoneSchema,
   country: z.string(),
   photo: z
     .custom<FileList>()

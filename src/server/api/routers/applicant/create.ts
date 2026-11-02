@@ -8,6 +8,7 @@ import {
   JobOpeningStatus,
 } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -18,7 +19,7 @@ export const createApplicant = protectedProcedure
       name: z.string().min(1),
       lastname: z.string().min(1),
       email: z.string().optional(),
-      phone: z.string().optional(),
+      phone: optionalE164PhoneSchema,
       photo: z.string().optional(),
       country: z.string().optional(),
       linkedin: z.string().optional(),

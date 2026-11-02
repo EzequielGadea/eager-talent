@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { api } from "~/lib/trpc/react";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 
 import { Button } from "~/components/ui/button";
 
@@ -34,14 +35,7 @@ export const applicantFormSchema = z
       .string()
       .min(1, "El correo es obligatorio")
       .email("Correo inválido"),
-    phone: z
-      .string()
-      .regex(
-        /^\+[1-9]\d{1,14}$/,
-        "El teléfono debe tener formato E.164 (ej. +59899000000)",
-      )
-      .optional()
-      .or(z.literal("")),
+    phone: optionalE164PhoneSchema,
     country: z.string(),
     photo: z
       .custom<FileList>()
