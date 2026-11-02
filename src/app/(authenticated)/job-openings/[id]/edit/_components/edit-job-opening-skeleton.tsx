@@ -33,7 +33,7 @@ export function EditJobOpeningSkeleton() {
   return (
     <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5">
       <header>
-        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
+        <h1 className="font-heading text-h1 text-text-primary">
           Editar vacante
         </h1>
       </header>

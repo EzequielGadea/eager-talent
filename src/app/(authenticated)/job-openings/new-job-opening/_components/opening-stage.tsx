@@ -85,7 +85,7 @@ export default function OpeningStage(props: {
       name: "nueva etapa",
       type: "Ninguna",
       label: "text",
-      color: "rgb(34, 42, 180)",
+      color: "#94A3B8",
     };
     props.setStages((currentStages: Stages) => {
       const newStages = [...currentStages];
@@ -147,7 +147,7 @@ export default function OpeningStage(props: {
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">
+        <CardTitle className="font-heading text-h3 text-text-primary">
           Flujo del proceso{" "}
           <span className="ml-2 align-middle text-xs font-normal text-text-tertiary">
             arrastrá para reordenar
@@ -187,7 +187,7 @@ export default function OpeningStage(props: {
             ))}
           </div>
           <button
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -298,7 +298,7 @@ function IndividualStage(props: {
       ) : (
         <div className="pl-4" />
       )}
-      <span className="w-4 text-[13px] font-medium text-text-tertiary">
+      <span className="w-4 text-small font-medium text-text-tertiary">
         {props.getStageIndex(props.stage.key) + 1}
       </span>
       <Popover
@@ -342,7 +342,7 @@ function IndividualStage(props: {
               onChange={(e) =>
                 props.updateName(props.stage.key, e.target.value)
               }
-              className="w-auto rounded-md border border-border-default bg-transparent px-2 py-1 text-[13px]"
+              className="w-auto rounded-md border border-border-default bg-transparent px-2 py-1 text-small"
             />
           </div>
 
@@ -357,18 +357,15 @@ function IndividualStage(props: {
           >
             <PopoverTrigger
               className={cn(
-                "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors",
+                "flex h-8.5 items-center gap-2 rounded-lg border border-border-default bg-surface-card px-4 text-small font-normal text-text-secondary shadow-none transition-colors",
                 props.isEditable
-                  ? `hover:bg-dashboard-success-light hover:text-dashboard-success-text ${STAGE_TYPE_CLASS_NAMES[recordType(props.stage.type)]}`
+                  ? `hover:bg-success-bg hover:text-tag-green-fg ${STAGE_TYPE_CLASS_NAMES[recordType(props.stage.type)]}`
                   : STAGE_TYPE_CLASS_STATIC[recordType(props.stage.type)],
               )}
             >
               <span>{props.stage.type}</span>
               {props.isEditable ? (
-                <ChevronDown
-                  size={14}
-                  className={cn("text-dashboard-text-muted")}
-                />
+                <ChevronDown size={14} className={cn("text-text-secondary")} />
               ) : (
                 <div className="pl-3" />
               )}

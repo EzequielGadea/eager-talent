@@ -203,7 +203,7 @@ export function PipelineColumnClient({
     <>
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-text-primary">
+          <h2 className="font-sans text-sm font-semibold text-text-primary">
             {stageName}
           </h2>
 

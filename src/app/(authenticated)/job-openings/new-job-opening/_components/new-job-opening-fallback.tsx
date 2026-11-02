@@ -75,9 +75,7 @@ export default function NewJobOpeningFallback() {
 export function NewJobOpeningPageFallback() {
   return (
     <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5">
-      <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
-        Nueva vacante
-      </h1>
+      <h1 className="font-heading text-h1 text-text-primary">Nueva vacante</h1>
       <NewJobOpeningFallback />
     </div>
   );

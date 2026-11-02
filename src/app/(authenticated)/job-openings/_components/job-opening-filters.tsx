@@ -186,7 +186,7 @@ export function JobOpeningFilters({
             variant="outline"
             size="sm"
             aria-label="Filtrar vacantes"
-            className="h-8 gap-2 bg-surface-card px-4 text-[13px] font-normal text-text-secondary transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text has-data-[icon=inline-start]:pl-4"
+            className="h-8 gap-2 bg-surface-card px-4 text-small font-normal text-text-secondary transition-colors hover:bg-success-bg hover:text-tag-green-fg has-data-[icon=inline-start]:pl-4"
           />
         }
       >
@@ -195,7 +195,7 @@ export function JobOpeningFilters({
         {activeFilterCount > 0 && (
           <Badge
             variant="secondary"
-            className="size-5 rounded-full p-0 text-[11px]"
+            className="size-5 rounded-full p-0 text-label"
           >
             {activeFilterCount}
           </Badge>
@@ -203,7 +203,7 @@ export function JobOpeningFilters({
       </PopoverTrigger>
 
       <PopoverContent align="end" className="w-72 gap-0 p-0">
-        <PopoverHeader className="flex-row items-center justify-between border-b border-dashboard-border px-4 py-3">
+        <PopoverHeader className="flex-row items-center justify-between border-b border-border-default px-4 py-3">
           <PopoverTitle className="font-semibold">
             Filtrar vacantes
           </PopoverTitle>
@@ -226,7 +226,7 @@ export function JobOpeningFilters({
         </PopoverHeader>
 
         <fieldset className="mt-4 px-4 pt-2 pb-4">
-          <legend className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary">
+          <legend className="text-label font-bold uppercase tracking-wider text-text-tertiary">
             Estado
           </legend>
 
@@ -254,7 +254,7 @@ export function JobOpeningFilters({
         <fieldset className="px-4 pb-4">
           <legend
             id={areaLabelId}
-            className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary"
+            className="text-label font-bold uppercase tracking-wider text-text-tertiary"
           >
             Área
           </legend>
@@ -305,7 +305,7 @@ export function JobOpeningFilters({
         <fieldset className="px-4 pb-4">
           <legend
             id={hiringManagerLabelId}
-            className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary"
+            className="text-label font-bold uppercase tracking-wider text-text-tertiary"
           >
             Hiring Manager
           </legend>
@@ -364,7 +364,7 @@ export function JobOpeningFilters({
         {/*
           Recruiter assignment filter is pending.
         <fieldset className="px-4 pb-4">
-          <legend className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary">
+          <legend className="text-label font-bold uppercase tracking-wider text-text-tertiary">
             Reclutador a cargo
           </legend>
 
@@ -384,7 +384,7 @@ export function JobOpeningFilters({
         <fieldset className="px-4 pb-4">
           <legend
             id={openingDateLabelId}
-            className="text-[11px] font-bold uppercase tracking-[0.05em] text-text-tertiary"
+            className="text-label font-bold uppercase tracking-wider text-text-tertiary"
           >
             Fecha de apertura
           </legend>
@@ -428,7 +428,7 @@ export function JobOpeningFilters({
           </label>
         </div>
 
-        <div className="flex justify-end gap-2 border-t border-dashboard-border px-4 py-3">
+        <div className="flex justify-end gap-2 border-t border-border-default px-4 py-3">
           <Button
             type="button"
             variant="outline"

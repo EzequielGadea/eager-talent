@@ -21,13 +21,13 @@ export default function AssignedInterviews() {
 
   if (isLoading) {
     return (
-      <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-        <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
+      <section className="w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
+        <div className="flex flex-wrap items-center gap-2 border-b border-border-default px-4 py-3">
           <Skeleton className="size-4 rounded-sm" />
           <Skeleton className="h-4 w-44" />
         </div>
 
-        <div className="flex flex-col divide-y divide-dashboard-border">
+        <div className="flex flex-col divide-y divide-border-default">
           {Array.from({ length: 2 }).map((_, index) => (
             <div
               key={index}
@@ -47,11 +47,11 @@ export default function AssignedInterviews() {
   }
 
   return (
-    <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-      <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
-        <CalendarDays size={16} className="text-dashboard-text-muted" />
+    <section className="w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border-default px-4 py-3">
+        <CalendarDays size={16} className="text-text-secondary" />
 
-        <h2 className="text-sm font-semibold text-text-primary">
+        <h2 className="font-sans text-sm font-semibold text-text-primary">
           Entrevistas asignadas a vos
         </h2>
       </div>
@@ -65,7 +65,7 @@ export default function AssignedInterviews() {
           No tenés entrevistas asignadas.
         </p>
       ) : (
-        <div className="flex flex-col divide-y divide-dashboard-border">
+        <div className="flex flex-col divide-y divide-border-default">
           {interviews.map((interview) => {
             const jobOpeningName =
               interview.application?.jobOpening.name ??
@@ -128,7 +128,7 @@ export default function AssignedInterviews() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="shrink-0 gap-2 rounded-full border-dashboard-border"
+                  className="shrink-0 gap-2 rounded-full border-border-default"
                   onClick={() => router.push(`/interviews/${interview.id}`)}
                 >
                   Ver

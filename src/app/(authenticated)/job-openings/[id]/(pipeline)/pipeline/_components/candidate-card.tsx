@@ -184,7 +184,7 @@ export function CandidateCard({
                 type="button"
                 onPointerDown={(event) => event.stopPropagation()}
                 onClick={() => setIsInterviewsDialogOpen(true)}
-                className="flex max-w-full items-center gap-1 text-left text-xs font-medium text-dashboard-sky-text underline-offset-2 hover:underline"
+                className="flex max-w-full items-center gap-1 text-left text-xs font-medium text-tag-blue-fg underline-offset-2 hover:underline"
               >
                 <span className="truncate">
                   Entrevista ·{" "}
@@ -269,7 +269,7 @@ export function CandidateCard({
         >
           <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
             <div className="border-b border-border-default px-6 py-5">
-              <DialogTitle className="text-lg font-semibold text-text-primary">
+              <DialogTitle className="text-text-primary">
                 {candidate.scheduledInterviews.length > 1
                   ? "Entrevistas agendadas"
                   : "Entrevista agendada"}
@@ -346,7 +346,7 @@ export function CandidateCard({
           }}
         >
           <DialogContent className="w-full max-w-md">
-            <DialogTitle className="text-lg font-semibold text-text-primary">
+            <DialogTitle className="text-text-primary">
               ¿Eliminar entrevista?
             </DialogTitle>
 

@@ -5,7 +5,7 @@ export function JobOpeningsRoleFallback() {
     <div
       role="status"
       aria-busy="true"
-      className="mx-auto flex w-full flex-col gap-5 p-6"
+      className="mx-auto flex w-full flex-col gap-5"
     >
       <span className="sr-only">Cargando vacantes</span>
       <Skeleton className="h-8 w-44" />

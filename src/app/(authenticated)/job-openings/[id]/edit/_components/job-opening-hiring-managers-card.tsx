@@ -117,7 +117,7 @@ export function JobOpeningHiringManagersCard({
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader>
-        <CardTitle className="font-heading text-[15px] font-bold tracking-[-0.01em] text-text-primary">
+        <CardTitle className="font-heading text-h3 text-text-primary">
           Hiring Managers
         </CardTitle>
       </CardHeader>
@@ -128,7 +128,7 @@ export function JobOpeningHiringManagersCard({
             <li key={manager.id}>
               <Badge
                 variant="tag"
-                className="h-8 gap-2 rounded-full py-1 pr-1 pl-1 text-[13px]"
+                className="h-8 gap-2 rounded-full py-1 pr-1 pl-1 text-small"
               >
                 <Avatar size="sm">
                   {manager.image && <AvatarImage src={manager.image} alt="" />}
@@ -192,7 +192,7 @@ export function JobOpeningHiringManagersCard({
               aria-label="Usuarios del sistema"
               className="mt-2 w-full rounded-xl border border-border-default bg-card p-3 shadow-lg"
             >
-              <p className="px-2 pb-2 text-xs font-semibold tracking-wide text-text-tertiary">
+              <p className="px-2 pb-2 text-label font-bold tracking-wider text-text-tertiary">
                 USUARIOS DEL SISTEMA
               </p>
 

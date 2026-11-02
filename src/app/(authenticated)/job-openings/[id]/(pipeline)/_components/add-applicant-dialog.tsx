@@ -76,7 +76,7 @@ export function AddApplicantDialog({
         {step === "select" ? (
           <>
             <div className="border-b border-border-default px-6 py-5">
-              <DialogTitle className="text-lg font-semibold text-text-primary">
+              <DialogTitle className="text-text-primary">
                 Agregar Candidato
               </DialogTitle>
 

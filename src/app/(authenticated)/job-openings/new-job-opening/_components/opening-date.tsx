@@ -54,7 +54,7 @@ export default function OpeningDate() {
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">
+        <CardTitle className="font-heading text-h3 text-text-primary">
           Fechas{" "}
           <span className="ml-2 align-middle text-xs font-normal text-text-tertiary">
             ambas obligatorias
@@ -65,10 +65,7 @@ export default function OpeningDate() {
         <div className="flex flex-col gap-3 md:flex-row md:items-end">
           <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
             <div className="space-y-2">
-              <Label
-                htmlFor="openingDate"
-                className="body text-[13px] text-text-secondary"
-              >
+              <Label htmlFor="openingDate">
                 Fecha de apertura <span className="text-danger">*</span>
               </Label>
 
@@ -99,10 +96,7 @@ export default function OpeningDate() {
               )}
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="closingDate"
-                className="body text-[13px] text-text-secondary"
-              >
+              <Label htmlFor="closingDate">
                 Fecha objetivo de cierre <span className="text-danger">*</span>
               </Label>
 

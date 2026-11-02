@@ -13,26 +13,24 @@ import { JobOpeningCardListSkeleton } from "./job-opening-card-list";
 
 export function HiringManagerJobOpeningsFallback() {
   return (
-    <div aria-busy="true" className="mx-auto flex w-full flex-col gap-5 md:p-6">
+    <div aria-busy="true" className="mx-auto flex w-full flex-col gap-5">
       <span className="sr-only">Cargando tus vacantes</span>
 
       <div>
-        <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
-          Mis vacantes
-        </h1>
+        <h1 className="font-heading text-h1 text-text-primary">Mis vacantes</h1>
 
         <div className="mt-2 flex items-center gap-2">
           <Skeleton className="h-4 w-full max-w-64" />
         </div>
       </div>
 
-      <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-background shadow-sm">
+      <div className="w-full overflow-hidden rounded-xl border border-border-default bg-background shadow-sm">
         <JobOpeningCardListSkeleton />
 
         <div className="hidden w-full overflow-hidden md:block">
           <Table className="table-fixed">
             <TableHeader>
-              <TableRow className="border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+              <TableRow className="border-b border-border-default bg-surface-subtle hover:bg-surface-subtle">
                 <TableHead className="px-4 py-3">Vacante</TableHead>
                 <TableHead className="hidden px-4 py-3 md:table-cell">
                   Área
@@ -54,7 +52,7 @@ export function HiringManagerJobOpeningsFallback() {
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-dashboard-border">
+            <TableBody className="divide-y divide-border-default">
               {Array.from({ length: 3 }).map((_, index) => (
                 <TableRow key={index} className="h-17.5 hover:bg-transparent">
                   <TableCell className="px-4 py-3">
@@ -87,19 +85,19 @@ export function HiringManagerJobOpeningsFallback() {
           </Table>
         </div>
 
-        <div className="flex items-center justify-between gap-4 border-t border-dashboard-border px-4 py-3">
+        <div className="flex items-center justify-between gap-4 border-t border-border-default px-4 py-3">
           <Skeleton className="h-4 min-w-0 flex-1 max-w-44" />
           <Skeleton className="h-7.5 w-28 shrink-0 rounded-lg sm:w-40" />
         </div>
       </div>
 
-      <section className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-background shadow-sm">
-        <div className="flex flex-wrap items-center gap-2 border-b border-dashboard-border px-4 py-3">
-          <CalendarDays className="size-4 text-dashboard-text-muted" />
+      <section className="w-full overflow-hidden rounded-xl border border-border-default bg-background shadow-sm">
+        <div className="flex flex-wrap items-center gap-2 border-b border-border-default px-4 py-3">
+          <CalendarDays className="size-4 text-text-secondary" />
           <Skeleton className="h-4 w-48" />
         </div>
 
-        <div className="flex flex-col divide-y divide-dashboard-border">
+        <div className="flex flex-col divide-y divide-border-default">
           {Array.from({ length: 2 }).map((_, index) => (
             <div
               key={index}

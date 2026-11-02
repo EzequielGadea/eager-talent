@@ -35,7 +35,7 @@ import { useState } from "react";
 export const jobOpeningFormSchema = z
   .object({
     name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
-    area: z.string().min(1, "El area de la vacante es obligatoria"),
+    area: z.string().min(1, "El área de la vacante es obligatoria"),
     status: z.enum(JobOpeningStatus),
     seniorityIds: z
       .array(z.string())

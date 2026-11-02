@@ -161,7 +161,7 @@ export function JobOpeningProcessCard({
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader>
         <div className="flex items-baseline gap-2">
-          <CardTitle className="font-heading text-[15px] font-bold tracking-[-0.01em] text-text-primary">
+          <CardTitle className="font-heading text-h3 text-text-primary">
             Flujo del proceso
           </CardTitle>
           <CardDescription className="text-xs text-text-tertiary">
@@ -241,7 +241,7 @@ export function JobOpeningProcessCard({
               >
                 <GripVertical aria-hidden="true" />
               </Button>
-              <span className="w-3.5 shrink-0 text-center font-mono text-[11px] tabular-nums text-text-tertiary">
+              <span className="w-3.5 shrink-0 text-center font-mono text-label tabular-nums text-text-tertiary">
                 {index + 1}
               </span>
 
@@ -280,7 +280,7 @@ export function JobOpeningProcessCard({
                   className={cn(
                     "h-7 border-transparent bg-transparent px-1 font-medium shadow-none",
                     isStageLocked(index, stage.id)
-                      ? "cursor-not-allowed text-text-secondary"
+                      ? "cursor-not-allowed"
                       : "hover:border-border-default",
                   )}
                   errorMessage={errors.stages?.[index]?.name?.message}
