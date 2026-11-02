@@ -3,14 +3,7 @@
 import { CheckCircle2, CircleAlert } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
+import { ListPagination } from "~/components/list-pagination";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
   Tooltip,
@@ -33,7 +26,6 @@ type DeviationsData = {
   items: DeviationItem[];
   total: number;
   page: number;
-  pageCount: number;
   pageSize: number;
   scaleMaximumDays: number;
   highestDeviation: DeviationItem | null;
@@ -218,67 +210,14 @@ export function JobOpeningDeviations({
           </TooltipProvider>
         )}
 
-        {!isLoading && data.pageCount > 1 ? (
-          <Pagination aria-label="Paginación de desvíos">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  text="Anterior"
-                  aria-label="Ir a la página anterior"
-                  href="#"
-                  aria-disabled={data.page === 1}
-                  tabIndex={data.page === 1 ? -1 : undefined}
-                  className={cn(
-                    data.page === 1 && "pointer-events-none opacity-50",
-                  )}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    if (data.page > 1) {
-                      onPageChange(data.page - 1);
-                    }
-                  }}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: data.pageCount }).map((_, index) => {
-                const page = index + 1;
-                return (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      href="#"
-                      isActive={page === data.page}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        onPageChange(page);
-                      }}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                );
-              })}
-
-              <PaginationItem>
-                <PaginationNext
-                  text="Siguiente"
-                  aria-label="Ir a la página siguiente"
-                  href="#"
-                  aria-disabled={data.page === data.pageCount}
-                  tabIndex={data.page === data.pageCount ? -1 : undefined}
-                  className={cn(
-                    data.page === data.pageCount &&
-                      "pointer-events-none opacity-50",
-                  )}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    if (data.page < data.pageCount) {
-                      onPageChange(data.page + 1);
-                    }
-                  }}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+        {!isLoading ? (
+          <ListPagination
+            totalItems={data.total}
+            pageSize={data.pageSize}
+            currentPage={data.page}
+            itemLabel="vacantes"
+            onPageChange={onPageChange}
+          />
         ) : null}
       </CardContent>
     </Card>
