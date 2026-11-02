@@ -2,9 +2,9 @@ import "server-only";
 
 import { Suspense } from "react";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { AccessDenied } from "~/components/access-denied";
 import { Table, TableBody } from "~/components/ui/table";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
@@ -84,7 +84,12 @@ async function ProtectedApplicantsPage(props: {
   });
 
   if (!canReadAllResult.success && !canReadAssignedResult.success) {
-    redirect("/dashboard");
+    return (
+      <AccessDenied
+        title="No tenés acceso a Candidatos"
+        description="Tu rol no tiene permisos para ver los candidatos."
+      />
+    );
   }
 
   const isHiringManagerView = !canReadAllResult.success;

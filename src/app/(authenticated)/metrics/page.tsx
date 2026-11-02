@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
 
+import { AccessDenied } from "~/components/access-denied";
 import Loading from "~/components/ui/loading";
 import { api } from "~/lib/trpc/server";
 import { defaultMetricsPeriod } from "~/lib/validations/metrics";
@@ -10,7 +10,12 @@ async function MetricsContent() {
   const user = await api.user.getCurrent();
 
   if (!user.role || !["recruiter", "admin", "owner"].includes(user.role)) {
-    notFound();
+    return (
+      <AccessDenied
+        title="No tenés acceso a Métricas"
+        description="Esta sección está disponible únicamente para usuarios con rol Recruiter."
+      />
+    );
   }
 
   const defaultFilters = { period: defaultMetricsPeriod };

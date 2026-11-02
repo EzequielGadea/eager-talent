@@ -3,8 +3,7 @@ import NewApplicantForm from "./_components/new-applicant-form";
 import { NewApplicantPageSkeleton } from "./_components/new-applicant-skeleton";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
-
-import { redirect } from "next/navigation";
+import { AccessDenied } from "~/components/access-denied";
 
 export default function newApplicantPage() {
   return (
@@ -24,7 +23,12 @@ async function ProtectedNewApplicantPage() {
     },
   });
   if (!permission.success) {
-    redirect("/dashboard");
+    return (
+      <AccessDenied
+        title="No se puede crear el candidato"
+        description="No tenés permisos para crear un candidato."
+      />
+    );
   }
   return (
     <div className="mx-auto w-full max-w-210">
