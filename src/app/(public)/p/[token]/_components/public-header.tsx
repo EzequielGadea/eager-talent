@@ -25,8 +25,11 @@ export function PublicHeader({ recruiterName }: PublicHeaderProps) {
                 x2="1"
                 y2="0"
               >
-                <stop offset="0" stopColor="#8B5CF6" />
-                <stop offset="1" stopColor="#10B981" />
+                <stop
+                  offset="0"
+                  style={{ stopColor: "var(--accent-purple)" }}
+                />
+                <stop offset="1" style={{ stopColor: "var(--accent-green)" }} />
               </linearGradient>
             </defs>
 
@@ -35,7 +38,11 @@ export function PublicHeader({ recruiterName }: PublicHeaderProps) {
               fill="url(#public-logo-gradient)"
             />
 
-            <g stroke="#FFFFFF" strokeLinecap="round" strokeLinejoin="round">
+            <g
+              stroke="var(--text-on-dark)"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M13 22L20 15L27 22" strokeWidth="4" />
               <path
                 d="M13 29.5L20 22.5L27 29.5"
@@ -45,7 +52,7 @@ export function PublicHeader({ recruiterName }: PublicHeaderProps) {
             </g>
           </svg>
 
-          <span className="font-heading text-xl font-bold tracking-tight text-text-primary">
+          <span className="font-heading text-h2 tracking-[-0.03em] text-text-primary">
             EagerTalent
           </span>
         </div>

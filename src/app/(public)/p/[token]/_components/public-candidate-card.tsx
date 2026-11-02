@@ -49,7 +49,7 @@ export function PublicCandidateCard({
     <Card className="min-w-0">
       <CardHeader className="flex flex-col gap-4 pb-2">
         <div className="flex items-start gap-4">
-          <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-xl font-semibold text-tag-green-fg">
+          <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-h2 text-tag-green-fg">
             {photo ? (
               <Image
                 src={photo}
@@ -65,13 +65,13 @@ export function PublicCandidateCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <CardTitle className="text-xl font-bold tracking-tight text-text-primary">
+            <CardTitle className="text-h2 text-text-primary">
               {fullName}
             </CardTitle>
 
             <div className="mt-1 flex flex-wrap items-center gap-2.5">
               <span
-                className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.badgeClass}`}
+                className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold ${status.badgeClass}`}
               >
                 <span className={`size-1.5 rounded-full ${status.dotClass}`} />
                 {status.label}
@@ -114,7 +114,7 @@ export function PublicCandidateCard({
 
       <CardContent className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
         <div className="min-w-0 wrap-anywhere">
-          <p className="text-xs font-semibold uppercase text-text-tertiary">
+          <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
             Seniority
           </p>
           <p className="mt-1 text-sm font-medium text-text-primary">
@@ -123,7 +123,7 @@ export function PublicCandidateCard({
         </div>
 
         <div className="min-w-0 wrap-anywhere">
-          <p className="text-xs font-semibold uppercase text-text-tertiary">
+          <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
             Nivel de inglés
           </p>
           <p className="mt-1 text-sm font-medium text-text-primary">
@@ -134,7 +134,7 @@ export function PublicCandidateCard({
         </div>
 
         <div className="min-w-0 wrap-anywhere">
-          <p className="text-xs font-semibold uppercase text-text-tertiary">
+          <p className="text-label font-bold tracking-wider uppercase text-text-tertiary">
             Formación
           </p>
           <p className="mt-1 text-sm font-medium text-text-primary">

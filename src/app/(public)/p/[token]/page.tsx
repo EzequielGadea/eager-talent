@@ -59,7 +59,7 @@ async function PublicApplicationContent({
   }));
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 text-foreground">
+    <div className="min-h-screen bg-surface-subtle py-8 text-foreground">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4">
         <PublicHeader recruiterName={recruiterName} />
 
