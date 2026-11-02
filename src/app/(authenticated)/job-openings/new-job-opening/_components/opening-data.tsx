@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Controller, useFormContext } from "react-hook-form";
 import { api } from "~/lib/trpc/react";
 
@@ -153,12 +154,12 @@ export default function OpeningData() {
                   )}
                 />
               )}
-              <button
-                type="button"
-                className="cursor-pointer text-xs font-medium text-text-link transition-colors hover:text-text-primary hover:underline"
+              <Link
+                href="/settings/general"
+                className="inline-block text-xs font-medium text-text-link transition-colors hover:text-text-primary hover:underline"
               >
                 Gestionar áreas
-              </button>
+              </Link>
             </div>
             {errors.area && (
               <p className="text-xs text-danger">{errors.area.message}</p>
