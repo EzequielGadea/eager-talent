@@ -12,15 +12,15 @@ import { LogoutButton } from "./logout-button";
 const ROLES: Record<string, { label: string; className: string }> = {
   owner: {
     label: "Recruiter",
-    className: "bg-tag-green-bg text-tag-green-fg",
+    className: "bg-tag-purple-bg text-tag-purple-fg",
   },
   recruiter: {
     label: "Recruiter",
-    className: "bg-tag-green-bg text-tag-green-fg",
+    className: "bg-tag-purple-bg text-tag-purple-fg",
   },
   hiringManager: {
     label: "Hiring Manager",
-    className: "bg-tag-purple-bg text-tag-purple-fg",
+    className: "bg-tag-gray-bg text-tag-gray-fg",
   },
   admin: {
     label: "Administrador",
@@ -116,7 +116,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
               <div className="flex flex-wrap items-center gap-3">
                 {role && (
                   <span
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${role.className}`}
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${role.className}`}
                   >
                     {role.label}
                   </span>

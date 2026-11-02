@@ -107,8 +107,8 @@ export default function OpeningData() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
-          <div className="space-y-2 md:col-span-2">
+        <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-1.5 md:col-span-2">
             <Label htmlFor="name">
               Nombre de la vacante <span className="text-danger">*</span>
             </Label>
@@ -123,11 +123,11 @@ export default function OpeningData() {
               <p className="text-xs text-danger">{errors.name.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="area">
               Área <span className="text-danger">*</span>
             </Label>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {isLoadingArea ? (
                 <Skeleton className="h-8 w-full rounded-lg" />
               ) : (
@@ -166,7 +166,7 @@ export default function OpeningData() {
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="status">Estado</Label>
             <Controller
               name="status"
@@ -217,7 +217,7 @@ export default function OpeningData() {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label
               htmlFor="seniority"
               className="text-small font-medium text-text-primary"
@@ -229,7 +229,7 @@ export default function OpeningData() {
             <SeniorityField />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label
               htmlFor="location"
               className="text-small font-medium text-text-primary"
