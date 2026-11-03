@@ -28,6 +28,10 @@ import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
 import { isRequiredStage } from "~/lib/required-stage-types";
 import { persistedStageSchema } from "~/lib/validations/job-opening";
+import {
+  getRequiredStageErrors,
+  getRequiredStageTypeErrors,
+} from "~/lib/validations/required-stages";
 import { useState } from "react";
 
 export const jobOpeningFormSchema = z
@@ -43,49 +47,10 @@ export const jobOpeningFormSchema = z
     closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
     hiringManagerIds: z.array(z.string()),
     stages: z.array(persistedStageSchema).superRefine((stages, ctx) => {
-      const errors: string[] = [];
-      if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
-        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'");
-      }
-
-      if (
-        stages[stages.length - 1]?.name !== "Contratado/a" ||
-        stages[stages.length - 1]?.type !== "Contratado"
-      ) {
-        errors.push(
-          "La última etapa debe ser 'Contratado/a' de tipo 'Contratado'",
-        );
-      }
-
-      if (
-        !stages.some(
-          (stage) =>
-            stage.name === "Entrevista técnica" && stage.type === "Entrevista",
-        )
-      ) {
-        errors.push(
-          "Debe haber una etapa de 'Entrevista técnica' de tipo 'Entrevista'",
-        );
-      }
-
-      if (
-        !stages.some(
-          (stage) =>
-            stage.name === "Entrevista HR" && stage.type === "Entrevista",
-        )
-      ) {
-        errors.push(
-          "Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista'",
-        );
-      }
-
-      if (
-        !stages.some(
-          (stage) => stage.name === "Oferta" && stage.type === "Oferta",
-        )
-      ) {
-        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta'");
-      }
+      const errors = [
+        ...getRequiredStageErrors(stages),
+        ...getRequiredStageTypeErrors(stages),
+      ];
 
       if (stages.some((stage) => stage.name.trim() === "")) {
         errors.push("No se permiten etapas sin nombre");

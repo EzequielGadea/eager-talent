@@ -5,6 +5,10 @@ import { Prisma } from "~/generated/prisma/client";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { TRPCError } from "@trpc/server";
 import { persistedStagesSchema } from "~/lib/validations/job-opening";
+import {
+  getRequiredStageErrors,
+  getRequiredStageTypeErrors,
+} from "~/lib/validations/required-stages";
 
 export const createJobOpening = protectedProcedure
   .input(
@@ -18,50 +22,11 @@ export const createJobOpening = protectedProcedure
       openingDate: z.coerce.date(),
       closingDate: z.coerce.date(),
       stages: persistedStagesSchema.superRefine((stages) => {
-        const errors: string[] = [];
-        if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
-          errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'");
-        }
+        const errors = [
+          ...getRequiredStageErrors(stages),
+          ...getRequiredStageTypeErrors(stages),
+        ];
 
-        if (
-          stages[stages.length - 1]?.name !== "Contratado/a" ||
-          stages[stages.length - 1]?.type !== "Contratado"
-        ) {
-          errors.push(
-            "La última etapa debe ser 'Contratado/a' de tipo 'Contratado'",
-          );
-        }
-
-        if (
-          !stages.some(
-            (stage) =>
-              stage.name === "Entrevista técnica" &&
-              stage.type === "Entrevista",
-          )
-        ) {
-          errors.push(
-            "Debe haber una etapa de 'Entrevista técnica' de tipo 'Entrevista",
-          );
-        }
-
-        if (
-          !stages.some(
-            (stage) =>
-              stage.name === "Entrevista HR" && stage.type === "Entrevista",
-          )
-        ) {
-          errors.push(
-            "Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista",
-          );
-        }
-
-        if (
-          !stages.some(
-            (stage) => stage.name === "Oferta" && stage.type === "Oferta",
-          )
-        ) {
-          errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta");
-        }
         if (errors.length) {
           throw new TRPCError({
             code: "BAD_REQUEST",
