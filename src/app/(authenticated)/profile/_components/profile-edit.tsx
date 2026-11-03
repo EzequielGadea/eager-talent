@@ -273,7 +273,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                       }
                     />
 
-                    <DialogContent className="max-w-110 overflow-hidden border bg-card p-0 text-card-foreground shadow-2xl sm:max-w-110">
+                    <DialogContent className="max-w-110 overflow-hidden border p-0 text-card-foreground shadow-2xl sm:max-w-110">
                       <DialogHeader className="flex flex-row items-center justify-between space-y-0 border-b px-5.5 py-4.5">
                         <DialogTitle className="m-0">
                           Quitar foto de perfil
@@ -387,7 +387,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
               }
             />
 
-            <DialogContent className="max-w-110 overflow-hidden border bg-card p-0 text-card-foreground shadow-2xl sm:max-w-110">
+            <DialogContent className="max-w-110 overflow-hidden border p-0 text-card-foreground shadow-2xl sm:max-w-110">
               <DialogHeader className="flex flex-row items-center justify-between space-y-0 border-b px-5.5 py-4.5">
                 <DialogTitle className="m-0">Cancelar edición</DialogTitle>
               </DialogHeader>

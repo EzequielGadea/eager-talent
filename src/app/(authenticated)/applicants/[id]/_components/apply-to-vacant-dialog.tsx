@@ -344,7 +344,7 @@ export function ApplyToVacantDialog({
                           aria-invalid={
                             fieldState.invalid && !!isJobOpeningSelected
                           }
-                          className="w-full"
+                          className="w-full disabled:bg-input/50 dark:disabled:bg-input/80"
                         >
                           <SelectValue placeholder="Moneda">
                             {field.value

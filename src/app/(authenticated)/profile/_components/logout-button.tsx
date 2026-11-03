@@ -34,7 +34,7 @@ export function LogoutButton() {
         }
       />
 
-      <DialogContent className="max-w-110 p-0 overflow-hidden bg-card text-card-foreground border shadow-2xl sm:max-w-110">
+      <DialogContent className="max-w-110 p-0 overflow-hidden text-card-foreground border shadow-2xl sm:max-w-110">
         <DialogHeader className="flex flex-row items-center justify-between px-5.5 py-4.5 border-b space-y-0">
           <DialogTitle className="m-0">Cerrar sesión</DialogTitle>
         </DialogHeader>
