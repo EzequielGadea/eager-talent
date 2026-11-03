@@ -82,7 +82,7 @@ export function ApplicantOverviewCard({
               <span className="flex min-w-0 max-w-full items-center gap-1.5">
                 <Mail className="size-4 shrink-0" />
                 <span className="min-w-0 wrap-anywhere">
-                  {email ?? "Sin información"}
+                  {email?.trim() || "Sin información"}
                 </span>
               </span>
 
