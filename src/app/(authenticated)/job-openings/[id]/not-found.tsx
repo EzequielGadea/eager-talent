@@ -1,8 +1,4 @@
-import Link from "next/link";
 import { AlertCircle } from "lucide-react";
-
-import { buttonVariants } from "~/components/ui/button";
-import { cn } from "~/lib/utils";
 
 export default function JobOpeningNotFound() {
   return (
@@ -22,16 +18,6 @@ export default function JobOpeningNotFound() {
               La vacante no existe o no tenés acceso a ella.
             </p>
           </div>
-
-          <Link
-            href="/dashboard"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "mt-2 h-11 w-full rounded-full",
-            )}
-          >
-            Volver al inicio
-          </Link>
         </div>
       </div>
     </main>
