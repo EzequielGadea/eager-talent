@@ -45,7 +45,7 @@ function MetricCard({
     <Card
       className={
         highlighted
-          ? "border-2 border-emerald-500 bg-emerald-50 ring-0"
+          ? "border-2 border-success bg-success-bg ring-0"
           : "ring-foreground/10"
       }
     >
@@ -57,9 +57,7 @@ function MetricCard({
             No hay datos para este filtro
           </p>
         ) : (
-          <p className="text-2xl font-bold text-text-primary tabular-nums">
-            {value}
-          </p>
+          <p className="text-h2 text-text-primary tabular-nums">{value}</p>
         )}
         {detail ? (
           <p className="text-sm text-text-secondary">{detail}</p>
@@ -117,7 +115,7 @@ export function MetricsSummaryCards({
       aria-label="Indicadores temporales"
     >
       <MetricCard
-        icon={<Clock className="size-5 text-red-500" aria-hidden="true" />}
+        icon={<Clock className="size-5 text-danger" aria-hidden="true" />}
         label="Tiempo prom. cierre total"
         value={
           metrics.averageClosingDays === null
@@ -127,7 +125,10 @@ export function MetricsSummaryCards({
       />
       <MetricCard
         icon={
-          <TrendingUp className="size-5 text-violet-500" aria-hidden="true" />
+          <TrendingUp
+            className="size-5 text-accent-purple"
+            aria-hidden="true"
+          />
         }
         label="Desvío total promedio"
         value={
@@ -146,7 +147,10 @@ export function MetricsSummaryCards({
       />
       <MetricCard
         icon={
-          <CircleCheck className="size-5 text-emerald-600" aria-hidden="true" />
+          <CircleCheck
+            className="size-5 text-accent-green-strong"
+            aria-hidden="true"
+          />
         }
         label="% vacantes en plazo"
         value={

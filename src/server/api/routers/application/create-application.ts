@@ -83,21 +83,21 @@ export const createApplication = protectedProcedure
     if (!applicant) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Applicant not found",
+        message: "No se encontró el candidato.",
       });
     }
 
     if (!jobOpening) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Job opening not found",
+        message: "No se encontró la vacante.",
       });
     }
 
     if (jobOpening.status !== JobOpeningStatus.Open) {
       throw new TRPCError({
         code: "PRECONDITION_FAILED",
-        message: "Solo se puede postular candidatos a vacantes abiertas.",
+        message: "Solo se pueden postular candidatos a vacantes abiertas.",
       });
     }
 
@@ -117,7 +117,7 @@ export const createApplication = protectedProcedure
     if (existingApplication) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "Applicant is already assigned to this job opening",
+        message: "El candidato ya está postulado a esta vacante.",
       });
     }
 
@@ -135,7 +135,7 @@ export const createApplication = protectedProcedure
     ) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Job opening has an invalid first stage",
+        message: "La vacante no tiene una primera etapa válida.",
       });
     }
     const now = new Date();
@@ -181,7 +181,7 @@ export const createApplication = protectedProcedure
       ) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Applicant is already assigned to this job opening",
+          message: "El candidato ya está postulado a esta vacante.",
         });
       }
 

@@ -44,7 +44,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   return (
     <TableRow
       onClick={() => handleApplicantClick(props.applicant.id)}
-      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-success-bg last:border-0"
+      className="group cursor-pointer border-b border-border-default transition-colors hover:bg-success-bg last:border-0"
     >
       {/* Applicant */}
       <TableCell className={`${columns.applicant} py-2 align-middle`}>
@@ -61,14 +61,14 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             />
           ) : (
             <div
-              className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${props.applicant.avatarBg}`}
+              className={`flex size-7 shrink-0 items-center justify-center rounded-full text-label font-bold ${props.applicant.avatarBg}`}
             >
               {props.applicant.initials || "-"}
             </div>
           )}
 
           <span
-            className="min-w-0 line-clamp-2 wrap-break-word whitespace-normal text-xs font-semibold leading-tight text-dashboard-dark"
+            className="min-w-0 line-clamp-2 wrap-break-word whitespace-normal text-xs font-semibold leading-tight text-text-primary"
             title={props.applicant.name || "-"}
           >
             {props.applicant.name || "-"}
@@ -88,7 +88,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
                     variant="tag"
                     style={getTagStyles(tag.color ?? "gray")}
                     title={tag.label || "-"}
-                    className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4 align-middle"
+                    className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-label font-semibold leading-4 align-middle"
                   >
                     {tag.label || "-"}
                   </Badge>
@@ -118,7 +118,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
                             variant="tag"
                             style={getTagStyles(tag.color ?? "gray")}
                             title={tag.label || "-"}
-                            className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
+                            className="whitespace-nowrap rounded-full px-2 py-0.5 text-label font-semibold leading-4"
                           >
                             {tag.label || "-"}
                           </Badge>
@@ -129,9 +129,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
                 )}
               </>
             ) : (
-              <span className="text-sm font-medium text-dashboard-text-muted">
-                -
-              </span>
+              <span className="text-sm font-medium text-text-secondary">-</span>
             )}
           </div>
         </div>
@@ -139,7 +137,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
 
       {/* Job-Opening */}
       <TableCell className={`${columns.vacancy} py-2 align-middle`}>
-        <div className="flex flex-wrap items-center gap-1 text-xs leading-tight text-dashboard-text-muted">
+        <div className="flex flex-wrap items-center gap-1 text-xs leading-tight text-text-secondary">
           <span className="wrap-break-word">
             {props.applicant.jobOpening.at(-1) || "-"}
           </span>
@@ -182,7 +180,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       {/* Role */}
       <TableCell className={`${columns.role} py-2 align-middle`}>
         <div
-          className="wrap-break-word text-xs leading-tight text-dashboard-text-muted"
+          className="wrap-break-word text-xs leading-tight text-text-secondary"
           title={props.applicant.role || "-"}
         >
           {props.applicant.role || "-"}
@@ -199,21 +197,19 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             }}
             variant="secondary"
             title={props.applicant.seniorityName}
-            className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4 align-middle"
+            className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-label font-semibold leading-4 align-middle"
           >
             {props.applicant.seniorityName}
           </Badge>
         ) : (
-          <span className="text-sm font-medium text-dashboard-text-muted">
-            -
-          </span>
+          <span className="text-xs leading-tight text-text-secondary">-</span>
         )}
       </TableCell>
 
       {/* Area */}
       <TableCell className={`${columns.area} py-2 align-middle`}>
         <div
-          className="wrap-break-word text-xs leading-tight text-dashboard-text-muted"
+          className="wrap-break-word text-xs leading-tight text-text-secondary"
           title={props.applicant.area || "-"}
         >
           {props.applicant.area || "-"}
@@ -222,7 +218,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
 
       {/* Source */}
       <TableCell className={`${columns.source} py-2 align-middle`}>
-        <div className="flex min-w-0 items-center gap-1 text-sm text-dashboard-text-muted">
+        <div className="flex min-w-0 items-center gap-1 text-sm text-text-secondary">
           {props.applicant.source ? (
             <>
               <span className="shrink-0">
@@ -253,14 +249,12 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             title="Descargar CV"
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-dashboard-text-muted transition-colors hover:bg-dashboard-track hover:text-dashboard-dark"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-surface-sunken hover:text-text-primary"
           >
             <FileText size={15} />
           </a>
         ) : (
-          <span className="text-sm font-medium text-dashboard-text-muted">
-            -
-          </span>
+          <span className="text-sm font-medium text-text-secondary">-</span>
         )}
       </TableCell>
 
@@ -275,21 +269,19 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             title="Ver perfil de LinkedIn"
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#0a66c2] transition-colors hover:bg-dashboard-track hover:text-[#004182]"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-text-link transition-colors hover:bg-surface-sunken"
           >
             <FaLinkedin size={15} />
           </a>
         ) : (
-          <span className="text-sm font-medium text-dashboard-text-muted">
-            -
-          </span>
+          <span className="text-sm font-medium text-text-secondary">-</span>
         )}
       </TableCell>
 
       {/* Email */}
       <TableCell className={`${columns.email} py-2 align-middle`}>
         <div
-          className="line-clamp-2 wrap-break-word whitespace-normal text-xs leading-tight text-dashboard-text-muted"
+          className="line-clamp-2 wrap-break-word whitespace-normal text-xs leading-tight text-text-secondary"
           title={props.applicant.email || "-"}
         >
           {props.applicant.email || "-"}

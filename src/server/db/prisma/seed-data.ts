@@ -293,10 +293,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   // SENIORITIES
   const seniorityDefs = [
-    { name: "Junior", order: 1, color: "#60A5FA" },
-    { name: "Semi Senior", order: 2, color: "#34D399" },
-    { name: "Senior", order: 3, color: "#FBBF24" },
-    { name: "Staff / Lead", order: 4, color: "#F87171" },
+    { name: "Junior", order: 1, color: "#2563EB" },
+    { name: "Semi Senior", order: 2, color: "#10B981" },
+    { name: "Senior", order: 3, color: "#F59E0B" },
+    { name: "Staff / Lead", order: 4, color: "#EF4444" },
   ];
   const seniorities: Record<string, { id: string; name: string }> = {};
   for (const s of seniorityDefs) {
@@ -378,49 +378,49 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       key: "24534",
       name: "Aplicado",
       type: "Ninguna",
-      color: "#94a3b8",
+      color: "#64748B",
       label: "Aplicó",
     },
     {
       key: "55678",
       name: "Entrevista HR",
       type: "Entrevista",
-      color: "#3c73ed",
+      color: "#2563EB",
       label: "Entrevista HR",
     },
     {
       key: "61245",
       name: "Psicotécnico",
       type: "Entrevista",
-      color: "#f59e0b",
+      color: "#8B5CF6",
       label: "Psicotécnico",
     },
     {
       key: "75365",
       name: "Revisión de perfil",
       type: "Ninguna",
-      color: "#8b5cf6",
+      color: "#8B5CF6",
       label: "En revisión",
     },
     {
       key: "83412",
       name: "Entrevista técnica",
       type: "Entrevista",
-      color: "#0284c7",
+      color: "#F59E0B",
       label: "Entrevista técnica",
     },
     {
       key: "92156",
       name: "Oferta",
       type: "Oferta",
-      color: "#10b981",
+      color: "#F59E0B",
       label: "Ofertado",
     },
     {
       key: "98721",
       name: "Contratado/a",
       type: "Contratado",
-      color: "#059669",
+      color: "#10B981",
       label: "Contratado",
     },
   ];
@@ -706,7 +706,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Federico",
       lastName: "Valverde",
       email: "federico.valverde@eagerworks.uy",
-      phone: "+598 99 150 815",
+      phone: "+59899150815",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImJt88e7duWENHGaTLgeYFv7r2dZABOCXKpxQ3",
       country: "Uruguay",
@@ -879,7 +879,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Darwin",
       lastName: "Núñez",
       email: "darwin.nunez@eagerworks.uy",
-      phone: "+598 98 210 999",
+      phone: "+59898210999",
       photo:
         "https://utfs.io/f/hR8lYSLGKWIm1Et5K6jFocWOCMilxSKvI6ygLh3w5ubHNEZa",
       country: "Uruguay",
@@ -937,7 +937,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Sergio",
       lastName: "Rochet",
       email: "sergio.rochet@eagerworks.uy",
-      phone: "+598 91 330 001",
+      phone: "+59891330001",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImVY1SU8NEPatwQzNrSK9G6WUHpdAuIx7knmCs",
       country: "Uruguay",
@@ -980,7 +980,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Ronald",
       lastName: "Araújo",
       email: "ronald.araujo@eagerworks.uy",
-      phone: "+598 99 444 333",
+      phone: "+59899444333",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImm5e42wQ3HCd9j6AlTfn0bFLrExghtROmV4oQ",
       country: "Uruguay",
@@ -1055,7 +1055,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Manuel",
       lastName: "Ugarte",
       email: "manuel.ugarte@eagerworks.uy",
-      phone: "+598 94 555 123",
+      phone: "+59894555123",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImfFzhXOSfu8Kth6YjTSgR72dGzlyXbwqoIaPe",
       country: "Uruguay",
@@ -1122,7 +1122,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Rodrigo",
       lastName: "Bentancur",
       email: "rodrigo.bentancur@eagerworks.uy",
-      phone: "+598 99 777 888",
+      phone: "+59899777888",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImQv9jFwhjHLUiJaSAu37prKRqVDtfBbxPIg9O",
       country: "Uruguay",
@@ -1200,7 +1200,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Facundo",
       lastName: "Pellistri",
       email: "facundo.pellistri@eagerworks.uy",
-      phone: "+598 92 444 333",
+      phone: "+59892444333",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImViU69cBNEPatwQzNrSK9G6WUHpdAuIx7knmC",
       country: "Uruguay",
@@ -1266,7 +1266,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Nicolás",
       lastName: "De La Cruz",
       email: "nicolas.delacruz@eagerworks.uy",
-      phone: "+598 98 111 222",
+      phone: "+59898111222",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImTduAftczqbAuclI6LrEMdvGJaHT2gYfNeD97",
       country: "Uruguay",
@@ -1323,7 +1323,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Mathías",
       lastName: "Olivera",
       email: "mathias.olivera@eagerworks.uy",
-      phone: "+598 99 666 555",
+      phone: "+59899666555",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImL7hwMPv5WnhSyidITwVUm73A0KlDjR8ekaHJ",
       country: "Uruguay",
@@ -1380,7 +1380,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Maximiliano",
       lastName: "Araújo",
       email: "maxi.araujo@eagerworks.uy",
-      phone: "+598 91 888 999",
+      phone: "+59891888999",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImLJiQNsv5WnhSyidITwVUm73A0KlDjR8ekaHJ",
       country: "Uruguay",
@@ -1445,7 +1445,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Ferran",
       lastName: "Torres",
       email: "ferran.torres@eagerworks.uy",
-      phone: "+34 612 345 678",
+      phone: "+34612345678",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImHhb13cEm6P0IYWAc5JoVdwyXaKQZESumLf87",
       country: "España",
@@ -1530,7 +1530,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Anthony",
       lastName: "Gordon",
       email: "anthony.gordon@eagerworks.uy",
-      phone: "+44 7700 900123",
+      phone: "+447700900123",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImeW38mUIrBaxbc3UnuwtRP6K92fSCLpE5DdGj",
       country: "Reino Unido",
@@ -1598,7 +1598,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Cristiano",
       lastName: "Ronaldo",
       email: "cristiano.ronaldo@eagerworks.uy",
-      phone: "+351 912 345 678",
+      phone: "+351912345678",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImrJaXOo8bsQ056OqKNWVH1zT9JPCL2F48aoXh",
       country: "Portugal",
@@ -1684,7 +1684,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Julián",
       lastName: "Álvarez",
       email: "julian.alvarez@eagerworks.uy",
-      phone: "+54 9 11 2345 6789",
+      phone: "+5491123456789",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImn1zAAatBlvSoOUGZk97AQs2P03wdbX6itycE",
       country: "Argentina",
@@ -1753,7 +1753,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Fernando",
       lastName: "Muslera",
       email: "fernando.muslera@eagerworks.uy",
-      phone: "+598 99 123 456",
+      phone: "+59899123456",
       photo:
         "https://utfs.io/f/hR8lYSLGKWImT1x2nYczqbAuclI6LrEMdvGJaHT2gYfNeD97",
       country: "Uruguay",

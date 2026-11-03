@@ -208,7 +208,7 @@ export function ApplicantApplicationsCard({
     <Card className="bg-card p-0">
       <CardHeader className="flex flex-wrap items-center gap-x-3 gap-y-3 px-6 py-4">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
-          <CardTitle className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
+          <CardTitle className="font-sans text-xs font-bold uppercase tracking-wider text-text-tertiary">
             Postulación
           </CardTitle>
 
@@ -278,7 +278,7 @@ export function ApplicantApplicationsCard({
                   onClick={() => setShowDisqualifyDialog(true)}
                 >
                   <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
-                    <X className="h-2.5 w-2.5" strokeWidth={2.5} />
+                    <X className="h-2.5 w-2.5" />
                   </span>
                   Descalificar
                 </Button>
@@ -290,7 +290,7 @@ export function ApplicantApplicationsCard({
                   className="gap-1.5 rounded-full border-info bg-background px-3.5 text-xs font-medium text-info shadow-none hover:bg-info-bg hover:text-text-link"
                   onClick={() => setShowRequalifyDialog(true)}
                 >
-                  <RotateCcw className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  <RotateCcw className="h-3.5 w-3.5" />
                   Recalificar
                 </Button>
               )}
@@ -333,6 +333,7 @@ export function ApplicantApplicationsCard({
           applicantId={app.applicantId}
           jobOpeningId={app.jobOpeningId}
           candidateName={applicantName}
+          jobOpeningName={app.jobOpening.name}
           stageName={app.currentStageName}
           onSuccess={refreshApplicantData}
         />
@@ -367,7 +368,7 @@ export function ApplicantApplicationsCard({
 
       <CardContent className="p-0 px-6 pb-6 pt-4">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-          <h3 className="min-w-0 text-base font-bold text-text-primary">
+          <h3 className="min-w-0 text-h3 text-text-primary">
             Historial de entrevistas
           </h3>
           {canScheduleInterview && (
@@ -423,18 +424,10 @@ export function ApplicantApplicationsCard({
           <Table>
             <TableHeader>
               <TableRow className="shadow-none hover:bg-transparent hover:shadow-none">
-                <TableHead className="w-1/3 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Instancia
-                </TableHead>
-                <TableHead className="w-1/5 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Fecha
-                </TableHead>
-                <TableHead className="w-1/4 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Entrevistador/es
-                </TableHead>
-                <TableHead className="w-1/6 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Resumen
-                </TableHead>
+                <TableHead className="w-1/3 pb-4">Instancia</TableHead>
+                <TableHead className="w-1/5 pb-4">Fecha</TableHead>
+                <TableHead className="w-1/4 pb-4">Entrevistador/es</TableHead>
+                <TableHead className="w-1/6 pb-4">Resumen</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

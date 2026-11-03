@@ -24,7 +24,7 @@ export function DashboardActiveJobOpening() {
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <h2 className="text-[13px] font-normal text-text-secondary">
+        <h2 className="font-sans text-small font-normal text-text-secondary">
           Vacantes activas
         </h2>
 
@@ -40,7 +40,7 @@ export function DashboardActiveJobOpening() {
           <DashboardFetchError refetch={refetch} isFetching={isFetching} />
         ) : (
           <>
-            <p className="mt-1 text-3xl leading-none font-semibold text-text-primary">
+            <p className="mt-1 text-h2 text-text-primary">
               {jobOpenings?.open ?? "—"}
             </p>
             <p

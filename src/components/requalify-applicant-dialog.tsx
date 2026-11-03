@@ -50,7 +50,7 @@ export function RequalifyApplicantDialog({
     >
       <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
         <div className="px-6 py-5">
-          <DialogTitle className="text-lg font-semibold text-text-primary">
+          <DialogTitle className="text-h3 text-text-primary">
             Volver a calificar
           </DialogTitle>
 

@@ -7,7 +7,7 @@ import { SelectionPipeline } from "./_components/selection-pipeline";
 import { TodaysInterviews } from "./_components/todays-interviews";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { AccessDenied } from "~/components/access-denied";
 
 export default function DashboardPage() {
   return (
@@ -42,7 +42,12 @@ async function DashboardContent() {
   });
 
   if (!permission.success) {
-    redirect("/job-openings");
+    return (
+      <AccessDenied
+        title="No tenés acceso al Dashboard"
+        description="Esta sección está disponible únicamente para usuarios con rol Recruiter."
+      />
+    );
   }
 
   return (

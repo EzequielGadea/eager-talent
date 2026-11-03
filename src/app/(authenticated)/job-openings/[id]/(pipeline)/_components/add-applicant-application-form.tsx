@@ -150,7 +150,7 @@ export function AddApplicantApplicationForm({
           </Button>
 
           <div>
-            <p className="text-lg font-semibold text-text-primary">
+            <p className="font-heading text-h3 text-text-primary">
               Datos de postulación
             </p>
 

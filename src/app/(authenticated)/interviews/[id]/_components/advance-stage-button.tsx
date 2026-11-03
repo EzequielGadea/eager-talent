@@ -37,7 +37,7 @@ export function AdvanceStageButton({
   return (
     <Button
       size="sm"
-      className="h-8 shrink-0 gap-2 self-start rounded-full bg-dashboard-dark px-4 text-xs font-semibold text-text-on-dark hover:bg-dashboard-dark-hover sm:self-auto"
+      className="h-8 shrink-0 gap-2 self-start rounded-full bg-surface-dark px-4 text-xs font-semibold text-text-on-dark hover:bg-surface-dark/90 sm:self-auto"
       style={{ touchAction: "manipulation" }}
       disabled={isPending}
       onClick={() =>

@@ -13,6 +13,7 @@ import type { PipelineCandidate } from "./types";
 
 type PipelineColumnClientProps = {
   jobOpeningId: string;
+  jobOpeningName: string;
   stageId: string;
   stageName: string;
   initialCandidates: PipelineCandidate[];
@@ -26,6 +27,7 @@ type PipelineColumnClientProps = {
 
 export function PipelineColumnClient({
   jobOpeningId,
+  jobOpeningName,
   stageId,
   stageName,
   initialCandidates,
@@ -203,7 +205,7 @@ export function PipelineColumnClient({
     <>
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-text-primary">
+          <h2 className="font-sans text-sm font-semibold text-text-primary">
             {stageName}
           </h2>
 
@@ -224,6 +226,7 @@ export function PipelineColumnClient({
             key={candidate.applicantId}
             candidate={candidate}
             jobOpeningId={jobOpeningId}
+            jobOpeningName={jobOpeningName}
             currentStageId={stageId}
             currentStageName={stageName}
             isLastStage={isLastStage}

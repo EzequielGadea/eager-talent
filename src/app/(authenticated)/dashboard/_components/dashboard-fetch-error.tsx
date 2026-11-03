@@ -19,7 +19,7 @@ export function DashboardFetchError({
           <CircleAlert className="size-6 text-danger" aria-hidden="true" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-text-primary">
+          <h3 className="font-heading text-h3 text-text-primary">
             Error inesperado
           </h3>
           <p className="text-sm text-text-secondary">

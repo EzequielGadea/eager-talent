@@ -1,10 +1,10 @@
 "use client";
 
 import { FileText, Loader2 } from "lucide-react";
+import { FaLinkedin } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { FaLinkedin } from "react-icons/fa";
 import {
   Popover,
   PopoverContent,
@@ -34,7 +34,7 @@ function getSafeExternalUrl(value: string | null): string | null {
 export function ApplicantCardListFallback() {
   return (
     <div className="flex h-24 items-center justify-center md:hidden">
-      <Loader2 className="size-5 animate-spin text-dashboard-text-muted" />
+      <Loader2 className="size-5 animate-spin text-text-secondary" />
     </div>
   );
 }
@@ -58,14 +58,14 @@ export function ApplicantCardList({
 
   if (applicants.length === 0) {
     return (
-      <p className="px-4 py-8 text-center text-sm text-dashboard-text-muted md:hidden">
+      <p className="px-4 py-8 text-center text-sm text-text-secondary md:hidden">
         {emptyMessage}
       </p>
     );
   }
 
   return (
-    <ul className="divide-y divide-dashboard-border md:hidden">
+    <ul className="divide-y divide-border-default md:hidden">
       {applicants.map((applicant) => (
         <li key={applicant.id}>
           {isHiringManagerView ? (
@@ -117,12 +117,12 @@ function CardHeader({ applicant }: { applicant: ApplicantInfo }) {
       <div className="min-w-0 flex-1">
         <Link
           href={`/applicants/${applicant.id}`}
-          className="block truncate text-sm font-semibold text-dashboard-dark after:absolute after:inset-0"
+          className="block truncate text-sm font-semibold text-text-primary after:absolute after:inset-0"
         >
           {applicant.name || "-"}
         </Link>
 
-        <p className="truncate text-xs text-dashboard-text-muted">
+        <p className="truncate text-xs text-text-secondary">
           {applicant.role || "-"}
         </p>
       </div>
@@ -144,7 +144,7 @@ function JobOpeningLine({
   );
 
   return (
-    <div className="flex min-w-0 items-center gap-1 text-xs text-dashboard-text-muted">
+    <div className="flex min-w-0 items-center gap-1 text-xs text-text-secondary">
       {jobOpening.length > 0 ? (
         <>
           <span className="min-w-0 truncate">{jobOpening[visibleIndex]}</span>
@@ -183,7 +183,7 @@ function JobOpeningLine({
 
 function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
   return (
-    <article className="relative flex flex-col gap-2.5 px-4 py-3 transition-colors hover:bg-dashboard-success-light">
+    <article className="relative flex flex-col gap-2.5 px-4 py-3 transition-colors hover:bg-success-bg">
       <div className="flex items-start justify-between gap-3">
         <CardHeader applicant={applicant} />
 
@@ -194,7 +194,7 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
               color: applicant.seniorityColor,
               backgroundColor: `${applicant.seniorityColor}26`,
             }}
-            className="shrink-0 whitespace-nowrap rounded-md border-transparent px-2 py-0.5 text-[10px] font-bold leading-4"
+            className="shrink-0 whitespace-nowrap rounded-md border-transparent px-2 py-0.5 text-label font-bold leading-4"
           >
             {applicant.seniorityName}
           </Badge>
@@ -211,7 +211,7 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
               variant="tag"
               style={getTagStyles(tag.color ?? "gray")}
               title={tag.label || "-"}
-              className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
+              className="whitespace-nowrap rounded-full px-2 py-0.5 text-label font-semibold leading-4"
             >
               {tag.label || "-"}
             </Badge>
@@ -235,7 +235,7 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
                       variant="tag"
                       style={getTagStyles(tag.color ?? "gray")}
                       title={tag.label || "-"}
-                      className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
+                      className="whitespace-nowrap rounded-full px-2 py-0.5 text-label font-semibold leading-4"
                     >
                       {tag.label || "-"}
                     </Badge>
@@ -248,7 +248,7 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
       )}
 
       <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-1.5 text-xs text-dashboard-text-muted">
+        <div className="flex min-w-0 items-center gap-1.5 text-xs text-text-secondary">
           {applicant.source && (
             <span className="shrink-0">{getSourceIcon(applicant.source)}</span>
           )}
@@ -265,7 +265,7 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Descargar CV"
-              className="inline-flex size-8 items-center justify-center rounded-md text-dashboard-text-muted transition-colors hover:bg-dashboard-track hover:text-dashboard-dark"
+              className="inline-flex size-8 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-surface-sunken hover:text-text-primary"
             >
               <FileText size={15} />
             </a>
@@ -277,7 +277,7 @@ function ApplicantCard({ applicant }: { applicant: ApplicantInfo }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Ver perfil de LinkedIn"
-              className="inline-flex size-8 items-center justify-center rounded-md text-[#0a66c2] transition-colors hover:bg-dashboard-track hover:text-[#004182]"
+              className="inline-flex size-8 items-center justify-center rounded-md text-text-link transition-colors hover:bg-surface-sunken"
             >
               <FaLinkedin size={15} />
             </a>
@@ -296,7 +296,7 @@ function HiringManagerApplicantCard({
   showSharedBy: boolean;
 }) {
   return (
-    <article className="relative flex flex-col gap-2 px-4 py-3 transition-colors hover:bg-dashboard-success-light">
+    <article className="relative flex flex-col gap-2 px-4 py-3 transition-colors hover:bg-success-bg">
       <CardHeader applicant={applicant} />
 
       <JobOpeningLine jobOpening={applicant.jobOpening} showFirst />
@@ -317,7 +317,7 @@ function HiringManagerApplicantCard({
         )}
 
         {showSharedBy && (
-          <span className="truncate text-xs text-dashboard-text-muted">
+          <span className="truncate text-xs text-text-secondary">
             Enviado por {applicant.sharedBy ?? "-"}
           </span>
         )}

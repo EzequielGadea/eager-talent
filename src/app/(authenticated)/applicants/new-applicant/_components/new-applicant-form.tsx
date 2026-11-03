@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 import { FormProvider, useForm } from "react-hook-form";
 
 import { api } from "~/lib/trpc/react";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 
 import { Button } from "~/components/ui/button";
 
@@ -34,14 +35,7 @@ export const applicantFormSchema = z
       .string()
       .min(1, "El correo es obligatorio")
       .email("Correo inválido"),
-    phone: z
-      .string()
-      .regex(
-        /^\+[1-9]\d{1,14}$/,
-        "El teléfono debe tener formato E.164 (ej. +59899000000)",
-      )
-      .optional()
-      .or(z.literal("")),
+    phone: optionalE164PhoneSchema,
     country: z.string(),
     photo: z
       .custom<FileList>()
@@ -164,12 +158,16 @@ export default function NewApplicantForm() {
   });
 
   const { isSubmitting } = methods.formState;
+  const [isNavigating, startTransition] = useTransition();
 
   const createCandidateMutation = api.applicant.createApplicant.useMutation({
     onSuccess: () => {
       methods.reset();
       setPhotoPreview(undefined);
-      router.push("/applicants");
+      startTransition(() => {
+        router.push("/applicants");
+        router.refresh();
+      });
     },
     onError: (error) => {
       if (error.data?.code === "CONFLICT") {
@@ -242,7 +240,7 @@ export default function NewApplicantForm() {
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4"
+        className="flex w-full flex-col gap-4"
       >
         <PersonalData
           photoPreview={photoPreview}
@@ -262,7 +260,7 @@ export default function NewApplicantForm() {
               Cancelar
             </Button>
 
-            <NewCandidateButton disabled={isSubmitting} />
+            <NewCandidateButton disabled={isSubmitting || isNavigating} />
           </div>
         </footer>
       </form>

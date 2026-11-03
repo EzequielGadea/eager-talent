@@ -1,19 +1,12 @@
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
+import { normalizeStageName } from "~/lib/required-stage-types";
 import {
   parseStages,
   isRequiredStageName,
 } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
-
-function normalizeStageName(name: string) {
-  return name
-    .trim()
-    .replace(/\s+/g, " ")
-    .normalize("NFC")
-    .toLocaleLowerCase("es");
-}
 
 export const getSelectionPipeline = protectedProcedure.query(
   async ({ ctx }) => {

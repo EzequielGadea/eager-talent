@@ -92,8 +92,8 @@ export default function PersonalData({
   }
 
   return (
-    <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader className="pb-3">
+    <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+      <CardHeader>
         <CardTitle className="text-sm font-semibold">
           Datos personales
         </CardTitle>

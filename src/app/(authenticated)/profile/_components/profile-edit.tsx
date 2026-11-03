@@ -204,7 +204,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
         className="overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm"
       >
         <div className="border-b border-border-default px-6 py-5">
-          <h2 className="font-heading text-xl font-bold text-text-primary">
+          <h2 className="font-heading text-h2 text-text-primary">
             Editar perfil
           </h2>
           <p className="mt-1 text-sm text-text-secondary">
@@ -234,7 +234,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
             ) : (
               <div
                 aria-hidden="true"
-                className={`flex size-20 shrink-0 items-center justify-center rounded-xl font-heading text-2xl font-semibold ${originalAvatar.colorClass}`}
+                className={`flex size-20 shrink-0 items-center justify-center rounded-xl text-h2 ${originalAvatar.colorClass}`}
               >
                 {avatar.initials}
               </div>
@@ -273,9 +273,9 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                       }
                     />
 
-                    <DialogContent className="max-w-110 overflow-hidden border bg-card p-0 text-card-foreground shadow-2xl sm:max-w-110">
+                    <DialogContent className="max-w-110 overflow-hidden border p-0 text-card-foreground shadow-2xl sm:max-w-110">
                       <DialogHeader className="flex flex-row items-center justify-between space-y-0 border-b px-5.5 py-4.5">
-                        <DialogTitle className="m-0 text-base font-bold tracking-tight">
+                        <DialogTitle className="m-0">
                           Quitar foto de perfil
                         </DialogTitle>
                       </DialogHeader>
@@ -293,7 +293,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                             <Button
                               type="button"
                               variant="outline"
-                              className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-[13px] font-semibold"
+                              className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-small font-semibold"
                             >
                               Cancelar
                             </Button>
@@ -305,7 +305,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                             <Button
                               type="button"
                               disabled={isSaving}
-                              className="h-auto cursor-pointer rounded-full bg-foreground px-4.25 py-2 text-[13px] font-semibold text-background hover:bg-foreground/90"
+                              className="h-auto cursor-pointer rounded-full bg-foreground px-4.25 py-2 text-small font-semibold text-background hover:bg-foreground/90"
                               onClick={handleRemoveImage}
                             >
                               Quitar foto
@@ -387,11 +387,9 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
               }
             />
 
-            <DialogContent className="max-w-110 overflow-hidden border bg-card p-0 text-card-foreground shadow-2xl sm:max-w-110">
+            <DialogContent className="max-w-110 overflow-hidden border p-0 text-card-foreground shadow-2xl sm:max-w-110">
               <DialogHeader className="flex flex-row items-center justify-between space-y-0 border-b px-5.5 py-4.5">
-                <DialogTitle className="m-0 text-base font-bold tracking-tight">
-                  Cancelar edición
-                </DialogTitle>
+                <DialogTitle className="m-0">Cancelar edición</DialogTitle>
               </DialogHeader>
 
               <div className="p-5.5">
@@ -407,7 +405,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                     <Button
                       type="button"
                       variant="outline"
-                      className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-[13px] font-semibold"
+                      className="h-auto cursor-pointer rounded-full px-3.75 py-2 text-small font-semibold"
                     >
                       Seguir editando
                     </Button>
@@ -417,7 +415,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
                 <Button
                   type="button"
                   onClick={onDone}
-                  className="h-auto cursor-pointer rounded-full bg-foreground px-4.25 py-2 text-[13px] font-semibold text-background hover:bg-foreground/90"
+                  className="h-auto cursor-pointer rounded-full bg-foreground px-4.25 py-2 text-small font-semibold text-background hover:bg-foreground/90"
                 >
                   Descartar cambios
                   <ArrowRight size={14} />
@@ -439,7 +437,7 @@ export function ProfileEdit({ user, onDone }: ProfileEditProps) {
 
       {isImageZoomed && preview && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-surface-dark/80 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Foto de perfil ampliada"

@@ -61,7 +61,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-text-primary">
+            <h2 className="text-h3 text-text-primary">
               No se pudo cargar la actividad
             </h2>
 
@@ -173,7 +173,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
               <col className="w-57.5" />
             </colgroup>
             <TableHeader>
-              <TableRow className="text-xs font-semibold uppercase text-muted-foreground hover:bg-transparent">
+              <TableRow className="hover:bg-transparent">
                 <TableHead className="py-3 pr-3">Fecha</TableHead>
                 <TableHead className="py-3 pr-3">Evento</TableHead>
                 <TableHead className="py-3">Postulación</TableHead>

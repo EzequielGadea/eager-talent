@@ -26,7 +26,7 @@ export function ApplicantAvatar({
 
   return (
     <div
-      className={`flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl ${avatar.colorClass} text-xl font-semibold`}
+      className={`flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl ${avatar.colorClass} text-h2`}
     >
       {photoUrl && photoUrl !== failedPhoto ? (
         <Image

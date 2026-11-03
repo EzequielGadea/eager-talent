@@ -55,7 +55,7 @@ export default function JobOpeningsPage(props: JobOpeningsPageProps) {
 
 function JobOpeningsRoleFallback() {
   return (
-    <div role="status" className="mx-auto flex w-full flex-col gap-5 md:p-6">
+    <div role="status" className="mx-auto flex w-full flex-col gap-5">
       <span className="sr-only">Cargando vacantes</span>
       <Skeleton className="h-8 w-44" />
       <Skeleton className="h-4 w-64" />
@@ -129,7 +129,7 @@ async function JobOpeningsListContent(
     <>
       {props.isHiringManagerView &&
         rawParams.notice === "hiring-manager-filter-unavailable" && (
-          <p role="status" className="px-6 pt-6 text-sm text-text-secondary">
+          <p role="status" className="mb-5 text-sm text-text-secondary">
             Se quitó el filtro por Hiring Manager porque no está disponible para
             tu perfil.
           </p>

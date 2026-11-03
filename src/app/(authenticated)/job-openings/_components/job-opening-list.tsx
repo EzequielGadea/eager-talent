@@ -154,14 +154,14 @@ export default function JobOpeningsList({
   ) {
     return (
       <main className="flex min-h-0 flex-1 items-center justify-center p-6">
-        <div className="relative w-full max-w-105 rounded-3xl border bg-white p-8 shadow-lg">
+        <div className="relative w-full max-w-105 rounded-3xl border bg-surface-card p-8 shadow-lg">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="flex size-12 items-center justify-center rounded-full bg-danger-bg">
               <AlertCircle className="size-6 text-danger" />
             </div>
 
             <div className="space-y-1">
-              <h1 className="text-lg font-semibold text-text-primary">
+              <h1 className="font-heading text-h3 text-text-primary">
                 No se pudieron cargar las vacantes
               </h1>
 
@@ -198,10 +198,10 @@ export default function JobOpeningsList({
       : "Todavía no hay vacantes registradas.";
 
   return (
-    <div className="mx-auto flex w-full flex-col gap-5 md:p-6">
+    <div className="mx-auto flex w-full flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
+          <h1 className="font-heading text-h1 text-text-primary">
             {isHiringManagerView ? "Mis vacantes" : "Vacantes"}
           </h1>
 
@@ -228,7 +228,7 @@ export default function JobOpeningsList({
 
             <Button
               size="sm"
-              className="h-8.5 w-8.5 gap-2 rounded-full bg-dashboard-dark px-0 text-text-on-dark hover:bg-dashboard-dark-hover md:h-7 md:w-auto md:px-2.5"
+              className="h-8.5 w-8.5 gap-2 px-0 rounded-full bg-surface-dark text-small font-semibold text-text-on-dark shadow-none hover:bg-surface-dark/90 md:h-7 md:w-auto md:px-2.5"
               onClick={() => router.push("/job-openings/new-job-opening")}
             >
               <Plus size={16} />
@@ -239,7 +239,7 @@ export default function JobOpeningsList({
         )}
       </div>
 
-      <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+      <div className="w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
         <JobOpeningCardList
           jobOpenings={jobOpenings}
           isHiringManagerView={isHiringManagerView}
@@ -249,55 +249,51 @@ export default function JobOpeningsList({
         <div className="hidden w-full overflow-x-auto md:block">
           <Table className="min-w-[900px]">
             <TableHeader>
-              <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Vacante
-                </TableHead>
+              <TableRow className="h-9.75 border-b border-border-default bg-surface-subtle hover:bg-surface-subtle">
+                <TableHead className="h-9.75 px-4 py-0">Vacante</TableHead>
 
-                <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0">
                   Área
                 </TableHead>
 
                 {!isHiringManagerView && (
-                  <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                  <TableHead className="h-9.75 px-4 py-0">
                     Hiring Managers
                   </TableHead>
                 )}
 
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
-                  Estado
-                </TableHead>
+                <TableHead className="h-9.75 px-4 py-0">Estado</TableHead>
 
-                <TableHead className="h-9.75 w-[9.5rem] min-w-[9.5rem] whitespace-nowrap px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                <TableHead className="h-9.75 w-[9.5rem] min-w-[9.5rem] px-4 py-0">
                   Candidatos
                 </TableHead>
 
                 {isHiringManagerView && (
                   <>
-                    <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                    <TableHead className="h-9.75 px-4 py-0">
                       Entrevista técnica
                     </TableHead>
 
-                    <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                    <TableHead className="h-9.75 px-4 py-0">
                       Ofertados
                     </TableHead>
                   </>
                 )}
 
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                <TableHead className="h-9.75 px-4 py-0">
                   Abierta desde
                 </TableHead>
 
-                <TableHead className="h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground" />
+                <TableHead className="h-9.75 px-4 py-0" />
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-dashboard-border">
+            <TableBody className="divide-y divide-border-default">
               {jobOpenings.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={isHiringManagerView ? 8 : 7}
-                    className="h-24 text-center text-dashboard-text-muted"
+                    className="h-24 text-center text-text-secondary"
                   >
                     {emptyMessage}
                   </TableCell>

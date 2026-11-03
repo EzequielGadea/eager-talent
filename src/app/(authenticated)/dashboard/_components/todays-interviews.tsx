@@ -39,7 +39,7 @@ export function TodaysInterviews() {
     >
       <header className="mb-1 flex items-center gap-2">
         <Clock className="size-4.5 text-text-secondary" aria-hidden="true" />
-        <h2 className="text-[15px] font-semibold text-text-primary">
+        <h2 className="font-heading text-h3 text-text-primary">
           Entrevistas de hoy
         </h2>
       </header>
@@ -73,7 +73,7 @@ export function TodaysInterviews() {
               className="grid grid-cols-[4.5rem_3rem_minmax(0,1fr)_auto] items-center gap-4 border-b border-border-default py-4 last:border-b-0"
             >
               <time
-                className="text-base font-medium text-text-secondary"
+                className="text-sm font-medium text-text-secondary"
                 dateTime={interview.date?.toString()}
               >
                 {interview.date
@@ -95,7 +95,7 @@ export function TodaysInterviews() {
               </Avatar>
 
               <div className="min-w-0">
-                <p className="truncate text-base leading-6 font-semibold text-text-primary">
+                <p className="truncate text-sm leading-6 font-semibold text-text-primary">
                   {interview.applicant.name} {interview.applicant.lastName}
                 </p>
                 <p className="truncate text-sm leading-5 text-text-secondary">

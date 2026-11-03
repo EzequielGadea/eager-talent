@@ -111,7 +111,7 @@ export function UserActionsMenu({ user }: Props) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex size-8 cursor-pointer items-center justify-center rounded-md hover:bg-slate-200"
+          className="flex size-8 cursor-pointer items-center justify-center rounded-md hover:bg-surface-sunken"
           aria-label={`Acciones de ${fullName}`}
         >
           <MoreHorizontal className="size-4" />

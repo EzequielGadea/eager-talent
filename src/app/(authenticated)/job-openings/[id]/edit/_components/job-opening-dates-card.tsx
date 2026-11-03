@@ -40,7 +40,7 @@ export function JobOpeningDatesCard() {
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader>
-        <CardTitle className="font-heading text-[15px] font-bold tracking-[-0.01em] text-text-primary">
+        <CardTitle className="font-heading text-h3 text-text-primary">
           Fechas
         </CardTitle>
       </CardHeader>
@@ -51,7 +51,7 @@ export function JobOpeningDatesCard() {
             <div className="flex flex-col gap-1.5">
               <Label
                 htmlFor="openingDate"
-                className="text-[13px] font-medium text-text-primary"
+                className="text-small font-medium text-text-primary"
               >
                 Fecha de apertura
                 <span className="ml-1 text-danger">*</span>
@@ -83,7 +83,7 @@ export function JobOpeningDatesCard() {
             <div className="flex flex-col gap-1.5">
               <Label
                 htmlFor="targetClosingDate"
-                className="text-[13px] font-medium text-text-primary"
+                className="text-small font-medium text-text-primary"
               >
                 Fecha objetivo de cierre
                 <span className="ml-1 text-danger">*</span>
@@ -115,7 +115,7 @@ export function JobOpeningDatesCard() {
 
           <div className="mb-4 flex h-9.5 items-center gap-2 rounded-lg border border-tag-green-bg bg-success-bg px-3 text-tag-green-fg md:mb-5.5">
             <Clock3 aria-hidden="true" className="size-4" />
-            <span className="whitespace-nowrap text-[13px] font-semibold">
+            <span className="whitespace-nowrap text-small font-semibold">
               {dayCount} {dayCount === 1 ? "día" : "días"}
             </span>
           </div>

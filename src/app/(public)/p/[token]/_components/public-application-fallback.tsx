@@ -4,7 +4,7 @@ import { Separator } from "~/components/ui/separator";
 
 export function PublicApplicationFallback() {
   return (
-    <div className="min-h-screen bg-slate-50 py-8 text-foreground">
+    <div className="min-h-screen bg-surface-subtle py-8 text-foreground">
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 px-4">
         <div className="flex flex-col gap-2.5">
           <header className="flex items-center justify-between border-b border-border-default pb-3.5">

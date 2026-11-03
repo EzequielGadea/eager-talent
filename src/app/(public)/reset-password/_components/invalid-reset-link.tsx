@@ -15,7 +15,7 @@ export function InvalidResetLink() {
         </div>
 
         <div className="space-y-1">
-          <h1 className="text-lg font-semibold text-text-primary">
+          <h1 className="font-heading text-h3 text-text-primary">
             Este enlace ya no es válido
           </h1>
 

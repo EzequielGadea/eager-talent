@@ -176,15 +176,15 @@ export function ResetPasswordForm({ token }: { token: string }) {
   if (isDone) {
     return (
       <ResetPasswordShell>
-        <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+        <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-success-bg text-accent-green-strong">
           <CircleCheck className="size-5" />
         </div>
-        <h1 className="text-xl font-bold tracking-tight text-slate-900">
+        <h1 className="font-heading text-h1 text-text-primary">
           Contraseña restablecida
         </h1>
         <p
           role={signOutError ? "alert" : undefined}
-          className="mt-2 text-sm text-slate-500"
+          className="mt-2 text-sm text-text-secondary"
         >
           {signOutError ??
             (hasSignedOut
@@ -195,7 +195,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
           type="button"
           disabled={isBusy}
           onClick={hasSignedOut ? handleGoToLogin : handleRetrySignOut}
-          className="mt-6 h-11 w-full rounded-full bg-slate-900 text-white hover:bg-slate-800"
+          className="mt-6 h-11 w-full rounded-full bg-surface-dark text-text-on-dark hover:bg-surface-dark/90"
         >
           {isRedirecting
             ? "Redirigiendo..."
@@ -212,10 +212,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
   return (
     <ResetPasswordShell>
-      <h1 className="text-xl font-bold tracking-tight text-slate-900">
+      <h1 className="font-heading text-h1 text-text-primary">
         Restablecé tu contraseña
       </h1>
-      <p className="mt-2 text-sm leading-relaxed text-slate-500">
+      <p className="mt-2 text-sm leading-relaxed text-text-secondary">
         Definí una nueva contraseña para acceder a tu cuenta.
       </p>
 
@@ -251,7 +251,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                           ? "Ocultar contraseña"
                           : "Mostrar contraseña"
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
                     >
                       {showPassword ? (
                         <EyeOff className="size-4" />
@@ -268,10 +268,10 @@ export function ResetPasswordForm({ token }: { token: string }) {
                           key={rule.id}
                           className={`flex items-center gap-1.5 text-xs ${
                             ok
-                              ? "text-emerald-600"
+                              ? "text-accent-green-strong"
                               : passwordHasError
-                                ? "text-red-600"
-                                : "text-slate-400"
+                                ? "text-tag-red-fg"
+                                : "text-text-tertiary"
                           }`}
                         >
                           {ok ? (
@@ -313,7 +313,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
                           ? "Ocultar contraseña"
                           : "Mostrar contraseña"
                       }
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="size-4" />
@@ -349,7 +349,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
               <Button
                 type="submit"
                 disabled={isBusy}
-                className="h-11 flex-1 rounded-full bg-slate-900 text-white hover:bg-slate-800"
+                className="h-11 flex-1 rounded-full bg-surface-dark text-text-on-dark hover:bg-surface-dark/90"
               >
                 {isBusy ? (
                   <Loader2 className="size-4 animate-spin" />
@@ -370,7 +370,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
       >
         <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
           <div className="border-b border-border-default px-6 py-5">
-            <DialogTitle className="text-lg font-semibold text-text-primary">
+            <DialogTitle className="text-h3 text-text-primary">
               Descartar cambios
             </DialogTitle>
             <DialogDescription className="mt-1 text-sm text-text-secondary">

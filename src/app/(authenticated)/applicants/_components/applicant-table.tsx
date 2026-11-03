@@ -58,7 +58,7 @@ export function ApplicantTable(props: {
     : "Todavía no hay candidatos registrados.";
 
   return (
-    <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
+    <div className="w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
       <ApplicantCardList
         applicants={props.applicantsData}
         isPending={isPending}
@@ -80,14 +80,14 @@ export function ApplicantTable(props: {
             <ApplicantTableHeader />
           )}
 
-          <TableBody className="divide-y divide-dashboard-border">
+          <TableBody className="divide-y divide-border-default">
             {isPending ? (
               <TableFallback isHiringManagerView={props.isHiringManagerView} />
             ) : props.applicantsData.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={props.isHiringManagerView ? 5 : 10}
-                  className="h-24 text-center text-dashboard-text-muted"
+                  className="h-24 text-center text-text-secondary"
                 >
                   {emptyMessage}
                 </TableCell>
@@ -127,27 +127,27 @@ export function HiringManagerApplicantTableHeader({
 }) {
   return (
     <TableHeader>
-      <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+      <TableRow className="h-9.75 border-b border-border-default bg-surface-subtle hover:bg-surface-subtle">
         <TableHead
-          className={`${showSharedBy ? "w-[30%]" : "w-[35%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${showSharedBy ? "w-[30%]" : "w-[35%]"} h-9.75 px-4 py-0`}
         >
           Candidato
         </TableHead>
 
         <TableHead
-          className={`${showSharedBy ? "w-[25%]" : "w-[35%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${showSharedBy ? "w-[25%]" : "w-[35%]"} h-9.75 px-4 py-0`}
         >
           Vacante
         </TableHead>
 
         <TableHead
-          className={`${showSharedBy ? "w-[25%]" : "w-[30%]"} h-9.75 px-4 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
+          className={`${showSharedBy ? "w-[25%]" : "w-[30%]"} h-9.75 px-4 py-0`}
         >
           Etapa / Estado
         </TableHead>
 
         {showSharedBy && (
-          <TableHead className="h-9.75 w-[20%] pr-4 py-0 pl-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
+          <TableHead className="h-9.75 w-[20%] pr-4 py-0 pl-0">
             Enviado por
           </TableHead>
         )}
@@ -159,66 +159,40 @@ export function HiringManagerApplicantTableHeader({
 export function ApplicantTableHeader() {
   return (
     <TableHeader>
-      <TableRow className="h-9.75 border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
-        <TableHead
-          className={`h-9.75 ${columns.applicant} py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
+      <TableRow className="h-9.75 border-b border-border-default bg-surface-subtle hover:bg-surface-subtle">
+        <TableHead className={`h-9.75 ${columns.applicant} py-0`}>
           Candidato
         </TableHead>
 
-        <TableHead
-          className={`${columns.tags} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
+        <TableHead className={`${columns.tags} h-9.75 py-0`}>
           Etiquetas
         </TableHead>
 
-        <TableHead
-          className={`${columns.vacancy} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
+        <TableHead className={`${columns.vacancy} h-9.75 py-0`}>
           Vacante
         </TableHead>
 
-        <TableHead
-          className={`${columns.role} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
-          Rol
-        </TableHead>
+        <TableHead className={`${columns.role} h-9.75 py-0`}>Rol</TableHead>
 
-        <TableHead
-          className={`${columns.seniority} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
+        <TableHead className={`${columns.seniority} h-9.75 py-0`}>
           Seniority
         </TableHead>
 
-        <TableHead
-          className={`${columns.area} h-9.75 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
+        <TableHead className={`${columns.area} h-9.75 pr-3 py-0`}>
           Área
         </TableHead>
 
-        <TableHead
-          className={`${columns.source} h-9.75 pr-3 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
+        <TableHead className={`${columns.source} h-9.75 pr-3 py-0`}>
           Source
         </TableHead>
 
-        <TableHead
-          className={`${columns.cv} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
-          CV
-        </TableHead>
+        <TableHead className={`${columns.cv} h-9.75 py-0`}>CV</TableHead>
 
-        <TableHead
-          className={`${columns.linkedin} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
+        <TableHead className={`${columns.linkedin} h-9.75 py-0`}>
           LinkedIn
         </TableHead>
 
-        <TableHead
-          className={`${columns.email} h-9.75 py-0 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground`}
-        >
-          Correo
-        </TableHead>
+        <TableHead className={`${columns.email} h-9.75 py-0`}>Correo</TableHead>
       </TableRow>
     </TableHeader>
   );
