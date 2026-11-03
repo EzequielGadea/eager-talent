@@ -116,7 +116,10 @@ export function SortableList<T extends { id: string }>({
   );
 
   const canDrag = (index: number) =>
-    !disabled && !(fixedEnds && (index === 0 || index === items.length - 1));
+    index >= 0 &&
+    index < items.length &&
+    !disabled &&
+    !(fixedEnds && (index === 0 || index === items.length - 1));
 
   function move(fromIndex: number, toIndex: number) {
     if (fromIndex !== toIndex && canDrag(fromIndex) && canDrag(toIndex)) {
