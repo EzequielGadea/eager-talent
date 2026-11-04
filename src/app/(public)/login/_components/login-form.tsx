@@ -31,8 +31,8 @@ function EagerTalentLogo() {
       >
         <defs>
           <linearGradient id="login-logo-gradient" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0" stopColor="#8B5CF6" />
-            <stop offset="1" stopColor="#10B981" />
+            <stop offset="0" style={{ stopColor: "var(--accent-purple)" }} />
+            <stop offset="1" style={{ stopColor: "var(--accent-green)" }} />
           </linearGradient>
         </defs>
 
@@ -41,15 +41,17 @@ function EagerTalentLogo() {
           fill="url(#login-logo-gradient)"
         />
 
-        <g stroke="#FFFFFF" strokeLinecap="round" strokeLinejoin="round">
+        <g
+          stroke="var(--text-on-dark)"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M13 22L20 15L27 22" strokeWidth="4" />
           <path d="M13 29.5L20 22.5L27 29.5" strokeWidth="4" opacity="0.5" />
         </g>
       </svg>
 
-      <h1 className="font-(family-name:--font-login-heading) text-[26px] font-bold tracking-[-0.03em]">
-        EagerTalent
-      </h1>
+      <h1 className="font-heading text-h2 tracking-[-0.03em]">EagerTalent</h1>
     </div>
   );
 }
@@ -135,7 +137,7 @@ export function LoginForm() {
   });
 
   return (
-    <section className="relative z-10 mx-4 w-full max-w-100 rounded-xl border border-border-default bg-surface-card p-6 shadow-[0_16px_40px_rgba(15,23,42,0.12)] sm:p-9">
+    <section className="relative z-10 mx-4 w-full max-w-100 rounded-xl border border-border-default bg-surface-card p-6 shadow-lg sm:p-9">
       <EagerTalentLogo />
 
       <p className="mt-2 mb-7 text-sm text-text-secondary">
@@ -144,7 +146,7 @@ export function LoginForm() {
 
       <form
         onSubmit={onSubmit}
-        className="space-y-4 [&_label]:text-[13px] [&_label]:font-medium"
+        className="space-y-4 [&_label]:text-small [&_label]:font-medium"
         noValidate
       >
         <Input
@@ -153,7 +155,7 @@ export function LoginForm() {
           label="Correo electrónico"
           autoComplete="email"
           errorMessage={errors.email?.message}
-          className="h-9.5 rounded-md border-border-default px-3 focus-visible:border-border-focus focus-visible:ring-border-focus/20"
+          className="h-9.5 rounded-md px-3"
           {...register("email")}
         />
 
@@ -180,7 +182,7 @@ export function LoginForm() {
               )}
             </button>
           }
-          className="h-9.5 rounded-md border-border-default px-3 focus-visible:border-border-focus focus-visible:ring-border-focus/20"
+          className="h-9.5 rounded-md px-3"
           {...register("password")}
         />
 
@@ -188,7 +190,7 @@ export function LoginForm() {
           <p
             role="alert"
             aria-live="polite"
-            className="rounded-md bg-danger-bg px-3 py-2 text-sm text-danger"
+            className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
           >
             {errors.root.message}
           </p>

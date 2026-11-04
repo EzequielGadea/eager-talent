@@ -3,15 +3,18 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Plus, Share2, X } from "lucide-react";
+import { ArrowUpRight, Plus, RotateCcw, Share2, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
+import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
+import { RequalifyApplicantDialog } from "~/components/requalify-applicant-dialog";
 import {
   Table,
   TableBody,
@@ -21,6 +24,11 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Separator } from "~/components/ui/separator";
+import type { InterviewType, SalaryCurrency } from "~/generated/prisma/enums";
+import {
+  interviewTypeTranslations,
+  salaryCurrencyTranslations,
+} from "~/lib/enum-translations";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
 import { ShareApplicationDialog } from "./share-application-dialog";
@@ -33,7 +41,7 @@ export type Interview = {
   id: string;
   name: string;
   duration: number;
-  modality: string;
+  modality: InterviewType;
   date: Date | string | null;
   status: string;
   summary: string | null;
@@ -50,7 +58,7 @@ export type ApplicationSummary = {
   canScheduleInterview: boolean;
   disqualificationDescription?: string | null;
   desiredSalaryAmount?: string | null;
-  desiredSalaryCurrency?: string | null;
+  desiredSalaryCurrency?: SalaryCurrency | null;
   availability?: string | null;
   jobOpening: { id: string; name: string };
   interviews: Interview[];
@@ -83,12 +91,15 @@ function getHeaderApplicationStatus(application: { active: boolean }) {
 
 function getInitialSelection(
   applications: ApplicationSummary[],
-  explorationInterviews: Interview[],
-): ApplicationSelection | undefined {
+): ApplicationSelection {
   if (applications[0]) {
-    return { type: "application", jobOpeningId: applications[0].jobOpeningId };
+    return {
+      type: "application",
+      jobOpeningId: applications[0].jobOpeningId,
+    };
   }
-  return explorationInterviews.length > 0 ? { type: "exploration" } : undefined;
+
+  return { type: "exploration" };
 }
 
 export function ApplicantApplicationsCard({
@@ -102,16 +113,22 @@ export function ApplicantApplicationsCard({
   canCreateApplication,
 }: ApplicantApplicationsCardProps) {
   const router = useRouter();
+  const utils = api.useUtils();
   const [, startTransition] = useTransition();
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
-    () => getInitialSelection(applications, explorationInterviews),
+    () => getInitialSelection(applications),
   );
   const [showApplyDialog, setShowApplyDialog] = useState(false);
+
+  function refreshApplicantData() {
+    void utils.activity.getByApplicantId.invalidate({ applicantId });
+    router.refresh();
+  }
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
-  const effectiveSelection =
-    selection ?? getInitialSelection(applications, explorationInterviews);
-  console.log({ selection, effectiveSelection });
+  const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
+  const [showRequalifyDialog, setShowRequalifyDialog] = useState(false);
+  const effectiveSelection = selection ?? getInitialSelection(applications);
   const isExploration = effectiveSelection?.type === "exploration";
   const app =
     effectiveSelection?.type === "application"
@@ -162,7 +179,11 @@ export function ApplicantApplicationsCard({
   const jobOpening = app?.jobOpening;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
   const desiredSalary = app
-    ? [app.desiredSalaryCurrency, app.desiredSalaryAmount]
+    ? [
+        app.desiredSalaryCurrency &&
+          salaryCurrencyTranslations[app.desiredSalaryCurrency],
+        app.desiredSalaryAmount,
+      ]
         .filter(Boolean)
         .join(" ")
     : "";
@@ -186,8 +207,8 @@ export function ApplicantApplicationsCard({
   return (
     <Card className="bg-card p-0">
       <CardHeader className="flex flex-wrap items-center gap-x-3 gap-y-3 px-6 py-4">
-        <div className="flex min-w-0 flex-1 basis-full flex-wrap items-center gap-2.5 lg:basis-auto">
-          <CardTitle className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
+          <CardTitle className="font-sans text-xs font-bold uppercase tracking-wider text-text-tertiary">
             Postulación
           </CardTitle>
 
@@ -226,39 +247,55 @@ export function ApplicantApplicationsCard({
         </div>
 
         {!isExploration && jobOpening && (
-          <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2.5 lg:w-auto">
-            <Link
-              href={`/job-openings/${encodeURIComponent(jobOpening.id)}`}
-              className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
-            >
-              Ver vacante{" "}
-              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </Link>
-
-            {canCreatePublicLink && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
-                onClick={() => setShowShareDialog(true)}
-              >
-                <Share2 className="h-3.5 w-3.5" /> Compartir
-              </Button>
-            )}
-            {canUpdateApplication && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
-              >
-                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
-                  <X className="h-2.5 w-2.5" strokeWidth={2.5} />
-                </span>
-                Descalificar
-              </Button>
-            )}
-          </div>
+          <Link
+            href={`/job-openings/${encodeURIComponent(jobOpening.id)}`}
+            className="group inline-flex h-auto shrink-0 p-0 text-sm font-medium text-text-link transition hover:text-info hover:underline hover:underline-offset-2"
+          >
+            Ver vacante{" "}
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
         )}
+
+        {!isExploration &&
+          jobOpening &&
+          (canCreatePublicLink || canUpdateApplication) && (
+            <div className="flex basis-full flex-wrap items-center justify-start gap-2.5 pt-2">
+              {canCreatePublicLink && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 rounded-full border-border-strong bg-background px-4 text-xs font-medium text-text-primary shadow-none hover:bg-tag-gray-bg"
+                  onClick={() => setShowShareDialog(true)}
+                >
+                  <Share2 className="h-3.5 w-3.5" /> Compartir
+                </Button>
+              )}
+              {canUpdateApplication && app?.active && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 rounded-full border-danger bg-background px-3.5 text-xs font-medium text-danger shadow-none hover:bg-danger-bg hover:text-tag-red-fg"
+                  onClick={() => setShowDisqualifyDialog(true)}
+                >
+                  <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
+                    <X className="h-2.5 w-2.5" />
+                  </span>
+                  Descalificar
+                </Button>
+              )}
+              {canUpdateApplication && app && !app.active && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 rounded-full border-info bg-background px-3.5 text-xs font-medium text-info shadow-none hover:bg-info-bg hover:text-text-link"
+                  onClick={() => setShowRequalifyDialog(true)}
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Recalificar
+                </Button>
+              )}
+            </div>
+          )}
       </CardHeader>
 
       <Separator className="bg-border-default" />
@@ -288,6 +325,33 @@ export function ApplicantApplicationsCard({
         />
       )}
 
+      {canUpdateApplication && app?.active && (
+        <DisqualifyApplicantDialog
+          key={`disqualify-${app.jobOpeningId}`}
+          open={showDisqualifyDialog}
+          onOpenChange={setShowDisqualifyDialog}
+          applicantId={app.applicantId}
+          jobOpeningId={app.jobOpeningId}
+          candidateName={applicantName}
+          jobOpeningName={app.jobOpening.name}
+          stageName={app.currentStageName}
+          onSuccess={refreshApplicantData}
+        />
+      )}
+
+      {canUpdateApplication && app && !app.active && (
+        <RequalifyApplicantDialog
+          key={`requalify-${app.jobOpeningId}`}
+          open={showRequalifyDialog}
+          onOpenChange={setShowRequalifyDialog}
+          applicantId={app.applicantId}
+          jobOpeningId={app.jobOpeningId}
+          applicantName={applicantName}
+          stageName={app.currentStageName}
+          onSuccess={refreshApplicantData}
+        />
+      )}
+
       {canCreatePublicLink && app && (
         <ShareApplicationDialog
           key={app.jobOpeningId}
@@ -304,7 +368,7 @@ export function ApplicantApplicationsCard({
 
       <CardContent className="p-0 px-6 pb-6 pt-4">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-          <h3 className="min-w-0 text-base font-bold text-text-primary">
+          <h3 className="min-w-0 text-h3 text-text-primary">
             Historial de entrevistas
           </h3>
           {canScheduleInterview && (
@@ -359,7 +423,7 @@ export function ApplicantApplicationsCard({
         ) : (
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="shadow-none hover:bg-transparent hover:shadow-none">
                 <TableHead className="w-1/3 pb-4">Instancia</TableHead>
                 <TableHead className="w-1/5 pb-4">Fecha</TableHead>
                 <TableHead className="w-1/4 pb-4">Entrevistador/es</TableHead>
@@ -393,11 +457,9 @@ export function ApplicantApplicationsCard({
                       {interview.name}
                     </p>
                     <p className="mt-0.5 text-xs text-text-tertiary">
-                      Entrevista{" "}
-                      {interview.modality === "VideoCall"
-                        ? "virtual"
-                        : "presencial"}{" "}
-                      de {interview.duration} minutos
+                      Entrevista:{" "}
+                      {interviewTypeTranslations[interview.modality]} ·{" "}
+                      {interview.duration} minutos
                     </p>
                   </TableCell>
 

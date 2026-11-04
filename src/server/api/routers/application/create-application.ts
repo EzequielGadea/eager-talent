@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { TRPCError } from "@trpc/server";
 
-import { SalaryCurrency } from "~/generated/prisma/enums";
+import { JobOpeningStatus, SalaryCurrency } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -61,6 +61,7 @@ export const createApplication = protectedProcedure
       ctx.db.applicant.findUnique({
         where: {
           id: input.applicantId,
+          deletedAt: null,
         },
         select: {
           id: true,
@@ -74,6 +75,7 @@ export const createApplication = protectedProcedure
           id: true,
           name: true,
           stages: true,
+          status: true,
         },
       }),
     ]);
@@ -81,14 +83,21 @@ export const createApplication = protectedProcedure
     if (!applicant) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Applicant not found",
+        message: "No se encontró el candidato.",
       });
     }
 
     if (!jobOpening) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Job opening not found",
+        message: "No se encontró la vacante.",
+      });
+    }
+
+    if (jobOpening.status !== JobOpeningStatus.Open) {
+      throw new TRPCError({
+        code: "PRECONDITION_FAILED",
+        message: "Solo se pueden postular candidatos a vacantes abiertas.",
       });
     }
 
@@ -98,6 +107,7 @@ export const createApplication = protectedProcedure
           applicantId: input.applicantId,
           jobOpeningId: input.jobOpeningId,
         },
+        deletedAt: null,
       },
       select: {
         applicantId: true,
@@ -107,7 +117,7 @@ export const createApplication = protectedProcedure
     if (existingApplication) {
       throw new TRPCError({
         code: "CONFLICT",
-        message: "Applicant is already assigned to this job opening",
+        message: "El candidato ya está postulado a esta vacante.",
       });
     }
 
@@ -125,7 +135,7 @@ export const createApplication = protectedProcedure
     ) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Job opening has an invalid first stage",
+        message: "La vacante no tiene una primera etapa válida.",
       });
     }
     const now = new Date();
@@ -171,7 +181,7 @@ export const createApplication = protectedProcedure
       ) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Applicant is already assigned to this job opening",
+          message: "El candidato ya está postulado a esta vacante.",
         });
       }
 

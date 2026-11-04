@@ -28,6 +28,7 @@ jobs:
     # Ephemeral CI database only; never use Preview/Production secrets here.
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/eager_talent_test
+      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/eager_talent_test
       # Public test-only key; never reuse it in deployed environments.
       BETTER_AUTH_SECRET: eager-talent-ci-only-secret-for-disposable-tests
 

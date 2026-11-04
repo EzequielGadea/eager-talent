@@ -1,15 +1,12 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 
-import type { JobOpeningStatus } from "~/generated/prisma/enums";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import type { EnglishLevel, JobOpeningStatus } from "~/generated/prisma/enums";
+import { englishLevelTranslations } from "~/lib/enum-translations";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Separator } from "~/components/ui/separator";
 import { getApplicationStatusBadge } from "../utils";
+import { PublicAttribute } from "./public-attribute";
 
 type PublicCandidateCardProps = {
   name: string;
@@ -20,7 +17,7 @@ type PublicCandidateCardProps = {
   email?: string | null;
   phone?: string | null;
   country?: string | null;
-  englishLevel?: string | null;
+  englishLevel?: EnglishLevel | null;
   title?: string | null;
   academicInstitution?: string | null;
   active?: boolean;
@@ -44,15 +41,14 @@ export function PublicCandidateCard({
 }: PublicCandidateCardProps) {
   const initials = `${name.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   const fullName = `${name} ${lastName}`;
-  const formation =
-    [title, academicInstitution].filter(Boolean).join(" · ") || "Sin información";
+  const formation = [title, academicInstitution].filter(Boolean).join(" · ");
   const status = getApplicationStatusBadge(active, jobOpeningStatus);
 
   return (
     <Card className="min-w-0">
       <CardHeader className="flex flex-col gap-4 pb-2">
         <div className="flex items-start gap-4">
-          <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-xl font-semibold text-tag-green-fg">
+          <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-tag-green-bg text-h2 text-tag-green-fg">
             {photo ? (
               <Image
                 src={photo}
@@ -68,13 +64,13 @@ export function PublicCandidateCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <CardTitle className="text-xl font-bold tracking-tight text-text-primary">
+            <CardTitle className="text-h2 text-text-primary">
               {fullName}
             </CardTitle>
 
             <div className="mt-1 flex flex-wrap items-center gap-2.5">
               <span
-                className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${status.badgeClass}`}
+                className={`flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-bold ${status.badgeClass}`}
               >
                 <span className={`size-1.5 rounded-full ${status.dotClass}`} />
                 {status.label}
@@ -116,32 +112,14 @@ export function PublicCandidateCard({
       <Separator />
 
       <CardContent className="grid grid-cols-1 gap-4 pt-4 sm:grid-cols-3">
-        <div className="min-w-0 wrap-anywhere">
-          <p className="text-xs font-semibold uppercase text-text-tertiary">
-            Seniority
-          </p>
-          <p className="mt-1 text-sm font-medium text-text-primary">
-            {seniorityName ?? "Sin seniority"}
-          </p>
-        </div>
+        <PublicAttribute label="Seniority" value={seniorityName} />
 
-        <div className="min-w-0 wrap-anywhere">
-          <p className="text-xs font-semibold uppercase text-text-tertiary">
-            Nivel de inglés
-          </p>
-          <p className="mt-1 text-sm font-medium text-text-primary">
-            {englishLevel ?? "Sin información"}
-          </p>
-        </div>
+        <PublicAttribute
+          label="Nivel de inglés"
+          value={englishLevel ? englishLevelTranslations[englishLevel] : null}
+        />
 
-        <div className="min-w-0 wrap-anywhere">
-          <p className="text-xs font-semibold uppercase text-text-tertiary">
-            Formación
-          </p>
-          <p className="mt-1 text-sm font-medium text-text-primary">
-            {formation}
-          </p>
-        </div>
+        <PublicAttribute label="Formación" value={formation} />
       </CardContent>
     </Card>
   );

@@ -1,7 +1,18 @@
+export const FIRST_STAGE = "Aplicado";
+export const LAST_STAGE = "Contratado/a";
+
+export const REQUIRED_MIDDLE_STAGES = [
+  "Entrevista HR",
+  "Entrevista Técnica",
+  "Oferta",
+] as const;
+
 const REQUIRED_STAGE_TYPES: Record<string, string> = {
+  aplicado: "Ninguna",
   "entrevista hr": "Entrevista",
   "entrevista tecnica": "Entrevista",
   oferta: "Oferta",
+  "contratado/a": "Contratado",
 };
 
 export function normalizeStageName(name: string) {
@@ -14,7 +25,11 @@ export function normalizeStageName(name: string) {
 }
 
 export function getRequiredStageType(name: string) {
-  return REQUIRED_STAGE_TYPES[normalizeStageName(name)];
+  const key = normalizeStageName(name);
+
+  return Object.hasOwn(REQUIRED_STAGE_TYPES, key)
+    ? REQUIRED_STAGE_TYPES[key]
+    : undefined;
 }
 
 export function isRequiredStage(stage: { name: string; label: string }) {

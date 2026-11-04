@@ -1,25 +1,26 @@
-﻿import "server-only";
+import "server-only";
 
 import { Suspense } from "react";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { AccessDenied } from "~/components/access-denied";
 import { Table, TableBody } from "~/components/ui/table";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { api } from "~/lib/trpc/server";
 
 import {
-  ApplicantTableHeader,
-  HiringManagerApplicantTableHeader,
-} from "./_components/applicant-table";
-import {
   ApplicantAwaiterFilters,
   ApplicantAwaiterHeader,
   ApplicantAwaiterTable,
   SharedApplicantsAwaiter,
 } from "./_components/applicant-awaiter";
+import {
+  ApplicantTableHeader,
+  HiringManagerApplicantTableHeader,
+} from "./_components/applicant-table";
+import { ApplicantCardListFallback } from "./_components/applicant-card-list";
 import {
   ApplicantsPageSkeleton,
   FiltersFallback,
@@ -83,7 +84,12 @@ async function ProtectedApplicantsPage(props: {
   });
 
   if (!canReadAllResult.success && !canReadAssignedResult.success) {
-    redirect("/dashboard");
+    return (
+      <AccessDenied
+        title="No tenés acceso a Candidatos"
+        description="Tu rol no tiene permisos para ver los candidatos."
+      />
+    );
   }
 
   const isHiringManagerView = !canReadAllResult.success;
@@ -142,14 +148,14 @@ async function ProtectedApplicantsPage(props: {
     }),
   );
 
-  const roleData = api.role.getAllRoles({});
+  const roleData = api.jobRole.getAllRoles({});
   const seniorityData = api.seniority.getAllSeniorities({});
   const areaData = api.area.getAllAreas({});
   const jobOpeningData = api.jobOpening.getAllJobOpenings({});
   const tagData = api.tag.getAllTags({});
 
   return (
-    <div className="min-w-0 w-full max-w-full flex-1 overflow-x-hidden p-4 text-dashboard-text-primary">
+    <div className="-mx-1 min-w-0 w-[calc(100%+0.5rem)] max-w-none flex-1 overflow-x-hidden px-1 text-text-primary">
       <Suspense
         fallback={<HeaderFallback isHiringManagerView={isHiringManagerView} />}
       >
@@ -173,6 +179,7 @@ async function ProtectedApplicantsPage(props: {
             promiseAreaData={areaData}
             promiseJobOpeningData={jobOpeningData}
             promiseTagData={tagData}
+            promiseCountApplicants={countApplicants}
             isHiringManagerView={isHiringManagerView}
           />
         </Suspense>
@@ -180,8 +187,10 @@ async function ProtectedApplicantsPage(props: {
 
       <Suspense
         fallback={
-          <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-            <div className="w-full overflow-x-auto">
+          <div className="w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
+            <ApplicantCardListFallback />
+
+            <div className="hidden w-full overflow-x-auto md:block">
               <Table
                 className={
                   isHiringManagerView
@@ -195,7 +204,7 @@ async function ProtectedApplicantsPage(props: {
                   <ApplicantTableHeader />
                 )}
 
-                <TableBody className="divide-y divide-dashboard-border">
+                <TableBody className="divide-y divide-border-default">
                   <TableFallback isHiringManagerView={isHiringManagerView} />
                 </TableBody>
               </Table>
@@ -214,12 +223,14 @@ async function ProtectedApplicantsPage(props: {
       {isHiringManagerView && sharedData && (
         <Suspense
           fallback={
-            <div className="mt-4 w-full overflow-hidden rounded-xl border border-dashboard-border bg-white shadow-sm">
-              <div className="w-full overflow-x-auto">
+            <div className="mt-4 w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
+              <ApplicantCardListFallback />
+
+              <div className="hidden w-full overflow-x-auto md:block">
                 <Table className="min-w-200 table-fixed">
                   <HiringManagerApplicantTableHeader showSharedBy={true} />
 
-                  <TableBody className="divide-y divide-dashboard-border">
+                  <TableBody className="divide-y divide-border-default">
                     <TableFallback isHiringManagerView showSharedBy />
                   </TableBody>
                 </Table>

@@ -16,6 +16,8 @@ import {
 } from "~/components/ui/popover";
 import { FilterKey, FiltersProps } from "../types";
 import { Source } from "~/generated/prisma/enums";
+import { sourceTranslations } from "~/lib/enum-translations";
+import { getTagStyles } from "~/lib/tags/get-tag-styles";
 import { cn } from "~/lib/utils";
 
 export function Filters({
@@ -24,6 +26,7 @@ export function Filters({
   areaData,
   jobOpeningData,
   tagData,
+  countApplicants,
   isHiringManagerView,
 }: FiltersProps) {
   const router = useRouter();
@@ -93,7 +96,7 @@ export function Filters({
             label: "Fuente",
             options: Object.values(Source).map((value) => ({
               id: value,
-              label: value,
+              label: sourceTranslations[value],
             })),
           },
           {
@@ -142,10 +145,10 @@ export function Filters({
 
   return (
     <>
-      <div className="relative w-56 shrink-0">
+      <div className="relative w-full shrink-0 md:w-56">
         <Search
-          size={15}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-dashboard-text-muted"
+          className="pointer-events-none absolute left-3 top-1/2 z-10 size-4 -translate-y-1/2 text-text-tertiary"
+          aria-hidden="true"
         />
 
         <Input
@@ -157,150 +160,152 @@ export function Filters({
             handleSearch(value);
           }}
           placeholder="Buscar por nombre..."
-          className="h-8.5 rounded-lg border-dashboard-border bg-white pl-9 text-[13px] font-normal shadow-none"
+          aria-label="Buscar por nombre"
+          className="h-8.5 rounded-lg border-border-default bg-surface-card pl-9 text-small font-normal shadow-none"
         />
       </div>
 
-      {filterGroups.map((config) => {
-        const activeValues = new Set(searchParams.getAll(config.key));
-        const activeFilterCount = activeValues.size;
-        const normalizedOptionSearch = optionSearch.trim().toLowerCase();
+      {/* Scrolls horizontally on mobile; from `md` up the filters wrap as before. */}
+      <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 md:contents">
+        {filterGroups.map((config) => {
+          const activeValues = new Set(searchParams.getAll(config.key));
+          const activeFilterCount = activeValues.size;
+          const normalizedOptionSearch = optionSearch.trim().toLowerCase();
 
-        const visibleOptions =
-          config.key === "tag" && normalizedOptionSearch
-            ? config.options.filter((option) =>
-                option.label.toLowerCase().includes(normalizedOptionSearch),
-              )
-            : config.options;
+          const visibleOptions =
+            config.key === "tag" && normalizedOptionSearch
+              ? config.options.filter((option) =>
+                  option.label.toLowerCase().includes(normalizedOptionSearch),
+                )
+              : config.options;
 
-        return (
-          <Popover
-            key={config.key}
-            open={openFilter === config.key}
-            onOpenChange={(open) => {
-              setOpenFilter(open ? config.key : null);
+          return (
+            <Popover
+              key={config.key}
+              open={openFilter === config.key}
+              onOpenChange={(open) => {
+                setOpenFilter(open ? config.key : null);
 
-              if (!open) {
-                setOptionSearch("");
-              }
-            }}
-          >
-            <PopoverTrigger
-              className={cn(
-                "flex h-8.5 items-center gap-2 rounded-lg border border-dashboard-border bg-white px-4 text-[13px] font-normal text-dashboard-text-muted shadow-none transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text",
-                activeFilterCount > 0 &&
-                  "border-dashboard-success-light font-semibold bg-dashboard-success-light text-dashboard-success-text",
-              )}
+                if (!open) {
+                  setOptionSearch("");
+                }
+              }}
             >
-              <span>{config.label}</span>
-
-              {activeFilterCount > 0 && (
-                <span className="text-xs font-semibold">
-                  · {activeFilterCount}
-                </span>
-              )}
-
-              <ChevronDown
-                size={14}
+              <PopoverTrigger
                 className={cn(
-                  "text-dashboard-text-muted",
-                  activeFilterCount > 0 && "text-dashboard-success-text",
+                  "flex h-8.5 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border px-4 text-small font-normal border-border-default bg-card text-text-secondary shadow-none transition-[border-color,box-shadow] hover:bg-card hover:text-text-secondary aria-expanded:bg-card aria-expanded:text-text-secondary data-popup-open:border-border-focus data-popup-open:ring-4 data-popup-open:ring-border-focus/20",
                 )}
-              />
-            </PopoverTrigger>
+              >
+                <span>{config.label}</span>
 
-            <PopoverContent align="start" className="w-56 rounded-xl p-3">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <p className="text-xs font-bold uppercase tracking-wider text-dashboard-text-light">
-                  Filtrar por {config.label.toLowerCase()}
-                </p>
-              </div>
+                {activeFilterCount > 0 && (
+                  <span className="text-xs font-semibold">
+                    · {activeFilterCount}
+                  </span>
+                )}
 
-              {config.key === "tag" && (
-                <Input
-                  type="search"
-                  value={optionSearch}
-                  onChange={(event) => setOptionSearch(event.target.value)}
-                  placeholder="Buscar etiqueta..."
-                  className="mb-3 h-8 rounded-lg border-dashboard-border bg-white text-sm"
-                />
-              )}
+                <ChevronDown size={14} className="text-text-secondary" />
+              </PopoverTrigger>
 
-              <div className="mb-3 flex max-h-56 flex-col gap-2.5 overflow-y-auto pr-1">
-                {visibleOptions.length === 0 ? (
-                  <p className="text-xs text-dashboard-text-muted">
-                    Sin opciones disponibles
+              <PopoverContent align="start" className="w-56 rounded-xl p-3">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <p className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
+                    Filtrar por {config.label.toLowerCase()}
                   </p>
-                ) : (
-                  visibleOptions.map((option) => {
-                    const optionValue = option.id;
-                    const isChecked = activeValues.has(optionValue);
+                </div>
 
-                    return (
-                      <label
-                        key={optionValue}
-                        className="flex cursor-pointer items-center gap-2"
-                      >
-                        <Checkbox
-                          checked={isChecked}
-                          onCheckedChange={(value) =>
-                            updateFilterValue(
-                              config.key,
-                              optionValue,
-                              Boolean(value),
-                            )
-                          }
-                        />
-
-                        {config.key === "tag" ? (
-                          <Badge
-                            variant="secondary"
-                            className="rounded-full border-transparent px-2 py-0.5 text-xs font-bold"
-                            style={{
-                              backgroundColor:
-                                "color" in option &&
-                                typeof option.color === "string"
-                                  ? option.color
-                                  : "#e5e7eb",
-                            }}
-                          >
-                            {option.label}
-                          </Badge>
-                        ) : (
-                          <span className="text-sm font-medium text-dashboard-text-muted">
-                            {option.label}
-                          </span>
-                        )}
-                      </label>
-                    );
-                  })
+                {config.key === "tag" && (
+                  <Input
+                    type="search"
+                    value={optionSearch}
+                    onChange={(event) => setOptionSearch(event.target.value)}
+                    placeholder="Buscar etiqueta..."
+                    className="mb-3 h-8 rounded-lg border-border-default bg-surface-card text-sm"
+                  />
                 )}
-              </div>
-              <div className="flex items-center justify-between border-t border-dashboard-border pt-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  disabled={activeFilterCount === 0}
-                  className="h-7 px-1 text-xs font-semibold text-dashboard-text-muted hover:bg-transparent hover:text-dashboard-success-text"
-                  onClick={() => clearFilter(config.key)}
-                >
-                  Limpiar
-                </Button>
 
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-7 rounded-lg bg-dashboard-dark px-4 text-xs font-semibold text-white hover:bg-dashboard-dark/90"
-                  onClick={() => setOpenFilter(null)}
-                >
-                  Aplicar
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-        );
-      })}
+                <div className="mb-3 flex max-h-56 flex-col gap-2.5 overflow-y-auto pr-1">
+                  {visibleOptions.length === 0 ? (
+                    <p className="text-xs text-text-secondary">
+                      Sin opciones disponibles
+                    </p>
+                  ) : (
+                    visibleOptions.map((option) => {
+                      const optionValue = option.id;
+                      const isChecked = activeValues.has(optionValue);
+
+                      return (
+                        <label
+                          key={optionValue}
+                          className="flex cursor-pointer items-center gap-2"
+                        >
+                          <Checkbox
+                            checked={isChecked}
+                            onCheckedChange={(value) =>
+                              updateFilterValue(
+                                config.key,
+                                optionValue,
+                                Boolean(value),
+                              )
+                            }
+                          />
+
+                          {config.key === "tag" ? (
+                            <Badge
+                              variant="tag"
+                              className="rounded-full px-2 py-0.5 text-xs font-bold"
+                              style={getTagStyles(
+                                "color" in option &&
+                                  typeof option.color === "string"
+                                  ? option.color
+                                  : "gray",
+                              )}
+                            >
+                              {option.label}
+                            </Badge>
+                          ) : (
+                            <span className="text-sm font-medium text-text-secondary">
+                              {option.label}
+                            </span>
+                          )}
+                        </label>
+                      );
+                    })
+                  )}
+                </div>
+                <div className="flex items-center justify-between border-t border-border-default pt-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={activeFilterCount === 0}
+                    className="h-7 px-1 text-xs font-semibold text-text-secondary hover:bg-transparent hover:text-tag-green-fg"
+                    onClick={() => clearFilter(config.key)}
+                  >
+                    Limpiar
+                  </Button>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="h-7 rounded-lg bg-surface-dark px-4 text-xs font-semibold text-text-on-dark hover:bg-surface-dark/90"
+                    onClick={() => setOpenFilter(null)}
+                  >
+                    Aplicar
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          );
+        })}
+
+        {isHiringManagerView && (
+          <span className="ml-auto shrink-0 text-sm text-text-secondary">
+            {countApplicants}{" "}
+            {countApplicants === 1 ? "candidato" : "candidatos"}
+          </span>
+        )}
+      </div>
     </>
   );
 }

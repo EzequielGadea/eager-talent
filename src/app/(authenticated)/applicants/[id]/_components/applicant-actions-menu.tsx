@@ -7,15 +7,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { cn } from "~/lib/utils";
 import { Briefcase, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { api } from "~/lib/trpc/server";
 import { Button } from "~/components/ui/button";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
+import { DeleteApplicantDialog } from "./delete-applicant-dialog";
 import { useState } from "react";
 
 type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
+
+const dangerItemClassName =
+  "text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!";
 
 export function ApplicantActionsMenu({
   canUpdateApplicant,
@@ -31,6 +34,7 @@ export function ApplicantActionsMenu({
   defaultShow: boolean;
 }) {
   const [showDialog, setShowDialog] = useState(defaultShow ?? false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   return (
     <>
@@ -82,9 +86,8 @@ export function ApplicantActionsMenu({
             canDeleteApplicant && <DropdownMenuSeparator />}
           {canDeleteApplicant && (
             <DropdownMenuItem
-              className={cn(
-                "gap-2 text-danger hover:bg-danger-bg hover:text-tag-red-fg",
-              )}
+              className={dangerItemClassName}
+              onClick={() => setShowDeleteDialog(true)}
             >
               <Trash2 className="size-4" />
               <span>Eliminar candidato</span>
@@ -98,6 +101,15 @@ export function ApplicantActionsMenu({
         setShowDialog={setShowDialog}
         applicantId={applicant.id}
       />
+
+      {canDeleteApplicant && (
+        <DeleteApplicantDialog
+          open={showDeleteDialog}
+          onOpenChange={setShowDeleteDialog}
+          applicantId={applicant.id}
+          applicantName={`${applicant.name} ${applicant.lastName}`.trim()}
+        />
+      )}
     </>
   );
 }

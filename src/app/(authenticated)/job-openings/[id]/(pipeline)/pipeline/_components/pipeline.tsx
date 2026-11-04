@@ -2,8 +2,8 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 
 import { auth } from "~/lib/auth";
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 
+import { PipelineHorizontalScroll } from "../../_components/pipeline-horizontal-scroll";
 import { PipelineColumn } from "./pipeline-column";
 import { PipelineColumnSkeleton } from "./pipeline-column-skeleton";
 import type { PipelineStage } from "./types";
@@ -11,11 +11,17 @@ import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
 
 type PipelineProps = {
   jobOpeningId: string;
+  jobOpeningName: string;
   stages: PipelineStage[];
   search?: string;
 };
 
-export async function Pipeline({ jobOpeningId, stages, search }: PipelineProps) {
+export async function Pipeline({
+  jobOpeningId,
+  jobOpeningName,
+  stages,
+  search,
+}: PipelineProps) {
   const requestHeaders = await headers();
 
   const [canUpdateApplication, canCreateInterview, canDeleteInterview] =
@@ -47,13 +53,14 @@ export async function Pipeline({ jobOpeningId, stages, search }: PipelineProps) 
     ]);
 
   return (
-    <ScrollArea className="w-full">
+    <PipelineHorizontalScroll>
       <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
         <div className="flex min-w-max gap-4 pb-4">
           {stages.map((stage, index) => (
             <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
               <PipelineColumn
                 jobOpeningId={jobOpeningId}
+                jobOpeningName={jobOpeningName}
                 stage={stage}
                 isLastStage={index === stages.length - 1}
                 search={search}
@@ -65,8 +72,6 @@ export async function Pipeline({ jobOpeningId, stages, search }: PipelineProps) 
           ))}
         </div>
       </PipelineDndProviderClient>
-
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    </PipelineHorizontalScroll>
   );
 }

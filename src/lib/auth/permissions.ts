@@ -9,6 +9,7 @@ import {
 const CRUD = ["read", "create", "update", "delete"] as const;
 
 export const accessStatements = {
+  dashboard: ["read"],
   publicLink: CRUD,
   jobRole: CRUD,
   area: CRUD,
@@ -16,6 +17,8 @@ export const accessStatements = {
   tag: CRUD,
   stageTemplate: CRUD,
   user: CRUD,
+
+  disqualificationMotive: ["read", "create", "delete"],
 
   // Entities with assigned scoping
   activity: [...CRUD, "readAssigned"],

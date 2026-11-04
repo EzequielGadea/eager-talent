@@ -2,13 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
 import {
@@ -25,22 +23,18 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "~/components/ui/combobox";
+} from "~/components/ui/combobox2";
 
 import { z } from "zod";
 
 import { api } from "~/lib/trpc/react";
 import { SalaryCurrency } from "~/generated/prisma/enums";
+import { salaryCurrencyTranslations } from "~/lib/enum-translations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldError,
-} from "~/components/ui/field";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
+import { Loader2, X } from "lucide-react";
 
 const applicationFormSchema = z
   .object({
@@ -48,20 +42,29 @@ const applicationFormSchema = z
     jobOpeningId: z.string({ error: "Debe indicar la vacante" }),
     desiredSalary: z.preprocess(
       (value) => (value === "" ? undefined : value),
-      z.coerce.number().positive().optional(),
+      z.coerce
+        .number()
+        .positive({
+          error: "El salario debe ser mayor a 0",
+        })
+        .optional(),
     ),
     currency: z.enum(SalaryCurrency).optional(),
     availability: z
-      .string({ error: "Debe indicar la disponibilidad" })
+      .string(
+        /* Este campo es opcional
+        { error: "Debe indicar la disponibilidad" }*/
+      )
       .trim()
-      .min(1, "La disponibilidad es demasiado corta."),
+      //.min(1, "La disponibilidad es demasiado corta.")
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.desiredSalary !== undefined && data.currency === undefined) {
       ctx.addIssue({
         code: "custom",
         path: ["currency"],
-        message: "Debe elegir una moneda.",
+        message: "Debe elegir una moneda si ingresa salario.",
       });
     }
 
@@ -69,7 +72,7 @@ const applicationFormSchema = z
       ctx.addIssue({
         code: "custom",
         path: ["desiredSalary"],
-        message: "Debe indicar el salario deseado.",
+        message: "Debe indicar el salario deseado si ingresa moneda.",
       });
     }
   });
@@ -92,6 +95,7 @@ export function ApplyToVacantDialog({
     handleSubmit,
     reset,
     setError,
+    trigger,
     formState: { errors, isValid },
   } = useForm<
     z.input<typeof applicationFormSchema>,
@@ -147,7 +151,7 @@ export function ApplyToVacantDialog({
       jobOpeningId: data.jobOpeningId,
       desiredSalary: data.desiredSalary,
       currency: data.currency,
-      availability: data.availability,
+      availability: data.availability ?? "",
     });
   }
 
@@ -164,180 +168,292 @@ export function ApplyToVacantDialog({
     control,
     name: "jobOpeningId",
   });
+
+  /*
+   *  con los siguientes watch y effect puedo hacer que el error de
+   *  monedas/salario se muestre al ingresar datos a los campos, comentarlos
+   *  junto con los disabled del boton de subida:
+   *  jobOpeningsError != null e isValid (lineas 392 y 393 al escribir esto)
+   *  si se prefiere que se bloquee el intento de submit si hay errores,
+   *  esas condiciones impiden se suba el form cuando zod encuentra algun error
+   */
+
+  const desiredSalary = useWatch({
+    control,
+    name: "desiredSalary",
+  });
+  const currency = useWatch({
+    control,
+    name: "currency",
+  });
+
+  useEffect(() => {
+    void trigger(["desiredSalary", "currency"]);
+  }, [desiredSalary, currency, trigger]);
   return (
-    <>
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
-          <form onSubmit={handleSubmit(createApplication)}>
-            <DialogHeader>
-              <DialogTitle>Postular candidato</DialogTitle>
-              <DialogDescription>
-                Por favor, completá la información para postular al candidato a
-                una vacante.
-              </DialogDescription>
-            </DialogHeader>
+    <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
+        <form
+          onSubmit={handleSubmit(createApplication)}
+          className="flex flex-col"
+        >
+          <div className="border-b border-border-default px-6 py-5">
+            <DialogTitle className="text-text-primary">
+              Postular candidato
+            </DialogTitle>
+
+            <DialogDescription className="mt-1 text-sm text-text-secondary">
+              Por favor, completá la información para postular al candidato a
+              una vacante.
+            </DialogDescription>
+          </div>
+
+          <div className="flex flex-col gap-5 px-6 py-5">
             {errors.root && (
-              <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {errors.root.message}
-              </div>
-            )}
-            {jobOpeningsError && (
-              <div
+              <p
                 role="alert"
-                className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
+              >
+                {errors.root.message}
+              </p>
+            )}
+
+            {jobOpeningsError && (
+              <p
+                role="alert"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 {jobOpeningsError.message}
-              </div>
+              </p>
             )}
+
             {!isLoadingJobOpening &&
               !jobOpeningsError &&
               jobOpenings?.length === 0 && (
-                <p className="mb-4 rounded-md border border-border-default bg-muted px-3 py-2 text-sm text-text-secondary">
-                  No hay vacantes en las que postular al candidato disponibles.
+                <p className="rounded-md border border-border-default bg-muted px-3 py-2 text-sm text-text-secondary">
+                  No hay vacantes disponibles para postular al candidato.
                 </p>
               )}
-            <FieldGroup>
-              <Controller
-                control={control}
-                name="jobOpeningId"
-                render={({ field, fieldState }) => {
-                  const selected =
-                    jobOpenings?.find((item) => item.id === field.value) ??
-                    null;
 
-                  return (
-                    <Field>
-                      <FieldLabel>Vacante</FieldLabel>
-                      <Combobox
-                        items={jobOpenings ?? []}
-                        name={field.name}
-                        value={selected}
-                        autoHighlight
-                        onValueChange={(item) => field.onChange(item?.id ?? "")}
-                        itemToStringValue={(item) => item.id}
-                        itemToStringLabel={(item) => item.name}
-                        isItemEqualToValue={(a, b) => a.id === b.id}
-                      >
-                        <ComboboxInput
-                          placeholder="Buscar vacante..."
-                          onBlur={field.onBlur}
-                          aria-invalid={fieldState.invalid}
-                          showClear
-                          className="flex justify-between *:grow"
-                        />
-                        <ComboboxContent className="w-full justify-between">
-                          <ComboboxEmpty>No hay vacantes.</ComboboxEmpty>
-                          <ComboboxList>
-                            {(item) => (
-                              <ComboboxItem key={item.id} value={item}>
-                                {item.name}
-                              </ComboboxItem>
-                            )}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
-                      {fieldState.invalid && (
-                        <FieldError>{fieldState.error?.message}</FieldError>
-                      )}
-                    </Field>
-                  );
-                }}
-              />
-              <Controller
-                control={control}
-                name="availability"
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel>Disponibilidad</FieldLabel>
-                    <Input
-                      placeholder="Ej. Inmediata, 15 días, 1 mes"
-                      disabled={!isJobOpeningSelected}
-                      {...field}
-                    />
-                    {fieldState.invalid && isJobOpeningSelected && (
-                      <FieldError>{fieldState.error?.message}</FieldError>
+            <Controller
+              control={control}
+              name="jobOpeningId"
+              render={({ field, fieldState }) => {
+                const selected =
+                  jobOpenings?.find((item) => item.id === field.value) ?? null;
+
+                return (
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="apply-job-opening"
+                      className="text-sm font-medium text-text-primary"
+                    >
+                      Vacante
+                    </label>
+
+                    <Combobox
+                      items={jobOpenings ?? []}
+                      name={field.name}
+                      value={selected}
+                      autoHighlight
+                      onValueChange={(item) => field.onChange(item?.id ?? "")}
+                      itemToStringValue={(item) => item.id}
+                      itemToStringLabel={(item) => item.name}
+                      isItemEqualToValue={(a, b) => a.id === b.id}
+                    >
+                      <ComboboxInput
+                        id="apply-job-opening"
+                        placeholder="Buscar vacante..."
+                        onBlur={field.onBlur}
+                        aria-invalid={fieldState.invalid}
+                        showClear
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>No hay vacantes.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(item) => (
+                            <ComboboxItem key={item.id} value={item}>
+                              {item.name}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+
+                    {fieldState.invalid && (
+                      <p className="text-xs text-danger">
+                        {fieldState.error?.message}
+                      </p>
                     )}
-                  </Field>
-                )}
-              />
-              <div className="flex flex-col gap-4 sm:flex-row mb-5">
+                  </div>
+                );
+              }}
+            />
+
+            <div className="grid gap-2">
+              <label
+                htmlFor="apply-desired-salary"
+                className="text-sm font-medium text-text-primary"
+              >
+                Salario deseado
+              </label>
+
+              <div className="grid grid-cols-[1fr_120px] gap-2">
                 <Controller
                   control={control}
                   name="desiredSalary"
                   render={({ field, fieldState }) => (
-                    <Field>
-                      <FieldLabel>Salario deseado</FieldLabel>
+                    <div className="grid gap-1">
                       <Input
+                        id="apply-desired-salary"
                         type="number"
-                        placeholder="Ej. 3.500"
+                        step="0.01"
+                        placeholder="Ej. 3500"
                         disabled={!isJobOpeningSelected}
                         min={0}
+                        aria-invalid={
+                          fieldState.invalid && !!isJobOpeningSelected
+                        }
                         {...field}
                         value={
                           (field.value as string | number | undefined) ?? ""
                         }
                       />
+
                       {fieldState.invalid && isJobOpeningSelected && (
-                        <FieldError>{fieldState.error?.message}</FieldError>
+                        <p className="text-xs text-danger">
+                          {fieldState.error?.message}
+                        </p>
                       )}
-                    </Field>
+                    </div>
                   )}
                 />
+
                 <Controller
                   control={control}
                   name="currency"
                   render={({ field, fieldState }) => (
-                    <Field>
-                      <FieldLabel>Moneda</FieldLabel>
+                    <div className="grid gap-1">
                       <Select
                         value={field.value ?? null}
                         onValueChange={field.onChange}
                         disabled={!isJobOpeningSelected}
                       >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Moneda" />
+                        <SelectTrigger
+                          aria-label="Moneda"
+                          aria-invalid={
+                            fieldState.invalid && !!isJobOpeningSelected
+                          }
+                          className="w-full disabled:bg-input/50 dark:disabled:bg-input/80"
+                        >
+                          <SelectValue placeholder="Moneda">
+                            {field.value
+                              ? salaryCurrencyTranslations[field.value]
+                              : undefined}
+                          </SelectValue>
+                          {field.value && (
+                            <span
+                              role="button"
+                              tabIndex={isJobOpeningSelected ? 0 : -1}
+                              onPointerDown={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                field.onChange(undefined);
+                              }}
+                              aria-label="Quitar moneda"
+                              className="ml-auto rounded-sm p-1 text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="h-4 w-4" />
+                            </span>
+                          )}
                         </SelectTrigger>
 
                         <SelectContent>
-                          <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="UYU">UYU</SelectItem>
+                          {Object.values(SalaryCurrency).map((currency) => (
+                            <SelectItem key={currency} value={currency}>
+                              {salaryCurrencyTranslations[currency]}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
+
                       {fieldState.invalid && isJobOpeningSelected && (
-                        <FieldError>{fieldState.error?.message}</FieldError>
+                        <p className="text-xs text-danger">
+                          {fieldState.error?.message}
+                        </p>
                       )}
-                    </Field>
+                    </div>
                   )}
                 />
               </div>
-            </FieldGroup>
-            <DialogFooter>
+            </div>
+
+            <Controller
+              control={control}
+              name="availability"
+              render={({ field, fieldState }) => (
+                <div className="grid gap-2">
+                  <label
+                    htmlFor="apply-availability"
+                    className="text-sm font-medium text-text-primary"
+                  >
+                    Disponibilidad
+                  </label>
+
+                  <Input
+                    id="apply-availability"
+                    placeholder="Ej. Inmediata, 15 días, 1 mes"
+                    disabled={!isJobOpeningSelected}
+                    aria-invalid={fieldState.invalid && !!isJobOpeningSelected}
+                    {...field}
+                  />
+
+                  {fieldState.invalid && isJobOpeningSelected && (
+                    <p className="text-xs text-danger">
+                      {fieldState.error?.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
+            <div className="flex justify-end gap-2 border-t border-border-default pt-4">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setShowDialog(false)}
+                onClick={() => {
+                  reset();
+                  setShowDialog(false);
+                }}
               >
                 Cancelar
               </Button>
+
               <Button
                 type="submit"
                 disabled={
+                  !isJobOpeningSelected ||
                   createApplicationMutation.isPending ||
                   isTransitionPending ||
                   isLoadingJobOpening ||
-                  !!jobOpeningsError ||
+                  jobOpeningsError != null ||
                   !isValid ||
                   !jobOpenings?.length
                 }
               >
-                {createApplicationMutation.isPending || isTransitionPending
-                  ? "Enviando..."
-                  : "Postular"}
+                {(createApplicationMutation.isPending ||
+                  isTransitionPending) && (
+                  <Loader2 className="size-4 animate-spin" />
+                )}
+                Postular
               </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
+            </div>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

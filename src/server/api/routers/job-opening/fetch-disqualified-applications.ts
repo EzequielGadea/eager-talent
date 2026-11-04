@@ -41,6 +41,7 @@ export const fetchDisqualifiedApplications = protectedProcedure
     const applications = await ctx.db.application.findMany({
       where: {
         jobOpeningId: input.jobOpeningId,
+        deletedAt: null,
         active: false,
         disqualificationDate: { not: null },
         applicant: getApplicantByKeywordWhere(input.search),

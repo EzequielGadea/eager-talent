@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
         hostname: "img.a.transfermarkt.technology",
         pathname: "/portrait/**",
       },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        pathname: "/f/**",
+      },
     ],
   },
   experimental: {

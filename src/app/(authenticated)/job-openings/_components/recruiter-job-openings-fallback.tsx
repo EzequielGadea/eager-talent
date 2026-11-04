@@ -10,15 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { JobOpeningCardListSkeleton } from "./job-opening-card-list";
 
 export function RecruiterJobOpeningsFallback() {
   return (
-    <div aria-busy="true" className="mx-auto flex w-full flex-col gap-5 p-6">
+    <div aria-busy="true" className="mx-auto flex w-full flex-col gap-5">
       <span className="sr-only">Cargando vacantes</span>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Vacantes</h1>
+          <h1 className="font-heading text-h1 text-text-primary">Vacantes</h1>
 
           <div className="mt-2 flex items-center gap-2">
             <Skeleton className="h-4 w-64" />
@@ -31,7 +32,7 @@ export function RecruiterJobOpeningsFallback() {
             variant="outline"
             size="sm"
             disabled
-            className="h-8 px-4 text-[13px] font-normal text-text-secondary"
+            className="h-8 px-4 text-small font-normal text-text-secondary"
           >
             <Filter data-icon="inline-start" />
             Filtrar
@@ -42,7 +43,7 @@ export function RecruiterJobOpeningsFallback() {
             variant="outline"
             size="sm"
             disabled
-            className="h-8 px-4 text-[13px] font-normal text-text-secondary"
+            className="h-8 px-4 text-small font-normal text-text-secondary"
           >
             Ordenar
             <ChevronDown data-icon="inline-end" />
@@ -51,19 +52,21 @@ export function RecruiterJobOpeningsFallback() {
           <Button
             size="sm"
             disabled
-            className="rounded-full bg-dashboard-dark text-text-on-dark"
+            className="h-8.5 w-8.5 gap-2 px-0 rounded-full bg-surface-dark text-small font-semibold text-text-on-dark shadow-none hover:bg-surface-dark/90 md:h-7 md:w-auto md:px-2.5"
           >
             <Plus data-icon="inline-start" />
-            Nueva vacante
+            <span className="sr-only md:not-sr-only">Nueva vacante</span>
           </Button>
         </div>
       </div>
 
-      <div className="w-full overflow-hidden rounded-xl border border-dashboard-border bg-background shadow-sm">
-        <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-hidden rounded-xl border border-border-default bg-background shadow-sm">
+        <JobOpeningCardListSkeleton />
+
+        <div className="hidden w-full overflow-x-auto md:block">
           <Table className="min-w-[900px]">
             <TableHeader>
-              <TableRow className="border-b border-dashboard-border bg-(--surface-subtle) hover:bg-(--surface-subtle)">
+              <TableRow className="border-b border-border-default bg-surface-subtle hover:bg-surface-subtle">
                 <TableHead className="px-4 py-3">Vacante</TableHead>
                 <TableHead className="px-4 py-3">Área</TableHead>
                 <TableHead className="px-4 py-3">Hiring Managers</TableHead>
@@ -74,7 +77,7 @@ export function RecruiterJobOpeningsFallback() {
               </TableRow>
             </TableHeader>
 
-            <TableBody className="divide-y divide-dashboard-border">
+            <TableBody className="divide-y divide-border-default">
               {Array.from({ length: 8 }).map((_, index) => (
                 <TableRow key={index} className="h-17.5 hover:bg-transparent">
                   <TableCell className="px-4 py-3">
@@ -104,7 +107,7 @@ export function RecruiterJobOpeningsFallback() {
           </Table>
         </div>
 
-        <div className="flex items-center justify-between border-t border-dashboard-border px-4 py-3">
+        <div className="flex flex-col items-center gap-3 border-t border-border-default px-4 py-3 sm:flex-row sm:justify-between">
           <Skeleton className="h-4 w-44" />
           <Skeleton className="h-7.5 w-40 rounded-lg" />
         </div>

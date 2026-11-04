@@ -39,6 +39,7 @@ export const moveApplicationToStage = protectedProcedure
             applicantId: input.applicantId,
             jobOpeningId: input.jobOpeningId,
           },
+          deletedAt: null,
         },
         select: {
           applicantId: true,

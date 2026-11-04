@@ -14,12 +14,16 @@ export const createApplicationProcedure = protectedProcedure
         desiredSalary: z.number().positive().optional(),
         currency: z.enum(SalaryCurrency).optional(),
         availability: z
-          .string({
+          .string(
+            /* Este campo es opcional
+            {
             error:
               "Debe proveer una descripcion de cuando estara disponible para trabajar si se lo contrata.",
-          })
+          }*/
+          )
           .trim()
-          .min(1, "La descripcion de su disponibilidad es muy corta."),
+          //.min(1, "La descripcion de su disponibilidad es muy corta."),
+          .optional(),
       })
       .superRefine((data, ctx) => {
         if (data.desiredSalary !== undefined && data.currency === undefined) {
@@ -49,6 +53,18 @@ export const createApplicationProcedure = protectedProcedure
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "No tenés permiso para crear postulaciones",
+      });
+    }
+
+    const applicant = await ctx.db.applicant.findUnique({
+      where: { id: input.applicantId, deletedAt: null },
+      select: { id: true },
+    });
+
+    if (!applicant) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Candidato no encontrado.",
       });
     }
 

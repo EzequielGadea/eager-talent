@@ -82,7 +82,7 @@ export function ApplicantApplicationDropdown({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="group/dropdown-trigger relative flex h-auto min-h-9 w-full max-w-full items-center gap-2 rounded-xl border border-border-strong bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-popup-open:border-accent-green data-popup-open:ring-1 data-popup-open:ring-accent-green sm:w-56 lg:w-72">
+      <DropdownMenuTrigger className="group/dropdown-trigger relative flex h-auto min-h-9 w-full max-w-full items-center gap-2 rounded-xl border border-border-default bg-background py-1.5 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition-[border-color,box-shadow,background-color] duration-150 hover:not-focus-visible:not-data-popup-open:border-border-strong hover:bg-tag-gray-bg focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20 data-popup-open:border-border-focus data-popup-open:ring-4 data-popup-open:ring-border-focus/20 sm:w-56 lg:w-90">
         <Briefcase className="h-4 w-4 shrink-0 text-text-secondary" />
         <span className="min-w-0 flex-1 truncate">{triggerLabel}</span>
         <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 shrink-0 text-text-tertiary transition-transform group-data-popup-open/dropdown-trigger:rotate-180" />
@@ -92,7 +92,7 @@ export function ApplicantApplicationDropdown({
         align="start"
         className="w-[min(28rem,calc(100vw-2rem))] rounded-xl border border-border-strong p-0 shadow-lg"
       >
-        <div className="border-b border-border-default bg-surface-subtle px-3.25 py-2.25 text-[11px] font-bold tracking-wider text-text-tertiary uppercase">
+        <div className="border-b border-border-default bg-surface-subtle px-3.25 py-2.25 text-label font-bold tracking-wider text-text-tertiary uppercase">
           Postulaciones de {applicantName}
         </div>
         <div className="max-h-60 overflow-y-auto">

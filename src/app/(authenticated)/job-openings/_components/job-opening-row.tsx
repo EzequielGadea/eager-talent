@@ -15,7 +15,7 @@ import { statusConfig } from "../constants";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
 
-type JobOpening =
+export type JobOpening =
   inferRouterOutputs<AppRouter>["jobOpening"]["getAllJobOpeningsDetailed"][number];
 
 type Props = {
@@ -23,16 +23,7 @@ type Props = {
   isHiringManagerView: boolean;
 };
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((word) => word[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
-function HiringManagersCell({
+export function HiringManagersCell({
   managers,
 }: {
   managers: JobOpening["hiringManagers"];
@@ -56,34 +47,36 @@ function HiringManagersCell({
   const otherManagers = managers.slice(1);
 
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-text-secondary">{firstManagerName}</span>
+    <div className="min-w-0 text-text-secondary">
+      <span className="inline-flex max-w-full items-baseline whitespace-nowrap">
+        {firstManagerName}
 
-      <Popover>
-        <PopoverTrigger
-          onClick={(e) => e.stopPropagation()}
-          className="cursor-pointer text-text-link hover:underline"
-        >
-          +{otherManagers.length}
-        </PopoverTrigger>
+        <Popover>
+          <PopoverTrigger
+            onClick={(e) => e.stopPropagation()}
+            className="ml-1 inline-flex cursor-pointer text-text-link hover:underline"
+          >
+            +{otherManagers.length}
+          </PopoverTrigger>
 
-        <PopoverContent
-          className="w-56 p-3"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <p className="mb-2 text-xs font-semibold text-text-primary">
-            Otros Hiring Managers
-          </p>
+          <PopoverContent
+            className="w-56 p-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="mb-2 text-xs font-semibold text-text-primary">
+              Otros Hiring Managers
+            </p>
 
-          <div className="flex flex-col gap-2">
-            {otherManagers.map((manager) => (
-              <span key={manager.id} className="text-sm text-text-secondary">
-                {manager.name} {manager.lastName}
-              </span>
-            ))}
-          </div>
-        </PopoverContent>
-      </Popover>
+            <div className="flex flex-col gap-2">
+              {otherManagers.map((manager) => (
+                <span key={manager.id} className="text-sm text-text-secondary">
+                  {manager.name} {manager.lastName}
+                </span>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      </span>
     </div>
   );
 }
@@ -99,23 +92,18 @@ export default function JobOpeningRow({
     day: "numeric",
     month: "short",
     year: "numeric",
+    timeZone: "UTC",
   }).format(new Date(jobOpening.openingDate));
 
   return (
     <TableRow
       onClick={() => router.push(`/job-openings/${jobOpening.id}`)}
-      className="group cursor-pointer border-b border-border-default transition-colors last:border-b-0 hover:bg-accent-green/5"
+      className="group cursor-pointer border-b border-border-default transition-colors last:border-b-0 hover:bg-success-bg"
     >
       <TableCell className="px-4 py-3">
-        <div className="flex items-center gap-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-tag-green-bg text-xs font-semibold text-tag-green-fg">
-            {getInitials(jobOpening.name)}
-          </div>
-
-          <span className="font-semibold text-text-primary">
-            {jobOpening.name}
-          </span>
-        </div>
+        <span className="font-semibold text-text-primary">
+          {jobOpening.name}
+        </span>
       </TableCell>
 
       <TableCell className="px-4 py-3 text-text-secondary">
@@ -123,7 +111,7 @@ export default function JobOpeningRow({
       </TableCell>
 
       {!isHiringManagerView && (
-        <TableCell className="px-4 py-3 text-text-secondary">
+        <TableCell className="w-[14rem] min-w-[14rem] px-4 py-3 text-text-secondary">
           <HiringManagersCell managers={jobOpening.hiringManagers} />
         </TableCell>
       )}
@@ -138,7 +126,7 @@ export default function JobOpeningRow({
         </span>
       </TableCell>
 
-      <TableCell className="px-4 py-3">
+      <TableCell className="w-[9.5rem] min-w-[9.5rem] whitespace-nowrap px-4 py-3">
         <div className="flex items-center gap-1.5">
           <span className="font-semibold text-text-primary">
             {jobOpening.applicants}

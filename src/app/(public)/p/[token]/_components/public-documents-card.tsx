@@ -62,8 +62,8 @@ function DocumentCard({
           <File className={`size-3.5 ${iconClassName}`} />
         </span>
 
-        <CardTitle className="min-w-0 wrap-anywhere text-xs font-semibold text-text-secondary group-data-[size=sm]/card:text-xs">
-          <h2>{title}</h2>
+        <CardTitle className="min-w-0 wrap-anywhere font-sans text-xs font-medium text-text-secondary group-data-[size=sm]/card:text-xs">
+          <h2 className="font-sans">{title}</h2>
         </CardTitle>
       </CardHeader>
 

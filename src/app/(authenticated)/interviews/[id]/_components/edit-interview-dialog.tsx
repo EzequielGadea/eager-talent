@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TZDate } from "@date-fns/tz";
+import { parseDateTime, toZoned } from "@internationalized/date";
 import { format } from "date-fns";
 import { Loader2, Pencil, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { DatePicker } from "~/components/ui/date-picker";
 import { Input } from "~/components/ui/input";
 import {
   Select,
@@ -25,16 +27,19 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { toast } from "~/components/ui/toast";
-import type { InterviewType } from "~/generated/prisma/enums";
+import { InterviewType } from "~/generated/prisma/enums";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { cn } from "~/lib/utils";
 
+const INTERVIEW_TIME_ZONE = "America/Montevideo";
+
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120];
 
-const MODALITY_OPTIONS = [
-  { value: "VideoCall", label: "Videollamada" },
-  { value: "InPerson", label: "Presencial" },
-] as const;
+const MODALITY_OPTIONS = Object.values(InterviewType).map((value) => ({
+  value,
+  label: interviewTypeTranslations[value],
+}));
 
 const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
@@ -93,11 +98,14 @@ const fieldLabel = "text-sm font-medium text-text-secondary";
 const fieldControl =
   "h-11 rounded-xl bg-surface-card focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20";
 
+const datePickerControl =
+  "[--date-picker-height:2.75rem] [--date-picker-radius:var(--radius-xl)]";
+
 function getInitialValues(
   interview: EditableInterview,
 ): EditInterviewFormValues {
   const mvdDate = interview.date
-    ? new TZDate(interview.date, "America/Montevideo")
+    ? new TZDate(interview.date, INTERVIEW_TIME_ZONE)
     : null;
 
   return {
@@ -200,8 +208,10 @@ export function EditInterviewDialog({
   const isPending = updateInterview.isPending || isRefreshing;
 
   function onSubmit(data: EditInterviewFormValues) {
-    const [year, month, day] = data.date.split("-").map(Number);
-    const [hour, minute] = data.time.split(":").map(Number);
+    const date = toZoned(
+      parseDateTime(`${data.date}T${data.time}`),
+      INTERVIEW_TIME_ZONE,
+    ).toDate();
 
     updateInterview.mutate({
       id: interview.id,
@@ -210,16 +220,7 @@ export function EditInterviewDialog({
         : data.exploratoryName?.trim(),
       modality: data.modality as InterviewType,
       duration: data.duration,
-      date: new TZDate(
-        year!,
-        month! - 1,
-        day!,
-        hour!,
-        minute!,
-        0,
-        0,
-        "America/Montevideo",
-      ),
+      date,
       interviewerIds: data.interviewerIds,
     });
   }
@@ -236,7 +237,7 @@ export function EditInterviewDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="w-full max-w-xl gap-0 overflow-visible rounded-2xl p-0 sm:max-w-xl">
         <div className="border-b border-border-default px-6 py-5">
-          <DialogTitle className="text-xl font-semibold text-text-primary">
+          <DialogTitle className="text-h3 text-text-primary">
             Editar entrevista
           </DialogTitle>
 
@@ -272,11 +273,22 @@ export function EditInterviewDialog({
                 <label htmlFor="edit-interview-date" className={fieldLabel}>
                   Fecha
                 </label>
-                <Input
-                  id="edit-interview-date"
-                  type="date"
-                  className={fieldControl}
-                  {...register("date")}
+                <Controller
+                  control={control}
+                  name="date"
+                  render={({ field }) => (
+                    <DatePicker
+                      id="edit-interview-date"
+                      name={field.name}
+                      aria-label="Fecha"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      isInvalid={!!errors.date}
+                      className={datePickerControl}
+                    />
+                  )}
                 />
                 {errors.date && (
                   <p className="text-xs text-danger">{errors.date.message}</p>
@@ -420,7 +432,7 @@ export function EditInterviewDialog({
                             className="absolute right-0 bottom-full left-0 z-20 mb-2 max-h-56 overflow-y-auto rounded-xl border border-border-default bg-surface-card p-2 shadow-lg"
                             onMouseDown={(event) => event.preventDefault()}
                           >
-                            <p className="px-2 pt-1 pb-2 font-sans text-xs font-bold tracking-[0.06em] text-text-secondary uppercase">
+                            <p className="px-2 pt-1 pb-2 font-sans text-label font-bold tracking-wider text-text-secondary uppercase">
                               USUARIOS DEL SISTEMA
                             </p>
 
@@ -454,7 +466,7 @@ export function EditInterviewDialog({
                                   }}
                                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-hover focus-visible:bg-surface-hover"
                                 >
-                                  <span className="flex size-7 items-center justify-center rounded-full bg-tag-purple-bg text-[11px] font-semibold text-tag-purple-fg">
+                                  <span className="flex size-7 items-center justify-center rounded-full bg-tag-purple-bg text-label font-semibold text-tag-purple-fg">
                                     {initialsOf(
                                       interviewer.name,
                                       interviewer.lastName,
@@ -497,7 +509,7 @@ export function EditInterviewDialog({
                               key={interviewer.id}
                               className="flex items-center gap-2 rounded-full border border-border-default bg-surface-subtle py-1 pr-1 pl-1"
                             >
-                              <span className="flex size-6 items-center justify-center rounded-full bg-tag-purple-bg text-[10px] font-semibold text-tag-purple-fg">
+                              <span className="flex size-6 items-center justify-center rounded-full bg-tag-purple-bg text-label font-semibold text-tag-purple-fg">
                                 {initialsOf(
                                   interviewer.name,
                                   interviewer.lastName,
@@ -549,7 +561,7 @@ export function EditInterviewDialog({
             </Button>
             <Button
               type="submit"
-              className="rounded-full bg-dashboard-dark px-5 text-text-on-dark hover:bg-dashboard-dark-hover"
+              className="rounded-full bg-surface-dark px-5 text-text-on-dark hover:bg-surface-dark/90"
               disabled={isPending}
             >
               {isPending ? (

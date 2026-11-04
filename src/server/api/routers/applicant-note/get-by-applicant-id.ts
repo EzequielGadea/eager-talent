@@ -34,6 +34,7 @@ export const getApplicantNoteByApplicantIdProcedure = protectedProcedure
       ctx.db.applicant.findFirst({
         where: {
           id: input.applicantId,
+          deletedAt: null,
           ...(canReadAllResult.success
             ? {}
             : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
@@ -41,7 +42,7 @@ export const getApplicantNoteByApplicantIdProcedure = protectedProcedure
         select: { id: true },
       }),
       ctx.db.applicantNote.findUnique({
-        where: { applicantId: input.applicantId },
+        where: { applicantId: input.applicantId, deletedAt: null },
         select: {
           id: true,
           content: true,

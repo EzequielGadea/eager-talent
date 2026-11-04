@@ -64,6 +64,7 @@ export const getActivitiesByApplicantIdProcedure = protectedProcedure
     const applicant = await ctx.db.applicant.findFirst({
       where: {
         id: input.applicantId,
+        deletedAt: null,
         ...(canReadApplicantWithoutAssignment
           ? {}
           : isHiringManagerAssignedToApplicant(ctx.session.user.id)),
@@ -80,11 +81,12 @@ export const getActivitiesByApplicantIdProcedure = protectedProcedure
 
     const where = {
       applicantId: input.applicantId,
+      deletedAt: null,
       ...(input.jobOpeningId ? { jobOpeningId: input.jobOpeningId } : {}),
     };
     const [applications, total] = await Promise.all([
       ctx.db.application.findMany({
-        where: { applicantId: input.applicantId },
+        where: { applicantId: input.applicantId, deletedAt: null },
         select: { jobOpeningId: true, jobOpening: { select: { name: true } } },
         orderBy: [{ jobOpening: { name: "asc" } }, { jobOpeningId: "asc" }],
       }),

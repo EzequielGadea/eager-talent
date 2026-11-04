@@ -274,7 +274,7 @@ export function ShareWithHiringManagerDialog({
       <DialogContent
         data-applicant-id={applicantId}
         showCloseButton={false}
-        className="grid max-h-[calc(100dvh-2rem)] w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        className="grid max-h-[calc(100dvh-2rem)] w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden bg-card p-0 sm:max-w-2xl"
       >
         <DialogHeader className="relative gap-3 px-6 py-5 pr-16">
           <div className="flex items-center gap-3">
@@ -282,7 +282,7 @@ export function ShareWithHiringManagerDialog({
               <UserRoundPlus className="size-5" aria-hidden="true" />
             </div>
 
-            <DialogTitle className="text-xl font-bold text-text-primary">
+            <DialogTitle className="text-h3 text-text-primary">
               Compartir con un Hiring Manager
             </DialogTitle>
           </div>
@@ -376,7 +376,7 @@ export function ShareWithHiringManagerDialog({
             >
               <ComboboxChips
                 ref={comboboxAnchor}
-                className="min-h-12 rounded-xl px-3 py-2 focus-within:border-border-focus focus-within:ring-4 focus-within:ring-border-focus/20"
+                className="min-h-12 rounded-xl px-3 py-2"
               >
                 <ComboboxValue>
                   {(value: HiringManagerOption[]) => (
@@ -429,9 +429,11 @@ export function ShareWithHiringManagerDialog({
                 className="overflow-hidden rounded-xl p-2"
               >
                 <ComboboxEmpty>
-                  {sharingDataQuery.isLoading
-                    ? "Cargando Hiring Managers..."
-                    : "No se encontraron Hiring Managers."}
+                  {sharingDataQuery.isLoading ? (
+                    <Skeleton className="mx-auto h-4 w-40" />
+                  ) : (
+                    "No se encontraron Hiring Managers."
+                  )}
                 </ComboboxEmpty>
 
                 <ComboboxList className="max-h-52 overflow-y-scroll! overscroll-contain scrollbar-gutter-stable [scrollbar-color:var(--border-default)_var(--muted)] scrollbar-thin! [&::-webkit-scrollbar]:block! [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-muted [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border-default">
@@ -439,7 +441,7 @@ export function ShareWithHiringManagerDialog({
                     <ComboboxItem
                       key={manager.id}
                       value={manager}
-                      className="min-h-16 rounded-lg px-3 py-2"
+                      className="min-h-16 rounded-lg px-3 py-2 data-highlighted:bg-surface-hover data-highlighted:text-text-primary"
                     >
                       <HiringManagerAvatar manager={manager} />
 
@@ -472,18 +474,20 @@ export function ShareWithHiringManagerDialog({
 
           <section className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-4">
-              <h3 className="text-xs font-bold tracking-wide text-text-tertiary">
+              <h3 className="font-sans text-xs font-bold tracking-wide text-text-tertiary">
                 YA TIENE ACCESO
               </h3>
 
               <span aria-live="polite" className="text-sm text-text-tertiary">
-                {sharingDataQuery.isLoading
-                  ? "Cargando..."
-                  : sharingDataQuery.error
-                    ? "—"
-                    : `${currentAccess.length} ${
-                        currentAccess.length === 1 ? "persona" : "personas"
-                      }`}
+                {sharingDataQuery.isLoading ? (
+                  <Skeleton className="h-4 w-16" />
+                ) : sharingDataQuery.error ? (
+                  "—"
+                ) : (
+                  `${currentAccess.length} ${
+                    currentAccess.length === 1 ? "persona" : "personas"
+                  }`
+                )}
               </span>
             </div>
 

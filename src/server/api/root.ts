@@ -8,14 +8,14 @@ import { interviewNoteRouter } from "./routers/interview-note";
 import { areaRouter } from "./routers/area";
 import { jobOpeningRouter } from "./routers/job-opening";
 import { publicLinkRouter } from "./routers/public-link";
-import { roleRouter } from "./routers/job-role";
+import { jobRoleRouter } from "./routers/job-role";
 import { searchRouter } from "./routers/search";
 import { seniorityRouter } from "./routers/seniority";
 import { tagRouter } from "./routers/tag";
 import { userRouter } from "./routers/user";
-import { usersRouter } from "./routers/users";
 import { templateStagesRouter } from "./routers/template-stages";
-import { descalificationMotiveRouter } from "./routers/descalification-motive";
+import { disqualificationMotiveRouter } from "./routers/disqualification-motive";
+import { metricsRouter } from "./routers/metrics";
 
 export const appRouter = createTRPCRouter({
   applicant: applicantRouter,
@@ -25,16 +25,16 @@ export const appRouter = createTRPCRouter({
   interview: interviewsRouter,
   interviewNote: interviewNoteRouter,
   area: areaRouter,
-  role: roleRouter,
+  jobRole: jobRoleRouter,
   seniority: seniorityRouter,
   jobOpening: jobOpeningRouter,
   publicLink: publicLinkRouter,
   search: searchRouter,
   tag: tagRouter,
   user: userRouter,
-  users: usersRouter,
   templateStages: templateStagesRouter,
-  descalificationMotive: descalificationMotiveRouter,
+  disqualificationMotive: disqualificationMotiveRouter,
+  metrics: metricsRouter,
 });
 
 export type AppRouter = typeof appRouter;

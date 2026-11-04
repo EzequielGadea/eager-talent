@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { auth } from "~/lib/auth";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 import type { api } from "~/lib/trpc/server";
 import {
   NO_APPLICATION_LABEL,
@@ -21,11 +22,6 @@ type Interview = Awaited<ReturnType<typeof api.interview.getById>>;
 
 type InterviewDetailsProps = {
   interviewPromise: Promise<Interview>;
-};
-
-const MODALITY_LABELS: Record<Interview["modality"], string> = {
-  VideoCall: "Videollamada",
-  InPerson: "Presencial",
 };
 
 export async function InterviewDetails({
@@ -59,7 +55,10 @@ export async function InterviewDetails({
         : "Sin fecha definida",
     },
     { label: "Duración", value: `${interview.duration} min` },
-    { label: "Modalidad", value: MODALITY_LABELS[interview.modality] },
+    {
+      label: "Modalidad",
+      value: interviewTypeTranslations[interview.modality],
+    },
     {
       label: "Entrevistadores",
       value: interview.interviewers

@@ -50,6 +50,7 @@ export function getJobOpeningFilterWhere(
       applications: {
         some: {
           active: true,
+          deletedAt: null,
         },
       },
     }),

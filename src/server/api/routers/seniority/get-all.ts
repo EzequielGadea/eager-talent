@@ -7,8 +7,6 @@ export const getAllSeniorities = protectedProcedure
   .input(z.object({}))
   .query(async ({ ctx }) => {
     const seniorities = await ctx.db.seniority.findMany({
-      where: { deletedAt: null },
-
       select: {
         id: true,
         name: true,

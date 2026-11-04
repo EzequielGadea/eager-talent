@@ -18,11 +18,15 @@ import { AddApplicantSelection } from "./add-applicant-selection";
 
 type AddApplicantDialogProps = {
   jobOpeningId: string;
+  disabled?: boolean;
 };
 
 type Step = "select" | "application";
 
-export function AddApplicantDialog({ jobOpeningId }: AddApplicantDialogProps) {
+export function AddApplicantDialog({
+  jobOpeningId,
+  disabled = false,
+}: AddApplicantDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<Step>("select");
   const [selectedApplicant, setSelectedApplicant] =
@@ -50,20 +54,29 @@ export function AddApplicantDialog({ jobOpeningId }: AddApplicantDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <Button
-        type="button"
-        className="h-10 gap-2 rounded-full px-5"
-        onClick={() => setOpen(true)}
+      <span
+        title={
+          disabled
+            ? "Solo se puede postular candidatos a vacantes abiertas"
+            : undefined
+        }
       >
-        <Plus className="size-4" />
-        Candidato
-      </Button>
+        <Button
+          type="button"
+          className="h-10 gap-2 px-5 rounded-full bg-surface-dark text-small font-semibold text-text-on-dark shadow-none hover:bg-surface-dark/90"
+          disabled={disabled}
+          onClick={() => setOpen(true)}
+        >
+          <Plus className="size-4" />
+          Candidato
+        </Button>
+      </span>
 
       <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
         {step === "select" ? (
           <>
             <div className="border-b border-border-default px-6 py-5">
-              <DialogTitle className="text-lg font-semibold text-text-primary">
+              <DialogTitle className="text-text-primary">
                 Agregar Candidato
               </DialogTitle>
 

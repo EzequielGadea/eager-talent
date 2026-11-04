@@ -15,6 +15,7 @@ export function isHiringManagerAssignedToApplicant(
       {
         applications: {
           some: {
+            deletedAt: null,
             jobOpening: {
               hiringManagers: { some: { id: userId } },
             },

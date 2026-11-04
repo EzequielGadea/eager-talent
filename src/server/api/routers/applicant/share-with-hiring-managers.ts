@@ -50,6 +50,7 @@ export const shareWithHiringManagers = protectedProcedure
       ctx.db.applicant.findUnique({
         where: {
           id: input.applicantId,
+          deletedAt: null,
         },
         select: {
           id: true,

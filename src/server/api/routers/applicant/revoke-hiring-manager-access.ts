@@ -40,6 +40,7 @@ export const revokeHiringManagerAccess = protectedProcedure
     const applicant = await ctx.db.applicant.findUnique({
       where: {
         id: input.applicantId,
+        deletedAt: null,
       },
       select: {
         id: true,

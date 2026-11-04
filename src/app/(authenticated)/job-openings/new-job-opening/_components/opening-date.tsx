@@ -1,19 +1,23 @@
 "use client";
-import { useFormContext, useWatch } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Clock } from "lucide-react";
 
-import { Input } from "~/components/ui/input";
+import { DatePicker } from "~/components/ui/date-picker";
 import { Label } from "~/components/ui/label";
 
 import { JobOpeningFormValues } from "./new-job-opening-form";
 
-function toDateInputValue(date: Date | undefined) {
+function toDateInputValue(date: Date | null | undefined) {
   return date && !Number.isNaN(date.getTime())
     ? date.toISOString().slice(0, 10)
-    : undefined;
+    : "";
+}
+
+function fromDateInputValue(value: string) {
+  return value ? new Date(`${value}T00:00:00.000Z`) : null;
 }
 
 function differenceInDateDays(startDate: Date, endDate: Date) {
@@ -33,8 +37,8 @@ function differenceInDateDays(startDate: Date, endDate: Date) {
 
 export default function OpeningDate() {
   const {
-    register,
     control,
+    trigger,
     formState: { errors },
   } = useFormContext<JobOpeningFormValues>();
 
@@ -50,7 +54,7 @@ export default function OpeningDate() {
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">
+        <CardTitle className="font-heading text-h3 text-text-primary">
           Fechas{" "}
           <span className="ml-2 align-middle text-xs font-normal text-text-tertiary">
             ambas obligatorias
@@ -61,19 +65,29 @@ export default function OpeningDate() {
         <div className="flex flex-col gap-3 md:flex-row md:items-end">
           <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
             <div className="space-y-2">
-              <Label
-                htmlFor="openingDate"
-                className="body text-[13px] text-text-secondary"
-              >
+              <Label htmlFor="openingDate">
                 Fecha de apertura <span className="text-danger">*</span>
               </Label>
 
-              <Input
-                type="date"
-                id="openingDate"
-                placeholder=""
-                className="w-full"
-                {...register("openingDate", { valueAsDate: true })}
+              <Controller
+                control={control}
+                name="openingDate"
+                render={({ field }) => (
+                  <DatePicker
+                    id="openingDate"
+                    name={field.name}
+                    aria-label="Fecha de apertura"
+                    value={toDateInputValue(field.value)}
+                    onChange={(value) => {
+                      field.onChange(fromDateInputValue(value));
+                      // The closing date error depends on the opening date.
+                      if (closingDate) void trigger("closingDate");
+                    }}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                    isInvalid={!!errors.openingDate}
+                  />
+                )}
               />
               {errors.openingDate && (
                 <p className="text-xs text-danger">
@@ -82,26 +96,38 @@ export default function OpeningDate() {
               )}
             </div>
             <div className="space-y-2">
-              <Label
-                htmlFor="closingDate"
-                className="body text-[13px] text-text-secondary"
-              >
+              <Label htmlFor="closingDate">
                 Fecha objetivo de cierre <span className="text-danger">*</span>
               </Label>
 
-              <Input
-                type="date"
-                placeholder="01/01/2001"
-                id="closingDate"
-                className="w-full"
-                min={toDateInputValue(openingDate)}
-                {...register("closingDate", {
-                  valueAsDate: true,
+              <Controller
+                control={control}
+                name="closingDate"
+                rules={{
                   validate: (value) =>
                     !openingDate ||
+                    !value ||
                     value >= openingDate ||
                     "La fecha de cierre no puede ser anterior a la fecha de apertura",
-                })}
+                }}
+                render={({ field }) => (
+                  <DatePicker
+                    id="closingDate"
+                    name={field.name}
+                    aria-label="Fecha objetivo de cierre"
+                    value={toDateInputValue(field.value)}
+                    onChange={(value) => {
+                      field.onChange(fromDateInputValue(value));
+                      // Skip empty partial input unless it clears an existing error.
+                      if (value || errors.closingDate)
+                        void trigger("closingDate");
+                    }}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                    minValue={toDateInputValue(openingDate)}
+                    isInvalid={!!errors.closingDate}
+                  />
+                )}
               />
               {errors.closingDate && (
                 <p className="text-xs text-danger">

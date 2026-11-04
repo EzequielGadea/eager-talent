@@ -23,7 +23,6 @@ export const createSeniority = protectedProcedure
 
     const existingSeniority = await ctx.db.seniority.findFirst({
       where: {
-        deletedAt: null,
         name: { equals: input.name, mode: "insensitive" },
       },
       select: { id: true },

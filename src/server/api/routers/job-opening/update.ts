@@ -14,6 +14,7 @@ import {
   updateJobOpeningSchema,
   type JobOpeningStageType,
 } from "~/lib/validations/job-opening";
+import { getRequiredStageTypeErrors } from "~/lib/validations/required-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 type CurrentStage = {
@@ -150,7 +151,20 @@ function toPersistedStage(
 
 const requiredStagesSchema = z
   .array(jobOpeningStageSchema)
-  .superRefine(addRequiredStagesIssues);
+  .superRefine((stages, ctx) => {
+    addRequiredStagesIssues(stages, ctx);
+
+    const typeErrors = getRequiredStageTypeErrors(
+      stages.map((stage) => ({
+        name: stage.name,
+        type: FORM_TO_PERSISTED_STAGE_TYPE[stage.type],
+      })),
+    );
+
+    for (const message of typeErrors) {
+      ctx.addIssue({ code: "custom", path: ["stages"], message });
+    }
+  });
 
 export const updateJobOpening = protectedProcedure
   .input(updateJobOpeningSchema)
@@ -194,8 +208,10 @@ export const updateJobOpening = protectedProcedure
           id: true,
           status: true,
           hasBeenOpened: true,
+          openingDate: true,
           stages: true,
           applications: {
+            where: { deletedAt: null },
             select: {
               currentStageId: true,
             },
@@ -206,7 +222,6 @@ export const updateJobOpening = protectedProcedure
       ctx.db.area.findFirst({
         where: {
           id: input.areaId,
-          deletedAt: null,
         },
         select: {
           id: true,
@@ -218,7 +233,6 @@ export const updateJobOpening = protectedProcedure
           id: {
             in: input.seniorityIds,
           },
-          deletedAt: null,
         },
       }),
 
@@ -243,6 +257,16 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
+    if (
+      currentJobOpening.status === "Closed" ||
+      currentJobOpening.status === "Cancelled"
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No se puede modificar una vacante cerrada o cancelada",
+      });
+    }
+
     if (!area) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -264,6 +288,25 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
+    const persistedOpeningDate = new Date(
+      Date.UTC(
+        currentJobOpening.openingDate.getUTCFullYear(),
+        currentJobOpening.openingDate.getUTCMonth(),
+        currentJobOpening.openingDate.getUTCDate(),
+      ),
+    );
+    const nextTargetClosingDate = new Date(
+      `${input.targetClosingDate}T00:00:00.000Z`,
+    );
+
+    if (nextTargetClosingDate < persistedOpeningDate) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message:
+          "La fecha objetivo de cierre no puede ser anterior a la apertura",
+      });
+    }
+
     const currentStages = getCurrentStages(currentJobOpening.stages);
     const persistedStagesById = getPersistedStagesById(
       currentJobOpening.stages,
@@ -275,6 +318,7 @@ export const updateJobOpening = protectedProcedure
     );
     // Estado y ubicación son opcionales: si no llegan, se conservan.
     const nextStatus = input.status ?? currentJobOpening.status;
+    const isClosing = nextStatus === "Closed";
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
     if (hasBeenOpened && stagesChanged) {
@@ -338,45 +382,59 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
-    return ctx.db.jobOpening.update({
-      where: {
-        id: input.id,
-      },
-      data: {
-        name: input.name,
-        status: nextStatus,
-        hasBeenOpened: hasBeenOpened || nextStatus === "Open",
-        location: input.location,
-        openingDate: new Date(`${input.openingDate}T00:00:00.000Z`),
-        targetClosingDate: new Date(`${input.targetClosingDate}T00:00:00.000Z`),
-
-        // Unchanged stages are not rewritten.
-        ...(stagesChanged || colorsChanged
-          ? {
-              stages: input.stages.map((stage) =>
-                toPersistedStage(stage, persistedStagesById.get(stage.id)),
-              ),
-            }
-          : {}),
-
-        area: {
-          connect: {
-            id: input.areaId,
+    return ctx.db.$transaction(async (tx) => {
+      const { count } = await tx.jobOpening.updateMany({
+        where: {
+          id: input.id,
+          status: {
+            notIn: ["Closed", "Cancelled"],
           },
         },
+        data: {
+          name: input.name,
+          status: nextStatus,
+          hasBeenOpened: hasBeenOpened || nextStatus === "Open",
+          ...(isClosing ? { closingDate: new Date() } : {}),
+          location: input.location,
+          targetClosingDate: nextTargetClosingDate,
+          areaId: input.areaId,
 
-        seniorities: {
-          set: input.seniorityIds.map((id) => ({ id })),
+          // Unchanged stages are not rewritten.
+          ...(stagesChanged || colorsChanged
+            ? {
+                stages: input.stages.map((stage) =>
+                  toPersistedStage(stage, persistedStagesById.get(stage.id)),
+                ),
+              }
+            : {}),
         },
+      });
 
-        hiringManagers: {
-          set: input.hiringManagerIds.map((id) => ({ id })),
+      if (count !== 1) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No se puede modificar una vacante cerrada o cancelada",
+        });
+      }
+
+      return tx.jobOpening.update({
+        where: {
+          id: input.id,
         },
-      },
-      select: {
-        id: true,
-        name: true,
-        status: true,
-      },
+        data: {
+          seniorities: {
+            set: input.seniorityIds.map((id) => ({ id })),
+          },
+
+          hiringManagers: {
+            set: input.hiringManagerIds.map((id) => ({ id })),
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+        },
+      });
     });
   });

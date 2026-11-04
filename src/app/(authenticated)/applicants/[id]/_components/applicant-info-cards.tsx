@@ -4,6 +4,7 @@ import { Button, buttonVariants } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
+import { hearAboutUsTranslations } from "~/lib/enum-translations";
 
 type ApplicantPromise = Promise<
   Awaited<ReturnType<typeof api.applicant.getById>>
@@ -34,7 +35,11 @@ export async function ApplicantInfoCards({
           icon={<GraduationCap className="size-3.5 text-accent-purple" />}
           title="Formación académica"
         >
-          <p className="font-semibold">{title?.trim() || "Sin información"}</p>
+          {title?.trim() ? (
+            <p className="font-semibold">{title.trim()}</p>
+          ) : (
+            <p className="text-muted-foreground">Sin información</p>
+          )}
 
           {(academicInstitution || careerYears) && (
             <p className="text-xs text-muted-foreground">
@@ -49,7 +54,13 @@ export async function ApplicantInfoCards({
           icon={<CircleHelp className="size-3.5 text-accent-green" />}
           title="¿Cómo escuchaste de nosotros?"
         >
-          <p className="font-semibold">{hearAboutUs ?? "Sin información"}</p>
+          {hearAboutUs ? (
+            <p className="font-semibold">
+              {hearAboutUsTranslations[hearAboutUs]}
+            </p>
+          ) : (
+            <p className="text-muted-foreground">Sin información</p>
+          )}
         </InfoCard>
 
         <DocumentCard title="CV" value={resume} emptyMessage="Sin CV cargado" />
@@ -134,8 +145,8 @@ function InfoCard({ icon, title, children }: InfoCardProps) {
       <CardHeader className="flex items-start gap-2">
         <span className="mt-0.5 shrink-0">{icon}</span>
 
-        <CardTitle className="min-w-0 wrap-anywhere text-xs font-semibold text-text-secondary group-data-[size=sm]/card:text-xs">
-          <h2>{title}</h2>
+        <CardTitle className="min-w-0 wrap-anywhere font-sans text-xs font-semibold text-text-secondary group-data-[size=sm]/card:text-xs">
+          <h2 className="font-sans">{title}</h2>
         </CardTitle>
       </CardHeader>
 

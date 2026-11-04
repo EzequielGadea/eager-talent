@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 
 import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 
@@ -15,7 +16,7 @@ export const updateApplicant = protectedProcedure
       name: z.string().min(1),
       lastname: z.string().min(1),
       email: z.string().optional(),
-      phone: z.string().optional(),
+      phone: optionalE164PhoneSchema,
 
       photo: z.string().nullable().optional(),
 
@@ -62,7 +63,7 @@ export const updateApplicant = protectedProcedure
         // Lock the applicant row so the change detection below and the update
         // are based on the same persisted state, even with concurrent edits.
         const lockedApplicants = await tx.$queryRaw<{ id: string }[]>`
-          SELECT "id" FROM "applicant" WHERE "id" = ${input.id} FOR UPDATE
+          SELECT "id" FROM "applicant" WHERE "id" = ${input.id} AND "deleted_at" IS NULL FOR UPDATE
         `;
 
         if (lockedApplicants.length === 0) {

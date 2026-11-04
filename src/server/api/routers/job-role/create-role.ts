@@ -21,7 +21,6 @@ export const createRole = protectedProcedure
 
     const existingRole = await ctx.db.jobRole.findFirst({
       where: {
-        deletedAt: null,
         name: { equals: input.name, mode: "insensitive" },
       },
       select: { id: true },

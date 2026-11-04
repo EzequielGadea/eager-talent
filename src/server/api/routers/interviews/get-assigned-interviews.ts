@@ -24,6 +24,7 @@ export const getAssignedInterviews = protectedProcedure.query(
 
     const interviews = await ctx.db.interview.findMany({
       where: {
+        deletedAt: null,
         assignments: {
           some: {
             interviewerId: ctx.session.user.id,

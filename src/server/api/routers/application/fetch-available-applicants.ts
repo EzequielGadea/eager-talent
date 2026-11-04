@@ -36,6 +36,7 @@ export const fetchAvailableApplicants = protectedProcedure
 
     const applicants = await ctx.db.applicant.findMany({
       where: {
+        deletedAt: null,
         applications: {
           none: {
             jobOpeningId: input.jobOpeningId,

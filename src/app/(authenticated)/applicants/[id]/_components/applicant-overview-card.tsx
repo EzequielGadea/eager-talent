@@ -14,6 +14,10 @@ import type { api } from "~/lib/trpc/server";
 import { getSafeExternalUrl } from "../_lib/external-url";
 import { ApplicantAvatar } from "./applicant-avatar";
 import { ApplicantActionsMenu } from "./applicant-actions-menu";
+import {
+  englishLevelTranslations,
+  sourceTranslations,
+} from "~/lib/enum-translations";
 
 type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
@@ -64,7 +68,7 @@ export function ApplicantOverviewCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <CardTitle className="min-w-0 text-xl font-bold tracking-tight">
+            <CardTitle className="min-w-0 text-h2">
               <h1 className="truncate" title={`${name} ${lastName}`}>
                 {name} {lastName}
               </h1>
@@ -78,23 +82,23 @@ export function ApplicantOverviewCard({
               <span className="flex min-w-0 max-w-full items-center gap-1.5">
                 <Mail className="size-4 shrink-0" />
                 <span className="min-w-0 wrap-anywhere">
-                  {email ?? "Sin email"}
+                  {email?.trim() || "Sin información"}
                 </span>
               </span>
 
-              <span className="flex min-w-0 max-w-full items-center gap-1.5">
-                <Phone className="size-4 shrink-0" />
-                <span className="min-w-0 wrap-anywhere">
-                  {phone ?? "Sin teléfono"}
+              {phone?.trim() && (
+                <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                  <Phone className="size-4 shrink-0" />
+                  <span className="min-w-0 wrap-anywhere">{phone}</span>
                 </span>
-              </span>
+              )}
 
-              <span className="flex min-w-0 max-w-full items-center gap-1.5">
-                <MapPin className="size-4 shrink-0" />
-                <span className="min-w-0 wrap-anywhere">
-                  {country ?? "Sin país"}
+              {country?.trim() && (
+                <span className="flex min-w-0 max-w-full items-center gap-1.5">
+                  <MapPin className="size-4 shrink-0" />
+                  <span className="min-w-0 wrap-anywhere">{country}</span>
                 </span>
-              </span>
+              )}
 
               {linkedinUrl && (
                 <a
@@ -139,15 +143,21 @@ export function ApplicantOverviewCard({
 
         <ApplicantAttribute
           label="Seniority"
-          value={seniority?.name ?? "Sin seniority"}
+          value={seniority?.name}
+          emptyMessage="Sin información"
         />
 
         <ApplicantAttribute
           label="Nivel de inglés"
-          value={englishLevel ?? "Sin información"}
+          value={englishLevel ? englishLevelTranslations[englishLevel] : null}
+          emptyMessage="Sin información"
         />
 
-        <ApplicantAttribute label="Fuente" value={source ?? "Sin fuente"} />
+        <ApplicantAttribute
+          label="Fuente"
+          value={source ? sourceTranslations[source] : null}
+          emptyMessage="Sin información"
+        />
       </CardContent>
     </Card>
   );
@@ -155,16 +165,25 @@ export function ApplicantOverviewCard({
 
 type ApplicantAttributeProps = {
   label: string;
-  value: string;
+  value?: string | null;
+  emptyMessage?: string;
 };
 
-function ApplicantAttribute({ label, value }: ApplicantAttributeProps) {
+function ApplicantAttribute({
+  label,
+  value,
+  emptyMessage,
+}: ApplicantAttributeProps) {
   return (
     <div className="min-w-0 wrap-anywhere">
-      <p className="text-xs font-semibold uppercase text-text-tertiary">
+      <p className="text-label font-bold uppercase tracking-wider text-text-tertiary">
         {label}
       </p>
-      <p className="mt-1 text-sm font-medium">{value}</p>
+      {value ? (
+        <p className="mt-1 text-sm font-medium">{value}</p>
+      ) : (
+        <p className="mt-1 text-sm text-muted-foreground">{emptyMessage}</p>
+      )}
     </div>
   );
 }

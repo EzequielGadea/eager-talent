@@ -7,6 +7,7 @@ import { Loader2, Search, UserRound } from "lucide-react";
 import { api } from "~/lib/trpc/react";
 
 import { Input } from "~/components/ui/input";
+import { Skeleton } from "~/components/ui/skeleton";
 
 import type { AvailableApplicant } from "./add-applicant-types";
 import { AvailableApplicantItem } from "./available-applicant-item";
@@ -113,8 +114,21 @@ export function AddApplicantSelection({
         }}
       >
         {initialLoading ? (
-          <div className="flex min-h-48 items-center justify-center">
-            <Loader2 className="size-5 animate-spin text-text-secondary" />
+          <div className="flex flex-col gap-1">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex w-full items-center gap-3 rounded-lg p-3"
+              >
+                <Skeleton className="size-10 shrink-0 rounded-full" />
+
+                <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-3 w-44" />
+                  <Skeleton className="h-3 w-28" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : applicantsQuery.isError ? (
           <div className="flex min-h-48 items-center justify-center px-6 text-center text-sm text-danger">

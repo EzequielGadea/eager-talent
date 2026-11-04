@@ -1,5 +1,16 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
-export const instant = false;
+
+import { SettingsLayoutSkeleton } from "./_components/settings-layout-skeleton";
+
+function SettingsRedirect() {
+  return redirect("/settings/users");
+}
+
 export default function SettingsPage() {
-  redirect("/settings/users");
+  return (
+    <Suspense fallback={<SettingsLayoutSkeleton />}>
+      <SettingsRedirect />
+    </Suspense>
+  );
 }

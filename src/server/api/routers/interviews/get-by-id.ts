@@ -34,6 +34,7 @@ export const getInterviewByIdProcedure = protectedProcedure
     const interview = await ctx.db.interview.findFirst({
       where: {
         id: input.id,
+        deletedAt: null,
         ...(canReadAllResult.success
           ? {}
           : isHiringManagerAssignedToInterview(ctx.session.user.id)),

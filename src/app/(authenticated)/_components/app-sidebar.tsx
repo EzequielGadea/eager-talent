@@ -7,6 +7,7 @@ import {
 } from "./app-header";
 import { MetricsIcon, SettingsIcon, VacanciesIcon } from "./app-icons";
 import { HiringManagerNavigation } from "./hiring-manager-navigation";
+import { ResponsiveSidebar } from "./mobile-navigation";
 import { NavigationItem } from "./navigation-item";
 import { UserMenu } from "./user-menu";
 
@@ -22,8 +23,8 @@ function EagerTalentBrand() {
             x2="1"
             y2="0"
           >
-            <stop offset="0" stopColor="var(--accent-purple)" />
-            <stop offset="1" stopColor="var(--accent-green)" />
+            <stop offset="0" style={{ stopColor: "var(--accent-purple)" }} />
+            <stop offset="1" style={{ stopColor: "var(--accent-green)" }} />
           </linearGradient>
         </defs>
 
@@ -34,7 +35,7 @@ function EagerTalentBrand() {
 
         <g
           fill="none"
-          stroke="white"
+          stroke="var(--text-on-dark)"
           strokeLinecap="round"
           strokeLinejoin="round"
         >
@@ -43,7 +44,7 @@ function EagerTalentBrand() {
         </g>
       </svg>
 
-      <span className="font-heading text-[19px] font-bold tracking-[-0.03em] text-text-primary">
+      <span className="font-heading text-h2 tracking-[-0.03em] text-text-primary">
         EagerTalent
       </span>
     </div>
@@ -70,7 +71,7 @@ function SidebarUser() {
 function RecruiterNavigation() {
   return (
     <>
-      <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+      <p className="px-3 pt-3.5 pb-1.5 text-label font-bold uppercase tracking-wider text-text-tertiary">
         PRINCIPAL
       </p>
 
@@ -92,13 +93,14 @@ function RecruiterNavigation() {
         href="/job-openings"
       />
 
-      <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+      <p className="px-3 pt-4 pb-1.5 text-label font-bold uppercase tracking-wider text-text-tertiary">
         ANÁLISIS
       </p>
 
       <NavigationItem
         icon={<MetricsIcon className="size-4.5" aria-hidden="true" />}
         label="Métricas"
+        href="/metrics"
       />
 
       <NavigationItem
@@ -106,15 +108,18 @@ function RecruiterNavigation() {
         label="Reportes"
       />
 
-      <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
-        EMPRESA
-      </p>
+      {/* On mobile, settings is reached from the header instead. */}
+      <div data-sidebar-only className="contents">
+        <p className="px-3 pt-4 pb-1.5 text-label font-bold uppercase tracking-wider text-text-tertiary">
+          EMPRESA
+        </p>
 
-      <NavigationItem
-        icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
-        label="Configuración"
-        href="/settings"
-      />
+        <NavigationItem
+          icon={<SettingsIcon className="size-4.5" aria-hidden="true" />}
+          label="Configuración"
+          href="/settings"
+        />
+      </div>
     </>
   );
 }
@@ -138,14 +143,14 @@ async function SidebarNavigation() {
 
 export function AppSidebar() {
   return (
-    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-border-default bg-surface-card">
-      <EagerTalentBrand />
-
-      <Suspense fallback={<div className="flex-1" />}>
-        <SidebarNavigation />
-      </Suspense>
-
-      <SidebarUser />
-    </aside>
+    <ResponsiveSidebar
+      brand={<EagerTalentBrand />}
+      navigation={
+        <Suspense fallback={<div className="flex-1" />}>
+          <SidebarNavigation />
+        </Suspense>
+      }
+      footer={<SidebarUser />}
+    />
   );
 }

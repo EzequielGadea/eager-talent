@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { TRPCError } from "@trpc/server";
 import { notFound } from "next/navigation";
 
-import Loading from "~/components/ui/loading";
 import { api } from "~/lib/trpc/server";
 import { ApplicantInfoCards } from "./_components/applicant-info-cards";
 import { ApplicantApplications } from "./_components/applicant-applications";
@@ -11,6 +10,15 @@ import { ApplicantNotes } from "./_components/applicant-notes";
 import { ApplicantTags } from "./_components/applicant-tags";
 import { ApplicantOverview } from "./_components/applicant-overview";
 import { ApplicantProfileSessionProvider } from "./_components/applicant-profile-session";
+import {
+  ApplicantApplicationsSkeleton,
+  ApplicantInfoCardsSkeleton,
+  ApplicantLogsSkeleton,
+  ApplicantNotesSkeleton,
+  ApplicantOverviewSkeleton,
+  ApplicantPageSkeleton,
+  ApplicantTagsSkeleton,
+} from "./_components/applicant-page-skeleton";
 
 type ApplicantPageProps = {
   params: Promise<{
@@ -20,7 +28,7 @@ type ApplicantPageProps = {
 
 export default function ApplicantPage({ params }: ApplicantPageProps) {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<ApplicantPageSkeleton />}>
       <ApplicantPageContent params={params} />
     </Suspense>
   );
@@ -39,31 +47,31 @@ async function ApplicantPageContent({ params }: ApplicantPageProps) {
 
   return (
     <ApplicantProfileSessionProvider key={id}>
-      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] selection:bg-tag-green-bg selection:text-tag-green-fg">
+      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)]">
         <div className="flex min-w-0 flex-col gap-4">
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<ApplicantOverviewSkeleton />}>
             <ApplicantOverview applicantPromise={applicantPromise} />
           </Suspense>
 
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<ApplicantInfoCardsSkeleton />}>
             <ApplicantInfoCards applicantPromise={applicantPromise} />
           </Suspense>
 
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<ApplicantApplicationsSkeleton />}>
             <ApplicantApplications applicantPromise={applicantPromise} />
           </Suspense>
 
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<ApplicantLogsSkeleton />}>
             <ApplicantLogsSection applicantPromise={applicantPromise} />
           </Suspense>
         </div>
 
         <aside className="flex min-w-0 flex-col gap-4">
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<ApplicantNotesSkeleton />}>
             <ApplicantNotes applicantPromise={applicantPromise} />
           </Suspense>
 
-          <Suspense fallback={<Loading />}>
+          <Suspense fallback={<ApplicantTagsSkeleton />}>
             <ApplicantTags applicantPromise={applicantPromise} />
           </Suspense>
         </aside>

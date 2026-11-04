@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { GeneralSettingsCardSkeleton } from "./general-settings-card-skeleton";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function RoleSetting() {
   const [isAddingRole, setIsAddingRole] = useState(false);
@@ -33,16 +34,21 @@ export default function RoleSetting() {
     name: string;
   } | null>(null);
 
-  const { data: roles, isLoading: isRolesLoading } =
-    api.role.getAllRoles.useQuery({});
+  const {
+    data: roles,
+    isLoading: isRolesLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.jobRole.getAllRoles.useQuery({});
 
   const utils = api.useUtils();
 
-  const createRole = api.role.createRole.useMutation({
+  const createRole = api.jobRole.createRole.useMutation({
     onSuccess: async () => {
       setRoleName("");
       setIsAddingRole(false);
-      await utils.role.getAllRoles.invalidate();
+      await utils.jobRole.getAllRoles.invalidate();
       toast.add({ title: "Rol creado con éxito", type: "success" });
     },
     onError: (error) => {
@@ -50,10 +56,10 @@ export default function RoleSetting() {
     },
   });
 
-  const deleteRole = api.role.deleteRole.useMutation({
+  const deleteRole = api.jobRole.deleteRole.useMutation({
     onSuccess: async () => {
       setRoleToDelete(null);
-      await utils.role.getAllRoles.invalidate();
+      await utils.jobRole.getAllRoles.invalidate();
       toast.add({ title: "Rol eliminado con éxito", type: "success" });
     },
     onError: (error) => {
@@ -117,12 +123,20 @@ export default function RoleSetting() {
     return <GeneralSettingsCardSkeleton title="Roles de candidato" rows={4} />;
   }
 
+  if (isError || !roles) {
+    return (
+      <SettingsFetchError
+        title="Roles de candidato"
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">
-          Roles de candidato
-        </CardTitle>
+        <CardTitle>Roles de candidato</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col">
@@ -174,10 +188,9 @@ export default function RoleSetting() {
           {isAddingRole && (
             <form
               onSubmit={handleCreateRole}
-              className="flex items-end gap-3 border-b border-border-default
-                        py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={roleName}
@@ -204,7 +217,7 @@ export default function RoleSetting() {
         </div>
         {!isAddingRole && (
           <button
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
             type="button"
             onClick={() => setIsAddingRole(true)}
           >

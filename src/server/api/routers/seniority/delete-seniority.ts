@@ -19,8 +19,8 @@ export const deleteSeniority = protectedProcedure
       throw new TRPCError({ code: "FORBIDDEN" });
     }
 
-    const seniority = await ctx.db.seniority.findFirst({
-      where: { id: input.id, deletedAt: null },
+    const seniority = await ctx.db.seniority.findUnique({
+      where: { id: input.id },
       select: {
         _count: { select: { applicants: true, jobOpenings: true } },
       },
@@ -47,8 +47,7 @@ export const deleteSeniority = protectedProcedure
       });
     }
 
-    await ctx.db.seniority.update({
+    await ctx.db.seniority.delete({
       where: { id: input.id },
-      data: { deletedAt: new Date() },
     });
   });

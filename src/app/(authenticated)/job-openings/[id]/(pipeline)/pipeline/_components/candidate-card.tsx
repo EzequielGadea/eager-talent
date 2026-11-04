@@ -33,17 +33,13 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { api } from "~/lib/trpc/react";
+import { interviewTypeTranslations } from "~/lib/enum-translations";
 
 import type { PipelineCandidate } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
-import { DisqualifyCandidateDialog } from "./disqualify-candidate-dialog";
+import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
 
 import getAvatar from "~/lib/avatar";
-
-const modalityLabels: Record<string, string> = {
-  VideoCall: "Videollamada",
-  InPerson: "Presencial",
-};
 
 function formatInterviewLabel(date: Date) {
   if (isToday(date)) {
@@ -66,6 +62,7 @@ function formatInterviewDateTime(date: Date) {
 type CandidateCardProps = {
   candidate: PipelineCandidate;
   jobOpeningId: string;
+  jobOpeningName: string;
   currentStageId: string;
   currentStageName: string;
   isLastStage: boolean;
@@ -78,6 +75,7 @@ type CandidateCardProps = {
 export function CandidateCard({
   candidate,
   jobOpeningId,
+  jobOpeningName,
   currentStageId,
   currentStageName,
   isLastStage,
@@ -155,14 +153,17 @@ export function CandidateCard({
     <>
       <Card
         ref={setNodeRef}
+        data-pipeline-candidate
         {...dragProps}
         style={{
           transform: transform
             ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
             : undefined,
         }}
-        className={`rounded-xl border-border-default bg-card p-3 shadow-none ${
-          canUpdateApplication ? "cursor-grab" : ""
+        className={`rounded-xl border-border-default bg-card p-3 shadow-none transition-[border-color,background-color,box-shadow] duration-150 ${
+          canUpdateApplication
+            ? "cursor-grab hover:border-primary/50  hover:shadow-md active:cursor-grabbing"
+            : ""
         }`}
       >
         <div className="flex items-center gap-3">
@@ -185,7 +186,7 @@ export function CandidateCard({
                 type="button"
                 onPointerDown={(event) => event.stopPropagation()}
                 onClick={() => setIsInterviewsDialogOpen(true)}
-                className="flex max-w-full items-center gap-1 text-left text-xs font-medium text-dashboard-sky-text underline-offset-2 hover:underline"
+                className="flex max-w-full items-center gap-1 text-left text-xs font-medium text-tag-blue-fg underline-offset-2 hover:underline"
               >
                 <span className="truncate">
                   Entrevista ·{" "}
@@ -270,7 +271,7 @@ export function CandidateCard({
         >
           <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
             <div className="border-b border-border-default px-6 py-5">
-              <DialogTitle className="text-lg font-semibold text-text-primary">
+              <DialogTitle className="text-text-primary">
                 {candidate.scheduledInterviews.length > 1
                   ? "Entrevistas agendadas"
                   : "Entrevista agendada"}
@@ -297,8 +298,8 @@ export function CandidateCard({
                     </p>
 
                     <p className="text-xs text-text-secondary">
-                      {modalityLabels[interview.modality] ?? interview.modality}{" "}
-                      · {interview.duration} min
+                      {interviewTypeTranslations[interview.modality]} ·{" "}
+                      {interview.duration} min
                     </p>
 
                     {interview.interviewers.length > 0 && (
@@ -347,7 +348,7 @@ export function CandidateCard({
           }}
         >
           <DialogContent className="w-full max-w-md">
-            <DialogTitle className="text-lg font-semibold text-text-primary">
+            <DialogTitle className="text-text-primary">
               ¿Eliminar entrevista?
             </DialogTitle>
 
@@ -391,13 +392,13 @@ export function CandidateCard({
       )}
 
       {canUpdateApplication && (
-        <DisqualifyCandidateDialog
+        <DisqualifyApplicantDialog
           open={isDisqualifyDialogOpen}
           onOpenChange={setIsDisqualifyDialogOpen}
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
-          candidateRole={candidate.role}
+          jobOpeningName={jobOpeningName}
           stageName={currentStageName}
           onSuccess={() => router.refresh()}
         />

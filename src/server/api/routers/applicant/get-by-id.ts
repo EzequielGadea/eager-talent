@@ -33,6 +33,7 @@ export const getApplicantByIdProcedure = protectedProcedure
     const applicant = await ctx.db.applicant.findFirst({
       where: {
         id: input.id,
+        deletedAt: null,
         ...(canReadAllResult.success
           ? {}
           : isHiringManagerAssignedToApplicant(ctx.session.user.id)),

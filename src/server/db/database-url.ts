@@ -58,3 +58,31 @@ export function getDatabaseUrl(): string {
 
   return LOCAL_DATABASE_URL;
 }
+
+export function getDirectUrl(): string {
+  const directUrl = process.env.DIRECT_URL?.trim();
+  if (directUrl) {
+    return directUrl;
+  }
+
+  // Prevent local fallback in production, Vercel, or CI environments
+  if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    throw new Error(
+      "DIRECT_URL is not defined in Vercel environment. Database connection requires an explicit DIRECT_URL.",
+    );
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "DIRECT_URL is not defined in production environment. Database connection requires an explicit DIRECT_URL.",
+    );
+  }
+
+  if (process.env.CI) {
+    throw new Error(
+      "DIRECT_URL is not defined in CI environment. CI workflow must explicitly provide DIRECT_URL.",
+    );
+  }
+
+  return LOCAL_DATABASE_URL;
+}

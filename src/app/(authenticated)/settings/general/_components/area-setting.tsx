@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { SettingsFetchError } from "./settings-fetch-error";
 
 export default function AreaSetting() {
   const [isAddingArea, setIsAddingArea] = useState(false);
@@ -40,14 +41,19 @@ export default function AreaSetting() {
 
   const utils = api.useUtils();
 
-  const { data: areas, isLoading: isAreasLoading } =
-    api.area.getAllAreas.useQuery({});
+  const {
+    data: areas,
+    isLoading: isAreasLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = api.area.getAllAreas.useQuery({});
 
   const createArea = api.area.createArea.useMutation({
     onSuccess: async () => {
       setAreaName("");
       setIsAddingArea(false);
-      toast.add({ title: "Area creada con exito", type: "success" });
+      toast.add({ title: "Área creada con éxito", type: "success" });
       await utils.area.getAllAreas.invalidate();
     },
     onError: (error) => {
@@ -58,6 +64,7 @@ export default function AreaSetting() {
   const deleteArea = api.area.deleteArea.useMutation({
     onSuccess: async () => {
       setAreaToDelete(null);
+      toast.add({ title: "Área eliminada con éxito", type: "success" });
       await utils.area.getAllAreas.invalidate();
     },
     onError: (error) => {
@@ -122,10 +129,20 @@ export default function AreaSetting() {
     return <GeneralSettingsCardSkeleton title="Áreas" rows={4} />;
   }
 
+  if (isError || !areas) {
+    return (
+      <SettingsFetchError
+        title="Áreas"
+        refetch={refetch}
+        isFetching={isFetching}
+      />
+    );
+  }
+
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">Áreas</CardTitle>
+        <CardTitle>Áreas</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col">
@@ -187,10 +204,9 @@ export default function AreaSetting() {
           {isAddingArea && (
             <form
               onSubmit={handleCreateArea}
-              className="flex items-end gap-3 border-b border-border-default
-              py-4"
+              className="flex flex-col gap-3 border-b border-border-default py-4 md:flex-row md:items-end"
             >
-              <div className="flex-1">
+              <div className="w-full min-w-0 md:flex-1">
                 <Input
                   type="text"
                   value={areaName}
@@ -203,7 +219,7 @@ export default function AreaSetting() {
                 type="submit"
                 disabled={!areaName.trim() || createArea.isPending}
               >
-                {createArea.isPending ? "Guardando..." : "Crear area"}
+                {createArea.isPending ? "Guardando..." : "Crear área"}
               </Button>
               <Button
                 type="button"
@@ -217,7 +233,7 @@ export default function AreaSetting() {
         </div>
         {!isAddingArea && (
           <button
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
             type="button"
             onClick={() => setIsAddingArea(true)}
           >
