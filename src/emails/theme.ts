@@ -1,16 +1,17 @@
 import type { TailwindConfig } from "react-email";
 import plugin from "tailwindcss/plugin";
 
+// Hex values of the semantic aliases in src/tokens/colors.css (emails cannot use CSS variables).
 const colors = {
-  bg: "#FFFFFF",
-  "bg-2": "#F3F4F6",
-  fg: "#14171E",
-  "fg-2": "#43454B",
-  "fg-3": "#7B7D81",
-  "fg-inverted": "#FFFFFF",
-  stroke: "#F0F0F0",
-  "stroke-strong": "#E4E4E7",
-  brand: "#614500",
+  bg: "#FFFFFF", // surface-card
+  "bg-2": "#F8FAFC", // surface-subtle
+  fg: "#0F172A", // text-primary
+  "fg-2": "#64748B", // text-secondary
+  "fg-3": "#94A3B8", // text-tertiary
+  "fg-inverted": "#FFFFFF", // text-on-dark
+  stroke: "#E2E8F0", // border-default
+  "stroke-strong": "#CBD5E1", // border-strong
+  brand: "#059669", // accent-green-strong
 } as const;
 
 const fontScale = {

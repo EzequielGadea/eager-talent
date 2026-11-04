@@ -2,6 +2,7 @@ import { UserActionsMenu } from "./user-actions-menu";
 import { LastAccessText, type User } from "./user-row";
 import { userRoleConfig, userStatusConfig } from "../constants";
 import getAvatar from "~/lib/avatar";
+import { cn } from "~/lib/utils";
 
 const PENDING_NAME_LABEL = "Pendiente";
 
@@ -11,7 +12,7 @@ type UsersCardListProps = {
 
 export function UsersCardList({ users }: UsersCardListProps) {
   return (
-    <ul className="divide-y divide-border-default rounded-lg border border-border-default bg-surface-card md:hidden">
+    <ul className="divide-y divide-border-default md:hidden">
       {users.length === 0 ? (
         <li className="px-4 py-8 text-center text-sm text-text-secondary">
           No hay usuarios para mostrar.
@@ -38,7 +39,10 @@ export function UsersCardList({ users }: UsersCardListProps) {
                 <div className="flex min-w-0 items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
                     <div
-                      className={`flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${avatar.colorClass}`}
+                      className={cn(
+                        "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                        avatar.colorClass,
+                      )}
                     >
                       {avatar.initials || "?"}
                     </div>
@@ -58,12 +62,18 @@ export function UsersCardList({ users }: UsersCardListProps) {
 
                 <div className="flex flex-wrap gap-2">
                   <span
-                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${role.className}`}
+                    className={cn(
+                      "inline-flex rounded-full px-2.5 py-1 text-xs font-medium",
+                      role.className,
+                    )}
                   >
                     {role.label}
                   </span>
                   <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${status.className}`}
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+                      status.className,
+                    )}
                   >
                     <span className="size-1.5 rounded-full bg-current" />
                     {status.label}

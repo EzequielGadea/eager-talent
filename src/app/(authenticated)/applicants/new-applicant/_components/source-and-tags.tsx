@@ -38,8 +38,8 @@ export default function SourceAndTags() {
   const { data: availableTags } = api.tag.getAllTags.useQuery({});
 
   return (
-    <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader className="pb-3">
+    <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+      <CardHeader>
         <CardTitle className="text-sm font-semibold">
           Origen y etiquetas
         </CardTitle>

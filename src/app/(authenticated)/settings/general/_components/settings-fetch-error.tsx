@@ -15,7 +15,7 @@ export function SettingsFetchError({
     <Card className="w-full shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-baseline gap-2">
-          <CardTitle className="text-sm font-semibold">{title}</CardTitle>
+          <CardTitle>{title}</CardTitle>
         </div>
       </CardHeader>
 
@@ -29,7 +29,7 @@ export function SettingsFetchError({
               <CircleAlert className="size-6 text-danger" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-text-primary">
+              <h3 className="font-heading text-h3 text-text-primary">
                 Error inesperado
               </h3>
               <p className="text-sm text-text-secondary">

@@ -36,7 +36,7 @@ export function ApplicantLogsFilter({
             size="sm"
             disabled={applications.length === 0}
             aria-label="Filtrar logs por postulación"
-            className="group/dropdown-trigger relative h-auto min-h-11 w-full max-w-96 gap-2 rounded-xl border-border-strong bg-background py-2 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition hover:border-text-tertiary hover:bg-tag-gray-bg focus-visible:ring-2 focus-visible:ring-tag-gray-bg data-popup-open:border-accent-green data-popup-open:ring-1 data-popup-open:ring-accent-green @[640px]/card-header:w-96"
+            className="group/dropdown-trigger relative h-auto min-h-11 w-full max-w-96 gap-2 rounded-xl border-border-default bg-background py-2 pl-3 pr-8 text-left text-sm font-semibold text-text-primary transition-[border-color,box-shadow,background-color] duration-150 hover:not-focus-visible:not-data-popup-open:border-border-strong hover:bg-tag-gray-bg focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20 data-popup-open:border-border-focus data-popup-open:ring-4 data-popup-open:ring-border-focus/20 @[640px]/card-header:w-96"
           />
         }
       >

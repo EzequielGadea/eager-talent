@@ -30,7 +30,20 @@ Abrir [http://localhost:3000](http://localhost:3000).
 bun run db:seed
 ```
 
-El script de seed (`src/server/db/prisma/seed-data.ts`) es **idempotente**: se puede ejecutar N veces sin duplicar datos. Solo se permite ejecutar contra PostgreSQL local.
+El script de seed (`src/server/db/prisma/seed-data.ts`) **reemplaza los datos de prueba**: borra candidatos, postulaciones, entrevistas, notas, actividades, enlaces públicos, invitaciones, vacantes y catálogos, y elimina los usuarios ajenos a la seed. Conserva los ocho usuarios de prueba existentes y sus contraseñas. Se puede repetir sin duplicar datos. Por defecto solo permite PostgreSQL local; una base remota de pruebas requiere `ALLOW_REMOTE_SEED=true` desde una terminal local.
+
+La limpieza y la posibilidad de repetir la carga ya existían en la seed anterior. Las fechas se recalculan al ejecutar: no se duplican registros, pero los IDs se regeneran y las entrevistas se desplazan a hoy y mañana.
+
+Para cargar la base de Preview usada por Vercel, integrar primero #123 y ejecutar desde una terminal local. Crear un archivo ignorado por Git `.env.seed-preview.local` con `DATABASE_URL` y `DIRECT_URL` apuntando a esa misma base PostgreSQL de pruebas, `NODE_ENV=development` y `ALLOW_REMOTE_SEED=true`. No incluir variables `VERCEL`, `VERCEL_ENV` ni `NETLIFY`, porque el proceso se ejecuta localmente y la protección existente rechaza los despliegues.
+
+```powershell
+bun install --frozen-lockfile
+bun run db:generate
+bun --env-file=.env.seed-preview.local run db:deploy
+bun --env-file=.env.seed-preview.local run db:seed
+```
+
+Ejecutar cada comando solo si el anterior terminó correctamente. `db:deploy` aplica las migraciones existentes, incluida la de #123; `db:seed` reemplaza los datos anteriores, incluidos los ingresados manualmente. No requiere `migrate reset`, `db push` ni incorporar la seed al build. Los datos serán visibles al recargar el deployment conectado a esa base. Las fotos ya están subidas y no necesitan token para esta carga.
 
 - **Usuarios iniciales (credenciales de login):**
 
@@ -42,6 +55,8 @@ El script de seed (`src/server/db/prisma/seed-data.ts`) es **idempotente**: se p
 | `Hiring Manager` | `hiring.manager@example.com`  | `hiring.manager` |
 | `Hiring Manager` | `hiring.manager2@example.com` | `hiring.manager` |
 | `Hiring Manager` | `hiring.manager3@example.com` | `hiring.manager` |
+| `Hiring Manager` | `hiring.manager4@example.com` | `hiring.manager` |
+| `Hiring Manager` | `hiring.manager5@example.com` | `hiring.manager` |
 
 #### Reiniciar la base de datos local desde cero
 

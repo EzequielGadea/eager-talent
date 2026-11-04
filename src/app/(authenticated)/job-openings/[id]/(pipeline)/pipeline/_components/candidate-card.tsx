@@ -4,13 +4,14 @@ import {
   ArrowRight,
   CalendarDays,
   CircleX,
+  GripVertical,
   Loader2,
   MoreHorizontal,
   Trash2,
   UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type PointerEvent } from "react";
 import { format, isToday, isTomorrow } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -62,6 +63,7 @@ function formatInterviewDateTime(date: Date) {
 type CandidateCardProps = {
   candidate: PipelineCandidate;
   jobOpeningId: string;
+  jobOpeningName: string;
   currentStageId: string;
   currentStageName: string;
   isLastStage: boolean;
@@ -74,6 +76,7 @@ type CandidateCardProps = {
 export function CandidateCard({
   candidate,
   jobOpeningId,
+  jobOpeningName,
   currentStageId,
   currentStageName,
   isLastStage,
@@ -93,13 +96,19 @@ export function CandidateCard({
     name: string;
   } | null>(null);
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: candidate.applicantId,
-    data: { candidate, stageId: currentStageId },
-    disabled: !canUpdateApplication,
-  });
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform } =
+    useDraggable({
+      id: candidate.applicantId,
+      data: { candidate, stageId: currentStageId },
+      disabled: !canUpdateApplication,
+    });
 
-  const dragProps = canUpdateApplication ? { ...listeners, ...attributes } : {};
+  function handleCardPointerDown(event: PointerEvent<HTMLDivElement>) {
+    // Touch gestures outside the handle keep the page scrollable.
+    if (event.pointerType !== "touch") {
+      listeners?.onPointerDown?.(event);
+    }
+  }
 
   const advanceApplicationStageMutation =
     api.application.advanceApplicationStage.useMutation({
@@ -152,7 +161,7 @@ export function CandidateCard({
       <Card
         ref={setNodeRef}
         data-pipeline-candidate
-        {...dragProps}
+        onPointerDown={canUpdateApplication ? handleCardPointerDown : undefined}
         style={{
           transform: transform
             ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
@@ -165,6 +174,26 @@ export function CandidateCard({
         }`}
       >
         <div className="flex items-center gap-3">
+          {canUpdateApplication && (
+            <Button
+              ref={setActivatorNodeRef}
+              type="button"
+              variant="ghost"
+              size="icon"
+              {...attributes}
+              {...listeners}
+              aria-label={`Arrastrar ${candidate.name} ${candidate.lastName}`}
+              title="Arrastrar candidato"
+              className="shrink-0 touch-none cursor-grab p-0 active:cursor-grabbing"
+              onPointerDown={(event) => {
+                event.stopPropagation();
+                listeners?.onPointerDown?.(event);
+              }}
+            >
+              <GripVertical aria-hidden="true" />
+            </Button>
+          )}
+
           <Avatar className="size-9 shrink-0">
             <AvatarImage
               src={candidate.photo ?? undefined}
@@ -184,7 +213,7 @@ export function CandidateCard({
                 type="button"
                 onPointerDown={(event) => event.stopPropagation()}
                 onClick={() => setIsInterviewsDialogOpen(true)}
-                className="flex max-w-full items-center gap-1 text-left text-xs font-medium text-dashboard-sky-text underline-offset-2 hover:underline"
+                className="flex max-w-full items-center gap-1 text-left text-xs font-medium text-tag-blue-fg underline-offset-2 hover:underline"
               >
                 <span className="truncate">
                   Entrevista ·{" "}
@@ -269,7 +298,7 @@ export function CandidateCard({
         >
           <DialogContent className="w-full max-w-lg gap-0 overflow-hidden p-0">
             <div className="border-b border-border-default px-6 py-5">
-              <DialogTitle className="text-lg font-semibold text-text-primary">
+              <DialogTitle className="text-text-primary">
                 {candidate.scheduledInterviews.length > 1
                   ? "Entrevistas agendadas"
                   : "Entrevista agendada"}
@@ -346,7 +375,7 @@ export function CandidateCard({
           }}
         >
           <DialogContent className="w-full max-w-md">
-            <DialogTitle className="text-lg font-semibold text-text-primary">
+            <DialogTitle className="text-text-primary">
               ¿Eliminar entrevista?
             </DialogTitle>
 
@@ -396,7 +425,7 @@ export function CandidateCard({
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
-          candidateRole={candidate.role}
+          jobOpeningName={jobOpeningName}
           stageName={currentStageName}
           onSuccess={() => router.refresh()}
         />

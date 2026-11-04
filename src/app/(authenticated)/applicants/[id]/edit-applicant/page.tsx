@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
+import { AccessDenied } from "~/components/access-denied";
 import { auth } from "~/lib/auth";
 
 import EditApplicantForm from "./_components/edit-applicant-form";
@@ -26,7 +26,12 @@ async function ProtectedEditApplicantPage() {
   });
 
   if (!permission.success) {
-    redirect("/dashboard");
+    return (
+      <AccessDenied
+        title="No se puede editar el candidato"
+        description="No tenés permisos para editar un candidato."
+      />
+    );
   }
 
   return <EditApplicantForm />;

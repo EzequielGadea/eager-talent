@@ -274,7 +274,7 @@ export function ShareWithHiringManagerDialog({
       <DialogContent
         data-applicant-id={applicantId}
         showCloseButton={false}
-        className="grid max-h-[calc(100dvh-2rem)] w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        className="grid max-h-[calc(100dvh-2rem)] w-full grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden bg-card p-0 sm:max-w-2xl"
       >
         <DialogHeader className="relative gap-3 px-6 py-5 pr-16">
           <div className="flex items-center gap-3">
@@ -282,7 +282,7 @@ export function ShareWithHiringManagerDialog({
               <UserRoundPlus className="size-5" aria-hidden="true" />
             </div>
 
-            <DialogTitle className="text-xl font-bold text-text-primary">
+            <DialogTitle className="text-h3 text-text-primary">
               Compartir con un Hiring Manager
             </DialogTitle>
           </div>
@@ -376,7 +376,7 @@ export function ShareWithHiringManagerDialog({
             >
               <ComboboxChips
                 ref={comboboxAnchor}
-                className="min-h-12 rounded-xl px-3 py-2 focus-within:border-border-focus focus-within:ring-4 focus-within:ring-border-focus/20"
+                className="min-h-12 rounded-xl px-3 py-2"
               >
                 <ComboboxValue>
                   {(value: HiringManagerOption[]) => (
@@ -441,7 +441,7 @@ export function ShareWithHiringManagerDialog({
                     <ComboboxItem
                       key={manager.id}
                       value={manager}
-                      className="min-h-16 rounded-lg px-3 py-2"
+                      className="min-h-16 rounded-lg px-3 py-2 data-highlighted:bg-surface-hover data-highlighted:text-text-primary"
                     >
                       <HiringManagerAvatar manager={manager} />
 
@@ -474,7 +474,7 @@ export function ShareWithHiringManagerDialog({
 
           <section className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-4">
-              <h3 className="text-xs font-bold tracking-wide text-text-tertiary">
+              <h3 className="font-sans text-xs font-bold tracking-wide text-text-tertiary">
                 YA TIENE ACCESO
               </h3>
 

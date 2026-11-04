@@ -33,7 +33,9 @@ export default function OpeningHiring() {
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">Hiring Managers</CardTitle>
+        <CardTitle className="font-heading text-h3 text-text-primary">
+          Hiring Managers
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Controller
@@ -64,7 +66,7 @@ export default function OpeningHiring() {
                       <Badge
                         key={manager.id}
                         variant="outline"
-                        className="h-8 rounded-full border border-border-default bg-surface-hover px-4 text-[13px] font-medium text-text-secondary transition-all"
+                        className="h-8 rounded-full border border-border-default bg-surface-hover px-4 text-small font-medium text-text-secondary transition-all"
                       >
                         {manager.image ? (
                           <Image
@@ -123,7 +125,7 @@ export default function OpeningHiring() {
                       disabled={availableManagers?.length === 0}
                     >
                       <ComboboxInput
-                        className="w-full rounded-md focus-within:!border-border-focus focus-within:!ring-3 focus-within:!ring-accent-green/30"
+                        className="w-full rounded-md"
                         placeholder={
                           availableManagers?.length === 0
                             ? "Todos los hiring managers fueron seleccionados"

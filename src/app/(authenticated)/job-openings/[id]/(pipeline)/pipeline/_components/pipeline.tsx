@@ -11,12 +11,14 @@ import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
 
 type PipelineProps = {
   jobOpeningId: string;
+  jobOpeningName: string;
   stages: PipelineStage[];
   search?: string;
 };
 
 export async function Pipeline({
   jobOpeningId,
+  jobOpeningName,
   stages,
   search,
 }: PipelineProps) {
@@ -53,11 +55,15 @@ export async function Pipeline({
   return (
     <PipelineHorizontalScroll>
       <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
-        <div className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row">
+        <div
+          data-pipeline-board
+          className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row"
+        >
           {stages.map((stage, index) => (
             <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
               <PipelineColumn
                 jobOpeningId={jobOpeningId}
+                jobOpeningName={jobOpeningName}
                 stage={stage}
                 isLastStage={index === stages.length - 1}
                 search={search}

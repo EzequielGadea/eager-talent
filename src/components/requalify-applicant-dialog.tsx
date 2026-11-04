@@ -50,7 +50,7 @@ export function RequalifyApplicantDialog({
     >
       <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
         <div className="px-6 py-5">
-          <DialogTitle className="text-lg font-semibold text-text-primary">
+          <DialogTitle className="text-h3 text-text-primary">
             Volver a calificar
           </DialogTitle>
 
@@ -61,10 +61,7 @@ export function RequalifyApplicantDialog({
           </DialogDescription>
 
           {requalifyMutation.isError && (
-            <p
-              role="alert"
-              className="mt-3 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
-            >
+            <p className="mt-3 text-sm text-danger">
               {requalifyMutation.error.data?.code === "CONFLICT"
                 ? requalifyMutation.error.message
                 : "No se pudo volver a calificar la postulación."}

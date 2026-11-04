@@ -1,6 +1,14 @@
 "use client";
 
-import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
 import { useRouter } from "next/navigation";
 import {
   createContext,
@@ -12,8 +20,12 @@ import {
 } from "react";
 
 import { api } from "~/lib/trpc/react";
+import { toast } from "~/components/ui/toast";
 
 import type { PendingMove, PipelineCandidate } from "./types";
+import { restrictToPipeline } from "./pipeline-drag-modifier";
+
+const dragModifiers = [restrictToPipeline];
 
 type PipelineMovesContextValue = {
   moves: Record<string, PendingMove>;
@@ -40,6 +52,10 @@ export function PipelineDndProvider({
 }: PipelineDndProviderProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor),
+  );
 
   const [moves, setMoves] = useState<Record<string, PendingMove>>({});
 
@@ -60,7 +76,7 @@ export function PipelineDndProvider({
     api.application.moveApplicationToStage.useMutation({
       onError: (error, variables) => {
         clearMove(variables.applicantId);
-        console.error("Error al mover el postulante:", error);
+        toast.add({ title: error.message, type: "error" });
       },
       onSettled: () => {
         pendingRef.current -= 1;
@@ -140,7 +156,12 @@ export function PipelineDndProvider({
 
   return (
     <PipelineMovesContext.Provider value={{ moves, clearMove }}>
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        modifiers={dragModifiers}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
         {children}
       </DndContext>
     </PipelineMovesContext.Provider>

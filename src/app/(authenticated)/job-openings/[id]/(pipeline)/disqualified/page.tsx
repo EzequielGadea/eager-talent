@@ -86,7 +86,7 @@ async function DisqualifiedContent({
   const stages = jobOpening.stages as PipelineStage[];
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col gap-6 p-6">
+    <main className="flex min-h-0 flex-1 flex-col gap-6">
       <JobOpeningHeader
         jobOpeningId={jobOpening.id}
         name={jobOpening.name}

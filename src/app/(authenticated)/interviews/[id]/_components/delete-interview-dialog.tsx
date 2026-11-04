@@ -63,7 +63,7 @@ export function DeleteInterviewDialog({
     >
       <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
         <div className="border-b border-border-default px-6 py-5">
-          <DialogTitle className="text-lg font-semibold text-text-primary">
+          <DialogTitle className="text-h3 text-text-primary">
             Eliminar entrevista
           </DialogTitle>
           <DialogDescription className="mt-1 text-sm text-text-secondary">

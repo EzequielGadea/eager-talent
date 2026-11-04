@@ -18,15 +18,7 @@ import {
   CardFooter,
 } from "~/components/ui/card";
 import { Empty, EmptyHeader, EmptyDescription } from "~/components/ui/empty";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/pagination";
+import { ListPagination } from "~/components/list-pagination";
 import { Separator } from "~/components/ui/separator";
 import {
   Table,
@@ -69,7 +61,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-text-primary">
+            <h2 className="text-h3 text-text-primary">
               No se pudo cargar la actividad
             </h2>
 
@@ -100,20 +92,10 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
     total = 0,
     page: current = 1,
     pageSize = 10,
-    totalPages = 1,
   } = data || {};
   const selectedApp = applications.find(
     (app) => app.jobOpeningId === jobOpeningId,
   );
-  const firstRecord = (current - 1) * pageSize + 1;
-  const pages =
-    totalPages <= 5
-      ? Array.from({ length: totalPages }, (_, index) => index + 1)
-      : current <= 3
-        ? [1, 2, 3, 4, totalPages]
-        : current >= totalPages - 2
-          ? [1, totalPages - 3, totalPages - 2, totalPages - 1, totalPages]
-          : [1, current - 1, current, current + 1, totalPages];
 
   const setPageAndScroll = (newPage: number) => {
     flushSync(() => {
@@ -191,7 +173,7 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
               <col className="w-57.5" />
             </colgroup>
             <TableHeader>
-              <TableRow className="text-xs font-semibold uppercase text-muted-foreground hover:bg-transparent">
+              <TableRow className="hover:bg-transparent">
                 <TableHead className="py-3 pr-3">Fecha</TableHead>
                 <TableHead className="py-3 pr-3">Evento</TableHead>
                 <TableHead className="py-3">Postulación</TableHead>
@@ -255,74 +237,21 @@ export function ApplicantLogs({ applicantId }: { applicantId: string }) {
         )}
       </CardContent>
 
-      {(isLoading || data) && (
-        <CardFooter className="flex flex-wrap items-center justify-between gap-3">
-          {isLoading || !data ? (
-            <>
-              <Skeleton className="h-5 w-40" />
-              <Skeleton className="h-10 w-75" />
-            </>
-          ) : (
-            <>
-              <span>
-                {activities.length === 0
-                  ? "No hay registros"
-                  : `${firstRecord}–${firstRecord + activities.length - 1} de ${total} registros`}
-              </span>
-              <Pagination className="mx-0 w-auto justify-end">
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      href="#"
-                      text="Página anterior"
-                      aria-disabled={current === 1}
-                      className={
-                        current === 1 ? "pointer-events-none opacity-50" : ""
-                      }
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (current > 1) setPageAndScroll(current - 1);
-                      }}
-                    />
-                  </PaginationItem>
-                  {pages.map((p, i) => (
-                    <PaginationItem key={p} className="flex items-center">
-                      {i > 0 && p - pages[i - 1] > 1 && <PaginationEllipsis />}
-                      <PaginationLink
-                        href="#"
-                        isActive={p === current}
-                        aria-label={`Página ${p}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setPageAndScroll(p);
-                        }}
-                      >
-                        {p}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  <PaginationItem>
-                    <PaginationNext
-                      href="#"
-                      text="Página siguiente"
-                      aria-disabled={current === totalPages}
-                      className={
-                        current === totalPages
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (current < totalPages) setPageAndScroll(current + 1);
-                      }}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </>
-          )}
-        </CardFooter>
-      )}
+      {(isLoading || data) &&
+        (isLoading || !data ? (
+          <CardFooter className="flex flex-wrap items-center justify-between gap-3">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-10 w-75" />
+          </CardFooter>
+        ) : (
+          <ListPagination
+            totalItems={total}
+            pageSize={pageSize}
+            currentPage={current}
+            itemLabel="registros"
+            onPageChange={setPageAndScroll}
+          />
+        ))}
     </Card>
   );
 }
