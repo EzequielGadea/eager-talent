@@ -96,12 +96,18 @@ export function CandidateCard({
     name: string;
   } | null>(null);
 
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform } =
-    useDraggable({
-      id: candidate.applicantId,
-      data: { candidate, stageId: currentStageId },
-      disabled: !canUpdateApplication,
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    isDragging,
+  } = useDraggable({
+    id: candidate.applicantId,
+    data: { candidate, stageId: currentStageId },
+    disabled: !canUpdateApplication,
+  });
 
   function handleCardPointerDown(event: PointerEvent<HTMLDivElement>) {
     // Touch gestures outside the handle keep the page scrollable.
@@ -163,6 +169,7 @@ export function CandidateCard({
         data-pipeline-candidate
         onPointerDown={canUpdateApplication ? handleCardPointerDown : undefined}
         style={{
+          zIndex: isDragging ? 10 : undefined,
           transform: transform
             ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
             : undefined,

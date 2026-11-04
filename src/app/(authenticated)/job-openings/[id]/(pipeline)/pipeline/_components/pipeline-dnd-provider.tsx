@@ -76,7 +76,13 @@ export function PipelineDndProvider({
     api.application.moveApplicationToStage.useMutation({
       onError: (error, variables) => {
         clearMove(variables.applicantId);
-        toast.add({ title: error.message, type: "error" });
+        const title =
+          error.data?.code === "UNAUTHORIZED"
+            ? "Necesitás iniciar sesión para mover la postulación."
+            : !error.data || error.data.code === "INTERNAL_SERVER_ERROR"
+              ? "No se pudo mover la postulación. Intentá nuevamente."
+              : error.message;
+        toast.add({ title, type: "error" });
       },
       onSettled: () => {
         pendingRef.current -= 1;
