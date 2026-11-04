@@ -1,17 +1,14 @@
-import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { PipelineColumnSkeleton } from "./pipeline-column-skeleton";
 
 export function PipelineSkeleton() {
   return (
-    <ScrollArea className="w-full">
-      <div className="flex min-w-max gap-4 pb-4">
+    <div className="w-full overflow-hidden">
+      <div className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row">
         <PipelineColumnSkeleton />
         <PipelineColumnSkeleton />
         <PipelineColumnSkeleton />
         <PipelineColumnSkeleton />
       </div>
-
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    </div>
   );
 }

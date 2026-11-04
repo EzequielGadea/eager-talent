@@ -4,13 +4,14 @@ import {
   ArrowRight,
   CalendarDays,
   CircleX,
+  GripVertical,
   Loader2,
   MoreHorizontal,
   Trash2,
   UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type PointerEvent } from "react";
 import { format, isToday, isTomorrow } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -95,13 +96,25 @@ export function CandidateCard({
     name: string;
   } | null>(null);
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    isDragging,
+  } = useDraggable({
     id: candidate.applicantId,
     data: { candidate, stageId: currentStageId },
     disabled: !canUpdateApplication,
   });
 
-  const dragProps = canUpdateApplication ? { ...listeners, ...attributes } : {};
+  function handleCardPointerDown(event: PointerEvent<HTMLDivElement>) {
+    // Touch gestures outside the handle keep the page scrollable.
+    if (event.pointerType !== "touch") {
+      listeners?.onPointerDown?.(event);
+    }
+  }
 
   const advanceApplicationStageMutation =
     api.application.advanceApplicationStage.useMutation({
@@ -154,8 +167,9 @@ export function CandidateCard({
       <Card
         ref={setNodeRef}
         data-pipeline-candidate
-        {...dragProps}
+        onPointerDown={canUpdateApplication ? handleCardPointerDown : undefined}
         style={{
+          zIndex: isDragging ? 10 : undefined,
           transform: transform
             ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
             : undefined,
@@ -167,6 +181,26 @@ export function CandidateCard({
         }`}
       >
         <div className="flex items-center gap-3">
+          {canUpdateApplication && (
+            <Button
+              ref={setActivatorNodeRef}
+              type="button"
+              variant="ghost"
+              size="icon"
+              {...attributes}
+              {...listeners}
+              aria-label={`Arrastrar ${candidate.name} ${candidate.lastName}`}
+              title="Arrastrar candidato"
+              className="shrink-0 touch-none cursor-grab p-0 active:cursor-grabbing"
+              onPointerDown={(event) => {
+                event.stopPropagation();
+                listeners?.onPointerDown?.(event);
+              }}
+            >
+              <GripVertical aria-hidden="true" />
+            </Button>
+          )}
+
           <Avatar className="size-9 shrink-0">
             <AvatarImage
               src={candidate.photo ?? undefined}
