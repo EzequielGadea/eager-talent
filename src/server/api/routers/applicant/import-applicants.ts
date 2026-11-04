@@ -1,4 +1,3 @@
-
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -14,7 +13,7 @@ import {
 } from "~/lib/csv/applicant-import-enums";
 import { normalizeImportPhone } from "~/lib/csv/normalize-import-phone";
 
-const importedApplicantSchema = z.object({
+export const importedApplicantSchema = z.object({
   rowNumber: z.number().int().positive(),
 
   email: z.string().trim().toLowerCase().pipe(z.email()),
@@ -46,16 +45,11 @@ type ImportError = {
   reason: string;
 };
 
-function normalizeOptionalId(
-  value: string | null,
-): string | null {
+function normalizeOptionalId(value: string | null): string | null {
   return value?.trim() || null;
 }
 
-function getRowNumber(
-  value: unknown,
-  fallback: number,
-): number {
+function getRowNumber(value: unknown, fallback: number): number {
   if (
     typeof value === "object" &&
     value !== null &&
@@ -88,9 +82,7 @@ function getImportErrorMessage(error: unknown): string {
     return error.message;
   }
 
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError
-  ) {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
       const target = error.meta?.target;
       const fields = Array.isArray(target)
@@ -118,40 +110,38 @@ export const importApplicants = protectedProcedure
   .input(importApplicantsSchema)
   .mutation(async ({ ctx, input }) => {
     // 1. Check all permissions before any database writes.
-   
 
     const applicantCreate = await auth.api.hasPermission({
-  headers: ctx.headers,
-  body: { permissions: { applicant: ["create"] } },
-});
+      headers: ctx.headers,
+      body: { permissions: { applicant: ["create"] } },
+    });
 
-const applicantUpdate = await auth.api.hasPermission({
-  headers: ctx.headers,
-  body: { permissions: { applicant: ["update"] } },
-});
+    const applicantUpdate = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { applicant: ["update"] } },
+    });
 
-const roleCreate = await auth.api.hasPermission({
-  headers: ctx.headers,
-  body: { permissions: { jobRole: ["create"] } },
-});
+    const roleCreate = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { jobRole: ["create"] } },
+    });
 
-const seniorityCreate = await auth.api.hasPermission({
-  headers: ctx.headers,
-  body: { permissions: { seniority: ["create"] } },
-});
+    const seniorityCreate = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions: { seniority: ["create"] } },
+    });
 
-if (
-  !applicantCreate.success ||
-  !applicantUpdate.success ||
-  !roleCreate.success ||
-  !seniorityCreate.success
-) {
-  throw new TRPCError({
-    code: "FORBIDDEN",
-    message:
-      "No tenés los permisos necesarios para importar candidatos.",
-  });
-}
+    if (
+      !applicantCreate.success ||
+      !applicantUpdate.success ||
+      !roleCreate.success ||
+      !seniorityCreate.success
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés los permisos necesarios para importar candidatos.",
+      });
+    }
 
     // 2. Prepare import results.
     let imported = 0;
@@ -170,9 +160,7 @@ if (
         errors.push({
           rowNumber: getRowNumber(rawApplicant, fallbackRow),
           email: getEmail(rawApplicant),
-          reason: parsed.error.issues
-            .map((issue) => issue.message)
-            .join("; "),
+          reason: parsed.error.issues.map((issue) => issue.message).join("; "),
         });
 
         continue;
@@ -182,9 +170,7 @@ if (
 
       const normalizedEmail = applicant.email.toLowerCase();
 
-      const peopleForceId = normalizeOptionalId(
-        applicant.externalId,
-      );
+      const peopleForceId = normalizeOptionalId(applicant.externalId);
 
       // 4. Check duplicates inside the import batch.
       if (seenEmails.has(normalizedEmail)) {
@@ -199,15 +185,11 @@ if (
 
       seenEmails.add(normalizedEmail);
 
-      if (
-        peopleForceId &&
-        seenPeopleForceIds.has(peopleForceId)
-      ) {
+      if (peopleForceId && seenPeopleForceIds.has(peopleForceId)) {
         errors.push({
           rowNumber: applicant.rowNumber,
           email: applicant.email,
-          reason:
-            "El ID de PeopleForce está repetido en la importación.",
+          reason: "El ID de PeopleForce está repetido en la importación.",
         });
 
         continue;
@@ -240,19 +222,17 @@ if (
 
           // Check existing PeopleForce ID.
           if (peopleForceId) {
-            const existingPeopleForceId =
-              await tx.applicant.findUnique({
-                where: {
-                  peopleForceID: peopleForceId,
-                },
-                select: { id: true },
-              });
+            const existingPeopleForceId = await tx.applicant.findFirst({
+              where: {
+                peopleForceID: peopleForceId,
+              },
+              select: { id: true },
+            });
 
             if (existingPeopleForceId) {
               throw new TRPCError({
                 code: "CONFLICT",
-                message:
-                  "Ya existe un candidato con ese ID de PeopleForce.",
+                message: "Ya existe un candidato con ese ID de PeopleForce.",
               });
             }
           }
@@ -361,12 +341,8 @@ if (
               title: applicant.title,
 
               source: mapImportSource(applicant.source),
-              englishLevel: mapImportEnglishLevel(
-                applicant.englishLevel,
-              ),
-              hearAboutUs: mapImportHearAboutUs(
-                applicant.hearAboutUs,
-              ),
+              englishLevel: mapImportEnglishLevel(applicant.englishLevel),
+              hearAboutUs: mapImportHearAboutUs(applicant.hearAboutUs),
 
               role: {
                 connect: { id: role.id },
@@ -397,17 +373,17 @@ if (
 
         imported++;
       } catch (error) {
-  console.error(
-    `Error importando candidato en la fila ${applicant.rowNumber}:`,
-    error,
-  );
+        console.error(
+          `Error importando candidato en la fila ${applicant.rowNumber}:`,
+          error,
+        );
 
-  errors.push({
-    rowNumber: applicant.rowNumber,
-    email: applicant.email,
-    reason: getImportErrorMessage(error),
-  });
-}
+        errors.push({
+          rowNumber: applicant.rowNumber,
+          email: applicant.email,
+          reason: getImportErrorMessage(error),
+        });
+      }
     }
 
     // 11. Return final import summary.
@@ -419,25 +395,18 @@ if (
     };
   });
 
-
-  function normalizeImportLinkedin(
-  linkedin: string | null,
-): string | null {
+function normalizeImportLinkedin(linkedin: string | null): string | null {
   if (!linkedin?.trim()) return null;
 
   try {
     const url = new URL(linkedin.trim());
 
-    const validProtocol =
-      url.protocol === "https:" || url.protocol === "http:";
+    const validProtocol = url.protocol === "https:" || url.protocol === "http:";
 
     const validHostname =
-      url.hostname === "linkedin.com" ||
-      url.hostname === "www.linkedin.com";
+      url.hostname === "linkedin.com" || url.hostname === "www.linkedin.com";
 
-    return validProtocol && validHostname
-      ? url.toString()
-      : null;
+    return validProtocol && validHostname ? url.toString() : null;
   } catch {
     return null;
   }
