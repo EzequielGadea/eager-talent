@@ -1,0 +1,345 @@
+
+"use client";
+
+import { useRef, useState } from "react";
+import { FileUp } from "lucide-react";
+
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+
+import {
+  parseApplicantCsv,
+  type ImportedApplicant,
+} from "~/lib/csv/parse-applicants-csv";
+
+import { api } from "~/lib/trpc/react";
+
+type ImportError = {
+  rowNumber: number;
+  email: string;
+  reason: string;
+};
+
+type ValidationResult = {
+  validApplicants: ImportedApplicant[];
+  errors: ImportError[];
+};
+
+type ImportResult = {
+  total: number;
+  imported: number;
+  failed: number;
+  errors: ImportError[];
+};
+
+export function ImportApplicantsButton() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [open, setOpen] = useState(false);
+  const [fileName, setFileName] = useState("");
+  const [generalError, setGeneralError] = useState<string | null>(null);
+
+  const [validationResult, setValidationResult] =
+    useState<ValidationResult | null>(null);
+
+  const [importResult, setImportResult] =
+    useState<ImportResult | null>(null);
+
+  const [isParsing, setIsParsing] = useState(false);
+
+  const utils = api.useUtils();
+
+  const validateMutation =
+    api.applicant.validateImportApplicants.useMutation();
+
+  const importMutation =
+    api.applicant.importApplicants.useMutation();
+
+  const isLoading =
+    isParsing ||
+    validateMutation.isPending ||
+    importMutation.isPending;
+
+  function resetState() {
+    setFileName("");
+    setGeneralError(null);
+    setValidationResult(null);
+    setImportResult(null);
+    setIsParsing(false);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  async function handleFileChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    resetState();
+    setFileName(file.name);
+    setOpen(true);
+
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      setGeneralError("El archivo debe tener formato CSV.");
+      return;
+    }
+
+    setIsParsing(true);
+
+    try {
+      const parsed = await parseApplicantCsv(file);
+
+      const parseErrors: string[] = [
+        ...parsed.headerErrors,
+        ...parsed.missingHeaders.map(
+          (header) => `Falta la columna obligatoria: ${header}.`,
+        ),
+        ...parsed.errors.map(
+          (error) =>
+            `Error al leer el CSV: ${error.message}`,
+        ),
+      ];
+
+      if (parseErrors.length > 0) {
+        setGeneralError(parseErrors.join("\n"));
+        return;
+      }
+
+      if (parsed.data.length === 0) {
+        setGeneralError("El archivo CSV no contiene candidatos.");
+        return;
+      }
+
+      const validation =
+        await validateMutation.mutateAsync({
+          applicants: parsed.data,
+        });
+
+      setValidationResult(validation);
+    } catch (error) {
+      setGeneralError(
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error al procesar el archivo.",
+      );
+    } finally {
+      setIsParsing(false);
+    }
+  }
+
+  async function handleConfirmImport() {
+    if (!validationResult?.validApplicants.length) return;
+
+    try {
+      setGeneralError(null);
+
+      const result = await importMutation.mutateAsync({
+        applicants: validationResult.validApplicants,
+      });
+
+      setImportResult(result);
+
+      // Refresh the applicants list after importing.
+      await utils.applicant.invalidate();
+    } catch (error) {
+      setGeneralError(
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error durante la importación.",
+      );
+    }
+  }
+
+  return (
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv,text/csv"
+        className="hidden"
+        onChange={handleFileChange}
+        aria-label="Seleccionar archivo CSV de candidatos"
+      />
+
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        onClick={() => fileInputRef.current?.click()}
+        className="h-8.5 gap-2 rounded-full px-3 text-small font-semibold md:px-4"
+      >
+        <FileUp size={16} />
+        <span className="hidden md:inline">Importar CSV</span>
+        <span className="sr-only md:hidden">
+          Importar candidatos desde CSV
+        </span>
+      </Button>
+
+      <Dialog
+        open={open}
+        onOpenChange={(nextOpen) => {
+          if (isLoading && !nextOpen) return;
+
+          setOpen(nextOpen);
+
+          if (!nextOpen) resetState();
+        }}
+      >
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Importar candidatos</DialogTitle>
+            <DialogDescription>
+              {fileName || "Importación desde archivo CSV"}
+            </DialogDescription>
+          </DialogHeader>
+
+          {isLoading && (
+            <p className="text-sm text-text-secondary">
+              {importMutation.isPending
+                ? "Importando candidatos..."
+                : "Procesando y validando el archivo..."}
+            </p>
+          )}
+
+          {generalError && (
+            <div
+              role="alert"
+              className="whitespace-pre-line rounded-md border border-danger bg-danger-bg p-3 text-sm text-danger"
+            >
+              {generalError}
+            </div>
+          )}
+
+          {validationResult && !importResult && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-md border border-border p-3">
+                  <p className="text-sm text-text-secondary">
+                    Candidatos válidos
+                  </p>
+                  <p className="text-2xl font-semibold">
+                    {validationResult.validApplicants.length}
+                  </p>
+                </div>
+
+                <div className="rounded-md border border-border p-3">
+                  <p className="text-sm text-text-secondary">
+                    Candidatos con errores
+                  </p>
+                  <p className="text-2xl font-semibold">
+                    {validationResult.errors.length}
+                  </p>
+                </div>
+              </div>
+
+              {validationResult.errors.length > 0 && (
+                <ImportErrors
+                  errors={validationResult.errors}
+                />
+              )}
+
+              <p className="text-sm text-text-secondary">
+                Solo se importarán los candidatos válidos.
+                Los candidatos con errores quedarán excluidos.
+              </p>
+            </div>
+          )}
+
+          {importResult && (
+            <div className="space-y-4">
+              <p className="text-sm">
+                Se importaron correctamente{" "}
+                <strong>{importResult.imported}</strong> de{" "}
+                <strong>{importResult.total}</strong> candidatos.
+              </p>
+
+              {importResult.failed > 0 && (
+                <ImportErrors errors={importResult.errors} />
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            {importResult ? (
+              <Button onClick={() => setOpen(false)}>
+                Cerrar
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={() => setOpen(false)}
+                >
+                  Cancelar
+                </Button>
+
+                {validationResult && (
+                  <Button
+                    disabled={
+                      isLoading ||
+                      validationResult.validApplicants.length === 0
+                    }
+                    onClick={handleConfirmImport}
+                  >
+                    Importar{" "}
+                    {validationResult.validApplicants.length}{" "}
+                    candidatos
+                  </Button>
+                )}
+              </>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+function ImportErrors({ errors }: { errors: ImportError[] }) {
+  return (
+    <div className="space-y-2">
+      <h3 className="text-sm font-semibold">
+        Errores detectados ({errors.length})
+      </h3>
+
+      <div className="max-h-64 overflow-auto rounded-md border border-border">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="p-2">Fila</th>
+              <th className="p-2">Email</th>
+              <th className="p-2">Motivo</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {errors.map((error, index) => (
+              <tr
+                key={`${error.rowNumber}-${index}`}
+                className="border-b border-border last:border-b-0"
+              >
+                <td className="p-2">{error.rowNumber}</td>
+                <td className="break-all p-2">
+                  {error.email || "—"}
+                </td>
+                <td className="p-2">{error.reason}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
