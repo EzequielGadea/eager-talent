@@ -215,6 +215,6 @@ export const validateImportApplicants = protectedProcedure
 
     return {
       validApplicants,
-      errors,
+      errors: errors.sort((a, b) => a.rowNumber - b.rowNumber),
     };
   });
