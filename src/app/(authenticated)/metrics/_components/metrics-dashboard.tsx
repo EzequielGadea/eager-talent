@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { Fragment, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -12,7 +12,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { Briefcase, Download } from "lucide-react";
 
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardTitle } from "~/components/ui/card";
 import { ChartContainer } from "~/components/ui/chart";
 import {
@@ -29,7 +31,6 @@ import {
   SelectValue,
   SelectGroup,
 } from "~/components/ui/select";
-import { Briefcase } from "lucide-react";
 import { api } from "~/lib/trpc/react";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
@@ -391,9 +392,8 @@ function PipelineChart({
         {/* Subtitle */}
         {pipeline && firstStage && (
           <p
-            className={`mb-5 text-small text-text-secondary transition-opacity ${
-              isRefreshing ? "opacity-50" : ""
-            }`}
+            className={`mb-5 text-small text-text-secondary transition-opacity ${isRefreshing ? "opacity-50" : ""
+              }`}
           >
             Conversión de punta a punta:{" "}
             <strong
@@ -436,9 +436,8 @@ function PipelineChart({
         ) : (
           <div
             aria-busy={isRefreshing}
-            className={`flex flex-col gap-1.5 transition-opacity ${
-              isRefreshing ? "opacity-50" : ""
-            }`}
+            className={`flex flex-col gap-1.5 transition-opacity ${isRefreshing ? "opacity-50" : ""
+              }`}
           >
             {pipeline.stages.map((stage, index) => {
               const nextStage = pipeline.stages[index + 1];
@@ -478,14 +477,12 @@ function PipelineChart({
                     <div className="grid grid-cols-[118px_1fr_40px]">
                       <span />
                       <span
-                        className={`inline-flex items-center gap-1.5 py-px text-label font-semibold ${
-                          advances ? "text-tag-green-fg" : "text-tag-red-fg"
-                        }`}
+                        className={`inline-flex items-center gap-1.5 py-px text-label font-semibold ${advances ? "text-tag-green-fg" : "text-tag-red-fg"
+                          }`}
                       >
                         <span
-                          className={`h-3 w-0.75 rounded-xs ${
-                            advances ? "bg-success" : "bg-danger"
-                          }`}
+                          className={`h-3 w-0.75 rounded-xs ${advances ? "bg-success" : "bg-danger"
+                            }`}
                         />
                         {Math.round(advancePercentage)}% avanza
                       </span>
@@ -556,43 +553,122 @@ export function MetricsDashboard({
     setPage(1);
   }
 
+  function downloadMetrics() {
+    window.print();
+  }
   return (
-    <section className="flex flex-col gap-6 [&_[data-slot=card]]:rounded-lg">
-      <header>
-        <h1 className="font-heading text-balance text-h1 text-text-primary">
-          Métricas
-        </h1>
-      </header>
+      <section className="metrics-print flex flex-col gap-6 [&_[data-slot=card]]:rounded-lg">
+        <style>{PRINT_STYLES}</style>
+        <header className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="font-heading text-balance text-h1 text-text-primary">
+            Métricas
+          </h1>
+          <Button
+            type="button"
+            onClick={downloadMetrics}
+            className="print:hidden"
+          >
+            <Download aria-hidden="true" />
+            Exportar a PDF
+          </Button>
+        </header>
 
-      <MetricsFilters
-        period={period}
-        areaId={areaId}
-        areas={areas}
-        onPeriodChange={changePeriod}
-        onAreaChange={changeArea}
-      />
+        <MetricsFilters
+          period={period}
+          areaId={areaId}
+          areas={areas}
+          onPeriodChange={changePeriod}
+          onAreaChange={changeArea}
+        />
 
-      <MetricsSummaryCards
-        metrics={timeMetrics}
-        isPending={
-          timeMetricsQuery.isPending || timeMetricsQuery.isPlaceholderData
-        }
-      />
+        <MetricsSummaryCards
+          metrics={timeMetrics}
+          isPending={
+            timeMetricsQuery.isPending || timeMetricsQuery.isPlaceholderData
+          }
+        />
 
-      <JobOpeningDeviations
-        data={deviations}
-        isLoading={
-          deviationsQuery.isPending || deviationsQuery.isPlaceholderData
-        }
-        onPageChange={setPage}
-      />
+        <JobOpeningDeviations
+          data={deviations}
+          isLoading={
+            deviationsQuery.isPending || deviationsQuery.isPlaceholderData
+          }
+          onPageChange={setPage}
+        />
 
-      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
-        <DisqualificationChart motives={summary.disqualificationMotives} />
-        <SourcesChart sources={summary.applicationSources} />
-      </div>
+        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+          <DisqualificationChart motives={summary.disqualificationMotives} />
+          <SourcesChart sources={summary.applicationSources} />
+        </div>
 
-      <PipelineChart closedOpenings={closedOpenings} />
-    </section>
+        <PipelineChart closedOpenings={closedOpenings} />
+      </section>
   );
 }
+
+
+const PRINT_STYLES = `
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+
+    body {
+      background: var(--surface-page);
+    }
+
+    body * {
+      visibility: hidden;
+    }
+    .metrics-print .recharts-tooltip-wrapper {
+      display: none !important;
+    }
+
+    .metrics-print,
+    .metrics-print * {
+      visibility: visible;
+    }
+
+    .metrics-print {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      gap: 6mm !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+
+      zoom: 0.75;
+    }
+
+    .metrics-print > header {
+      margin-bottom: 6mm;
+    }
+
+    .metrics-print > header + * {
+      margin-bottom: 6mm;
+    }
+
+    .metrics-print [data-slot="card"] {
+      background: var(--surface-card) !important;
+      border: 1px solid var(--border-default) !important;
+      box-shadow: none !important;
+      break-inside: avoid;
+      page-break-inside: avoid;
+      margin-bottom: 3mm;
+    }
+
+    .metrics-print table {
+      margin-top: 6mm !important;
+    }
+
+    .metrics-print [class*="overflow-"] {
+      overflow: visible !important;
+    }
+
+    .metrics-print [class*="min-w-"] {
+      min-width: 0 !important;
+    }
+  }
+`;
