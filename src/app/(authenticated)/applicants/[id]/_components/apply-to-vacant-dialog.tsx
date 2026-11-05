@@ -25,12 +25,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from "~/components/ui/combobox2";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "~/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "~/components/ui/field";
 
 import { z } from "zod";
 
