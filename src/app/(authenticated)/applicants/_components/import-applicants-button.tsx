@@ -82,6 +82,13 @@ export function ImportApplicantsButton() {
   async function handleFileChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
+    const expectedHeaders: Record<string, string> = {
+      email: "Correo",
+      fullName: "Nombre completo",
+      role: "Posición actual",
+    };
+    
+    
     const file = event.target.files?.[0];
 
     if (!file) return;
@@ -103,7 +110,7 @@ export function ImportApplicantsButton() {
       const parseErrors: string[] = [
         ...parsed.headerErrors,
         ...parsed.missingHeaders.map(
-          (header) => `Falta la columna obligatoria: ${header}.`,
+          (header) => `Al archivo le falta una columna obligatoria correspondiente a ${header} (se esperaba "${expectedHeaders[header]}").`,
         ),
         ...parsed.errors.map(
           (error) =>
