@@ -1,7 +1,7 @@
-
 "use client";
 
-import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useRef, useState, useTransition } from "react";
 import { FileUp } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
@@ -41,6 +41,8 @@ type ImportResult = {
 
 export function ImportApplicantsButton() {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const [isRefreshing, startTransition] = useTransition();
 
   const [open, setOpen] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -49,23 +51,21 @@ export function ImportApplicantsButton() {
   const [validationResult, setValidationResult] =
     useState<ValidationResult | null>(null);
 
-  const [importResult, setImportResult] =
-    useState<ImportResult | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
 
   const [isParsing, setIsParsing] = useState(false);
 
   const utils = api.useUtils();
 
-  const validateMutation =
-    api.applicant.validateImportApplicants.useMutation();
+  const validateMutation = api.applicant.validateImportApplicants.useMutation();
 
-  const importMutation =
-    api.applicant.importApplicants.useMutation();
+  const importMutation = api.applicant.importApplicants.useMutation();
 
   const isLoading =
     isParsing ||
     validateMutation.isPending ||
-    importMutation.isPending;
+    importMutation.isPending ||
+    isRefreshing;
 
   function resetState() {
     setFileName("");
@@ -79,16 +79,13 @@ export function ImportApplicantsButton() {
     }
   }
 
-  async function handleFileChange(
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) {
+  async function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const expectedHeaders: Record<string, string> = {
       email: "Correo",
       fullName: "Nombre completo",
       role: "Posición actual",
     };
-    
-    
+
     const file = event.target.files?.[0];
 
     if (!file) return;
@@ -110,11 +107,11 @@ export function ImportApplicantsButton() {
       const parseErrors: string[] = [
         ...parsed.headerErrors,
         ...parsed.missingHeaders.map(
-          (header) => `Al archivo le falta una columna obligatoria correspondiente a ${header} (se esperaba "${expectedHeaders[header]}").`,
+          (header) =>
+            `Al archivo le falta una columna obligatoria correspondiente a ${header} (se esperaba "${expectedHeaders[header]}").`,
         ),
         ...parsed.errors.map(
-          (error) =>
-            `Error al leer el CSV: ${error.message}`,
+          (error) => `Error al leer el CSV: ${error.message}`,
         ),
       ];
 
@@ -128,10 +125,9 @@ export function ImportApplicantsButton() {
         return;
       }
 
-      const validation =
-        await validateMutation.mutateAsync({
-          applicants: parsed.data,
-        });
+      const validation = await validateMutation.mutateAsync({
+        applicants: parsed.data,
+      });
 
       setValidationResult(validation);
     } catch (error) {
@@ -159,6 +155,9 @@ export function ImportApplicantsButton() {
 
       // Refresh the applicants list after importing.
       await utils.applicant.invalidate();
+      startTransition(() => {
+        router.refresh();
+      });
     } catch (error) {
       setGeneralError(
         error instanceof Error
@@ -188,9 +187,7 @@ export function ImportApplicantsButton() {
       >
         <FileUp size={16} />
         <span className="hidden md:inline">Importar CSV</span>
-        <span className="sr-only md:hidden">
-          Importar candidatos desde CSV
-        </span>
+        <span className="sr-only md:hidden">Importar candidatos desde CSV</span>
       </Button>
 
       <Dialog
@@ -251,21 +248,19 @@ export function ImportApplicantsButton() {
               </div>
 
               {validationResult.errors.length > 0 && (
-                <ImportErrors
-                  errors={validationResult.errors}
-                />
+                <ImportErrors errors={validationResult.errors} />
               )}
 
               <p className="text-sm text-text-secondary">
-                Solo se importarán los candidatos válidos.
-                Los candidatos con errores quedarán excluidos.
+                Solo se importarán los candidatos válidos. Los candidatos con
+                errores quedarán excluidos.
               </p>
             </div>
           )}
 
           {importResult && (
             <div className="space-y-4">
-              <p className="text-sm">
+              <p className="rounded-md bg-success-bg p-3 text-sm text-success">
                 Se importaron correctamente{" "}
                 <strong>{importResult.imported}</strong> de{" "}
                 <strong>{importResult.total}</strong> candidatos.
@@ -279,7 +274,7 @@ export function ImportApplicantsButton() {
 
           <DialogFooter>
             {importResult ? (
-              <Button onClick={() => setOpen(false)}>
+              <Button disabled={isLoading} onClick={() => setOpen(false)}>
                 Cerrar
               </Button>
             ) : (
@@ -295,13 +290,11 @@ export function ImportApplicantsButton() {
                 {validationResult && (
                   <Button
                     disabled={
-                      isLoading ||
-                      validationResult.validApplicants.length === 0
+                      isLoading || validationResult.validApplicants.length === 0
                     }
                     onClick={handleConfirmImport}
                   >
-                    Importar{" "}
-                    {validationResult.validApplicants.length}{" "}
+                    Importar {validationResult.validApplicants.length}{" "}
                     candidatos
                   </Button>
                 )}
@@ -338,9 +331,7 @@ function ImportErrors({ errors }: { errors: ImportError[] }) {
                 className="border-b border-border last:border-b-0"
               >
                 <td className="p-2">{error.rowNumber}</td>
-                <td className="break-all p-2">
-                  {error.email || "—"}
-                </td>
+                <td className="break-all p-2">{error.email || "—"}</td>
                 <td className="p-2">{error.reason}</td>
               </tr>
             ))}

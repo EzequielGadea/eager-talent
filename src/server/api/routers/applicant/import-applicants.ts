@@ -209,6 +209,7 @@ export const importApplicants = protectedProcedure
                 equals: applicant.email,
                 mode: "insensitive",
               },
+              // deletedAt: null,
             },
             select: { id: true },
           });
@@ -225,6 +226,7 @@ export const importApplicants = protectedProcedure
             const existingPeopleForceId = await tx.applicant.findFirst({
               where: {
                 peopleForceID: peopleForceId,
+                deletedAt: null,
               },
               select: { id: true },
             });
