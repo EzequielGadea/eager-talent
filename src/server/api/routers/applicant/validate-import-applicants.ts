@@ -181,6 +181,7 @@ export const validateImportApplicants = protectedProcedure
             equals: normalizedEmail,
             mode: "insensitive",
           },
+          //deletedAt: null, ------------------- REVISAR !!!!!!!!!!!!!!!! -------------------------
         },
         select: { id: true },
       });
@@ -196,7 +197,10 @@ export const validateImportApplicants = protectedProcedure
 
       if (peopleForceId) {
         const existingApplicantID = await ctx.db.applicant.findFirst({
-          where: { peopleForceID: peopleForceId },
+          where: {
+            peopleForceID: peopleForceId,
+            //  deletedAt: null
+          },
           select: { id: true },
         });
 
