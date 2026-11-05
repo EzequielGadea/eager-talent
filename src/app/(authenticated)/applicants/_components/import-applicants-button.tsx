@@ -259,18 +259,37 @@ export function ImportApplicantsButton() {
           )}
 
           {importResult && (
-            <div className="space-y-4">
-              <p className="rounded-md bg-success-bg p-3 text-sm text-success">
-                Se importaron correctamente{" "}
-                <strong>{importResult.imported}</strong> de{" "}
-                <strong>{importResult.total}</strong> candidatos.
-              </p>
+  <div className="space-y-4">
+    <p
+      className={`rounded-md p-3 text-sm ${
+        importResult.imported === 0
+          ? "bg-danger-bg text-danger"
+          : importResult.failed > 0
+            ? "bg-warning-bg text-warning"
+            : "bg-success-bg text-success"
+      }`}
+    >
+      {importResult.imported === 0 ? (
+        "No se pudo importar ningún candidato."
+      ) : importResult.failed > 0 ? (
+        <>
+          Se importaron {importResult.imported} de{" "}
+          {importResult.total} candidatos. Los otros{" "}
+          {importResult.failed} no pudieron importarse.
+        </>
+      ) : (
+        <>
+          Se importaron correctamente{" "}
+          {importResult.imported} candidatos.
+        </>
+      )}
+    </p>
 
-              {importResult.failed > 0 && (
-                <ImportErrors errors={importResult.errors} />
-              )}
-            </div>
-          )}
+    {importResult.failed > 0 && (
+      <ImportErrors errors={importResult.errors} />
+    )}
+  </div>
+)}
 
           <DialogFooter>
             {importResult ? (
