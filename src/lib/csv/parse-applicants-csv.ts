@@ -59,7 +59,7 @@ const fields: Record<ApplicantField, string[]> = {
   title: ["Academic career"],
   fullName: ["Nombre completo", "Full name", "Name"],
   seniority: ["Nivel de puesto", "Job level", "Seniority"],
-  role: ["Posicion actual", "Posición actual", "Current position"],
+  role: ["Posicion actual", "Posición actual", "Current position", "rol", "role"],
   linkedin: ["Enlaces", "Links", "Link", "Enlace"],
   externalId: ["Identificación", "Identificacion"],
 };
