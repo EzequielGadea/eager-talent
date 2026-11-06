@@ -186,7 +186,7 @@ export function ImportApplicantsButton() {
         className="h-8.5 gap-2 rounded-full px-3 text-small font-semibold md:px-4"
       >
         <FileUp size={16} />
-        <span className="hidden md:inline">Importar CSV</span>
+        <span className="hidden md:inline">Importar candidatos</span>
         <span className="sr-only md:hidden">Importar candidatos desde CSV</span>
       </Button>
 
@@ -259,37 +259,37 @@ export function ImportApplicantsButton() {
           )}
 
           {importResult && (
-  <div className="space-y-4">
-    <p
-      className={`rounded-md p-3 text-sm ${
-        importResult.imported === 0
-          ? "bg-danger-bg text-danger"
-          : importResult.failed > 0
-            ? "bg-warning-bg text-warning"
-            : "bg-success-bg text-success"
-      }`}
-    >
-      {importResult.imported === 0 ? (
-        "No se pudo importar ningún candidato."
-      ) : importResult.failed > 0 ? (
-        <>
-          Se importaron {importResult.imported} de{" "}
-          {importResult.total} candidatos. Los otros{" "}
-          {importResult.failed} no pudieron importarse.
-        </>
-      ) : (
-        <>
-          Se importaron correctamente{" "}
-          {importResult.imported} candidatos.
-        </>
-      )}
-    </p>
+            <div className="space-y-4">
+              <p
+                className={`rounded-md p-3 text-sm ${
+                  importResult.imported === 0
+                    ? "bg-danger-bg text-danger"
+                    : importResult.failed > 0
+                      ? "bg-warning-bg text-warning"
+                      : "bg-success-bg text-success"
+                }`}
+              >
+                {importResult.imported === 0 ? (
+                  "No se pudo importar ningún candidato."
+                ) : importResult.failed > 0 ? (
+                  <>
+                    Se importaron {importResult.imported} de{" "}
+                    {importResult.total} candidatos. Los otros{" "}
+                    {importResult.failed} no pudieron importarse.
+                  </>
+                ) : (
+                  <>
+                    Se importaron correctamente {importResult.imported}{" "}
+                    candidatos.
+                  </>
+                )}
+              </p>
 
-    {importResult.failed > 0 && (
-      <ImportErrors errors={importResult.errors} />
-    )}
-  </div>
-)}
+              {importResult.failed > 0 && (
+                <ImportErrors errors={importResult.errors} />
+              )}
+            </div>
+          )}
 
           <DialogFooter>
             {importResult ? (
