@@ -33,7 +33,10 @@ type Props = {
 };
 
 const UPLOAD_ERROR_MESSAGE =
-  "No se pudo subir el archivo: verificá que sea un PDF o una imagen (PNG, JPG, WEBP o GIF) de hasta 4 MB.";
+  "No se pudo subir el archivo: verificá sea un PDF de hasta 4 MB.";
+
+const PHOTO_UPLOAD_ERROR_MESSAGE =
+  "No se pudo subir la foto: verificar sea PNG, JPG, WEBP o GIF de hasta 4 MB.";
 
 function getApplicantDefaultValues(applicant: Applicant): ApplicantFormValues {
   return {
@@ -146,7 +149,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
       if (photoFailed) {
         methods.setError("photo", {
           type: "server",
-          message: UPLOAD_ERROR_MESSAGE,
+          message: PHOTO_UPLOAD_ERROR_MESSAGE,
         });
       }
 

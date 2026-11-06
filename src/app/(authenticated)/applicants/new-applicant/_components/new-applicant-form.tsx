@@ -45,10 +45,14 @@ export const applicantFormSchema = z
         (files) =>
           !files ||
           files.length === 0 ||
-          files[0].type === "image/png" ||
-          files[0].type === "image/jpeg" ||
-          files[0].type === "image/jpg",
-        "El archivo debe ser una imagen PNG, JPEG o JPG",
+          [
+            "image/png",
+            "image/jpeg",
+            "image/jpg",
+            "image/webp",
+            "image/gif",
+          ].includes(files[0].type),
+        "El archivo debe ser una imagen PNG, JPG, WEBP o GIF",
       )
       .refine(
         (files) =>

@@ -12,7 +12,7 @@ import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 import ApplicantEditFormContent from "./edit-applicant-form-content";
 import { EditApplicantPageSkeleton } from "./edit-applicant-skeleton";
 
-const MAX_PHOTO_SIZE = 4 * 1024 * 1024;
+const MAX_PHOTO_SIZE = 4_000_000;
 
 export const applicantFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -26,10 +26,14 @@ export const applicantFormSchema = z.object({
       (files) =>
         !files ||
         files.length === 0 ||
-        files[0].type === "image/png" ||
-        files[0].type === "image/jpeg" ||
-        files[0].type === "image/jpg",
-      "El archivo debe ser una imagen PNG, JPEG o JPG",
+        [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/webp",
+          "image/gif",
+        ].includes(files[0].type),
+      "El archivo debe ser una imagen PNG, JPG, WEBP o GIF",
     )
     .refine(
       (files) =>
