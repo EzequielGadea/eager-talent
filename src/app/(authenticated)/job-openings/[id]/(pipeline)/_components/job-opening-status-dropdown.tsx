@@ -22,51 +22,24 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { toast } from "~/components/ui/toast";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
-import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
+import { statusConfig } from "../../../constants";
 
 type JobOpeningStatusDropdownProps = {
   jobOpeningId: string;
   status: JobOpeningStatus;
   canUpdate: boolean;
+  openingDate: Date;
+  hasApplications: boolean;
 };
 
 type TerminalStatus =
   typeof JobOpeningStatus.Closed | typeof JobOpeningStatus.Cancelled;
 
-const statusStyles: Record<
-  string,
-  {
-    badgeClassName: string;
-    dotClassName: string;
-  }
-> = {
-  Open: {
-    badgeClassName: "bg-success-bg text-success",
-    dotClassName: "bg-success",
-  },
-  Paused: {
-    badgeClassName: "bg-warning-bg text-warning",
-    dotClassName: "bg-warning",
-  },
-  Closed: {
-    badgeClassName: "bg-muted text-muted-foreground",
-    dotClassName: "bg-muted-foreground",
-  },
-  Cancelled: {
-    badgeClassName: "bg-danger-bg text-danger",
-    dotClassName: "bg-danger",
-  },
-};
-
-const fallbackStatusStyle = {
-  badgeClassName: "bg-muted text-muted-foreground",
-  dotClassName: "bg-muted-foreground",
-};
-
 const statusSuccessMessages: Record<JobOpeningStatus, string> = {
   Open: "Vacante abierta correctamente",
   Paused: "Vacante pausada correctamente",
+  Draft: "Vacante guardada como borrador correctamente",
   Closed: "Vacante cerrada correctamente",
   Cancelled: "Vacante cancelada correctamente",
 };
@@ -81,6 +54,8 @@ export function JobOpeningStatusDropdown({
   jobOpeningId,
   status,
   canUpdate,
+  openingDate,
+  hasApplications,
 }: JobOpeningStatusDropdownProps) {
   const router = useRouter();
   const [isRefreshing, startTransition] = useTransition();
@@ -108,8 +83,11 @@ export function JobOpeningStatusDropdown({
   });
 
   const isBusy = updateStatusMutation.isPending || isRefreshing;
-  const statusStyle = statusStyles[status] ?? fallbackStatusStyle;
+  const statusStyle = statusConfig[status];
   const isLocked = isTerminalStatus(status);
+  const canSetDraft =
+    status === JobOpeningStatus.Draft ||
+    (!hasApplications && openingDate > new Date());
 
   function handleStatusChange(nextStatus: JobOpeningStatus) {
     if (nextStatus === status || isBusy || isLocked) {
@@ -143,10 +121,10 @@ export function JobOpeningStatusDropdown({
     return (
       <Badge
         variant="secondary"
-        className={`rounded-full ${statusStyle.badgeClassName}`}
+        className={`rounded-full ${statusStyle.className}`}
       >
         <span className={`size-1.5 rounded-full ${statusStyle.dotClassName}`} />
-        {jobOpeningStatusTranslations[status]}
+        {statusStyle.label}
       </Badge>
     );
   }
@@ -160,33 +138,38 @@ export function JobOpeningStatusDropdown({
           type="button"
           disabled={isBusy}
           className="rounded-full"
-          aria-label={`Cambiar el estado de la vacante, estado actual: ${jobOpeningStatusTranslations[status]}`}
+          aria-label={`Cambiar el estado de la vacante, estado actual: ${statusStyle.label}`}
         >
           <Badge
             variant="secondary"
-            className={`rounded-full ${statusStyle.badgeClassName}`}
+            className={`rounded-full ${statusStyle.className}`}
           >
             <span
               className={`size-1.5 rounded-full ${statusStyle.dotClassName}`}
             />
-            {jobOpeningStatusTranslations[status]}
+            {statusStyle.label}
             <ChevronDown className="size-3.5" />
           </Badge>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="start">
-          {Object.values(JobOpeningStatus).map((jobOpeningStatus) => (
-            <DropdownMenuItem
-              key={jobOpeningStatus}
-              onClick={() => handleStatusChange(jobOpeningStatus)}
-            >
-              <span className="flex-1">
-                {jobOpeningStatusTranslations[jobOpeningStatus]}
-              </span>
+          {Object.values(JobOpeningStatus)
+            .filter(
+              (jobOpeningStatus) =>
+                jobOpeningStatus !== JobOpeningStatus.Draft || canSetDraft,
+            )
+            .map((jobOpeningStatus) => (
+              <DropdownMenuItem
+                key={jobOpeningStatus}
+                onClick={() => handleStatusChange(jobOpeningStatus)}
+              >
+                <span className="flex-1">
+                  {statusConfig[jobOpeningStatus].label}
+                </span>
 
-              {jobOpeningStatus === status && <Check className="size-4" />}
-            </DropdownMenuItem>
-          ))}
+                {jobOpeningStatus === status && <Check className="size-4" />}
+              </DropdownMenuItem>
+            ))}
         </DropdownMenuContent>
       </DropdownMenu>
 

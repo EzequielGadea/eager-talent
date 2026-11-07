@@ -321,6 +321,25 @@ export const updateJobOpening = protectedProcedure
     const isClosing = nextStatus === "Closed";
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
+
+    if (nextStatus === "Draft" && nextStatus !== currentJobOpening.status) {
+      if (currentJobOpening.openingDate <= new Date()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante cuya fecha de apertura ya pasó",
+        });
+      }
+
+      if (currentJobOpening.applications.length > 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante que tiene candidatos en el pipeline",
+        });
+      }
+    }
+
     if (hasBeenOpened && stagesChanged) {
       throw new TRPCError({
         code: "FORBIDDEN",

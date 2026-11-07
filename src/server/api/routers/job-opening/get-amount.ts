@@ -71,7 +71,7 @@ export const getJobOpeningsAmount = protectedProcedure
       ),
     );
 
-    const [total, open, paused, closed, cancelled, openedThisWeek] =
+    const [total, open, paused, closed, cancelled, draft, openedThisWeek] =
       await Promise.all([
         ctx.db.jobOpening.count({
           where: filteredWhere,
@@ -102,6 +102,11 @@ export const getJobOpeningsAmount = protectedProcedure
         }),
         ctx.db.jobOpening.count({
           where: {
+            AND: [accessWhere, { status: "Draft" }],
+          },
+        }),
+        ctx.db.jobOpening.count({
+          where: {
             AND: [
               accessWhere,
               {
@@ -121,6 +126,7 @@ export const getJobOpeningsAmount = protectedProcedure
       paused,
       closed,
       cancelled,
+      draft,
       openedThisWeek,
     };
   });
