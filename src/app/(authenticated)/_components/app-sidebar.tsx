@@ -1,4 +1,4 @@
-import { ChevronUp, FileText, House, Users } from "lucide-react";
+import { ChevronUp, House, Users } from "lucide-react";
 import { Suspense } from "react";
 import {
   CurrentUser,
@@ -101,11 +101,6 @@ function RecruiterNavigation() {
         icon={<MetricsIcon className="size-4.5" aria-hidden="true" />}
         label="Métricas"
         href="/metrics"
-      />
-
-      <NavigationItem
-        icon={<FileText className="size-4.5" aria-hidden="true" />}
-        label="Reportes"
       />
 
       {/* On mobile, settings is reached from the header instead. */}
