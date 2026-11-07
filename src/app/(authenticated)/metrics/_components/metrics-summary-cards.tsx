@@ -9,6 +9,7 @@ import {
 
 import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
+import { cn } from "~/lib/utils";
 
 type TimeMetrics = {
   averageClosingDays: number | null;
@@ -44,12 +45,14 @@ function MetricCard({
   value,
   detail,
   highlighted = false,
+  valueClassName = "text-text-primary",
 }: {
   icon: ReactNode;
   label: string;
   value: string | null;
   detail?: string;
   highlighted?: boolean;
+  valueClassName?: string;
 }) {
   return (
     <Card
@@ -67,7 +70,7 @@ function MetricCard({
             No hay datos para este filtro
           </p>
         ) : (
-          <p className="text-h2 text-text-primary tabular-nums">{value}</p>
+          <p className={cn("text-h2 tabular-nums", valueClassName)}>{value}</p>
         )}
         {detail ? (
           <p className="text-sm text-text-secondary">{detail}</p>
@@ -75,6 +78,15 @@ function MetricCard({
       </CardContent>
     </Card>
   );
+}
+
+// Same colors as the job opening deviations chart: late in red, on time in green.
+function getStageDeviationClassName(deviation: StageDeviation) {
+  if (deviation.averageDeviationDays === null) return undefined;
+
+  return deviation.averageDeviationDays > 0
+    ? "text-danger"
+    : "text-accent-green-strong";
 }
 
 function formatStageDeviation(deviation: StageDeviation) {
@@ -149,12 +161,14 @@ export function MetricsSummaryCards({
         label="Desvío desde HR"
         value={formatStageDeviation(stageDeviations.hr)}
         detail={formatStageDeviationDetail(stageDeviations.hr)}
+        valueClassName={getStageDeviationClassName(stageDeviations.hr)}
       />
       <MetricCard
         icon={<CodeXml className="size-5" aria-hidden="true" />}
         label="Desvío resp. técnica"
         value={formatStageDeviation(stageDeviations.technical)}
         detail={formatStageDeviationDetail(stageDeviations.technical)}
+        valueClassName={getStageDeviationClassName(stageDeviations.technical)}
       />
       <MetricCard
         icon={

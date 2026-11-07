@@ -205,11 +205,11 @@ export function JobOpeningStatusDropdown({
               jobOpeningId={jobOpeningId}
               isBusy={isBusy}
               onCancel={() => setIsConfirmOpen(false)}
-              onConfirm={(stageTargets) =>
+              onConfirm={(stageClosings) =>
                 updateStatusMutation.mutate({
                   jobOpeningId,
                   status: JobOpeningStatus.Closed,
-                  stageTargets,
+                  stageClosings,
                 })
               }
             />

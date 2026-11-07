@@ -85,6 +85,15 @@ export function getStageClosingDateError({
   return undefined;
 }
 
+// A closed metric stage does not accept candidates until it is reopened.
+export function getClosedStageError(
+  stage: { name: string; closedAt?: string | null } | undefined,
+) {
+  return stage && isMetricStage(stage) && stage.closedAt
+    ? `La etapa ${stage.name} está cerrada. Reabrila desde el Pipeline para sumar candidatos.`
+    : undefined;
+}
+
 // Metric stages that still block closing the job opening.
 export function getPendingMetricStages<T extends MetricStageData>(
   stages: readonly T[],

@@ -24,6 +24,7 @@ type PipelineColumnClientProps = {
   canDeleteInterview: boolean;
   search?: string;
   stageStatus?: ReactNode;
+  headerAction?: ReactNode;
 };
 
 export function PipelineColumnClient({
@@ -39,6 +40,7 @@ export function PipelineColumnClient({
   canDeleteInterview,
   search,
   stageStatus,
+  headerAction,
 }: PipelineColumnClientProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: stageId,
@@ -205,8 +207,8 @@ export function PipelineColumnClient({
 
   return (
     <>
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <header className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
           <h2 className="font-sans text-sm font-semibold text-text-primary">
             {stageName}
           </h2>
@@ -214,10 +216,12 @@ export function PipelineColumnClient({
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
             {Math.max(0, effectiveTotal)}
           </span>
-        </div>
-      </header>
 
-      {stageStatus}
+          {stageStatus}
+        </div>
+
+        {headerAction}
+      </header>
 
       <div
         ref={setNodeRef}

@@ -5,10 +5,16 @@ import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import {
   getMetricStageName,
+  getMetricStages,
   getPendingMetricStages,
+  getStageClosingDateError,
+  toIsoDate,
 } from "~/lib/stage-metrics";
 import { parseStages } from "~/lib/validations/job-opening";
-import type { StageTarget } from "~/lib/validations/stage-metrics";
+import type {
+  StageClosing,
+  StageTarget,
+} from "~/lib/validations/stage-metrics";
 import type { createTRPCContext } from "~/server/api/trpc";
 
 type Context = Awaited<ReturnType<typeof createTRPCContext>>;
@@ -122,19 +128,95 @@ export async function saveStages(
   }
 }
 
-// Applies the reviewed target days and checks the metric stages are ready
-// for closing the job opening. Returns the stages to persist.
-export function getClosingStages(
+// Applies the target days edited in the job opening form (metric stages only).
+export function applyStageTargets(
   stagesJson: Prisma.JsonValue,
-  stageTargets: StageTarget[] = [],
+  stageTargets: StageTarget[],
 ) {
+  const metricStageKeys = new Set(
+    getMetricStages(parseStages(stagesJson)).map((stage) => stage.key),
+  );
   let stageRecords = getStageRecords(stagesJson);
 
   for (const { stageKey, targetDays } of stageTargets) {
+    if (!metricStageKeys.has(stageKey)) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Los días objetivo solo aplican a las etapas de las métricas",
+      });
+    }
+
     stageRecords = updateStageRecord(stageRecords, stageKey, { targetDays });
   }
 
+  return stageRecords;
+}
+
+// Stores the closing dates entered for the still-open metric stages and checks
+// every metric stage is ready for closing the job opening. Returns the stages
+// to persist.
+export async function getClosingStages(
+  ctx: Context,
+  jobOpening: {
+    id: string;
+    openingDate: Date;
+    stages: Prisma.JsonValue;
+  },
+  stageClosings: StageClosing[] = [],
+) {
+  let stageRecords = getStageRecords(jobOpening.stages);
+  const metricStages = getMetricStages(parseStages(stageRecords));
+  const today = toIsoDate(new Date());
+
+  // In process order, so each date is checked against the previous stage's.
+  for (const metricStage of metricStages) {
+    const closing = stageClosings.find(
+      ({ stageKey }) => stageKey === metricStage.key,
+    );
+
+    if (!closing || metricStage.closedAt) continue;
+
+    const closingDateError = getStageClosingDateError({
+      stages: parseStages(stageRecords),
+      stageKey: closing.stageKey,
+      closedAt: closing.closedAt,
+      openingDate: toIsoDate(jobOpening.openingDate),
+      today,
+    });
+
+    if (closingDateError) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `${metricStage.name}: ${closingDateError}`,
+      });
+    }
+
+    stageRecords = updateStageRecord(stageRecords, closing.stageKey, {
+      closedAt: closing.closedAt,
+    });
+  }
+
   const stages = parseStages(stageRecords);
+  const closedNowKeys = stageClosings.map(({ stageKey }) => stageKey);
+
+  if (closedNowKeys.length > 0) {
+    const candidatesInStages = await ctx.db.application.count({
+      where: {
+        jobOpeningId: jobOpening.id,
+        currentStageId: { in: closedNowKeys },
+        active: true,
+        deletedAt: null,
+      },
+    });
+
+    if (candidatesInStages > 0) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No se puede cerrar una etapa mientras tenga candidatos.",
+      });
+    }
+  }
+
   const pendingStages = getPendingMetricStages(stages);
 
   if (pendingStages.length > 0) {

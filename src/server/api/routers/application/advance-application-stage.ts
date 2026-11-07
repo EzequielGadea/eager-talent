@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { getClosedStageError } from "~/lib/stage-metrics";
 import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -108,6 +109,12 @@ export const advanceApplicationStage = protectedProcedure
         code: "BAD_REQUEST",
         message: "Application is already in the last stage",
       });
+    }
+
+    const closedStageError = getClosedStageError(nextStage);
+
+    if (closedStageError) {
+      throw new TRPCError({ code: "CONFLICT", message: closedStageError });
     }
 
     return ctx.db.$transaction(async (tx) => {

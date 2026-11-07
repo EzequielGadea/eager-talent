@@ -126,6 +126,11 @@ export function CandidateCard({
       },
       onError: (error) => {
         console.error("Error al avanzar etapa:", error);
+
+        // e.g. the next stage is closed for the stage metrics.
+        if (error.data?.code === "CONFLICT") {
+          toast.add({ title: error.message, type: "error" });
+        }
       },
     });
 

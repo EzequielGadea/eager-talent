@@ -8,7 +8,10 @@ import {
   normalizeStageName,
 } from "~/lib/required-stage-types";
 import { getRequiredStageErrors } from "~/lib/validations/required-stages";
-import { stageTargetsSchema } from "~/lib/validations/stage-metrics";
+import {
+  stageClosingsSchema,
+  stageTargetsSchema,
+} from "~/lib/validations/stage-metrics";
 
 export const jobOpeningStageTypeSchema = z.enum([
   "none",
@@ -141,8 +144,11 @@ export const updateJobOpeningSchema = z
 
     hiringManagerIds: z.array(z.string().min(1)),
 
-    // Target days reviewed when closing the job opening.
+    // Target days of the metric stages (editable while the job opening is open).
     stageTargets: stageTargetsSchema.optional(),
+
+    // Closing dates of the metric stages still open when closing the job opening.
+    stageClosings: stageClosingsSchema.optional(),
   })
   .superRefine((data, ctx) => {
     const openingDate = new Date(`${data.openingDate}T00:00:00.000Z`);

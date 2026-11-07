@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 
-import { getMetricStages } from "~/lib/stage-metrics";
+import { getMetricStages, toIsoDate } from "~/lib/stage-metrics";
 import { parseStages } from "~/lib/validations/job-opening";
 import { getStageMetricsSchema } from "~/lib/validations/stage-metrics";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -14,7 +14,7 @@ export const getStageMetrics = protectedProcedure
 
     const jobOpening = await ctx.db.jobOpening.findUnique({
       where: { id: input.jobOpeningId },
-      select: { stages: true },
+      select: { id: true, openingDate: true, stages: true },
     });
 
     if (!jobOpening) {
@@ -24,10 +24,29 @@ export const getStageMetrics = protectedProcedure
       });
     }
 
-    return getMetricStages(parseStages(jobOpening.stages)).map((stage) => ({
-      key: stage.key,
-      name: stage.name,
-      targetDays: stage.targetDays ?? null,
-      closedAt: stage.closedAt ?? null,
-    }));
+    const metricStages = getMetricStages(parseStages(jobOpening.stages));
+    const candidateCounts = await ctx.db.application.groupBy({
+      by: ["currentStageId"],
+      where: {
+        jobOpeningId: jobOpening.id,
+        currentStageId: { in: metricStages.map((stage) => stage.key) },
+        active: true,
+        deletedAt: null,
+      },
+      _count: { _all: true },
+    });
+
+    return {
+      openingDate: toIsoDate(jobOpening.openingDate),
+      stages: metricStages.map((stage) => ({
+        key: stage.key,
+        name: stage.name,
+        targetDays: stage.targetDays ?? null,
+        closedAt: stage.closedAt ?? null,
+        candidatesCount:
+          candidateCounts.find(
+            ({ currentStageId }) => currentStageId === stage.key,
+          )?._count._all ?? 0,
+      })),
+    };
   });

@@ -3,7 +3,7 @@ import { stageAllowsInterview } from "~/lib/validations/job-opening";
 import { isMetricStage, type MetricStageData } from "~/lib/stage-metrics";
 
 import { PipelineColumnClient } from "./pipeline-column-client";
-import { StageClosureControl } from "./stage-closure-control";
+import { StageClosureBadge, StageClosureMenu } from "./stage-closure-control";
 import type { PipelineStage } from "./types";
 
 type PipelineColumnProps = {
@@ -63,14 +63,19 @@ export async function PipelineColumn({
         search={search}
         stageStatus={
           isMetricStage(stage) ? (
-            <StageClosureControl
+            <StageClosureBadge closedAt={stage.closedAt ?? null} />
+          ) : undefined
+        }
+        headerAction={
+          isMetricStage(stage) && stageClosure.canManage ? (
+            <StageClosureMenu
               jobOpeningId={jobOpeningId}
               stageKey={stage.key}
               stageName={stage.name}
               closedAt={stage.closedAt ?? null}
               openingDate={stageClosure.openingDate}
               stages={stageClosure.stages}
-              canManage={stageClosure.canManage}
+              hasCandidates={data.total > 0}
             />
           ) : undefined
         }

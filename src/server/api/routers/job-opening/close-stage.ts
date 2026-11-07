@@ -34,6 +34,23 @@ export const closeStage = protectedProcedure
       throw new TRPCError({ code: "BAD_REQUEST", message: closingDateError });
     }
 
+    // Disqualified applications are no longer in the pipeline, so they don't block.
+    const candidatesInStage = await ctx.db.application.count({
+      where: {
+        jobOpeningId: jobOpening.id,
+        currentStageId: input.stageKey,
+        active: true,
+        deletedAt: null,
+      },
+    });
+
+    if (candidatesInStage > 0) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No se puede cerrar la etapa mientras tenga candidatos.",
+      });
+    }
+
     await saveStages(
       ctx,
       jobOpening.id,

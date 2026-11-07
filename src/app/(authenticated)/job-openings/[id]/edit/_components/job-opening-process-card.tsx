@@ -20,6 +20,8 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
+import { StageTargetDaysFields } from "../../../_components/stage-target-days-fields";
+
 type JobOpeningProcessCardProps = {
   canEditStages: boolean;
 };
@@ -29,6 +31,7 @@ export function JobOpeningProcessCard({
 }: JobOpeningProcessCardProps) {
   const {
     control,
+    register,
     setValue,
     formState: { errors, defaultValues, isSubmitted },
   } = useFormContext<UpdateJobOpeningInput>();
@@ -105,6 +108,27 @@ export function JobOpeningProcessCard({
         {typeof stageErrorMessage === "string" && (
           <p className="text-xs text-danger">{stageErrorMessage}</p>
         )}
+
+        {/* Target days stay editable even when the flow is locked. */}
+        <StageTargetDaysFields
+          fields={(defaultValues?.stageTargets ?? []).flatMap(
+            (target, index) =>
+              target?.stageKey
+                ? [
+                    {
+                      stageKey: target.stageKey,
+                      stageName:
+                        stages.find((stage) => stage.id === target.stageKey)
+                          ?.name ?? target.stageKey,
+                      error: errors.stageTargets?.[index]?.targetDays?.message,
+                      inputProps: register(`stageTargets.${index}.targetDays`, {
+                        valueAsNumber: true,
+                      }),
+                    },
+                  ]
+                : [],
+          )}
+        />
 
         <div
           role="note"

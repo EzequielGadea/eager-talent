@@ -18,8 +18,6 @@ import OpeningDate from "./opening-date";
 
 import OpeningStage from "./opening-stage";
 
-import OpeningStageTargets from "./opening-stage-targets";
-
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
 import OpeningHiring from "./opening-hiring";
@@ -173,7 +171,6 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
           setStages={setStages}
           requiredStageKeys={requiredStageKeys}
         />
-        <OpeningStageTargets stages={stages} />
         <OpeningHiring />
 
         <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">

@@ -17,7 +17,7 @@ import {
 import { getRequiredStageTypeErrors } from "~/lib/validations/required-stages";
 import type { Prisma } from "~/generated/prisma/client";
 import { protectedProcedure } from "~/server/api/trpc";
-import { getClosingStages } from "./stage-metrics-utils";
+import { applyStageTargets, getClosingStages } from "./stage-metrics-utils";
 
 type CurrentStage = {
   id: string;
@@ -421,13 +421,26 @@ export const updateJobOpening = protectedProcedure
             toPersistedStage(stage, persistedStagesById.get(stage.id)),
           )
         : undefined;
-    // Closing also stores the reviewed target days of the metric stages.
-    const nextStages = isClosing
-      ? getClosingStages(
+    // Target days of the metric stages can be edited at any time.
+    const targetedStages = input.stageTargets?.length
+      ? applyStageTargets(
           (rewrittenStages ?? currentJobOpening.stages) as Prisma.JsonValue,
           input.stageTargets,
         )
       : rewrittenStages;
+    // Closing also stores the closing dates of the still-open metric stages.
+    const nextStages = isClosing
+      ? await getClosingStages(
+          ctx,
+          {
+            id: currentJobOpening.id,
+            openingDate: currentJobOpening.openingDate,
+            stages: (targetedStages ??
+              currentJobOpening.stages) as Prisma.JsonValue,
+          },
+          input.stageClosings,
+        )
+      : targetedStages;
 
     return ctx.db.$transaction(async (tx) => {
       const { count } = await tx.jobOpening.updateMany({

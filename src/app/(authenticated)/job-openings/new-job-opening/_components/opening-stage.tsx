@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import type { JobOpeningFormValues } from "./new-job-opening-form";
+import OpeningStageTargets from "./opening-stage-targets";
 import type { Stages } from "../utils";
 
 export default function OpeningStage(props: {
@@ -47,12 +48,13 @@ export default function OpeningStage(props: {
           </p>
         )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-4">
         <PersistedStageFlowEditor
           stages={props.stages}
           onChange={props.setStages}
           lockedKeys={props.requiredStageKeys}
         />
+        <OpeningStageTargets stages={props.stages} />
       </CardContent>
     </Card>
   );

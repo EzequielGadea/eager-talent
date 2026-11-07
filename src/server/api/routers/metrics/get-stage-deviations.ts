@@ -22,8 +22,8 @@ function toAverageDeviation(deviations: number[]) {
 
 // Average deviation of the HR and technical interview stages across every
 // closed job opening in the filter.
-// HR real duration: job opening opening date -> HR stage closing date.
-// Technical real duration: HR stage closing date -> technical stage closing date.
+// Both stages count their days from the job opening's opening date:
+// real duration = stage closing date - opening date; deviation = real - target.
 export const getStageDeviations = protectedProcedure
   .input(metricsFilterSchema)
   .query(async ({ ctx, input }) => {
@@ -42,24 +42,20 @@ export const getStageDeviations = protectedProcedure
         parseStages(jobOpening.stages),
       );
 
-      if (!hrStage?.closedAt) continue;
+      const getDeviation = (stage: typeof hrStage) =>
+        stage?.closedAt && stage.targetDays
+          ? differenceInMetricDays(
+              parseISO(`${stage.closedAt}T00:00:00Z`),
+              jobOpening.openingDate,
+            ) - stage.targetDays
+          : null;
 
-      const hrClosingDate = parseISO(`${hrStage.closedAt}T00:00:00Z`);
+      const hrDeviation = getDeviation(hrStage);
+      const technicalDeviation = getDeviation(technicalStage);
 
-      if (hrStage.targetDays) {
-        hrDeviations.push(
-          differenceInMetricDays(hrClosingDate, jobOpening.openingDate) -
-            hrStage.targetDays,
-        );
-      }
-
-      if (technicalStage?.closedAt && technicalStage.targetDays) {
-        technicalDeviations.push(
-          differenceInMetricDays(
-            parseISO(`${technicalStage.closedAt}T00:00:00Z`),
-            hrClosingDate,
-          ) - technicalStage.targetDays,
-        );
+      if (hrDeviation !== null) hrDeviations.push(hrDeviation);
+      if (technicalDeviation !== null) {
+        technicalDeviations.push(technicalDeviation);
       }
     }
 

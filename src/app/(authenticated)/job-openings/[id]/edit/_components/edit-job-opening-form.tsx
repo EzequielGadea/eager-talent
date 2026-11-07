@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
-import type { StageTarget } from "~/lib/validations/stage-metrics";
+import type { StageClosing } from "~/lib/validations/stage-metrics";
 
 import { StageMetricsClosingForm } from "../../_components/stage-metrics-closing-form";
 
@@ -101,14 +101,14 @@ export function EditJobOpeningForm({
     await updateJobOpening.mutateAsync(values);
   }
 
-  async function handleConfirmTerminalSubmit(stageTargets?: StageTarget[]) {
+  async function handleConfirmTerminalSubmit(stageClosings?: StageClosing[]) {
     if (!pendingSubmitValues || isSaving) {
       return;
     }
 
     await updateJobOpening.mutateAsync({
       ...pendingSubmitValues,
-      stageTargets,
+      stageClosings,
     });
   }
 
@@ -210,8 +210,8 @@ export function EditJobOpeningForm({
               jobOpeningId={defaultValues.id}
               isBusy={isSaving}
               onCancel={() => setIsConfirmOpen(false)}
-              onConfirm={(stageTargets) =>
-                void handleConfirmTerminalSubmit(stageTargets)
+              onConfirm={(stageClosings) =>
+                void handleConfirmTerminalSubmit(stageClosings)
               }
             />
           ) : (

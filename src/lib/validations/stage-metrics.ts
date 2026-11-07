@@ -23,6 +23,16 @@ export const closeStageSchema = z.object({
 
 export type CloseStageInput = z.infer<typeof closeStageSchema>;
 
+// Closing dates entered for still-open stages when closing the job opening.
+export const stageClosingSchema = closeStageSchema.pick({
+  stageKey: true,
+  closedAt: true,
+});
+
+export const stageClosingsSchema = z.array(stageClosingSchema);
+
+export type StageClosing = z.infer<typeof stageClosingSchema>;
+
 export const reopenStageSchema = z.object({
   jobOpeningId: z.string().min(1),
   stageKey: z.string().min(1),

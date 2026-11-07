@@ -467,6 +467,12 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       return stage;
     });
 
+  // Same default target days as the backfill migration (HR 7, technical 14).
+  const defaultStagesWithTargets = withStageMetrics({
+    hrTargetDays: 7,
+    technicalTargetDays: 14,
+  });
+
   await prisma.stageTemplate.create({
     data: {
       stages: defaultStages,
@@ -491,11 +497,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Senior Full Stack Developer (Rails & React) - US Partner",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      // HR stage closed, technical stage still open.
+      // Both metric stages open: they still have candidates.
       stages: withStageMetrics({
         hrTargetDays: 10,
         technicalTargetDays: 14,
-        hrClosedAt: seedDateFromToday(-30),
       }),
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: seedDateFromToday(-45),
@@ -512,7 +517,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Backend Developer (Ruby on Rails) - Fintech Startup",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-20),
       targetClosingDate: seedDateFromToday(0),
@@ -533,7 +538,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "QA Automation Engineer - HealthTech Platform",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido)",
       openingDate: seedDateFromToday(-15),
       targetClosingDate: seedDateFromToday(45),
@@ -548,7 +553,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "DevOps & Cloud Engineer (AWS) - Cloud Infrastructure",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-10),
       targetClosingDate: seedDateFromToday(-2),
@@ -564,7 +569,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Frontend Developer (React / Next.js) - E-Commerce Platform",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
       openingDate: seedDateFromToday(-18),
 
@@ -580,7 +585,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "AI Solutions & Full Stack Engineer (Python & React) - GenAI Studio",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: seedDateFromToday(-5),
       targetClosingDate: seedDateFromToday(40),
@@ -600,7 +605,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Mobile Developer (React Native) - EagerWorks Delivery",
       status: "Open",
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
       openingDate: seedDateFromToday(0),
       targetClosingDate: seedDateFromToday(21),
@@ -702,12 +707,14 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
   for (const [index, definition] of closedOpeningDefs.entries()) {
     const openingDate = subDays(definition.closing, definition.duration);
     // Mix of on-time and late stages for the stage deviation metrics.
+    // Both targets count from the opening date.
     const hrTargetDays = Math.round(definition.duration * 0.25);
-    const technicalTargetDays = Math.round(definition.duration * 0.35);
+    const technicalStageDays = Math.round(definition.duration * 0.35);
+    const technicalTargetDays = hrTargetDays + technicalStageDays;
     const hrClosedAt = addDays(openingDate, hrTargetDays + (index % 5) - 2);
     const technicalClosedAt = addDays(
       hrClosedAt,
-      technicalTargetDays + (index % 4) - 1,
+      technicalStageDays + (index % 4) - 1,
     );
 
     const opening = await prisma.jobOpening.create({
@@ -742,7 +749,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
             : "Product Designer - Proyecto cancelado",
         status,
         hasBeenOpened: true,
-        stages: defaultStages,
+        stages: defaultStagesWithTargets,
         location: "Remoto (Uruguay)",
         openingDate: seedDateFromToday(-14),
         targetClosingDate: seedDateFromToday(14),

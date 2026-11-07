@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { getClosedStageError } from "~/lib/stage-metrics";
 import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -96,6 +97,12 @@ export const moveApplicationToStage = protectedProcedure
 
     if (application.currentStageId === input.targetStageId) {
       return application;
+    }
+
+    const closedStageError = getClosedStageError(targetStage);
+
+    if (closedStageError) {
+      throw new TRPCError({ code: "CONFLICT", message: closedStageError });
     }
 
     const fromStageId = application.currentStageId;
