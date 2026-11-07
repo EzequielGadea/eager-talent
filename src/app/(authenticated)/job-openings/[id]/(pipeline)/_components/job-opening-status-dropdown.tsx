@@ -29,6 +29,9 @@ type JobOpeningStatusDropdownProps = {
   jobOpeningId: string;
   status: JobOpeningStatus;
   canUpdate: boolean;
+  openingDate: Date;
+  hasBeenOpened: boolean;
+  hasApplications: boolean;
 };
 
 type TerminalStatus =
@@ -52,6 +55,9 @@ export function JobOpeningStatusDropdown({
   jobOpeningId,
   status,
   canUpdate,
+  openingDate,
+  hasBeenOpened,
+  hasApplications,
 }: JobOpeningStatusDropdownProps) {
   const router = useRouter();
   const [isRefreshing, startTransition] = useTransition();
@@ -81,6 +87,9 @@ export function JobOpeningStatusDropdown({
   const isBusy = updateStatusMutation.isPending || isRefreshing;
   const statusStyle = statusConfig[status];
   const isLocked = isTerminalStatus(status);
+  const canSetDraft =
+    status === JobOpeningStatus.Draft ||
+    (!hasBeenOpened && !hasApplications && openingDate > new Date());
 
   function handleStatusChange(nextStatus: JobOpeningStatus) {
     if (nextStatus === status || isBusy || isLocked) {
@@ -146,18 +155,23 @@ export function JobOpeningStatusDropdown({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="start">
-          {Object.values(JobOpeningStatus).map((jobOpeningStatus) => (
-            <DropdownMenuItem
-              key={jobOpeningStatus}
-              onClick={() => handleStatusChange(jobOpeningStatus)}
-            >
-              <span className="flex-1">
-                {statusConfig[jobOpeningStatus].label}
-              </span>
+          {Object.values(JobOpeningStatus)
+            .filter(
+              (jobOpeningStatus) =>
+                jobOpeningStatus !== JobOpeningStatus.Draft || canSetDraft,
+            )
+            .map((jobOpeningStatus) => (
+              <DropdownMenuItem
+                key={jobOpeningStatus}
+                onClick={() => handleStatusChange(jobOpeningStatus)}
+              >
+                <span className="flex-1">
+                  {statusConfig[jobOpeningStatus].label}
+                </span>
 
-              {jobOpeningStatus === status && <Check className="size-4" />}
-            </DropdownMenuItem>
-          ))}
+                {jobOpeningStatus === status && <Check className="size-4" />}
+              </DropdownMenuItem>
+            ))}
         </DropdownMenuContent>
       </DropdownMenu>
 
