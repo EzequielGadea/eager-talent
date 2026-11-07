@@ -8,6 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useUploadThing } from "~/components/ui/uploadthing";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { api } from "~/lib/trpc/react";
 
 import {
@@ -85,6 +93,7 @@ export default function EditApplicantFormContent({ applicant }: Props) {
   const [removePhoto, setRemovePhoto] = useState(false);
   const [removeResume, setRemoveResume] = useState(false);
   const [removeEducation, setRemoveEducation] = useState(false);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 
   const methods = useForm<ApplicantFormValues>({
     resolver: zodResolver(applicantFormSchema),
@@ -217,13 +226,14 @@ export default function EditApplicantFormContent({ applicant }: Props) {
     });
   }
 
-  function handleCancel() {
+  function handleConfirmCancel() {
     methods.reset(getApplicantDefaultValues(applicant));
 
     setPhotoPreview(applicant.photo ?? undefined);
     setRemovePhoto(false);
     setRemoveResume(false);
     setRemoveEducation(false);
+    setIsCancelConfirmOpen(false);
 
     router.push(`/applicants/${applicant.id}`);
   }
@@ -261,7 +271,12 @@ export default function EditApplicantFormContent({ applicant }: Props) {
           </p>
 
           <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" onClick={handleCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting || updateApplicantMutation.isPending}
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
               Cancelar
             </Button>
 
@@ -269,6 +284,38 @@ export default function EditApplicantFormContent({ applicant }: Props) {
           </div>
         </footer>
       </form>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting && !updateApplicantMutation.isPending) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar edición?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los cambios que no hayas
+              guardado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }

@@ -10,6 +10,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { toast } from "~/components/ui/toast";
 
 type RequalifyApplicantDialogProps = {
   open: boolean;
@@ -32,6 +33,10 @@ export function RequalifyApplicantDialog({
 }: RequalifyApplicantDialogProps) {
   const requalifyMutation = api.application.requalifyApplication.useMutation({
     onSuccess: () => {
+      toast.add({
+        title: "Candidato recalificado correctamente",
+        type: "success",
+      });
       onOpenChange(false);
       onSuccess();
     },

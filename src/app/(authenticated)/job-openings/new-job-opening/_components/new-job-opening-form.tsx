@@ -24,6 +24,14 @@ import NewJobOpeningButtonProps from "./new-job-opening-button";
 
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
 import { isRequiredStage } from "~/lib/required-stage-types";
@@ -123,13 +131,15 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
       stages: data.stages,
     });
   }
-  function handleCancel() {
+  function handleConfirmCancel() {
     methods.reset();
     setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
+    setIsCancelConfirmOpen(false);
     router.push("/job-openings");
   }
 
   const [stages, setStages] = useState(props.templateStages.stages);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 
   // Required stages as loaded from the template, by key, so typing one of
   // those names in a new stage does not lock it.
@@ -156,7 +166,12 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
         <Card className="w-full items-end rounded-xl shadow-sm">
           <CardContent>
             <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" onClick={handleCancel}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isSubmitting || createJobOpeningMutation.isPending}
+                onClick={() => setIsCancelConfirmOpen(true)}
+              >
                 Cancelar
               </Button>
               <NewJobOpeningButtonProps disabled={isSubmitting} />
@@ -164,6 +179,38 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
           </CardContent>
         </Card>
       </form>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting && !createJobOpeningMutation.isPending) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar creación?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los datos que hayas
+              ingresado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }
