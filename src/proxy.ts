@@ -7,8 +7,49 @@ import { prisma } from "~/lib/prisma";
 
 const authRoutes = ["/login", "/signup", "/accept-invite", "/reset-password"];
 const publicRoutes = ["/", ...authRoutes];
+
+const UPLOAD_PATH = "/api/files/upload";
+
+// 4 MiB for the file + margin for the multipart overhead.
+// Must match MAX_BODY in the upload route.
+const MAX_BODY = 4 * 1024 * 1024 + 64 * 1024;
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Upload route checks run BEFORE touching the database, so an oversized
+  // or malformed request costs nothing.
+  if (pathname === UPLOAD_PATH) {
+    if (request.method !== "POST") {
+      return Response.json({ message: "Método no permitido" }, { status: 405 });
+    }
+
+    const length = Number(request.headers.get("content-length"));
+
+    if (!Number.isFinite(length) || length <= 0) {
+      return Response.json(
+        { message: "Content-Length requerido" },
+        { status: 411 },
+      );
+    }
+
+    if (length > MAX_BODY) {
+      return Response.json(
+        { message: "El archivo supera el tamaño máximo de 4 MB" },
+        { status: 413 },
+      );
+    }
+
+    const uploadSession = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    if (!uploadSession) {
+      return Response.json({ message: "No autorizado" }, { status: 401 });
+    }
+
+    return NextResponse.next();
+  }
 
   const session = await auth.api.getSession({
     headers: request.headers,
@@ -51,5 +92,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    // The upload route is listed explicitly because the general pattern excludes /api.
+    "/api/files/upload",
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };

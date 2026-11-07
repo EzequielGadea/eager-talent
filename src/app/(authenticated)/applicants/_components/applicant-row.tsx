@@ -128,6 +128,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
                   </Popover>
                 )}
               </>
+
             ) : (
               <span className="text-sm font-medium text-text-secondary">-</span>
             )}
@@ -140,6 +141,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
         <div className="flex flex-wrap items-center gap-1 text-xs leading-tight text-text-secondary">
           <span className="wrap-break-word">
             {props.applicant.jobOpening.at(-1) || "-"}
+
           </span>
 
           {props.applicant.jobOpening.length > 1 && (

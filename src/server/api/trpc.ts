@@ -31,3 +31,17 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+export const permissionProcedure = (permissions: Record<string, string[]>) =>
+  protectedProcedure.use(async ({ ctx, next }) => {
+    const { success } = await auth.api.hasPermission({
+      headers: ctx.headers,
+      body: { permissions },
+    });
+
+    if (!success) {
+      throw new TRPCError({ code: "FORBIDDEN" });
+    }
+
+    return next({ ctx });
+  });

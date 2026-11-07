@@ -35,4 +35,5 @@ async function ProtectedEditApplicantPage() {
   }
 
   return <EditApplicantForm />;
+
 }

@@ -75,6 +75,7 @@ export function JobOpeningDatesCard() {
                   />
                 )}
               />
+
               <p className="min-h-4 text-xs text-danger">
                 {errors.openingDate?.message ?? "\u00A0"}
               </p>
@@ -107,6 +108,7 @@ export function JobOpeningDatesCard() {
                   />
                 )}
               />
+
               <p className="min-h-4 text-xs text-danger">
                 {errors.targetClosingDate?.message ?? "\u00A0"}
               </p>
