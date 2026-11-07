@@ -552,7 +552,7 @@ export function ShareWithHiringManagerDialog({
 
                         {isConfirmingRevoke && (
                           <div className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-danger-bg px-3 py-2">
-                            <span className="text-xs text-danger">
+                            <span className="text-xs text-text-primary">
                               ¿Quitar el acceso a {getFullName(manager)}?
                             </span>
                             <div className="flex shrink-0 items-center gap-1.5">
