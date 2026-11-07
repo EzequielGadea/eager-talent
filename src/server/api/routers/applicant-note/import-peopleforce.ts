@@ -49,11 +49,14 @@ function parseRows(rows: Record<string, unknown>[]) {
   }
 
   let skippedWithoutIdentification = 0;
+  const skippedWithoutIdentificationNames: string[] = [];
   const notes = rows.flatMap((row) => {
     const identification = cellToString(row["Identificación"]);
     const content = cellToString(row["Notas"]);
     if (!identification) {
       skippedWithoutIdentification++;
+      const name = cellToString(row["Nombre"]);
+      if (name) skippedWithoutIdentificationNames.push(name);
       return [];
     }
     if (!content) return [];
@@ -68,7 +71,11 @@ function parseRows(rows: Record<string, unknown>[]) {
     ];
   });
 
-  return { notes, skippedWithoutIdentification };
+  return {
+    notes,
+    skippedWithoutIdentification,
+    skippedWithoutIdentificationNames,
+  };
 }
 
 function validateColumns(columns: unknown[]) {
@@ -241,6 +248,16 @@ export const previewPeopleForceNotesProcedure = protectedProcedure
     const existingNoteApplicants = applicants
       .filter((applicant) => applicant.note)
       .map((applicant) => `${applicant.name} ${applicant.lastName}`.trim());
+    const omittedApplicantNames = [
+      ...new Set([
+        ...parsed.notes
+          .filter((note) => !applicantByPeopleForceId.has(note.identification))
+          .map((note) => note.name || "Sin nombre"),
+        ...parsed.skippedWithoutIdentificationNames.map(
+          (name) => `${name} (sin identificación)`,
+        ),
+      ]),
+    ];
 
     return {
       notes: matchedNotes,
@@ -252,6 +269,7 @@ export const previewPeopleForceNotesProcedure = protectedProcedure
         (identification) => !applicantByPeopleForceId.has(identification),
       ).length,
       skippedWithoutIdentification: parsed.skippedWithoutIdentification,
+      omittedApplicantNames,
       existingNoteApplicants,
     };
   });

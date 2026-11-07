@@ -201,6 +201,9 @@ export function ImportNotesButton() {
                 </p>
               ) : (
                 <>
+                  {preview.omittedApplicantNames.length > 0 && (
+                    <OmittedApplicants names={preview.omittedApplicantNames} />
+                  )}
                   {hasExistingNotes && (
                     <p className="rounded-md bg-warning-bg p-3 text-warning">
                       Algunos candidatos ya tienen notas importadas. Continuar
@@ -213,6 +216,10 @@ export function ImportNotesButton() {
                   </p>
                 </>
               )}
+              {preview.matchedApplicants === 0 &&
+                preview.omittedApplicantNames.length > 0 && (
+                  <OmittedApplicants names={preview.omittedApplicantNames} />
+                )}
             </div>
           )}
           <DialogFooter>
@@ -239,6 +246,27 @@ export function ImportNotesButton() {
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+function OmittedApplicants({ names }: { names: string[] }) {
+  const visibleNames = names.slice(0, 50);
+  const remainingCount = names.length - visibleNames.length;
+
+  return (
+    <div className="rounded-md bg-warning-bg p-3 text-warning">
+      <p className="font-medium">Candidatos omitidos:</p>
+      <ul className="mt-1 list-disc pl-5">
+        {visibleNames.map((name, index) => (
+          <li key={`${name}-${index}`}>{name}</li>
+        ))}
+      </ul>
+      {remainingCount > 0 && (
+        <p className="mt-1">
+          y {remainingCount} candidato{remainingCount === 1 ? "" : "s"} más.
+        </p>
+      )}
+    </div>
   );
 }
 
