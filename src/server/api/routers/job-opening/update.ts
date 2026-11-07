@@ -15,7 +15,9 @@ import {
   type JobOpeningStageType,
 } from "~/lib/validations/job-opening";
 import { getRequiredStageTypeErrors } from "~/lib/validations/required-stages";
+import type { Prisma } from "~/generated/prisma/client";
 import { protectedProcedure } from "~/server/api/trpc";
+import { getClosingStages } from "./stage-metrics-utils";
 
 type CurrentStage = {
   id: string;
@@ -412,6 +414,21 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
+    // Unchanged stages are not rewritten.
+    const rewrittenStages =
+      stagesChanged || colorsChanged
+        ? input.stages.map((stage) =>
+            toPersistedStage(stage, persistedStagesById.get(stage.id)),
+          )
+        : undefined;
+    // Closing also stores the reviewed target days of the metric stages.
+    const nextStages = isClosing
+      ? getClosingStages(
+          (rewrittenStages ?? currentJobOpening.stages) as Prisma.JsonValue,
+          input.stageTargets,
+        )
+      : rewrittenStages;
+
     return ctx.db.$transaction(async (tx) => {
       const { count } = await tx.jobOpening.updateMany({
         where: {
@@ -430,13 +447,8 @@ export const updateJobOpening = protectedProcedure
           targetClosingDate: nextTargetClosingDate,
           areaId: input.areaId,
 
-          // Unchanged stages are not rewritten.
-          ...(stagesChanged || colorsChanged
-            ? {
-                stages: input.stages.map((stage) =>
-                  toPersistedStage(stage, persistedStagesById.get(stage.id)),
-                ),
-              }
+          ...(nextStages
+            ? { stages: nextStages as Prisma.InputJsonValue }
             : {}),
         },
       });

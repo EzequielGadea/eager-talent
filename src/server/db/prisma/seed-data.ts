@@ -12,6 +12,7 @@ import {
   startOfYear,
   subDays,
 } from "date-fns";
+import { toIsoDate } from "~/lib/stage-metrics";
 import { getTagColor } from "~/lib/tags/get-tag-color";
 import type {
   PrismaClient,
@@ -435,6 +436,37 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     return stage.key;
   };
 
+  // Stage deviation metrics data stored in the job opening stages JSON.
+  const withStageMetrics = (metrics: {
+    hrTargetDays: number;
+    technicalTargetDays: number;
+    hrClosedAt?: Date;
+    technicalClosedAt?: Date;
+  }) =>
+    defaultStages.map((stage) => {
+      if (stage.key === stageKey("Entrevista HR")) {
+        return {
+          ...stage,
+          targetDays: metrics.hrTargetDays,
+          ...(metrics.hrClosedAt
+            ? { closedAt: toIsoDate(metrics.hrClosedAt) }
+            : {}),
+        };
+      }
+
+      if (stage.key === stageKey("Entrevista técnica")) {
+        return {
+          ...stage,
+          targetDays: metrics.technicalTargetDays,
+          ...(metrics.technicalClosedAt
+            ? { closedAt: toIsoDate(metrics.technicalClosedAt) }
+            : {}),
+        };
+      }
+
+      return stage;
+    });
+
   await prisma.stageTemplate.create({
     data: {
       stages: defaultStages,
@@ -459,7 +491,12 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Senior Full Stack Developer (Rails & React) - US Partner",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      // HR stage closed, technical stage still open.
+      stages: withStageMetrics({
+        hrTargetDays: 10,
+        technicalTargetDays: 14,
+        hrClosedAt: seedDateFromToday(-30),
+      }),
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: seedDateFromToday(-45),
       targetClosingDate: seedDateFromToday(-7),
@@ -662,15 +699,30 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   ];
   const closedOpenings = [];
-  for (const definition of closedOpeningDefs) {
+  for (const [index, definition] of closedOpeningDefs.entries()) {
+    const openingDate = subDays(definition.closing, definition.duration);
+    // Mix of on-time and late stages for the stage deviation metrics.
+    const hrTargetDays = Math.round(definition.duration * 0.25);
+    const technicalTargetDays = Math.round(definition.duration * 0.35);
+    const hrClosedAt = addDays(openingDate, hrTargetDays + (index % 5) - 2);
+    const technicalClosedAt = addDays(
+      hrClosedAt,
+      technicalTargetDays + (index % 4) - 1,
+    );
+
     const opening = await prisma.jobOpening.create({
       data: {
         name: definition.name,
         status: "Closed",
         hasBeenOpened: true,
-        stages: defaultStages,
+        stages: withStageMetrics({
+          hrTargetDays,
+          technicalTargetDays,
+          hrClosedAt,
+          technicalClosedAt,
+        }),
         location: "Montevideo, Uruguay (Híbrido / Remoto)",
-        openingDate: subDays(definition.closing, definition.duration),
+        openingDate,
         targetClosingDate: subDays(definition.closing, definition.deviation),
         closingDate: definition.closing,
         areaId: areas[definition.area].id,

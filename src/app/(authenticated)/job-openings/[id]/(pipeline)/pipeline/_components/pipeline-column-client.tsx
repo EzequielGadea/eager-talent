@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { useDroppable } from "@dnd-kit/core";
 
@@ -23,6 +23,7 @@ type PipelineColumnClientProps = {
   canCreateInterview: boolean;
   canDeleteInterview: boolean;
   search?: string;
+  stageStatus?: ReactNode;
 };
 
 export function PipelineColumnClient({
@@ -37,6 +38,7 @@ export function PipelineColumnClient({
   canCreateInterview,
   canDeleteInterview,
   search,
+  stageStatus,
 }: PipelineColumnClientProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: stageId,
@@ -214,6 +216,8 @@ export function PipelineColumnClient({
           </span>
         </div>
       </header>
+
+      {stageStatus}
 
       <div
         ref={setNodeRef}

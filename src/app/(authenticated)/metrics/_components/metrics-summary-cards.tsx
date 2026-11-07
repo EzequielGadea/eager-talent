@@ -19,6 +19,16 @@ type TimeMetrics = {
   totalConsidered: number;
 };
 
+type StageDeviation = {
+  averageDeviationDays: number | null;
+  count: number;
+};
+
+type StageDeviations = {
+  hr: StageDeviation;
+  technical: StageDeviation;
+};
+
 function formatDays(value: number) {
   return `${value} ${Math.abs(value) === 1 ? "día" : "días"}`;
 }
@@ -67,30 +77,27 @@ function MetricCard({
   );
 }
 
-function PendingMetricCard({
-  icon,
-  label,
-}: {
-  icon: ReactNode;
-  label: string;
-}) {
-  return (
-    <Card aria-label={`${label}: próximamente`}>
-      <CardContent className="flex min-h-40 flex-col justify-center gap-2">
-        <div className="text-text-tertiary">{icon}</div>
-        <p className="text-sm font-medium text-text-secondary">{label}</p>
-        <Skeleton className="h-8 w-24" />
-        <p className="text-xs font-medium text-text-tertiary">Próximamente</p>
-      </CardContent>
-    </Card>
-  );
+function formatStageDeviation(deviation: StageDeviation) {
+  return deviation.averageDeviationDays === null
+    ? null
+    : formatSignedDays(deviation.averageDeviationDays);
+}
+
+function formatStageDeviationDetail(deviation: StageDeviation) {
+  if (deviation.count === 0) return undefined;
+
+  return `Promedio de ${deviation.count} ${
+    deviation.count === 1 ? "vacante" : "vacantes"
+  }`;
 }
 
 export function MetricsSummaryCards({
   metrics,
+  stageDeviations,
   isPending,
 }: {
   metrics: TimeMetrics;
+  stageDeviations: StageDeviations;
   isPending: boolean;
 }) {
   if (isPending) {
@@ -137,13 +144,17 @@ export function MetricsSummaryCards({
             : formatSignedDays(metrics.averageDeviationDays)
         }
       />
-      <PendingMetricCard
+      <MetricCard
         icon={<UserRound className="size-5" aria-hidden="true" />}
         label="Desvío desde HR"
+        value={formatStageDeviation(stageDeviations.hr)}
+        detail={formatStageDeviationDetail(stageDeviations.hr)}
       />
-      <PendingMetricCard
+      <MetricCard
         icon={<CodeXml className="size-5" aria-hidden="true" />}
         label="Desvío resp. técnica"
+        value={formatStageDeviation(stageDeviations.technical)}
+        detail={formatStageDeviationDetail(stageDeviations.technical)}
       />
       <MetricCard
         icon={

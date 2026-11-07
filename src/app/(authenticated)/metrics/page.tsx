@@ -19,20 +19,28 @@ async function MetricsContent() {
   }
 
   const defaultFilters = { period: defaultMetricsPeriod };
-  const [summary, closedOpenings, timeMetrics, deviations, areas] =
-    await Promise.all([
-      api.metrics.getMetricsSummary(defaultFilters),
-      api.metrics.getClosedOpenings(defaultFilters),
-      api.metrics.getTimeMetrics(defaultFilters),
-      api.metrics.getJobOpeningDeviations({ ...defaultFilters, page: 1 }),
-      api.area.getAllAreas({}),
-    ]);
+  const [
+    summary,
+    closedOpenings,
+    timeMetrics,
+    stageDeviations,
+    deviations,
+    areas,
+  ] = await Promise.all([
+    api.metrics.getMetricsSummary(defaultFilters),
+    api.metrics.getClosedOpenings(defaultFilters),
+    api.metrics.getTimeMetrics(defaultFilters),
+    api.metrics.getStageDeviations(defaultFilters),
+    api.metrics.getJobOpeningDeviations({ ...defaultFilters, page: 1 }),
+    api.area.getAllAreas({}),
+  ]);
 
   return (
     <MetricsDashboard
       initialSummary={summary}
       initialClosedOpenings={closedOpenings}
       initialTimeMetrics={timeMetrics}
+      initialStageDeviations={stageDeviations}
       initialDeviations={deviations}
       areas={areas.map(({ id, name }) => ({ id, name }))}
     />

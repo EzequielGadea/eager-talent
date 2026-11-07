@@ -23,6 +23,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import type { StageTarget } from "~/lib/validations/stage-metrics";
+
+import { StageMetricsClosingForm } from "../../_components/stage-metrics-closing-form";
 
 type EditJobOpeningFormProps = {
   defaultValues: UpdateJobOpeningInput;
@@ -98,12 +101,15 @@ export function EditJobOpeningForm({
     await updateJobOpening.mutateAsync(values);
   }
 
-  async function handleConfirmTerminalSubmit() {
+  async function handleConfirmTerminalSubmit(stageTargets?: StageTarget[]) {
     if (!pendingSubmitValues || isSaving) {
       return;
     }
 
-    await updateJobOpening.mutateAsync(pendingSubmitValues);
+    await updateJobOpening.mutateAsync({
+      ...pendingSubmitValues,
+      stageTargets,
+    });
   }
 
   function handleInvalidSubmit(errors: FieldErrors<UpdateJobOpeningInput>) {
@@ -199,27 +205,34 @@ export function EditJobOpeningForm({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSaving}
-              onClick={() => setIsConfirmOpen(false)}
-            >
-              Volver
-            </Button>
-            <Button
-              type="button"
-              disabled={isSaving}
-              onClick={() => void handleConfirmTerminalSubmit()}
-            >
-              {isSaving
-                ? "Confirmando..."
-                : isClosing
-                  ? "Cerrar vacante"
-                  : "Cancelar vacante"}
-            </Button>
-          </DialogFooter>
+          {isClosing ? (
+            <StageMetricsClosingForm
+              jobOpeningId={defaultValues.id}
+              isBusy={isSaving}
+              onCancel={() => setIsConfirmOpen(false)}
+              onConfirm={(stageTargets) =>
+                void handleConfirmTerminalSubmit(stageTargets)
+              }
+            />
+          ) : (
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isSaving}
+                onClick={() => setIsConfirmOpen(false)}
+              >
+                Volver
+              </Button>
+              <Button
+                type="button"
+                disabled={isSaving}
+                onClick={() => void handleConfirmTerminalSubmit()}
+              >
+                {isSaving ? "Confirmando..." : "Cancelar vacante"}
+              </Button>
+            </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
 

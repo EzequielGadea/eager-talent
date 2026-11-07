@@ -18,6 +18,8 @@ import OpeningDate from "./opening-date";
 
 import OpeningStage from "./opening-stage";
 
+import OpeningStageTargets from "./opening-stage-targets";
+
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
 import OpeningHiring from "./opening-hiring";
@@ -34,6 +36,8 @@ import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
 import { isRequiredStage } from "~/lib/required-stage-types";
 import { persistedStageSchema } from "~/lib/validations/job-opening";
+import { getMetricStages } from "~/lib/stage-metrics";
+import { stageTargetsSchema } from "~/lib/validations/stage-metrics";
 import {
   getRequiredStageErrors,
   getRequiredStageTypeErrors,
@@ -52,6 +56,7 @@ export const jobOpeningFormSchema = z
     openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
     closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
     hiringManagerIds: z.array(z.string()),
+    metricStageTargets: stageTargetsSchema,
     stages: z.array(persistedStageSchema).superRefine((stages, ctx) => {
       const errors = [
         ...getRequiredStageErrors(stages),
@@ -94,6 +99,9 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
       openingDate: undefined,
       closingDate: undefined,
       hiringManagerIds: [],
+      metricStageTargets: getMetricStages(props.templateStages.stages).map(
+        (stage) => ({ stageKey: stage.key, targetDays: undefined }),
+      ),
       stages: props.templateStages.stages,
     },
   });
@@ -125,7 +133,13 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
       openingDate: data.openingDate,
       closingDate: data.closingDate,
       hiringManagerIds: data.hiringManagerIds,
-      stages: data.stages,
+      stages: data.stages.map((stage) => {
+        const target = data.metricStageTargets.find(
+          ({ stageKey }) => stageKey === stage.key,
+        );
+
+        return target ? { ...stage, targetDays: target.targetDays } : stage;
+      }),
     });
   }
   function handleConfirmCancel() {
@@ -159,6 +173,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
           setStages={setStages}
           requiredStageKeys={requiredStageKeys}
         />
+        <OpeningStageTargets stages={stages} />
         <OpeningHiring />
 
         <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">

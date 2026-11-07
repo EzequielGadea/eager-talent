@@ -8,6 +8,7 @@ import {
   normalizeStageName,
 } from "~/lib/required-stage-types";
 import { getRequiredStageErrors } from "~/lib/validations/required-stages";
+import { stageTargetsSchema } from "~/lib/validations/stage-metrics";
 
 export const jobOpeningStageTypeSchema = z.enum([
   "none",
@@ -35,6 +36,9 @@ export const persistedStageSchema = z.object({
   type: persistedStageTypeSchema,
   color: z.string(),
   label: z.string(),
+  // Stage deviation metrics data (only on the metric stages).
+  targetDays: z.number().int().positive().nullish(),
+  closedAt: z.string().nullish(),
 });
 
 export const persistedStagesSchema = z
@@ -136,6 +140,9 @@ export const updateJobOpeningSchema = z
       .min(1, "La vacante debe tener al menos una etapa"),
 
     hiringManagerIds: z.array(z.string().min(1)),
+
+    // Target days reviewed when closing the job opening.
+    stageTargets: stageTargetsSchema.optional(),
   })
   .superRefine((data, ctx) => {
     const openingDate = new Date(`${data.openingDate}T00:00:00.000Z`);

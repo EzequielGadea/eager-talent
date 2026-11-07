@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 
 import { auth } from "~/lib/auth";
+import { getMetricStages } from "~/lib/stage-metrics";
 
 import { PipelineHorizontalScroll } from "../../_components/pipeline-horizontal-scroll";
 import { PipelineColumn } from "./pipeline-column";
@@ -14,6 +15,9 @@ type PipelineProps = {
   jobOpeningName: string;
   stages: PipelineStage[];
   search?: string;
+  // yyyy-MM-dd
+  openingDate: string;
+  canManageStageClosures: boolean;
 };
 
 export async function Pipeline({
@@ -21,7 +25,15 @@ export async function Pipeline({
   jobOpeningName,
   stages,
   search,
+  openingDate,
+  canManageStageClosures,
 }: PipelineProps) {
+  const stageClosure = {
+    openingDate,
+    stages: getMetricStages(stages),
+    canManage: canManageStageClosures,
+  };
+
   const requestHeaders = await headers();
 
   const [canUpdateApplication, canCreateInterview, canDeleteInterview] =
@@ -70,6 +82,7 @@ export async function Pipeline({
                 canUpdateApplication={canUpdateApplication.success}
                 canCreateInterview={canCreateInterview.success}
                 canDeleteInterview={canDeleteInterview.success}
+                stageClosure={stageClosure}
               />
             </Suspense>
           ))}

@@ -47,6 +47,7 @@ type RouterOutputs = inferRouterOutputs<AppRouter>;
 type MetricsSummary = RouterOutputs["metrics"]["getMetricsSummary"];
 type ClosedOpening = RouterOutputs["metrics"]["getClosedOpenings"][number];
 type TimeMetrics = RouterOutputs["metrics"]["getTimeMetrics"];
+type StageDeviations = RouterOutputs["metrics"]["getStageDeviations"];
 type JobOpeningDeviations = RouterOutputs["metrics"]["getJobOpeningDeviations"];
 
 function formatPercentage(value: number | null) {
@@ -505,12 +506,14 @@ export function MetricsDashboard({
   initialSummary,
   initialClosedOpenings,
   initialTimeMetrics,
+  initialStageDeviations,
   initialDeviations,
   areas,
 }: {
   initialSummary: MetricsSummary;
   initialClosedOpenings: ClosedOpening[];
   initialTimeMetrics: TimeMetrics;
+  initialStageDeviations: StageDeviations;
   initialDeviations: JobOpeningDeviations;
   areas: Array<{ id: string; name: string }>;
 }) {
@@ -532,6 +535,13 @@ export function MetricsDashboard({
     initialData: isDefaultFilter ? initialTimeMetrics : undefined,
     placeholderData: keepPreviousData,
   });
+  const stageDeviationsQuery = api.metrics.getStageDeviations.useQuery(
+    filters,
+    {
+      initialData: isDefaultFilter ? initialStageDeviations : undefined,
+      placeholderData: keepPreviousData,
+    },
+  );
   const deviationsQuery = api.metrics.getJobOpeningDeviations.useQuery(
     { ...filters, page },
     {
@@ -544,6 +554,7 @@ export function MetricsDashboard({
   const summary = summaryQuery.data ?? initialSummary;
   const closedOpenings = closedOpeningsQuery.data ?? initialClosedOpenings;
   const timeMetrics = timeMetricsQuery.data ?? initialTimeMetrics;
+  const stageDeviations = stageDeviationsQuery.data ?? initialStageDeviations;
   const deviations = deviationsQuery.data ?? initialDeviations;
 
   function changePeriod(nextPeriod: MetricsPeriod) {
@@ -586,8 +597,12 @@ export function MetricsDashboard({
 
         <MetricsSummaryCards
           metrics={timeMetrics}
+          stageDeviations={stageDeviations}
           isPending={
-            timeMetricsQuery.isPending || timeMetricsQuery.isPlaceholderData
+            timeMetricsQuery.isPending ||
+            timeMetricsQuery.isPlaceholderData ||
+            stageDeviationsQuery.isPending ||
+            stageDeviationsQuery.isPlaceholderData
           }
         />
 
