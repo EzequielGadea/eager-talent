@@ -93,7 +93,6 @@ async function DisqualifiedContent({
         status={jobOpening.status}
         areaName={jobOpening.area.name}
         openingDate={jobOpening.openingDate}
-        hasBeenOpened={jobOpening.hasBeenOpened}
         hasApplications={jobOpening.hasApplications}
         canCreateApplication={canCreateApplication.success}
         canUpdateJobOpening={canUpdateJobOpening.success}

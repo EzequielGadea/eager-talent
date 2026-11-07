@@ -30,7 +30,6 @@ type JobOpeningStatusDropdownProps = {
   status: JobOpeningStatus;
   canUpdate: boolean;
   openingDate: Date;
-  hasBeenOpened: boolean;
   hasApplications: boolean;
 };
 
@@ -56,7 +55,6 @@ export function JobOpeningStatusDropdown({
   status,
   canUpdate,
   openingDate,
-  hasBeenOpened,
   hasApplications,
 }: JobOpeningStatusDropdownProps) {
   const router = useRouter();
@@ -89,7 +87,7 @@ export function JobOpeningStatusDropdown({
   const isLocked = isTerminalStatus(status);
   const canSetDraft =
     status === JobOpeningStatus.Draft ||
-    (!hasBeenOpened && !hasApplications && openingDate > new Date());
+    (!hasApplications && openingDate > new Date());
 
   function handleStatusChange(nextStatus: JobOpeningStatus) {
     if (nextStatus === status || isBusy || isLocked) {

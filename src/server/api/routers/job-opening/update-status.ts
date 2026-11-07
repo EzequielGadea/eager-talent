@@ -72,17 +72,6 @@ export const updateStatus = protectedProcedure
       input.status === JobOpeningStatus.Draft &&
       input.status !== jobOpening.status
     ) {
-      if (
-        jobOpening.hasBeenOpened ||
-        jobOpening.status === JobOpeningStatus.Open
-      ) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message:
-            "No se puede pasar a borrador una vacante que está o estuvo abierta",
-        });
-      }
-
       if (jobOpening.openingDate <= new Date()) {
         throw new TRPCError({
           code: "FORBIDDEN",

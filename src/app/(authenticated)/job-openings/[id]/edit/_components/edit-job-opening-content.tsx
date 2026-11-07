@@ -167,9 +167,7 @@ export async function EditJobOpeningContent({
           seniorityOptions={seniorities}
           canSetDraft={
             jobOpening.status === "Draft" ||
-            (!jobOpening.hasBeenOpened &&
-              !jobOpening.hasApplications &&
-              jobOpening.openingDate > new Date())
+            (!jobOpening.hasApplications && jobOpening.openingDate > new Date())
           }
         />
 
