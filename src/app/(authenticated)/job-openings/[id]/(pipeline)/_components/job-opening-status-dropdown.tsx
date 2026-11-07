@@ -49,6 +49,10 @@ const statusStyles: Record<
     badgeClassName: "bg-warning-bg text-warning",
     dotClassName: "bg-warning",
   },
+  Draft: {
+    badgeClassName: "bg-info-bg text-info",
+    dotClassName: "bg-info",
+  },
   Closed: {
     badgeClassName: "bg-muted text-muted-foreground",
     dotClassName: "bg-muted-foreground",
@@ -67,6 +71,7 @@ const fallbackStatusStyle = {
 const statusSuccessMessages: Record<JobOpeningStatus, string> = {
   Open: "Vacante abierta correctamente",
   Paused: "Vacante pausada correctamente",
+  Draft: "Vacante guardada como borrador correctamente",
   Closed: "Vacante cerrada correctamente",
   Cancelled: "Vacante cancelada correctamente",
 };
