@@ -209,7 +209,7 @@ export const importApplicants = protectedProcedure
                 equals: applicant.email,
                 mode: "insensitive",
               },
-              // deletedAt: null,
+              deletedAt: null,
             },
             select: { id: true },
           });
