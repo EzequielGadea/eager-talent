@@ -11,7 +11,8 @@ import { revokeHiringManagerAccess } from "./revoke-hiring-manager-access";
 import { shareWithHiringManagers } from "./share-with-hiring-managers";
 import { updateApplicantTags } from "./update-applicant-tags";
 import { deleteApplicant } from "./delete-applicant";
-
+import { importApplicants } from "./import-applicants";
+import { validateImportApplicants } from "./validate-import-applicants";
 export { getApplicantByIdProcedure };
 
 export { createApplicant };
@@ -31,4 +32,6 @@ export const applicantRouter = createTRPCRouter({
   shareWithHiringManagers,
   revokeHiringManagerAccess,
   updateApplicantTags,
+  importApplicants,
+  validateImportApplicants,
 });
