@@ -23,11 +23,11 @@ type JobOpeningDetailsCardProps = {
     id: string;
     name: string;
   }>;
-
   seniorityOptions: Array<{
     id: string;
     name: string;
   }>;
+  canSetDraft: boolean;
 };
 
 const LOCATION_OPTIONS: UpdateJobOpeningInput["location"][] = [
@@ -39,6 +39,7 @@ const LOCATION_OPTIONS: UpdateJobOpeningInput["location"][] = [
 export function JobOpeningDetailsCard({
   areaOptions,
   seniorityOptions,
+  canSetDraft,
 }: JobOpeningDetailsCardProps) {
   const {
     register,
@@ -141,12 +142,14 @@ export function JobOpeningDetailsCard({
                 spacing={1}
                 className="w-full rounded-lg border border-border-default bg-muted p-1"
               >
-                <ToggleGroupItem
-                  value="Draft"
-                  className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
-                >
-                  {jobOpeningStatusTranslations.Draft}
-                </ToggleGroupItem>
+                {canSetDraft && (
+                  <ToggleGroupItem
+                    value="Draft"
+                    className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
+                  >
+                    {jobOpeningStatusTranslations.Draft}
+                  </ToggleGroupItem>
+                )}
 
                 <ToggleGroupItem
                   value="Open"
