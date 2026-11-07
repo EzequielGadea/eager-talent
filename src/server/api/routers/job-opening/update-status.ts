@@ -39,6 +39,14 @@ export const updateStatus = protectedProcedure
         id: true,
         status: true,
         hasBeenOpened: true,
+        openingDate: true,
+        _count: {
+          select: {
+            applications: {
+              where: { deletedAt: null },
+            },
+          },
+        },
       },
     });
 
@@ -60,6 +68,38 @@ export const updateStatus = protectedProcedure
       });
     }
 
+    if (
+      input.status === JobOpeningStatus.Draft &&
+      input.status !== jobOpening.status
+    ) {
+      if (
+        jobOpening.hasBeenOpened ||
+        jobOpening.status === JobOpeningStatus.Open
+      ) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante que está o estuvo abierta",
+        });
+      }
+
+      if (jobOpening.openingDate <= new Date()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante cuya fecha de apertura ya pasó",
+        });
+      }
+
+      if (jobOpening._count.applications > 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante que tiene candidatos en el pipeline",
+        });
+      }
+    }
+
     const isClosing = input.status === JobOpeningStatus.Closed;
 
     const hasBeenOpened =
@@ -78,7 +118,6 @@ export const updateStatus = protectedProcedure
         status: input.status,
         hasBeenOpened,
         ...(isClosing ? { closingDate: new Date() } : {}),
-
       },
     });
 
