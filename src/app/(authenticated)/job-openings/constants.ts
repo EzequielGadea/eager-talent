@@ -20,6 +20,10 @@ export const statusConfig = {
     label: jobOpeningStatusTranslations.Cancelled,
     className: "bg-danger-bg text-danger",
   },
+  Draft: {
+    label: jobOpeningStatusTranslations.Draft,
+    className: "bg-info-bg text-info",
+  },
 } satisfies Record<
   JobOpeningStatus,
   {
