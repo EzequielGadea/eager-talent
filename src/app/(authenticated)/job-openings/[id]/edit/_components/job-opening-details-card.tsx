@@ -142,6 +142,13 @@ export function JobOpeningDetailsCard({
                 className="w-full rounded-lg border border-border-default bg-muted p-1"
               >
                 <ToggleGroupItem
+                  value="Draft"
+                  className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
+                >
+                  {jobOpeningStatusTranslations.Draft}
+                </ToggleGroupItem>
+
+                <ToggleGroupItem
                   value="Open"
                   className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
                 >
