@@ -186,6 +186,13 @@ export default function OpeningData() {
                   className="flex w-full rounded-lg border border-border-default bg-surface-sunken p-1"
                 >
                   <ToggleGroupItem
+                    value={JobOpeningStatus.Draft}
+                    className="flex-1 rounded-md bg-surface-sunken text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
+                  >
+                    {jobOpeningStatusTranslations.Draft}
+                  </ToggleGroupItem>
+
+                  <ToggleGroupItem
                     value={JobOpeningStatus.Open}
                     className="flex-1 rounded-md bg-surface-sunken text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
