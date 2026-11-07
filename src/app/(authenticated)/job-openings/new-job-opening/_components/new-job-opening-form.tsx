@@ -90,7 +90,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
     defaultValues: {
       name: "",
       area: "",
-      status: JobOpeningStatus.Open,
+      status: JobOpeningStatus.Draft,
       seniorityIds: [],
       location: "Indiferente",
       openingDate: undefined,
