@@ -78,7 +78,7 @@ const historyStatusConfig = {
 };
 
 const sectionTitleClassName =
-  "text-xs font-bold uppercase tracking-wider text-text-tertiary";
+  "font-sans text-xs font-bold uppercase tracking-wider text-text-tertiary";
 
 // tRPC has no transformer here, so dates arrive as ISO strings.
 function formatDate(date: Date | string) {
@@ -219,7 +219,7 @@ export function ShareApplicationDialog({
             <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-success-bg text-accent-green-strong">
               <Share2 className="size-4" aria-hidden="true" />
             </div>
-            <DialogTitle className="font-heading text-lg font-bold text-text-primary">
+            <DialogTitle className="font-heading text-h3 text-text-primary">
               Compartir postulación
             </DialogTitle>
           </div>
@@ -257,7 +257,7 @@ export function ShareApplicationDialog({
             {linksQuery.error && (
               <div
                 role="alert"
-                className="flex items-center justify-between gap-3 rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="flex items-center justify-between gap-3 rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 <span>{linksQuery.error.message}</span>
                 <Button
@@ -458,7 +458,7 @@ export function ShareApplicationDialog({
             {errors.root && (
               <div
                 role="alert"
-                className="rounded-md border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
               >
                 {errors.root.message}
               </div>

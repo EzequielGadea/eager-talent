@@ -115,21 +115,29 @@ export function ApplicantApplicationsCard({
   const router = useRouter();
   const utils = api.useUtils();
   const [, startTransition] = useTransition();
+
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
     () => getInitialSelection(applications),
   );
+
   const [showApplyDialog, setShowApplyDialog] = useState(false);
 
   function refreshApplicantData() {
     void utils.activity.getByApplicantId.invalidate({ applicantId });
-    router.refresh();
+    startTransition(() => {
+      router.refresh();
+    });
   }
+
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
   const [showRequalifyDialog, setShowRequalifyDialog] = useState(false);
-  const effectiveSelection = selection;
+
+  const effectiveSelection = selection ?? getInitialSelection(applications);
+
   const isExploration = effectiveSelection?.type === "exploration";
+
   const app =
     effectiveSelection?.type === "application"
       ? (applications.find(
@@ -173,11 +181,14 @@ export function ApplicantApplicationsCard({
   const interviews = isExploration
     ? explorationInterviews
     : (app?.interviews ?? []);
+
   const canScheduleInterview =
     canCreateInterview &&
     (isExploration || Boolean(app?.active && app.canScheduleInterview));
+
   const jobOpening = app?.jobOpening;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
+
   const desiredSalary = app
     ? [
         app.desiredSalaryCurrency &&
@@ -211,7 +222,7 @@ export function ApplicantApplicationsCard({
     <Card className="bg-card p-0">
       <CardHeader className="flex flex-wrap items-center gap-x-3 gap-y-3 px-6 py-4">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2.5">
-          <CardTitle className="text-xs font-bold uppercase tracking-wider text-text-tertiary">
+          <CardTitle className="font-sans text-xs font-bold uppercase tracking-wider text-text-tertiary">
             Postulación
           </CardTitle>
 
@@ -241,6 +252,7 @@ export function ApplicantApplicationsCard({
               {headerStatus.label}
             </Badge>
           )}
+
           {isExploration && (
             <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg">
               <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-tag-purple-fg" />
@@ -273,6 +285,7 @@ export function ApplicantApplicationsCard({
                   <Share2 className="h-3.5 w-3.5" /> Compartir
                 </Button>
               )}
+
               {canUpdateApplication && app?.active && (
                 <Button
                   variant="outline"
@@ -281,11 +294,12 @@ export function ApplicantApplicationsCard({
                   onClick={() => setShowDisqualifyDialog(true)}
                 >
                   <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-danger">
-                    <X className="h-2.5 w-2.5" strokeWidth={2.5} />
+                    <X className="h-2.5 w-2.5" />
                   </span>
                   Descalificar
                 </Button>
               )}
+
               {canUpdateApplication && app && !app.active && (
                 <Button
                   variant="outline"
@@ -293,7 +307,7 @@ export function ApplicantApplicationsCard({
                   className="gap-1.5 rounded-full border-info bg-background px-3.5 text-xs font-medium text-info shadow-none hover:bg-info-bg hover:text-text-link"
                   onClick={() => setShowRequalifyDialog(true)}
                 >
-                  <RotateCcw className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  <RotateCcw className="h-3.5 w-3.5" />
                   Recalificar
                 </Button>
               )}
@@ -336,6 +350,7 @@ export function ApplicantApplicationsCard({
           applicantId={app.applicantId}
           jobOpeningId={app.jobOpeningId}
           candidateName={applicantName}
+          jobOpeningName={app.jobOpening.name}
           stageName={app.currentStageName}
           onSuccess={refreshApplicantData}
         />
@@ -370,9 +385,10 @@ export function ApplicantApplicationsCard({
 
       <CardContent className="p-0 px-6 pb-6 pt-4">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-          <h3 className="min-w-0 text-base font-bold text-text-primary">
+          <h3 className="min-w-0 text-h3 text-text-primary">
             Historial de entrevistas
           </h3>
+
           {canScheduleInterview && (
             <Button
               type="button"
@@ -386,6 +402,7 @@ export function ApplicantApplicationsCard({
             </Button>
           )}
         </div>
+
         {canCreateInterview &&
           app &&
           app.active &&
@@ -426,20 +443,13 @@ export function ApplicantApplicationsCard({
           <Table>
             <TableHeader>
               <TableRow className="shadow-none hover:bg-transparent hover:shadow-none">
-                <TableHead className="w-1/3 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Instancia
-                </TableHead>
-                <TableHead className="w-1/5 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Fecha
-                </TableHead>
-                <TableHead className="w-1/4 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Entrevistador/es
-                </TableHead>
-                <TableHead className="w-1/6 pb-4 text-xs font-bold uppercase tracking-wider text-text-tertiary">
-                  Resumen
-                </TableHead>
+                <TableHead className="w-1/3 pb-4">Instancia</TableHead>
+                <TableHead className="w-1/5 pb-4">Fecha</TableHead>
+                <TableHead className="w-1/4 pb-4">Entrevistador/es</TableHead>
+                <TableHead className="w-1/6 pb-4">Resumen</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {interviews.map((interview) => (
                 <TableRow

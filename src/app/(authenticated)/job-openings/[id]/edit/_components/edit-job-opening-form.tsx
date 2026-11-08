@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition, type ReactNode } from "react";
-import Link from "next/link";
 import { ArrowRight, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -38,6 +37,7 @@ export function EditJobOpeningForm({
   const router = useRouter();
   const [isNavigationPending, startTransition] = useTransition();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
   const [pendingSubmitValues, setPendingSubmitValues] =
     useState<UpdateJobOpeningInput | null>(null);
 
@@ -122,8 +122,10 @@ export function EditJobOpeningForm({
     });
   }
 
-  function handleCancel() {
+  function handleConfirmCancel() {
     form.reset(defaultValues);
+    setIsCancelConfirmOpen(false);
+    router.push(`/job-openings/${defaultValues.id}/pipeline`);
   }
 
   const isClosing = pendingSubmitValues?.status === "Closed";
@@ -138,28 +140,17 @@ export function EditJobOpeningForm({
         {children}
         <footer className="pb-6">
           <Card className="w-full rounded-xl py-5 shadow-sm">
-            <CardContent className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
+            <CardContent className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
               <Button
-                nativeButton={false}
+                type="button"
                 variant="outline"
-                size="lg"
-                className="w-full rounded-full px-6 text-text-secondary sm:w-auto"
-                render={
-                  <Link
-                    href={`/job-openings/${defaultValues.id}/pipeline`}
-                    onClick={handleCancel}
-                  />
-                }
+                disabled={isSaving}
+                onClick={() => setIsCancelConfirmOpen(true)}
               >
                 Cancelar
               </Button>
 
-              <Button
-                type="submit"
-                size="lg"
-                disabled={isSaving}
-                className="w-full rounded-full px-6 sm:w-auto"
-              >
+              <Button type="submit" disabled={isSaving}>
                 {isSaving ? (
                   <>
                     <LoaderCircle
@@ -225,6 +216,38 @@ export function EditJobOpeningForm({
                 : isClosing
                   ? "Cerrar vacante"
                   : "Cancelar vacante"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSaving) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar edición?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los cambios que no hayas
+              guardado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
             </Button>
           </DialogFooter>
         </DialogContent>

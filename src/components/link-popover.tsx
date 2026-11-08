@@ -20,8 +20,7 @@ const linkSchema = z
   .min(1, "La URL no puede estar vacía")
   .refine((val) => !/\s/.test(val), "URL inválida")
   .refine(
-    (val) =>
-      !/^[a-z][a-z\d+.-]*:\/\//i.test(val) || /^https?:\/\//i.test(val),
+    (val) => !/^[a-z][a-z\d+.-]*:\/\//i.test(val) || /^https?:\/\//i.test(val),
     "URL inválida",
   )
   .transform((val) => (/^https?:\/\//i.test(val) ? val : `https://${val}`))
@@ -167,10 +166,7 @@ export function LinkPopover({
           </div>
 
           {error && (
-            <p
-              className="px-1 text-xs text-destructive font-medium"
-              role="alert"
-            >
+            <p className="px-1 text-xs text-danger" role="alert">
               {error}
             </p>
           )}

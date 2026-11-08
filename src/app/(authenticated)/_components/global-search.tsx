@@ -17,8 +17,6 @@ import { jobOpeningStatusTranslations } from "~/lib/enum-translations";
 import { api } from "~/lib/trpc/react";
 import { VacanciesIcon } from "./app-icons";
 
-const commandGroupClassName =
-  "**:[[cmdk-group-heading]]:font-sans **:[[cmdk-group-heading]]:font-bold **:[[cmdk-group-heading]]:uppercase **:[[cmdk-group-heading]]:tracking-[0.06em]";
 const resultItemClassName =
   "gap-3 rounded-lg px-3 py-2.5 data-selected:bg-success-bg";
 
@@ -75,7 +73,7 @@ function ResultItem({
 function KeyHint({ keys, label }: { keys: string; label: string }) {
   return (
     <span className="flex items-center gap-1">
-      <kbd className="rounded border border-border-default bg-white px-1 py-0.5 text-xs">
+      <kbd className="rounded border border-border-default bg-surface-card px-1 py-0.5 text-xs">
         {keys}
       </kbd>
       {label}
@@ -169,17 +167,17 @@ export function GlobalSearch() {
           onBlur={() => setIsFocused(false)}
           aria-label="Buscar"
           placeholder="Buscar candidatos, vacantes o etiquetas…"
-          className="h-9.5 w-full min-w-0 rounded-md border border-border-default bg-slate-50 py-2 pr-3 pl-9 text-sm text-text-primary outline-none placeholder:text-text-tertiary focus:border-border-focus md:pr-14"
+          className="h-9.5 w-full min-w-0 rounded-md border border-border-default bg-surface-subtle py-2 pr-3 pl-9 text-sm text-text-primary outline-none transition-[border-color,box-shadow] duration-150 placeholder:text-text-tertiary hover:not-focus-visible:border-border-strong focus-visible:border-border-focus focus-visible:ring-4 focus-visible:ring-border-focus/20 md:pr-14"
         />
 
-        <kbd className="absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-border-default bg-white px-1.5 py-0.5 text-xs text-text-tertiary md:block">
+        <kbd className="absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-border-default bg-surface-card px-1.5 py-0.5 text-xs text-text-tertiary md:block">
           {isFocused ? "Esc" : "⌘K"}
         </kbd>
 
         {showResults && (
           <div
             onMouseDown={(event) => event.preventDefault()}
-            className="absolute top-full left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-border-default bg-white shadow-lg max-md:fixed max-md:inset-x-4 max-md:top-17 max-md:mt-0 max-md:w-auto"
+            className="absolute top-full left-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-lg max-md:fixed max-md:inset-x-4 max-md:top-17 max-md:mt-0 max-md:w-auto"
           >
             <CommandList hideScrollbar={false} className="max-h-96">
               <CommandEmpty className="py-8 text-center text-sm text-text-tertiary">
@@ -189,10 +187,7 @@ export function GlobalSearch() {
               </CommandEmpty>
 
               {!isDebouncing && hasApplicants && (
-                <CommandGroup
-                  heading="CANDIDATOS"
-                  className={`px-2 pt-2 ${commandGroupClassName}`}
-                >
+                <CommandGroup heading="CANDIDATOS" className="px-2 pt-2">
                   {data?.applicants.map((applicant) => (
                     <ResultItem
                       key={applicant.id}
@@ -225,10 +220,7 @@ export function GlobalSearch() {
               )}
 
               {!isDebouncing && hasJobOpenings && (
-                <CommandGroup
-                  heading="VACANTES"
-                  className={`px-2 pb-2 ${commandGroupClassName}`}
-                >
+                <CommandGroup heading="VACANTES" className="px-2 pb-2">
                   {data?.jobOpenings.map((jobOpening) => (
                     <ResultItem
                       key={jobOpening.id}

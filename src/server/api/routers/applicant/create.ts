@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 import {
   EnglishLevel,
@@ -7,91 +8,75 @@ import {
   SalaryCurrency,
   JobOpeningStatus,
 } from "~/generated/prisma/enums";
-import { auth } from "~/lib/auth";
-import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
-import { TRPCError } from "@trpc/server";
-
-import { paises } from "~/lib/countries";
-
-function parseUrl(value: string) {
-  try {
-    return new URL(value);
-  } catch {
-    return null;
-  }
-}
-
-function isUploadthingUrl(value: string) {
-  const url = parseUrl(value);
-  return (
-    url?.protocol === "https:" &&
-    (url.hostname === "utfs.io" || url.hostname.endsWith(".ufs.sh"))
-  );
-}
-
-function isLinkedinUrl(value: string) {
-  const url = parseUrl(value);
-  return (
-    (url?.protocol === "https:" || url?.protocol === "http:") &&
-    (url.hostname === "linkedin.com" || url.hostname.endsWith(".linkedin.com"))
-  );
-}
-
-const uploadthingUrlSchema = z
-  .string()
-  .refine(
-    isUploadthingUrl,
-    "El archivo debe estar subido al servicio de archivos",
-  );
-
-const careerYearSchema = z.number().int().min(1900).max(2100);
+import { auth } from "~/lib/auth";
+import {
+  applicantCountrySchema,
+  applicantEmailSchema,
+  applicantLinkedinSchema,
+  applicantNameSchema,
+  applicantTagIdsSchema,
+  availabilitySchema,
+  careerYearSchema,
+  desiredSalarySchema,
+  shortTextSchema,
+  validateCareerYears,
+} from "~/lib/validations/applicant";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
+import { uploadthingUrlSchema } from "~/lib/validations/uploadthing-url";
+import { protectedProcedure } from "~/server/api/trpc";
 
 export const createApplicant = protectedProcedure
   .input(
-    z.object({
-      name: z.string().min(1),
-      lastname: z.string().min(1),
-      email: z.email("Correo inválido").optional(),
-      phone: z.string().optional(),
-      photo: uploadthingUrlSchema.optional(),
-      country: z
-        .string()
-        .refine(
-          (value) =>
-            value === "" || paises.some((pais) => pais.nombre === value),
-          "País inválido",
-        )
-        .optional(),
-      linkedin: z
-        .string()
-        .refine(
-          (value) => value === "" || isLinkedinUrl(value),
-          "Debe ingresar una URL de LinkedIn válida",
-        )
-        .optional(),
+    z
+      .object({
+        name: applicantNameSchema("El nombre"),
+        lastname: applicantNameSchema("El apellido"),
+        email: applicantEmailSchema,
+        phone: optionalE164PhoneSchema,
+        photo: uploadthingUrlSchema.optional(),
+        country: applicantCountrySchema.optional(),
+        linkedin: applicantLinkedinSchema.optional(),
 
-      englishLevel: z.enum(EnglishLevel).optional(),
-      source: z.enum(Source).optional(),
-      hearAboutUs: z.enum(HearAboutUs).optional(),
+        englishLevel: z.enum(EnglishLevel).optional(),
+        source: z.enum(Source).optional(),
+        hearAboutUs: z.enum(HearAboutUs).optional(),
 
-      title: z.string().optional(),
-      academicInstitution: z.string().optional(),
-      careerStartYear: careerYearSchema.optional(),
-      careerEndYear: careerYearSchema.optional(),
-      education: uploadthingUrlSchema.optional(),
-      resume: uploadthingUrlSchema.optional(),
+        title: shortTextSchema("El título", 100).optional(),
+        academicInstitution: shortTextSchema("La institución", 150).optional(),
+        careerStartYear: careerYearSchema.optional(),
+        careerEndYear: careerYearSchema.optional(),
+        education: uploadthingUrlSchema.optional(),
+        resume: uploadthingUrlSchema.optional(),
 
-      roleId: z.string(),
-      areaId: z.string().optional(),
-      seniorityId: z.string().optional(),
-      jobOpeningId: z.string().optional(),
-      // desiredSalary: z.number().positive().optional().or(z.literal("")),
-      desiredSalary: z.string().optional(),
-      currency: z.enum(SalaryCurrency).optional(),
-      availability: z.string().optional(),
-      tagIds: z.array(z.string()).default([]),
-    }),
+        roleId: z.string().min(1),
+        areaId: z.string().min(1).optional(),
+        seniorityId: z.string().min(1).optional(),
+        jobOpeningId: z.string().min(1).optional(),
+        desiredSalary: desiredSalarySchema.optional(),
+        currency: z.enum(SalaryCurrency).optional(),
+        availability: availabilitySchema.optional(),
+        tagIds: applicantTagIdsSchema.default([]),
+      })
+      .superRefine((data, ctx) => {
+        validateCareerYears(data, ctx);
+
+        if (data.desiredSalary !== undefined && !data.currency) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["currency"],
+            message: "Debe seleccionar una moneda",
+          });
+        }
+
+        if (data.currency && data.desiredSalary === undefined) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["desiredSalary"],
+            message: "Debe ingresar el salario deseado",
+          });
+        }
+      }),
   )
   .mutation(async ({ ctx, input }) => {
     const permission = await auth.api.hasPermission({
@@ -110,6 +95,33 @@ export const createApplicant = protectedProcedure
       });
     }
     try {
+      const [role, area, seniority, tagsCount] = await Promise.all([
+        ctx.db.jobRole.findUnique({
+          where: { id: input.roleId },
+          select: { id: true },
+        }),
+        input.areaId
+          ? ctx.db.area.findUnique({
+              where: { id: input.areaId },
+              select: { id: true },
+            })
+          : Promise.resolve(true),
+        input.seniorityId
+          ? ctx.db.seniority.findUnique({
+              where: { id: input.seniorityId },
+              select: { id: true },
+            })
+          : Promise.resolve(true),
+        ctx.db.tag.count({ where: { id: { in: input.tagIds } } }),
+      ]);
+
+      if (!role || !area || !seniority || tagsCount !== input.tagIds.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "El rol, área, seniority o tags seleccionados no existen",
+        });
+      }
+
       let firstStageId: string | undefined;
       let jobOpeningName: string | undefined;
 
@@ -229,7 +241,7 @@ export const createApplicant = protectedProcedure
               desiredSalaryAmount: input.desiredSalary,
               desiredSalaryCurrency: input.currency,
               // Agregar cuando cambie la base : currency: input.currency,
-              availability: input.availability,
+              availability: input.availability || undefined,
             },
           });
 

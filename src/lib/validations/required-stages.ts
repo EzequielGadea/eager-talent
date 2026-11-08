@@ -2,8 +2,21 @@ import {
   FIRST_STAGE,
   LAST_STAGE,
   REQUIRED_MIDDLE_STAGES,
+  getRequiredStageType,
   normalizeStageName,
 } from "~/lib/required-stage-types";
+
+export function getRequiredStageTypeErrors(
+  stages: ReadonlyArray<{ name: string; type: string }>,
+): string[] {
+  return stages.flatMap((stage) => {
+    const expectedType = getRequiredStageType(stage.name);
+
+    return expectedType && stage.type !== expectedType
+      ? [`La etapa ${stage.name} debe tener el tipo ${expectedType}.`]
+      : [];
+  });
+}
 
 export function getRequiredStageErrors(
   stages: ReadonlyArray<{ name: string }>,

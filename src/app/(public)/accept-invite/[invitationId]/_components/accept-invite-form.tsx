@@ -159,25 +159,29 @@ export function AcceptInviteForm({
 
   return (
     <InviteShell>
-      <h1 className="text-xl font-bold tracking-tight text-slate-900">
+      <h1 className="font-heading text-h1 text-text-primary">
         Creá tu contraseña
       </h1>
-      <p className="mt-2 text-sm leading-relaxed text-slate-500">
-        <span className="font-semibold text-slate-900">
+      <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+        <span className="font-semibold text-text-primary">
           {invitation.inviterName}
         </span>{" "}
         te invitó a EagerTalent como{" "}
-        <span className="font-semibold text-slate-900">{invitation.role}</span>.
-        Definí una contraseña para activar tu cuenta.
+        <span className="font-semibold text-text-primary">
+          {invitation.role}
+        </span>
+        . Definí una contraseña para activar tu cuenta.
       </p>
 
-      <div className="mt-5 flex items-center gap-3 rounded-xl border bg-slate-50 px-3 py-2.5">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+      <div className="mt-5 flex items-center gap-3 rounded-xl border bg-surface-subtle px-3 py-2.5">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-success-bg text-accent-green-strong">
           <Mail className="size-4" />
         </div>
         <div className="min-w-0">
-          <p className="text-[11px] text-slate-400">Cuenta invitada</p>
-          <p className="truncate text-sm text-slate-900">{invitation.email}</p>
+          <p className="text-label text-text-tertiary">Cuenta invitada</p>
+          <p className="truncate text-sm text-text-primary">
+            {invitation.email}
+          </p>
         </div>
       </div>
 
@@ -250,7 +254,7 @@ export function AcceptInviteForm({
                     aria-label={
                       showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                     }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
                   >
                     {showPassword ? (
                       <EyeOff className="size-4" />
@@ -267,10 +271,10 @@ export function AcceptInviteForm({
                         key={rule.id}
                         className={`flex items-center gap-1.5 text-xs ${
                           ok
-                            ? "text-emerald-600"
+                            ? "text-accent-green-strong"
                             : passwordHasError
-                              ? "text-red-600"
-                              : "text-slate-400"
+                              ? "text-tag-red-fg"
+                              : "text-text-tertiary"
                         }`}
                       >
                         {ok ? (
@@ -320,7 +324,7 @@ export function AcceptInviteForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="h-11 w-full rounded-full bg-slate-900 text-white hover:bg-slate-800"
+            className="h-11 w-full rounded-full bg-surface-dark text-text-on-dark hover:bg-surface-dark/90"
           >
             {isSubmitting ? (
               <Loader2 className="size-4 animate-spin" />
@@ -332,7 +336,7 @@ export function AcceptInviteForm({
             )}
           </Button>
 
-          <p className="text-center text-xs text-slate-400">
+          <p className="text-center text-xs text-text-tertiary">
             La invitación vence el {invitation.expiresAt}.
           </p>
         </FieldGroup>

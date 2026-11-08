@@ -54,7 +54,7 @@ export default function DisqualificationMotiveSetting() {
         setMotiveName("");
         setIsAddingMotive(false);
         await utils.disqualificationMotive.getAllDisqualificationMotive.invalidate();
-        toast.add({ title: "Motivo creado con éxito", type: "success" });
+        toast.add({ title: "Motivo creado correctamente", type: "success" });
       },
       onError: (error) => {
         toast.add({ title: error.message, type: "error" });
@@ -147,9 +147,7 @@ export default function DisqualificationMotiveSetting() {
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">
-          Motivos de descalificación
-        </CardTitle>
+        <CardTitle>Motivos de descalificación</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col">
@@ -235,7 +233,7 @@ export default function DisqualificationMotiveSetting() {
         </div>
         {!isAddingMotive && (
           <button
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
             type="button"
             onClick={() => setIsAddingMotive(true)}
           >

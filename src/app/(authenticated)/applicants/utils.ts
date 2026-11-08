@@ -51,7 +51,7 @@ export async function transformApplicants(
           jobOpening: jobOpenings,
           currentStage: currentStage ?? null,
           role: applicant.role.name || "-",
-          seniorityName: applicant.seniority?.name || "-",
+          seniorityName: applicant.seniority?.name || undefined,
           seniorityColor: applicant.seniority?.color || "-",
           area: applicant.area?.name || "-",
           source: applicant.source ?? null,

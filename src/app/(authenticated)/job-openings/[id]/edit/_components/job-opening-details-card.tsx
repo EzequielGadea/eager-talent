@@ -23,11 +23,11 @@ type JobOpeningDetailsCardProps = {
     id: string;
     name: string;
   }>;
-
   seniorityOptions: Array<{
     id: string;
     name: string;
   }>;
+  canSetDraft: boolean;
 };
 
 const LOCATION_OPTIONS: UpdateJobOpeningInput["location"][] = [
@@ -39,6 +39,7 @@ const LOCATION_OPTIONS: UpdateJobOpeningInput["location"][] = [
 export function JobOpeningDetailsCard({
   areaOptions,
   seniorityOptions,
+  canSetDraft,
 }: JobOpeningDetailsCardProps) {
   const {
     register,
@@ -54,7 +55,7 @@ export function JobOpeningDetailsCard({
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader>
-        <CardTitle className="font-heading text-[15px] font-bold tracking-[-0.01em] text-text-primary">
+        <CardTitle className="font-heading text-h3 text-text-primary">
           Datos de la vacante
         </CardTitle>
       </CardHeader>
@@ -63,7 +64,7 @@ export function JobOpeningDetailsCard({
         <div className="flex flex-col gap-1.5 md:col-span-2">
           <Label
             htmlFor="name"
-            className="text-sm font-medium text-text-primary"
+            className="text-small font-medium text-text-primary"
           >
             Nombre de la vacante
             <span className="ml-1 text-danger">*</span>
@@ -80,9 +81,9 @@ export function JobOpeningDetailsCard({
         <div className="flex flex-col gap-1.5">
           <Label
             htmlFor="area"
-            className="text-[13px] font-medium text-text-primary"
+            className="text-small font-medium text-text-primary"
           >
-            Area
+            Área
             <span className="ml-1 text-danger">*</span>
           </Label>
 
@@ -126,7 +127,7 @@ export function JobOpeningDetailsCard({
         </div>
 
         <fieldset className="flex flex-col gap-1.5">
-          <legend className="text-[13px] font-medium text-text-primary">
+          <legend className="mb-2 text-small font-medium text-text-primary">
             Estado
           </legend>
 
@@ -141,6 +142,15 @@ export function JobOpeningDetailsCard({
                 spacing={1}
                 className="w-full rounded-lg border border-border-default bg-muted p-1"
               >
+                {canSetDraft && (
+                  <ToggleGroupItem
+                    value="Draft"
+                    className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
+                  >
+                    {jobOpeningStatusTranslations.Draft}
+                  </ToggleGroupItem>
+                )}
+
                 <ToggleGroupItem
                   value="Open"
                   className="flex-1 text-text-secondary hover:bg-transparent aria-pressed:bg-card aria-pressed:text-tag-green-fg aria-pressed:shadow-sm"
@@ -174,7 +184,7 @@ export function JobOpeningDetailsCard({
         </fieldset>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-[13px] font-medium text-text-primary">
+          <legend className="mb-2 text-small font-medium text-text-primary">
             Seniority
             <span className="ml-1 text-danger">*</span>
             <span className="ml-1 font-normal text-text-tertiary">
@@ -224,7 +234,7 @@ export function JobOpeningDetailsCard({
         </fieldset>
 
         <fieldset className="flex flex-col gap-2">
-          <legend className="text-[13px] font-medium text-text-primary">
+          <legend className="mb-2 text-small font-medium text-text-primary">
             Ubicación
           </legend>
 

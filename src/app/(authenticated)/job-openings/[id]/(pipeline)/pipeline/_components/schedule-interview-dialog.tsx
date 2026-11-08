@@ -106,7 +106,7 @@ type ScheduleInterviewDialogProps = {
 };
 
 const fieldLabel = "text-sm font-medium text-text-secondary";
-const fieldControl = "h-11 rounded-xl bg-white";
+const fieldControl = "h-11 rounded-xl bg-surface-card";
 
 // Formato 24 h: deja solo dígitos y agrega los ":" automáticamente (1430 -> 14:30).
 function formatTime24(raw: string) {
@@ -196,7 +196,7 @@ export function ScheduleInterviewDialog({
       <DialogContent className="w-full max-w-xl gap-0 sm:max-w-xl overflow-visible rounded-2xl p-0">
         {/* Encabezado */}
         <div className="border-b border-border-default px-6 py-5">
-          <DialogTitle className="text-xl font-semibold text-text-primary">
+          <DialogTitle className="text-h2 text-text-primary">
             Agregar entrevista
           </DialogTitle>
 
@@ -345,7 +345,7 @@ export function ScheduleInterviewDialog({
                             className={cn(
                               "min-w-0 flex-1 truncate rounded-lg px-2 text-sm whitespace-nowrap transition-colors",
                               selected
-                                ? "bg-white font-semibold text-text-primary shadow-sm"
+                                ? "bg-surface-card font-semibold text-text-primary shadow-sm"
                                 : "text-text-secondary hover:text-text-primary",
                             )}
                           >
@@ -389,7 +389,7 @@ export function ScheduleInterviewDialog({
                     <div className="grid gap-2">
                       <div className="relative">
                         {showList && (
-                          <div className="absolute right-0 bottom-full left-0 z-20 mb-2 max-h-56 overflow-y-auto rounded-xl border border-border-default bg-white p-2 shadow-lg">
+                          <div className="absolute right-0 bottom-full left-0 z-20 mb-2 max-h-56 overflow-y-auto rounded-xl border border-border-default bg-surface-card p-2 shadow-lg">
                             <p className="px-2 pt-1 pb-2 text-xs font-medium text-text-secondary">
                               Hiring Managers del sistema
                             </p>
@@ -423,7 +423,7 @@ export function ScheduleInterviewDialog({
                                   }}
                                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-hover"
                                 >
-                                  <span className="flex size-7 items-center justify-center rounded-full bg-dashboard-purple-avatar text-[11px] font-semibold text-dashboard-purple-text">
+                                  <span className="flex size-7 items-center justify-center rounded-full bg-tag-purple-bg text-label font-semibold text-tag-purple-fg">
                                     {initialsOf(
                                       interviewer.name,
                                       interviewer.lastName,
@@ -458,7 +458,7 @@ export function ScheduleInterviewDialog({
                               key={interviewer.id}
                               className="flex items-center gap-2 rounded-full border border-border-default bg-surface-subtle py-1 pr-1 pl-1"
                             >
-                              <span className="flex size-6 items-center justify-center rounded-full bg-dashboard-purple-avatar text-[10px] font-semibold text-dashboard-purple-text">
+                              <span className="flex size-6 items-center justify-center rounded-full bg-tag-purple-bg text-label font-semibold text-tag-purple-fg">
                                 {initialsOf(
                                   interviewer.name,
                                   interviewer.lastName,
@@ -498,7 +498,10 @@ export function ScheduleInterviewDialog({
             </div>
 
             {createInterviewMutation.isError && (
-              <p className="text-sm text-danger">
+              <p
+                role="alert"
+                className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2 text-sm text-danger"
+              >
                 {createInterviewMutation.error.data?.code === "CONFLICT"
                   ? createInterviewMutation.error.message
                   : "No se pudo agendar la entrevista."}
@@ -519,7 +522,7 @@ export function ScheduleInterviewDialog({
             </Button>
             <Button
               type="submit"
-              className="rounded-full bg-slate-900 px-5 text-white hover:bg-slate-800"
+              className="rounded-full bg-surface-dark px-5 text-text-on-dark hover:bg-surface-dark/90"
               disabled={isPending}
             >
               {isPending ? (

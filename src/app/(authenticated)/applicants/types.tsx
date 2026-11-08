@@ -56,6 +56,7 @@ export interface FiltersProps {
   areaData: Awaited<ReturnType<typeof api.area.getAllAreas>>;
   jobOpeningData: Awaited<ReturnType<typeof api.jobOpening.getAllJobOpenings>>;
   tagData: Awaited<ReturnType<typeof api.tag.getAllTags>>;
+  countApplicants: number;
   isHiringManagerView: boolean;
 }
 

@@ -48,6 +48,13 @@ export const fetchById = protectedProcedure
         stages: true,
         location: true,
         openingDate: true,
+        _count: {
+          select: {
+            applications: {
+              where: { deletedAt: null },
+            },
+          },
+        },
         targetClosingDate: true,
         area: {
           select: {
@@ -105,6 +112,7 @@ export const fetchById = protectedProcedure
       stages: jobOpening.stages,
       location: jobOpening.location,
       openingDate: jobOpening.openingDate,
+      hasApplications: jobOpening._count.applications > 0,
       targetClosingDate: jobOpening.targetClosingDate,
       area: jobOpening.area,
       seniorities: jobOpening.seniorities,

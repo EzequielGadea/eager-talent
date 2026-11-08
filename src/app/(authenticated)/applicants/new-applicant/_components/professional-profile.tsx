@@ -56,8 +56,8 @@ export default function ProfessionalProfile() {
   });
 
   return (
-    <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader className="gap-1 pb-3">
+    <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+      <CardHeader className="gap-1">
         <CardTitle className="text-sm font-semibold">
           Perfil profesional
         </CardTitle>
@@ -101,7 +101,7 @@ export default function ProfessionalProfile() {
               />
             )}
             {errors.role && (
-              <p className="text-danger">{errors.role.message}</p>
+              <p className="text-xs text-danger">{errors.role.message}</p>
             )}
           </div>
 
@@ -254,10 +254,14 @@ export default function ProfessionalProfile() {
                   </div>
                 </div>
                 {errors.currency && (
-                  <p className="text-danger">{errors.currency.message}</p>
+                  <p className="text-xs text-danger">
+                    {errors.currency.message}
+                  </p>
                 )}
                 {errors.desiredSalary && (
-                  <p className="text-danger">{errors.desiredSalary.message}</p>
+                  <p className="text-xs text-danger">
+                    {errors.desiredSalary.message}
+                  </p>
                 )}
               </div>
 

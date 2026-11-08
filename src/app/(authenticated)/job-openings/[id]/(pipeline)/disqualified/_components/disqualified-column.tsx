@@ -35,12 +35,14 @@ export function DisqualifiedColumn({
 
   return (
     <section
-      className="flex w-80 shrink-0 flex-col gap-3 border-t-4 pt-3"
+      className="flex w-full shrink-0 flex-col gap-3 border-t-4 pt-3 sm:w-80"
       style={{ borderTopColor: stageColor }}
     >
       {/* Nombre de la etapa a la izquierda y cantidad a la derecha. */}
       <header className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-text-primary">{stageName}</h2>
+        <h2 className="font-sans text-sm font-semibold text-text-primary">
+          {stageName}
+        </h2>
 
         <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
           {applications.length}

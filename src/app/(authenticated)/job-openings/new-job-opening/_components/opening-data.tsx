@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Controller, useFormContext } from "react-hook-form";
 import { api } from "~/lib/trpc/react";
 
@@ -71,7 +72,7 @@ function SeniorityField() {
                 <ToggleGroupItem
                   key={seniority.id}
                   value={seniority.id}
-                  className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
+                  className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                 >
                   {isSelected && <Check className="mr-1.5 h-3.5 w-3.5" />}
                   {seniority.name}
@@ -101,17 +102,14 @@ export default function OpeningData() {
   return (
     <Card className="w-full rounded-x1 shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">
+        <CardTitle className="font-heading text-h3 text-text-primary">
           Datos de la vacante
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid flex-1 grid-cols-1 gap-x-3 gap-y-3 md:grid-cols-2">
-          <div className="space-y-2 md:col-span-2">
-            <Label
-              htmlFor="name"
-              className="body text-[13px] text-text-secondary"
-            >
+        <div className="grid flex-1 grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-1.5 md:col-span-2">
+            <Label htmlFor="name">
               Nombre de la vacante <span className="text-danger">*</span>
             </Label>
 
@@ -125,11 +123,11 @@ export default function OpeningData() {
               <p className="text-xs text-danger">{errors.name.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="area">
-              Area <span className="text-danger">*</span>
+              Área <span className="text-danger">*</span>
             </Label>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {isLoadingArea ? (
                 <Skeleton className="h-8 w-full rounded-lg" />
               ) : (
@@ -139,7 +137,7 @@ export default function OpeningData() {
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Seleccionar area">
+                        <SelectValue placeholder="Seleccionar área">
                           {areas?.find((area) => area.id === field.value)?.name}
                         </SelectValue>
                       </SelectTrigger>
@@ -156,19 +154,19 @@ export default function OpeningData() {
                   )}
                 />
               )}
-              <button
-                type="button"
-                className="cursor-pointer text-xs font-medium text-text-link transition-colors hover:text-text-primary hover:underline"
+              <Link
+                href="/settings/general"
+                className="inline-block text-xs font-medium text-text-link transition-colors hover:text-text-primary hover:underline"
               >
                 Gestionar áreas
-              </button>
+              </Link>
             </div>
             {errors.area && (
               <p className="text-xs text-danger">{errors.area.message}</p>
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="status">Estado</Label>
             <Controller
               name="status"
@@ -188,29 +186,36 @@ export default function OpeningData() {
                   className="flex w-full rounded-lg border border-border-default bg-surface-sunken p-1"
                 >
                   <ToggleGroupItem
+                    value={JobOpeningStatus.Draft}
+                    className="flex-1 rounded-md bg-surface-sunken text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
+                  >
+                    {jobOpeningStatusTranslations.Draft}
+                  </ToggleGroupItem>
+
+                  <ToggleGroupItem
                     value={JobOpeningStatus.Open}
-                    className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
+                    className="flex-1 rounded-md bg-surface-sunken text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
                     {jobOpeningStatusTranslations.Open}
                   </ToggleGroupItem>
 
                   <ToggleGroupItem
                     value={JobOpeningStatus.Paused}
-                    className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
+                    className="flex-1 rounded-md bg-surface-sunken text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
                     {jobOpeningStatusTranslations.Paused}
                   </ToggleGroupItem>
 
                   <ToggleGroupItem
                     value={JobOpeningStatus.Closed}
-                    className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
+                    className="flex-1 rounded-md bg-surface-sunken text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
                     {jobOpeningStatusTranslations.Closed}
                   </ToggleGroupItem>
 
                   <ToggleGroupItem
                     value={JobOpeningStatus.Cancelled}
-                    className="flex-1 rounded-md bg-surface-sunken text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
+                    className="flex-1 rounded-md bg-surface-sunken text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:bg-card data-pressed:text-accent-green-strong data-pressed:shadow-sm"
                   >
                     {jobOpeningStatusTranslations.Cancelled}
                   </ToggleGroupItem>
@@ -219,10 +224,10 @@ export default function OpeningData() {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label
               htmlFor="seniority"
-              className="text-[13px] font-medium text-text-primary"
+              className="text-small font-medium text-text-primary"
             >
               Seniority
               <span className="text-danger">*</span>
@@ -231,10 +236,10 @@ export default function OpeningData() {
             <SeniorityField />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label
               htmlFor="location"
-              className="text-[13px] font-medium text-text-primary"
+              className="text-small font-medium text-text-primary"
             >
               Ubicación
             </Label>
@@ -257,7 +262,7 @@ export default function OpeningData() {
                 >
                   <ToggleGroupItem
                     value="Uruguay"
-                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                   >
                     {field.value === "Uruguay" ? (
                       <CircleDot className="mr-1.5 h-3.5 w-3.5" />
@@ -268,7 +273,7 @@ export default function OpeningData() {
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="Argentina"
-                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                   >
                     {field.value === "Argentina" ? (
                       <CircleDot className="mr-1.5 h-3.5 w-3.5" />
@@ -279,7 +284,7 @@ export default function OpeningData() {
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="Indiferente"
-                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-[13px] font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
+                    className="h-8 rounded-full border border-border-default bg-surface-card px-4 text-small font-medium text-text-secondary transition-all hover:bg-surface-hover data-pressed:border-accent-green-strong data-pressed:bg-success-bg data-pressed:text-accent-green-strong"
                   >
                     {field.value === "Indiferente" ? (
                       <CircleDot className="mr-1.5 h-3.5 w-3.5" />

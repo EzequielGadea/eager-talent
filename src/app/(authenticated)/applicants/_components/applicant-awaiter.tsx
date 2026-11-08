@@ -64,6 +64,7 @@ export async function ApplicantAwaiterFilters({
   promiseAreaData,
   promiseJobOpeningData,
   promiseTagData,
+  promiseCountApplicants,
   isHiringManagerView,
 }: {
   promiseRoleData: ReturnType<typeof api.jobRole.getAllRoles>;
@@ -71,16 +72,24 @@ export async function ApplicantAwaiterFilters({
   promiseAreaData: ReturnType<typeof api.area.getAllAreas>;
   promiseJobOpeningData: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
   promiseTagData: ReturnType<typeof api.tag.getAllTags>;
+  promiseCountApplicants: Promise<number>;
   isHiringManagerView: boolean;
 }) {
-  const [roleData, seniorityData, areaData, jobOpeningData, tagData] =
-    await Promise.all([
-      promiseRoleData,
-      promiseSeniorityData,
-      promiseAreaData,
-      promiseJobOpeningData,
-      promiseTagData,
-    ]);
+  const [
+    roleData,
+    seniorityData,
+    areaData,
+    jobOpeningData,
+    tagData,
+    countApplicants,
+  ] = await Promise.all([
+    promiseRoleData,
+    promiseSeniorityData,
+    promiseAreaData,
+    promiseJobOpeningData,
+    promiseTagData,
+    promiseCountApplicants,
+  ]);
 
   return (
     <Filters
@@ -89,6 +98,7 @@ export async function ApplicantAwaiterFilters({
       areaData={areaData}
       jobOpeningData={jobOpeningData}
       tagData={tagData}
+      countApplicants={countApplicants}
       isHiringManagerView={isHiringManagerView}
     />
   );

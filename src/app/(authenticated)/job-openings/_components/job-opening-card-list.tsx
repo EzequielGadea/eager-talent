@@ -9,7 +9,7 @@ import { HiringManagersCell, type JobOpening } from "./job-opening-row";
 
 export function JobOpeningCardListSkeleton() {
   return (
-    <div className="flex flex-col divide-y divide-dashboard-border md:hidden">
+    <div className="flex flex-col divide-y divide-border-default md:hidden">
       {Array.from({ length: 4 }).map((_, index) => (
         <div key={index} className="flex flex-col gap-3 px-4 py-3">
           <div className="flex items-center gap-3">
@@ -39,14 +39,14 @@ export function JobOpeningCardList({
 }) {
   if (jobOpenings.length === 0) {
     return (
-      <p className="px-4 py-8 text-center text-sm text-dashboard-text-muted md:hidden">
+      <p className="px-4 py-8 text-center text-sm text-text-secondary md:hidden">
         {emptyMessage}
       </p>
     );
   }
 
   return (
-    <ul className="divide-y divide-dashboard-border md:hidden">
+    <ul className="divide-y divide-border-default md:hidden">
       {jobOpenings.map((jobOpening) => (
         <li key={jobOpening.id}>
           <JobOpeningCard

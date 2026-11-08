@@ -43,8 +43,8 @@ export default function ProfessionalProfile() {
     api.seniority.getAllSeniorities.useQuery({});
 
   return (
-    <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader className="gap-1 pb-3">
+    <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+      <CardHeader className="gap-1">
         <CardTitle className="text-sm font-semibold">
           Perfil profesional
         </CardTitle>
@@ -88,7 +88,7 @@ export default function ProfessionalProfile() {
               />
             )}
             {errors.role && (
-              <p className="text-danger">{errors.role.message}</p>
+              <p className="text-xs text-danger">{errors.role.message}</p>
             )}
           </div>
 
@@ -140,7 +140,7 @@ export default function ProfessionalProfile() {
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Seleccionar area">
+                      <SelectValue placeholder="Seleccionar área">
                         {areas?.find((area) => area.id === field.value)?.name}
                       </SelectValue>
                     </SelectTrigger>

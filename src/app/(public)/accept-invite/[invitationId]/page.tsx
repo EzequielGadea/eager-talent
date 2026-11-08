@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import AcceptInvitePage from "./_components/accept-invite-form";
 import { InvalidToken } from "./_components/invalid-token";
 import { InviteShell } from "./_components/invite-shell";
@@ -68,12 +69,25 @@ async function InvitationContent({
   paramsPromise: Promise<{ invitationId: string }>;
   searchParamsPromise: Promise<{ token?: string; error?: string }>;
 }) {
+  await connection();
   const { invitationId } = await paramsPromise;
   const { token, error } = await searchParamsPromise;
 
-  const inv = await getInvitation(invitationId);
+  if (error || !token) return <InvalidToken />;
 
-  if (error || !token || !inv) return <InvalidToken />;
+  const [inv, verification] = await Promise.all([
+    getInvitation(invitationId),
+    prisma.verification.findFirst({
+      where: {
+        identifier: `reset-password:${token}`,
+      },
+      select: { id: true, expiresAt: true },
+    }),
+  ]);
+
+  if (!inv || !verification || verification.expiresAt < new Date()) {
+    return <InvalidToken />;
+  }
 
   return (
     <AcceptInvitePage

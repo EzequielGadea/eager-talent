@@ -9,6 +9,7 @@ import {
 const CRUD = ["read", "create", "update", "delete"] as const;
 
 export const accessStatements = {
+  dashboard: ["read"],
   publicLink: CRUD,
   jobRole: CRUD,
   area: CRUD,

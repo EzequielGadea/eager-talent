@@ -14,6 +14,7 @@ import {
   updateJobOpeningSchema,
   type JobOpeningStageType,
 } from "~/lib/validations/job-opening";
+import { getRequiredStageTypeErrors } from "~/lib/validations/required-stages";
 import { protectedProcedure } from "~/server/api/trpc";
 
 type CurrentStage = {
@@ -150,7 +151,20 @@ function toPersistedStage(
 
 const requiredStagesSchema = z
   .array(jobOpeningStageSchema)
-  .superRefine(addRequiredStagesIssues);
+  .superRefine((stages, ctx) => {
+    addRequiredStagesIssues(stages, ctx);
+
+    const typeErrors = getRequiredStageTypeErrors(
+      stages.map((stage) => ({
+        name: stage.name,
+        type: FORM_TO_PERSISTED_STAGE_TYPE[stage.type],
+      })),
+    );
+
+    for (const message of typeErrors) {
+      ctx.addIssue({ code: "custom", path: ["stages"], message });
+    }
+  });
 
 export const updateJobOpening = protectedProcedure
   .input(updateJobOpeningSchema)
@@ -304,8 +318,28 @@ export const updateJobOpening = protectedProcedure
     );
     // Estado y ubicación son opcionales: si no llegan, se conservan.
     const nextStatus = input.status ?? currentJobOpening.status;
+    const isClosing = nextStatus === "Closed";
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
+
+    if (nextStatus === "Draft" && nextStatus !== currentJobOpening.status) {
+      if (currentJobOpening.openingDate <= new Date()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante cuya fecha de apertura ya pasó",
+        });
+      }
+
+      if (currentJobOpening.applications.length > 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante que tiene candidatos en el pipeline",
+        });
+      }
+    }
+
     if (hasBeenOpened && stagesChanged) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -379,6 +413,8 @@ export const updateJobOpening = protectedProcedure
           name: input.name,
           status: nextStatus,
           hasBeenOpened: hasBeenOpened || nextStatus === "Open",
+          ...(isClosing ? { closingDate: new Date() } : {}),
+
           location: input.location,
           targetClosingDate: nextTargetClosingDate,
           areaId: input.areaId,

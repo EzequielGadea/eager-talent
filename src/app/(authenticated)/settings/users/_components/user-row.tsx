@@ -12,7 +12,8 @@ import type { AppRouter } from "~/server/api/root";
 import { userRoleConfig, userStatusConfig } from "../constants";
 import { UserActionsMenu } from "./user-actions-menu";
 
-export type User = inferRouterOutputs<AppRouter>["user"]["getAllUsers"][number];
+export type User =
+  inferRouterOutputs<AppRouter>["user"]["getAllUsers"]["users"][number];
 
 import getAvatar from "~/lib/avatar";
 
@@ -43,7 +44,7 @@ const spanishFormatter: typeof baseSpanishFormatter = (
 
 const PENDING_NAME_LABEL = "Pendiente";
 
-function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
+export function LastAccessText({ lastAccess }: { lastAccess: string | null }) {
   if (!lastAccess) {
     return <span>—</span>;
   }

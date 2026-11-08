@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSelectedLayoutSegment } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { JobOpeningFilters } from "./job-opening-filters";
 
@@ -10,9 +10,11 @@ type JobOpeningTabsProps = {
 };
 
 export function JobOpeningTabs({ jobOpeningId }: JobOpeningTabsProps) {
-  const segment = useSelectedLayoutSegment();
+  const pathname = usePathname();
 
-  const activeTab = segment === "disqualified" ? "disqualified" : "pipeline";
+  const activeTab = pathname.endsWith("/disqualified")
+    ? "disqualified"
+    : "pipeline";
 
   return (
     <div className="border-b border-border-default">

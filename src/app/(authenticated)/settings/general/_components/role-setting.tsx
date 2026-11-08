@@ -49,7 +49,7 @@ export default function RoleSetting() {
       setRoleName("");
       setIsAddingRole(false);
       await utils.jobRole.getAllRoles.invalidate();
-      toast.add({ title: "Rol creado con éxito", type: "success" });
+      toast.add({ title: "Rol creado correctamente", type: "success" });
     },
     onError: (error) => {
       toast.add({ title: error.message, type: "error" });
@@ -136,9 +136,7 @@ export default function RoleSetting() {
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">
-          Roles de candidato
-        </CardTitle>
+        <CardTitle>Roles de candidato</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col">
@@ -219,7 +217,7 @@ export default function RoleSetting() {
         </div>
         {!isAddingRole && (
           <button
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
             type="button"
             onClick={() => setIsAddingRole(true)}
           >

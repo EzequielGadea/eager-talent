@@ -22,20 +22,30 @@ import { Card, CardContent } from "~/components/ui/card";
 
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
-import { DndProvider } from "react-dnd";
-import { dndManager } from "../dnd-manager";
-
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
+import { isRequiredStage } from "~/lib/required-stage-types";
 import { persistedStageSchema } from "~/lib/validations/job-opening";
+import {
+  getRequiredStageErrors,
+  getRequiredStageTypeErrors,
+} from "~/lib/validations/required-stages";
 import { useState } from "react";
 
 export const jobOpeningFormSchema = z
   .object({
     name: z.string().min(1, "El nombre de la vacante es obligatiorio"),
-    area: z.string().min(1, "El area de la vacante es obligatoria"),
+    area: z.string().min(1, "El área de la vacante es obligatoria"),
     status: z.enum(JobOpeningStatus),
     seniorityIds: z
       .array(z.string())
@@ -45,49 +55,10 @@ export const jobOpeningFormSchema = z
     closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
     hiringManagerIds: z.array(z.string()),
     stages: z.array(persistedStageSchema).superRefine((stages, ctx) => {
-      const errors: string[] = [];
-      if (stages[0]?.name !== "Aplicado" || stages[0]?.type !== "Ninguna") {
-        errors.push("La primera etapa debe ser 'Aplicado' de tipo 'Ninguna'");
-      }
-
-      if (
-        stages[stages.length - 1]?.name !== "Contratado/a" ||
-        stages[stages.length - 1]?.type !== "Contratado"
-      ) {
-        errors.push(
-          "La última etapa debe ser 'Contratado/a' de tipo 'Contratado'",
-        );
-      }
-
-      if (
-        !stages.some(
-          (stage) =>
-            stage.name === "Entrevista técnica" && stage.type === "Entrevista",
-        )
-      ) {
-        errors.push(
-          "Debe haber una etapa de 'Entrevista técnica' de tipo 'Entrevista'",
-        );
-      }
-
-      if (
-        !stages.some(
-          (stage) =>
-            stage.name === "Entrevista HR" && stage.type === "Entrevista",
-        )
-      ) {
-        errors.push(
-          "Debe haber una etapa de 'Entrevista HR' de tipo 'Entrevista'",
-        );
-      }
-
-      if (
-        !stages.some(
-          (stage) => stage.name === "Oferta" && stage.type === "Oferta",
-        )
-      ) {
-        errors.push("Debe haber una etapa de 'Oferta' de tipo 'Oferta'");
-      }
+      const errors = [
+        ...getRequiredStageErrors(stages),
+        ...getRequiredStageTypeErrors(stages),
+      ];
 
       if (stages.some((stage) => stage.name.trim() === "")) {
         errors.push("No se permiten etapas sin nombre");
@@ -119,7 +90,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
     defaultValues: {
       name: "",
       area: "",
-      status: JobOpeningStatus.Open,
+      status: JobOpeningStatus.Draft,
       seniorityIds: [],
       location: "Indiferente",
       openingDate: undefined,
@@ -132,15 +103,14 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
   const { isSubmitting } = methods.formState;
 
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       methods.reset();
       setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
       toast.add({
         title: "Vacante creada correctamente",
         type: "success",
       });
-      // router.push(`/job-openings/${data.id}`); DESCOMENTAR CUANDO ESTE IMPLEMENTADO LA CONSULTA DE VACANTE
-      router.push("/job-openings");
+      router.push(`/job-openings/${data.id}`);
     },
     onError: (error) => {
       console.error("Error creating job opening:", error.message, error.data);
@@ -160,40 +130,46 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
       stages: data.stages,
     });
   }
-  function handleCancel() {
+  function handleConfirmCancel() {
     methods.reset();
     setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
+    setIsCancelConfirmOpen(false);
     router.push("/job-openings");
   }
 
   const [stages, setStages] = useState(props.templateStages.stages);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
+
+  // Required stages as loaded from the template, by key, so typing one of
+  // those names in a new stage does not lock it.
+  const requiredStageKeys = new Set(
+    props.templateStages.stages.flatMap((stage) =>
+      isRequiredStage(stage) ? [stage.key] : [],
+    ),
+  );
 
   return (
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4"
+        className="flex w-full flex-col gap-4"
       >
         <OpeningData />
         <OpeningDate />
-        <DndProvider manager={dndManager}>
-          {
-            <OpeningStage
-              stages={stages}
-              setStages={setStages}
-              form={methods}
-            />
-          }
-        </DndProvider>
+        <OpeningStage
+          stages={stages}
+          setStages={setStages}
+          requiredStageKeys={requiredStageKeys}
+        />
         <OpeningHiring />
-        <Card className="w-full items-end rounded-x1 shadow-sm">
+        <Card className="w-full items-end rounded-xl shadow-sm">
           <CardContent>
             <div className="flex items-center gap-2">
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleCancel}
-                className="h-8.5 gap-2 rounded-full bg-info-bg px-4 text-[13px] font-semibold shadow-none hover:bg-dashboard-dark-hover"
+                disabled={isSubmitting || createJobOpeningMutation.isPending}
+                onClick={() => setIsCancelConfirmOpen(true)}
               >
                 Cancelar
               </Button>
@@ -202,6 +178,38 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
           </CardContent>
         </Card>
       </form>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting && !createJobOpeningMutation.isPending) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar creación?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los datos que hayas
+              ingresado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }

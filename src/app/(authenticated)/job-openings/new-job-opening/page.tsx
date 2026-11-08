@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { AccessDenied } from "~/components/access-denied";
 import { auth } from "~/lib/auth";
 import { headers } from "next/headers";
 import { api } from "~/lib/trpc/server";
@@ -30,24 +31,20 @@ async function ProtectedNewJobOpeningPage() {
       },
     },
   });
+
   if (!permission.success) {
     return (
-      <main className="flex min-h-0 flex-1 items-center justify-center p-6">
-        <div className="text-center">
-          <h1 className="text-lg font-semibold text-text-primary">
-            No se puede crear la vacante
-          </h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            No tenés permisos para crear una vacante.
-          </p>
-        </div>
-      </main>
+      <AccessDenied
+        title="No se puede crear la vacante"
+        description="No tenés permisos para crear una vacante."
+      />
     );
   }
+
   return (
     <>
-      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-        <h1 className="mb-0 font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
+      <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5">
+        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
           Nueva vacante
         </h1>
         <Suspense fallback={<NewJobOpeningFallback />}>

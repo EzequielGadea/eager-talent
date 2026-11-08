@@ -1,9 +1,9 @@
 const colors = [
-  "bg-dashboard-orange-light text-dashboard-orange-text",
-  "bg-dashboard-sky-avatar text-dashboard-sky-text",
-  "bg-dashboard-success-avatar text-dashboard-success-text",
+  "bg-tag-amber-bg text-tag-amber-fg",
   "bg-tag-blue-bg text-tag-blue-fg",
-  "bg-dashboard-purple-avatar text-dashboard-purple-text",
+  "bg-tag-green-bg text-tag-green-fg",
+  "bg-tag-blue-bg text-tag-blue-fg",
+  "bg-tag-purple-bg text-tag-purple-fg",
   "bg-tag-amber-bg text-tag-amber-fg",
 ] as const;
 

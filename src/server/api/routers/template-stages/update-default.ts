@@ -1,24 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import {
-  isRequiredStage,
-  normalizeStageName,
-  getRequiredStageType,
-} from "~/lib/required-stage-types";
-import {
-  persistedStagesSchema,
-  persistedStageTypeSchema,
-} from "~/lib/validations/job-opening";
-import { protectedProcedure } from "~/server/api/trpc";
-import { auth } from "~/lib/auth";
-
-import { getRequiredStageErrors } from "~/lib/validations/required-stages";
+import { isRequiredStage } from "~/lib/required-stage-types";
+import { persistedStagesSchema } from "~/lib/validations/job-opening";
+import { permissionProcedure } from "~/server/api/trpc";
 
 const stageSchema = z.object({
   key: z.string().min(1),
   name: z.string().trim().min(1).max(80),
-  type: persistedStageTypeSchema,
+  type: z.string().min(1),
   label: z.string().min(1),
   color: z.string().min(1),
 });
@@ -34,34 +24,16 @@ const stagesSchema = z
       });
     }
 
-    const names = stages.map((stage) => normalizeStageName(stage.name));
+    const names = stages.map((stage) => stage.name.toLocaleLowerCase("es"));
     if (new Set(names).size !== names.length) {
       ctx.addIssue({
         code: "custom",
         message: "Las etapas no pueden tener nombres repetidos",
       });
     }
-
-    for (const message of getRequiredStageErrors(stages)) {
-      ctx.addIssue({
-        code: "custom",
-        message,
-      });
-    }
-
-    for (const stage of stages) {
-      const expectedType = getRequiredStageType(stage.name);
-
-      if (expectedType && stage.type !== expectedType) {
-        ctx.addIssue({
-          code: "custom",
-          message: `La etapa ${stage.name} debe tener el tipo ${expectedType}.`,
-        });
-      }
-    }
   });
 
-export const updateDefault = protectedProcedure
+export const updateDefault = permissionProcedure({ stageTemplate: ["update"] })
   .input(
     z.object({
       id: z.string().min(1),
@@ -69,22 +41,6 @@ export const updateDefault = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
-    const permission = await auth.api.hasPermission({
-      headers: ctx.headers,
-      body: {
-        permissions: {
-          stageTemplate: ["update"],
-        },
-      },
-    });
-
-    if (!permission?.success) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "No tienes permisos para actualizar el flujo por defecto.",
-      });
-    }
-
     const template = await ctx.db.stageTemplate.findFirst({
       where: { id: input.id, deletedAt: null },
       select: { id: true, stages: true },
@@ -98,6 +54,36 @@ export const updateDefault = protectedProcedure
     const nextStagesByKey = new Map(
       input.stages.map((stage) => [stage.key, stage]),
     );
+
+    const boundaryStages = [
+      {
+        current: currentStages[0],
+        next: input.stages[0],
+        position: "primera",
+      },
+      {
+        current: currentStages.at(-1),
+        next: input.stages.at(-1),
+        position: "última",
+      },
+    ];
+
+    for (const boundary of boundaryStages) {
+      if (
+        !boundary.current ||
+        !boundary.next ||
+        boundary.next.key !== boundary.current.key ||
+        boundary.next.name !== boundary.current.name ||
+        boundary.next.type !== boundary.current.type ||
+        boundary.next.label !== boundary.current.label ||
+        boundary.next.color !== boundary.current.color
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `La ${boundary.position} etapa no se puede mover, editar ni eliminar.`,
+        });
+      }
+    }
 
     for (const requiredStage of currentStages) {
       if (!isRequiredStage(requiredStage)) continue;
