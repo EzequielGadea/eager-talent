@@ -3,6 +3,7 @@ import { LastAccessText, type User } from "./user-row";
 import { userRoleConfig, userStatusConfig } from "../constants";
 import getAvatar from "~/lib/avatar";
 import { cn } from "~/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 const PENDING_NAME_LABEL = "Pendiente";
 
@@ -38,14 +39,17 @@ export function UsersCardList({ users }: UsersCardListProps) {
               <article className="flex flex-col gap-3 px-4 py-3">
                 <div className="flex min-w-0 items-start justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
-                    <div
-                      className={cn(
-                        "flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                        avatar.colorClass,
-                      )}
-                    >
-                      {avatar.initials || "?"}
-                    </div>
+                    <Avatar className="size-9">
+                      {user.image && <AvatarImage src={user.image} alt="" />}
+                      <AvatarFallback
+                        className={cn(
+                          "text-xs font-semibold",
+                          avatar.colorClass,
+                        )}
+                      >
+                        {avatar.initials || "?"}
+                      </AvatarFallback>
+                    </Avatar>
 
                     <div className="min-w-0 flex-1">
                       <p className="break-words text-sm font-semibold text-text-primary">

@@ -248,12 +248,26 @@ export default function JobOpeningsList({
         />
 
         <div className="hidden w-full overflow-x-auto md:block">
-          <Table className="min-w-[900px]">
+          <Table
+            className={isHiringManagerView ? "min-w-[1000px]" : "min-w-[900px]"}
+          >
             <TableHeader>
               <TableRow className="h-9.75 border-b border-border-default bg-surface-subtle hover:bg-surface-subtle">
-                <TableHead className="h-9.75 px-4 py-0">Vacante</TableHead>
+                <TableHead
+                  className={`h-9.75 px-4 py-0 ${
+                    isHiringManagerView ? "min-w-[16rem]" : ""
+                  }`}
+                >
+                  Vacante
+                </TableHead>
 
-                <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0">
+                <TableHead
+                  className={`h-9.75 px-4 py-0 ${
+                    isHiringManagerView
+                      ? "min-w-[9rem]"
+                      : "w-[14rem] min-w-[14rem]"
+                  }`}
+                >
                   Área
                 </TableHead>
 
@@ -271,11 +285,11 @@ export default function JobOpeningsList({
 
                 {isHiringManagerView && (
                   <>
-                    <TableHead className="h-9.75 px-4 py-0">
+                    <TableHead className="h-9.75 whitespace-nowrap px-4 py-0">
                       Entrevista técnica
                     </TableHead>
 
-                    <TableHead className="h-9.75 px-4 py-0">
+                    <TableHead className="h-9.75 whitespace-nowrap px-4 py-0">
                       Ofertados
                     </TableHead>
                   </>

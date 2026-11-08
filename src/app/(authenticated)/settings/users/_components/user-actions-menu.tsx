@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
+  CircleAlert,
   CircleX,
   KeyRound,
   Loader2,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -54,6 +56,7 @@ export function UserActionsMenu({ user }: Props) {
   const [dialog, setDialog] = useState<
     "ban" | "delete" | "reset" | "cancelInvitation" | null
   >(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   const fullName = `${user.name} ${user.lastName}`.trim() || user.email;
 
@@ -62,28 +65,46 @@ export function UserActionsMenu({ user }: Props) {
 
     if (!invitationId) return;
 
-    startTransition(async () => {
-      const { error } = await authClient.organization.cancelInvitation({
-        invitationId,
-      });
+    setCancelError(null);
 
-      if (error) {
-        toast.add({
-          type: "error",
-          title: "Error",
-          description: error.message ?? "No se pudo cancelar la invitación",
+    startTransition(async () => {
+      try {
+        const { error } = await authClient.organization.cancelInvitation({
+          invitationId,
         });
 
-        return;
-      }
+        if (error) {
+          // Aceptada en otra sesión: la membresía se conserva.
+          if (error.code === "INVITATION_ALREADY_ACCEPTED") {
+            setDialog(null);
+            router.refresh();
+            toast.add({
+              type: "info",
+              title: "La invitación ya fue aceptada",
+              description: `${user.email} ya es miembro activo. No se modificó su acceso.`,
+            });
 
-      setDialog(null);
-      router.refresh();
-      toast.add({
-        type: "success",
-        title: "Invitación cancelada",
-        description: `Se canceló la invitación de ${user.email}`,
-      });
+            return;
+          }
+
+          setCancelError(error.message ?? "No se pudo cancelar la invitación");
+
+          return;
+        }
+
+        setDialog(null);
+        router.refresh();
+        toast.add({
+          type: "success",
+          title: "Invitación cancelada",
+          description: `Se canceló la invitación de ${user.email}`,
+        });
+      } catch {
+        // Fallo de red: se queda en la pantalla y se permite reintentar.
+        setCancelError(
+          "No se pudo cancelar la invitación. Revisá tu conexión e intentá nuevamente.",
+        );
+      }
     });
   };
 
@@ -221,6 +242,7 @@ export function UserActionsMenu({ user }: Props) {
         open={dialog === "cancelInvitation"}
         onOpenChange={(open) => {
           if (isPending) return;
+          if (!open) setCancelError(null);
           setDialog(open ? "cancelInvitation" : null);
         }}
       >
@@ -233,11 +255,22 @@ export function UserActionsMenu({ user }: Props) {
             </DialogDescription>
           </DialogHeader>
 
+          {cancelError && (
+            <Alert variant="destructive">
+              <CircleAlert aria-hidden="true" />
+              <AlertTitle>No se pudo cancelar la invitación</AlertTitle>
+              <AlertDescription>{cancelError}</AlertDescription>
+            </Alert>
+          )}
+
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() => setDialog(null)}
+              onClick={() => {
+                setCancelError(null);
+                setDialog(null);
+              }}
               disabled={isPending}
             >
               Volver
@@ -249,7 +282,11 @@ export function UserActionsMenu({ user }: Props) {
               disabled={isPending}
             >
               {isPending && <Loader2 className="size-4 animate-spin" />}
-              {isPending ? "Cancelando..." : "Cancelar invitación"}
+              {isPending
+                ? "Cancelando..."
+                : cancelError
+                  ? "Reintentar"
+                  : "Cancelar invitación"}
             </Button>
           </DialogFooter>
         </DialogContent>

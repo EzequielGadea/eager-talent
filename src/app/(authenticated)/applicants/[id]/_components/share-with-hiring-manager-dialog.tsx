@@ -116,7 +116,8 @@ export function ShareWithHiringManagerDialog({
   const comboboxAnchor = useComboboxAnchor();
   const router = useRouter();
   const trpcUtils = api.useUtils();
-  const [isRefreshing, startTransition] = useTransition();
+  const [isShareRefreshing, startShareTransition] = useTransition();
+  const [isRevokeRefreshing, startRevokeTransition] = useTransition();
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -165,7 +166,7 @@ export function ShareWithHiringManagerDialog({
         },
       );
 
-      startTransition(() => {
+      startShareTransition(() => {
         router.refresh();
       });
     },
@@ -190,7 +191,7 @@ export function ShareWithHiringManagerDialog({
         type: "success",
       });
 
-      startTransition(() => {
+      startRevokeTransition(() => {
         router.refresh();
       });
     },
@@ -214,7 +215,10 @@ export function ShareWithHiringManagerDialog({
     visibleManagerCount === 0 ? 52 : visibleManagerCount * 64 + 24;
 
   const isBusy =
-    shareMutation.isPending || revokeMutation.isPending || isRefreshing;
+    shareMutation.isPending ||
+    revokeMutation.isPending ||
+    isShareRefreshing ||
+    isRevokeRefreshing;
 
   function resetDialogState() {
     setSearch("");
@@ -627,7 +631,7 @@ export function ShareWithHiringManagerDialog({
               }
               onClick={handleShare}
             >
-              {shareMutation.isPending || isRefreshing ? (
+              {shareMutation.isPending || isShareRefreshing ? (
                 <>
                   Compartiendo
                   <LoaderCircle

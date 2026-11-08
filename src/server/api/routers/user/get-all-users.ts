@@ -79,6 +79,7 @@ export const getAllUsers = protectedProcedure
         name: true,
         lastName: true,
         email: true,
+        image: true,
         banned: true,
         lastAccess: true,
         members: {
@@ -105,6 +106,7 @@ export const getAllUsers = protectedProcedure
         name: user.name,
         lastName: user.lastName,
         email: user.email,
+        image: user.image,
         role:
           user.members[0]?.role === "owner"
             ? "recruiter"

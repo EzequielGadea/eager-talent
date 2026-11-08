@@ -199,6 +199,15 @@ export const auth = betterAuth({
       roles,
       organizationHooks: {
         async beforeCancelInvitation({ invitation }) {
+          // Aceptada en otra sesión: no se cancela ni se toca la membresía.
+          if (invitation.status === "accepted") {
+            throw new APIError("BAD_REQUEST", {
+              message:
+                "La invitación ya fue aceptada: el usuario ya es miembro activo.",
+              code: "INVITATION_ALREADY_ACCEPTED",
+            });
+          }
+
           await revokeUnacceptedInvitation(await auth.$context, invitation);
         },
       },

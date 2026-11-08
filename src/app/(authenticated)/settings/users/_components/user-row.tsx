@@ -11,6 +11,7 @@ import type { AppRouter } from "~/server/api/root";
 
 import { userRoleConfig, userStatusConfig } from "../constants";
 import { UserActionsMenu } from "./user-actions-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 
 export type User =
   inferRouterOutputs<AppRouter>["user"]["getAllUsers"]["users"][number];
@@ -88,11 +89,14 @@ export function UserRow({ user }: Props) {
     <TableRow className="border-b border-border-default transition-colors last:border-b-0 hover:bg-success-bg">
       <TableCell className="px-4 py-3 pl-6">
         <div className="flex items-center gap-3">
-          <div
-            className={`flex size-9 shrink-0 items-center justify-center rounded-full  text-xs font-semibold ${avatar.colorClass}`}
-          >
-            {avatar.initials || "?"}
-          </div>
+          <Avatar className="size-9">
+            {user.image && <AvatarImage src={user.image} alt="" />}
+            <AvatarFallback
+              className={`text-xs font-semibold ${avatar.colorClass}`}
+            >
+              {avatar.initials || "?"}
+            </AvatarFallback>
+          </Avatar>
 
           {fullName ? (
             <span className="font-semibold text-text-primary">{fullName}</span>
