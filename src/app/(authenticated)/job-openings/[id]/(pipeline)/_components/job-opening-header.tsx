@@ -14,6 +14,7 @@ type JobOpeningHeaderProps = {
   status: JobOpeningStatus;
   areaName: string;
   openingDate: Date;
+  hasApplications: boolean;
   canCreateApplication: boolean;
   canUpdateJobOpening: boolean;
 };
@@ -66,6 +67,7 @@ export function JobOpeningHeader({
   status,
   areaName,
   openingDate,
+  hasApplications,
   canCreateApplication,
   canUpdateJobOpening,
 }: JobOpeningHeaderProps) {
@@ -73,7 +75,7 @@ export function JobOpeningHeader({
     status === JobOpeningStatus.Closed || status === JobOpeningStatus.Cancelled;
 
   return (
-    <header className="flex items-center justify-between gap-4">
+    <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-3">
         <Link
           href="/job-openings"
@@ -85,13 +87,15 @@ export function JobOpeningHeader({
 
         <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <h1 className="truncate text-xl font-semibold text-text-primary">
+            <h1 className="truncate font-heading text-h1 text-text-primary">
               {name}
             </h1>
 
             <JobOpeningStatusDropdown
               jobOpeningId={jobOpeningId}
               status={status}
+              openingDate={openingDate}
+              hasApplications={hasApplications}
               canUpdate={canUpdateJobOpening && !isLocked}
             />
           </div>
@@ -102,14 +106,14 @@ export function JobOpeningHeader({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex shrink-0 items-center justify-between sm:w-auto sm:justify-end sm:gap-3">
         {canUpdateJobOpening &&
           (isLocked ? (
             <Button
               type="button"
               variant="outline"
               disabled
-              className="h-10 shrink-0 gap-2 whitespace-nowrap rounded-md px-4 text-sm font-medium"
+              className="h-10 shrink-0 gap-2 whitespace-nowrap rounded-full px-4 text-sm font-medium"
             >
               <Pencil className="size-4 shrink-0" />
               <span>Editar</span>
@@ -117,7 +121,7 @@ export function JobOpeningHeader({
           ) : (
             <Link
               href={`/job-openings/${jobOpeningId}/edit`}
-              className="inline-flex h-10 shrink-0 flex-row items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-background px-4 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+              className="inline-flex h-10 shrink-0 flex-row items-center justify-center gap-2 whitespace-nowrap rounded-full border border-dashboard-border bg-surface-card px-4 text-sm font-medium text-text-secondary transition-colors hover:bg-dashboard-success-light hover:text-dashboard-success-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dashboard-success-text focus-visible:ring-offset-2"
             >
               <Pencil className="size-4 shrink-0" />
               <span>Editar</span>

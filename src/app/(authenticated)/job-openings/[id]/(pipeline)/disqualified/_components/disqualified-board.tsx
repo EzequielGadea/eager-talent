@@ -50,7 +50,7 @@ export function DisqualifiedBoard({
       )}
 
       <PipelineHorizontalScroll>
-        <div className="flex min-w-max gap-4 pb-4">
+        <div className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row">
           {stages.map((stage) => (
             <DisqualifiedColumn
               key={stage.name}

@@ -1,13 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 import { FormProvider, useForm } from "react-hook-form";
 
 import { api } from "~/lib/trpc/react";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { toast } from "~/components/ui/toast";
 
 import PersonalData from "./personal-data";
 import ProfessionalProfile from "./professional-profile";
@@ -26,6 +36,8 @@ import {
 
 import { useUploadThing } from "~/components/ui/uploadthing";
 
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
+
 export const applicantFormSchema = z
   .object({
     name: z.string().min(1, "El nombre es obligatorio"),
@@ -34,14 +46,7 @@ export const applicantFormSchema = z
       .string()
       .min(1, "El correo es obligatorio")
       .email("Correo inválido"),
-    phone: z
-      .string()
-      .regex(
-        /^\+[1-9]\d{1,14}$/,
-        "El teléfono debe tener formato E.164 (ej. +59899000000)",
-      )
-      .optional()
-      .or(z.literal("")),
+    phone: optionalE164PhoneSchema,
     country: z.string(),
     photo: z
       .custom<FileList>()
@@ -49,10 +54,19 @@ export const applicantFormSchema = z
         (files) =>
           !files ||
           files.length === 0 ||
-          files[0].type === "image/png" ||
-          files[0].type === "image/jpeg" ||
-          files[0].type === "image/jpg",
-        "El archivo debe ser una imagen PNG, JPEG o JPG",
+          [
+            "image/png",
+            "image/jpeg",
+            "image/jpg",
+            "image/webp",
+            "image/gif",
+          ].includes(files[0].type),
+        "El archivo debe ser una imagen PNG, JPG, WEBP o GIF",
+      )
+      .refine(
+        (files) =>
+          !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
+        "La foto no puede superar los 4 MiB.",
       )
       .optional(),
 
@@ -90,6 +104,11 @@ export const applicantFormSchema = z
           !files || files.length === 0 || files[0].type === "application/pdf",
         "Debe subir un archivo PDF",
       )
+      .refine(
+        (files) =>
+          !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
+        "El CV no puede superar los 4 MiB.",
+      )
       .optional(),
 
     education: z
@@ -98,6 +117,11 @@ export const applicantFormSchema = z
         (files) =>
           !files || files.length === 0 || files[0].type === "application/pdf",
         "Debe subir un archivo PDF",
+      )
+      .refine(
+        (files) =>
+          !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
+        "El certificado no puede superar los 4 MiB.",
       )
       .optional(),
 
@@ -164,12 +188,20 @@ export default function NewApplicantForm() {
   });
 
   const { isSubmitting } = methods.formState;
+  const [isNavigating, startTransition] = useTransition();
 
   const createCandidateMutation = api.applicant.createApplicant.useMutation({
     onSuccess: () => {
       methods.reset();
       setPhotoPreview(undefined);
-      router.push("/applicants");
+      toast.add({
+        title: "Candidato creado correctamente",
+        type: "success",
+      });
+      startTransition(() => {
+        router.push("/applicants");
+        router.refresh();
+      });
     },
     onError: (error) => {
       if (error.data?.code === "CONFLICT") {
@@ -186,11 +218,50 @@ export default function NewApplicantForm() {
   });
 
   async function onSubmit(data: ApplicantFormValues) {
+    methods.clearErrors(["resume", "education", "photo"]);
+
     const [resumeResult, educationResult, photoResult] = await Promise.all([
       data.resume?.[0] ? startUpload([data.resume[0]]) : undefined,
       data.education?.[0] ? startUpload([data.education[0]]) : undefined,
       data.photo?.[0] ? startUpload([data.photo[0]]) : undefined,
     ]);
+
+    let hasUploadError = false;
+
+    if (data.resume?.[0] && !resumeResult) {
+      methods.setError("resume", {
+        type: "manual",
+        message:
+          data.resume[0].size > 4 * 1024 * 1024
+            ? "El CV supera el tamaño máximo permitido de 4 MiB."
+            : "No se pudo subir el CV. Intentá nuevamente.",
+      });
+      hasUploadError = true;
+    }
+
+    if (data.education?.[0] && !educationResult) {
+      methods.setError("education", {
+        type: "manual",
+        message:
+          data.education[0].size > 4 * 1024 * 1024
+            ? "El certificado supera el tamaño máximo permitido de 4 MiB."
+            : "No se pudo subir el certificado. Intentá nuevamente.",
+      });
+      hasUploadError = true;
+    }
+
+    if (data.photo?.[0] && !photoResult) {
+      methods.setError("photo", {
+        type: "manual",
+        message:
+          data.photo[0].size > 4 * 1024 * 1024
+            ? "La foto supera el tamaño máximo permitido de 4 MiB."
+            : "No se pudo subir la foto. Intentá nuevamente.",
+      });
+      hasUploadError = true;
+    }
+
+    if (hasUploadError) return;
 
     const resumeUrl = resumeResult?.[0]?.ufsUrl;
     const educationUrl = educationResult?.[0]?.ufsUrl;
@@ -233,16 +304,19 @@ export default function NewApplicantForm() {
     });
   }
 
-  function handleCancel() {
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
+
+  function handleConfirmCancel() {
     methods.reset();
     setPhotoPreview(undefined);
+    setIsCancelConfirmOpen(false);
     router.push("/applicants");
   }
   return (
     <FormProvider {...methods}>
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4"
+        className="flex w-full flex-col gap-4"
       >
         <PersonalData
           photoPreview={photoPreview}
@@ -258,14 +332,51 @@ export default function NewApplicantForm() {
           </p>
 
           <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" onClick={handleCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting || createCandidateMutation.isPending}
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
               Cancelar
             </Button>
 
-            <NewCandidateButton disabled={isSubmitting} />
+            <NewCandidateButton disabled={isSubmitting || isNavigating} />
           </div>
         </footer>
       </form>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting && !createCandidateMutation.isPending) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar creación?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los datos que hayas
+              ingresado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }

@@ -29,7 +29,7 @@ function FieldFallback({ className = "" }: { className?: string }) {
 
 export default function NewJobOpeningFallback() {
   return (
-    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4">
+    <div className="flex w-full flex-col gap-4">
       <FormSectionFallback titleWidth="w-36">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FieldFallback className="md:col-span-2" />
@@ -74,8 +74,8 @@ export default function NewJobOpeningFallback() {
 
 export function NewJobOpeningPageFallback() {
   return (
-    <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-      <h1 className="mb-0 font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
+    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5">
+      <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
         Nueva vacante
       </h1>
       <NewJobOpeningFallback />

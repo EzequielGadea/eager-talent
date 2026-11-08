@@ -13,12 +13,12 @@ function FieldSkeleton({ labelWidth = "w-24" }: { labelWidth?: string }) {
 export function EditApplicantFormSkeleton() {
   return (
     <div
-      className="mx-auto flex w-full max-w-[1440px] flex-col gap-4 p-4"
+      className="flex w-full flex-col gap-4"
       aria-label="Cargando formulario del candidato"
       aria-busy="true"
     >
-      <Card className="w-full rounded-xl shadow-sm">
-        <CardHeader className="pb-3">
+      <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+        <CardHeader>
           <Skeleton className="h-4 w-32" />
         </CardHeader>
         <CardContent>
@@ -40,8 +40,8 @@ export function EditApplicantFormSkeleton() {
         </CardContent>
       </Card>
 
-      <Card className="w-full rounded-xl shadow-sm">
-        <CardHeader className="gap-1.5 pb-3">
+      <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+        <CardHeader className="gap-1.5">
           <Skeleton className="h-4 w-36" />
           <Skeleton className="h-3 w-48" />
         </CardHeader>
@@ -55,8 +55,8 @@ export function EditApplicantFormSkeleton() {
         </CardContent>
       </Card>
 
-      <Card className="w-full rounded-xl shadow-sm">
-        <CardHeader className="pb-3">
+      <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+        <CardHeader>
           <Skeleton className="h-4 w-36" />
         </CardHeader>
         <CardContent>
@@ -72,14 +72,12 @@ export function EditApplicantFormSkeleton() {
 
 export function EditApplicantPageSkeleton() {
   return (
-    <>
-      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
-        <h1 className="mb-0 font-heading text-2xl font-bold leading-[1.2] tracking-[-0.02em] text-dashboard-dark">
-          Editar candidato
-        </h1>
-      </div>
+    <div className="mx-auto w-full max-w-210">
+      <h1 className="mb-5.5 font-heading text-h1 text-text-primary">
+        Editar candidato
+      </h1>
 
       <EditApplicantFormSkeleton />
-    </>
+    </div>
   );
 }

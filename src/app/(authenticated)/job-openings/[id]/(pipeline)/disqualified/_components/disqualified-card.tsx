@@ -44,6 +44,8 @@ export function DisqualifiedCard({
 
   const initials = avatar.initials;
   const avatarColor = avatar.colorClass;
+  const motiveLabel =
+    application.disqualificationMotive?.trim() || "(sin motivo especificado)";
   return (
     <>
       {/* Borde izquierdo rojo: marca visual de que fue descartado. */}
@@ -69,33 +71,26 @@ export function DisqualifiedCard({
 
         {/* Separador, motivo en rojo, comentario opcional, fecha y acción. */}
         <div className="mt-3 flex flex-col gap-2 border-t border-border-default pt-3">
-          {(application.disqualificationMotive ||
-            application.disqualificationDescription) && (
-            <div className="flex items-start justify-between gap-2">
-              <p className="flex min-w-0 items-start gap-1.5 text-sm font-medium text-destructive">
-                <CircleAlert className="mt-0.5 size-3.5 shrink-0" />
-                {application.disqualificationMotive && (
-                  <span className="line-clamp-2">
-                    {application.disqualificationMotive}
-                  </span>
-                )}
-              </p>
+          <div className="flex items-start justify-between gap-2">
+            <p className="flex min-w-0 items-start gap-1.5 text-sm font-medium text-destructive">
+              <CircleAlert className="mt-0.5 size-3.5 shrink-0" />
+              <span className="line-clamp-2">{motiveLabel}</span>
+            </p>
 
-              {/* Comentario opcional: solo un "+" que abre el diálogo. */}
-              {application.disqualificationDescription && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  aria-label="Ver comentario"
-                  title="Ver comentario"
-                  className="size-5 shrink-0 rounded-full p-0 text-text-secondary"
-                  onClick={() => setIsCommentOpen(true)}
-                >
-                  <Plus className="size-3" />
-                </Button>
-              )}
-            </div>
-          )}
+            {/* Comentario opcional: solo un "+" que abre el diálogo. */}
+            {application.disqualificationDescription && (
+              <Button
+                type="button"
+                variant="outline"
+                aria-label="Ver comentario"
+                title="Ver comentario"
+                className="size-5 shrink-0 rounded-full p-0 text-text-secondary"
+                onClick={() => setIsCommentOpen(true)}
+              >
+                <Plus className="size-3" />
+              </Button>
+            )}
+          </div>
 
           {/* la fecha exacta al pasar el mouse. */}
           <p
@@ -134,12 +129,12 @@ export function DisqualifiedCard({
         <Dialog open={isCommentOpen} onOpenChange={setIsCommentOpen}>
           <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
             <div className="border-b border-border-default px-6 py-5">
-              <DialogTitle className="text-lg font-semibold text-text-primary">
+              <DialogTitle className="text-text-primary">
                 Comentario
               </DialogTitle>
 
               <DialogDescription className="mt-1 text-sm text-text-secondary">
-                {fullName} · {application.disqualificationMotive}
+                {fullName} · {motiveLabel}
               </DialogDescription>
             </div>
 

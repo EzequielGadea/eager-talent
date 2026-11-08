@@ -62,7 +62,7 @@ function CalendarDropdown({
             key={optionValue}
             value={optionValue}
             disabled={disabled}
-            className="flex w-full cursor-pointer items-center rounded-md px-2 py-1 text-sm text-text-primary outline-hidden select-none not-data-selected:data-highlighted:bg-tag-green-bg not-data-selected:data-highlighted:text-tag-green-fg data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:bg-accent-green data-selected:font-semibold data-selected:text-white data-selected:data-highlighted:bg-accent-green-strong data-selected:data-highlighted:text-white"
+            className="flex w-full cursor-pointer items-center rounded-md px-2 py-1 text-sm text-text-primary outline-hidden select-none not-data-selected:data-highlighted:bg-tag-green-bg not-data-selected:data-highlighted:text-tag-green-fg data-disabled:pointer-events-none data-disabled:opacity-50 data-selected:bg-accent-green data-selected:font-semibold data-selected:text-text-on-dark data-selected:data-highlighted:bg-accent-green-strong data-selected:data-highlighted:text-text-on-dark"
           >
             <SelectPrimitive.ItemText>{label}</SelectPrimitive.ItemText>
           </SelectPrimitive.Item>
@@ -129,7 +129,7 @@ function Calendar({
         ),
         day_button: cn(
           "flex size-full min-w-(--cell-size) cursor-pointer items-center justify-center rounded-(--cell-radius) text-sm font-medium text-text-primary outline-none transition-colors hover:bg-tag-green-bg hover:text-tag-green-fg focus-visible:ring-2 focus-visible:ring-border-focus",
-          "group-data-[selected=true]/day:bg-accent-green group-data-[selected=true]/day:font-semibold group-data-[selected=true]/day:text-white group-data-[selected=true]/day:hover:bg-accent-green-strong group-data-[selected=true]/day:hover:text-white",
+          "group-data-[selected=true]/day:bg-accent-green group-data-[selected=true]/day:font-semibold group-data-[selected=true]/day:text-text-on-dark group-data-[selected=true]/day:hover:bg-accent-green-strong group-data-[selected=true]/day:hover:text-text-on-dark",
           "group-data-[disabled=true]/day:pointer-events-none group-data-[disabled=true]/day:opacity-40",
           defaultClassNames.day_button,
         ),

@@ -27,7 +27,7 @@ export function PublicInterviewsCard({
       <Card className="min-w-0">
         <CardHeader className="flex flex-row items-center gap-2">
           <CalendarCheck className="size-4 text-text-secondary" />
-          <CardTitle className="text-base font-bold text-text-primary">
+          <CardTitle className="text-h3 text-text-primary">
             Proceso de entrevistas
           </CardTitle>
         </CardHeader>
@@ -44,7 +44,7 @@ export function PublicInterviewsCard({
     <Card className="min-w-0">
       <CardHeader className="flex flex-row items-center gap-2 pb-3">
         <CalendarCheck className="size-4 shrink-0 text-text-secondary" />
-        <CardTitle className="text-base font-bold text-text-primary">
+        <CardTitle className="text-h3 text-text-primary">
           Proceso de entrevistas
         </CardTitle>
         <span className="text-xs text-text-tertiary">— notas incluidas</span>
@@ -52,19 +52,19 @@ export function PublicInterviewsCard({
 
       <Separator />
 
-      <CardContent className="flex flex-col gap-5 pt-4">
+      <CardContent className="flex flex-col px-0">
         {interviews.map((interview) => (
           <div
             key={interview.id}
-            className="flex flex-col gap-3 rounded-xl border border-border-default bg-card p-4"
+            className="border-b border-border-default px-4.5 py-4 last:border-b-0"
           >
-            <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-sm font-bold text-text-primary">
+                <h3 className="font-sans text-sm font-semibold text-text-primary">
                   {interview.name}
                 </h3>
                 {(interview.duration || interview.modality) && (
-                  <p className="text-xs text-text-secondary">
+                  <p className="text-xs text-text-tertiary">
                     {[
                       interview.duration ? `${interview.duration} min` : null,
                       interview.modality
@@ -77,36 +77,26 @@ export function PublicInterviewsCard({
                 )}
               </div>
 
-              <div className="text-right text-xs text-text-secondary">
-                {interview.date && (
-                  <p className="font-medium text-text-primary">
-                    {interview.date}
-                  </p>
-                )}
+              <div className="flex items-center gap-4 text-small text-text-secondary">
+                {interview.date && <span>{interview.date}</span>}
                 {interview.interviewers.length > 0 && (
-                  <p className="text-text-tertiary">
-                    {interview.interviewers.join(", ")}
-                  </p>
+                  <span>{interview.interviewers.join(", ")}</span>
                 )}
               </div>
             </div>
 
-            <div className="rounded-xl border border-border-default bg-surface-subtle p-3.5">
-              {interview.note ? (
-                <>
-                  <p className="text-[10px] font-bold tracking-wider text-text-tertiary uppercase">
-                    Notas de la entrevista
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-text-secondary whitespace-pre-line">
-                    {interview.note}
-                  </p>
-                </>
-              ) : (
-                <p className="text-xs text-text-tertiary">
-                  Sin notas registradas todavía.
-                </p>
-              )}
-            </div>
+            {interview.note ? (
+              <div className="mt-3 rounded-md bg-surface-subtle px-3.5 py-3 text-small leading-relaxed text-text-primary">
+                <span className="mb-1.25 block text-label font-bold tracking-wider text-text-tertiary uppercase">
+                  Notas de la entrevista
+                </span>
+                <span className="whitespace-pre-line">{interview.note}</span>
+              </div>
+            ) : (
+              <div className="mt-3 rounded-md bg-surface-subtle px-3.5 py-2.75 text-small text-text-tertiary">
+                Sin notas registradas todavía.
+              </div>
+            )}
           </div>
         ))}
       </CardContent>

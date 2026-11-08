@@ -5,7 +5,7 @@ export function SettingsLayoutSkeleton() {
   return (
     <main className="flex flex-col gap-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-text-primary">
+        <h1 className="font-heading text-h1 text-text-primary">
           Configuración
         </h1>
       </div>

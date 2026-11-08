@@ -28,7 +28,7 @@ export const moveApplicationToStage = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "User does not have application:update permission",
+        message: "No tenés permiso para mover postulaciones.",
       });
     }
 
@@ -63,21 +63,21 @@ export const moveApplicationToStage = protectedProcedure
     if (!application) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Application not found",
+        message: "No se encontró la postulación.",
       });
     }
 
     if (!application.active) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Application is not active",
+        message: "Esta postulación ya no está activa y no se puede mover.",
       });
     }
 
     if (!jobOpening) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Job opening not found",
+        message: "No se encontró la vacante.",
       });
     }
 
@@ -90,7 +90,7 @@ export const moveApplicationToStage = protectedProcedure
     if (!targetStage) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Target stage was not found",
+        message: "No se encontró la etapa de destino.",
       });
     }
 
@@ -121,7 +121,7 @@ export const moveApplicationToStage = protectedProcedure
       if (count !== 1) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Application stage has changed",
+          message: "La etapa de la postulación cambió. Intentá nuevamente.",
         });
       }
 

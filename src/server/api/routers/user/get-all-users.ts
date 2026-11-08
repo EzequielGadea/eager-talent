@@ -5,9 +5,11 @@ import { auth } from "~/lib/auth";
 import { getUserStatus } from "~/server/api/procedures/get-user-status";
 import { protectedProcedure } from "~/server/api/trpc";
 
+const USERS_PER_PAGE = 8;
+
 export const getAllUsers = protectedProcedure
-  .input(z.object({}))
-  .query(async ({ ctx }) => {
+  .input(z.object({ page: z.number().int().min(1).default(1) }))
+  .query(async ({ ctx, input }) => {
     const canReadUsersResult = await auth.api.hasPermission({
       headers: ctx.headers,
       body: {
@@ -55,17 +57,23 @@ export const getAllUsers = protectedProcedure
       ]);
     }
 
-    const users = await ctx.db.user.findMany({
-      where: {
-        id: {
-          not: ctx.session.user.id,
-        },
-        deletedAt: null,
-        OR: [
-          { members: { some: { organizationId } } },
-          { email: { in: invitations.map((invitation) => invitation.email) } },
-        ],
+    const where = {
+      id: {
+        not: ctx.session.user.id,
       },
+      deletedAt: null,
+      OR: [
+        { members: { some: { organizationId } } },
+        { email: { in: invitations.map((invitation) => invitation.email) } },
+      ],
+    };
+
+    const total = await ctx.db.user.count({ where });
+
+    const users = await ctx.db.user.findMany({
+      where,
+      skip: (input.page - 1) * USERS_PER_PAGE,
+      take: USERS_PER_PAGE,
       select: {
         id: true,
         name: true,
@@ -83,14 +91,12 @@ export const getAllUsers = protectedProcedure
           },
         },
       },
-      orderBy: {
-        name: "asc",
-      },
+      orderBy: [{ name: "asc" }, { id: "asc" }],
     });
 
     const now = new Date();
 
-    return users.map((user) => {
+    const items = users.map((user) => {
       const userInvitations =
         invitationsByEmail.get(user.email.toLowerCase()) ?? [];
 
@@ -118,4 +124,6 @@ export const getAllUsers = protectedProcedure
         assignedJobOpeningsCount: user._count.assignedJobOpenings,
       };
     });
+
+    return { users: items, total, pageSize: USERS_PER_PAGE };
   });

@@ -7,23 +7,27 @@ import { Toaster } from "~/components/ui/toast";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+  fallback: ["Inter", "system-ui", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
   title: "EagerTalent",
-  description: "EagerTalent: gestión de procesos de selección",
+  description: "Gestioná tus candidatos y vacantes en EagerTalent.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`${inter.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

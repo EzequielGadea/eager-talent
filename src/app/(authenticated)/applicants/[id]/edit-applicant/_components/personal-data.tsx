@@ -5,7 +5,7 @@ import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 import Image from "next/image";
 import type { Dispatch, SetStateAction } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
@@ -30,7 +30,7 @@ import { paises as countries } from "~/lib/countries";
 
 import type { ApplicantFormValues } from "./edit-applicant-form";
 
-const MAX_PHOTO_SIZE = 4 * 1024 * 1024;
+const MAX_PHOTO_SIZE = 4_000_000;
 
 type PersonalDataProps = {
   currentPhoto?: string | null;
@@ -50,9 +50,8 @@ export default function PersonalData({
   const {
     register,
     control,
-    resetField,
-    setError,
     clearErrors,
+    resetField,
     formState: { errors },
   } = useFormContext<ApplicantFormValues>();
 
@@ -62,6 +61,11 @@ export default function PersonalData({
   });
 
   const photoFile = photoWatch?.[0];
+
+  // Local error state: react-hook-form can wipe errors set with setError
+  // when it revalidates, so the size error lives outside of it.
+  const [photoSizeError, setPhotoSizeError] = useState<string>();
+  const photoError = photoSizeError ?? errors.photo?.message;
 
   useEffect(() => {
     return () => {
@@ -74,6 +78,8 @@ export default function PersonalData({
   const photoField = register("photo");
 
   function handleRemovePhoto() {
+    setPhotoSizeError(undefined);
+
     if (photoFile) {
       resetField("photo");
       setPhotoPreview(removePhoto ? undefined : (currentPhoto ?? undefined));
@@ -92,8 +98,8 @@ export default function PersonalData({
   }
 
   return (
-    <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader className="pb-3">
+    <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+      <CardHeader>
         <CardTitle className="text-sm font-semibold">
           Datos personales
         </CardTitle>
@@ -106,10 +112,15 @@ export default function PersonalData({
             <input
               id="photo"
               type="file"
-              accept=".jpg,.jpeg,.png"
+              accept=".jpg,.jpeg,.png,.webp,.gif"
               className="hidden"
               {...photoField}
               onChange={(event) => {
+                // Discard any previous error when a new file is picked: both
+                // the local one and the one the server left in react-hook-form.
+                setPhotoSizeError(undefined);
+                clearErrors("photo");
+
                 const file = event.target.files?.[0];
 
                 if (!file) {
@@ -118,19 +129,16 @@ export default function PersonalData({
                 }
 
                 if (file.size > MAX_PHOTO_SIZE) {
+                  // Reset the input so the oversized file is never attached.
                   event.target.value = "";
                   photoField.onChange(event);
                   setPhotoPreview(
                     removePhoto ? undefined : (currentPhoto ?? undefined),
                   );
-                  setError("photo", {
-                    type: "manual",
-                    message: "La foto no puede superar los 4 MB",
-                  });
+                  setPhotoSizeError("La foto no puede superar los 4 MB");
                   return;
                 }
 
-                clearErrors("photo");
                 photoField.onChange(event);
                 setPhotoPreview(URL.createObjectURL(file));
               }}
@@ -189,8 +197,10 @@ export default function PersonalData({
               </button>
             )}
 
-            {errors.photo && (
-              <p className="text-danger">{errors.photo.message}</p>
+            {photoError && (
+              <p className="mt-2 w-32 wrap-break-word text-xs text-danger">
+                {photoError}
+              </p>
             )}
           </div>
 
@@ -206,7 +216,7 @@ export default function PersonalData({
                 {...register("name")}
               />
               {errors.name && (
-                <p className="text-danger">{errors.name.message}</p>
+                <p className="text-xs text-danger">{errors.name.message}</p>
               )}
             </div>
 
@@ -221,7 +231,7 @@ export default function PersonalData({
                 {...register("lastname")}
               />
               {errors.lastname && (
-                <p className="text-danger">{errors.lastname.message}</p>
+                <p className="text-xs text-danger">{errors.lastname.message}</p>
               )}
             </div>
 
@@ -237,7 +247,7 @@ export default function PersonalData({
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-danger">{errors.email.message}</p>
+                <p className="text-xs text-danger">{errors.email.message}</p>
               )}
             </div>
 
@@ -250,7 +260,7 @@ export default function PersonalData({
                 {...register("phone")}
               />
               {errors.phone && (
-                <p className="text-danger">{errors.phone.message}</p>
+                <p className="text-xs text-danger">{errors.phone.message}</p>
               )}
             </div>
 
@@ -287,7 +297,7 @@ export default function PersonalData({
                 {...register("linkedin")}
               />
               {errors.linkedin && (
-                <p className="text-danger">{errors.linkedin.message}</p>
+                <p className="text-xs text-danger">{errors.linkedin.message}</p>
               )}
             </div>
           </div>

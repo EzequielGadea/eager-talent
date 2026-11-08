@@ -14,12 +14,16 @@ export const createApplicationProcedure = protectedProcedure
         desiredSalary: z.number().positive().optional(),
         currency: z.enum(SalaryCurrency).optional(),
         availability: z
-          .string({
+          .string(
+            /* Este campo es opcional
+            {
             error:
               "Debe proveer una descripcion de cuando estara disponible para trabajar si se lo contrata.",
-          })
+          }*/
+          )
           .trim()
-          .min(1, "La descripcion de su disponibilidad es muy corta."),
+          //.min(1, "La descripcion de su disponibilidad es muy corta."),
+          .optional(),
       })
       .superRefine((data, ctx) => {
         if (data.desiredSalary !== undefined && data.currency === undefined) {

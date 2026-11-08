@@ -25,7 +25,11 @@ export function normalizeStageName(name: string) {
 }
 
 export function getRequiredStageType(name: string) {
-  return REQUIRED_STAGE_TYPES[normalizeStageName(name)];
+  const key = normalizeStageName(name);
+
+  return Object.hasOwn(REQUIRED_STAGE_TYPES, key)
+    ? REQUIRED_STAGE_TYPES[key]
+    : undefined;
 }
 
 export function isRequiredStage(stage: { name: string; label: string }) {

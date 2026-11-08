@@ -53,7 +53,7 @@ export default function AreaSetting() {
     onSuccess: async () => {
       setAreaName("");
       setIsAddingArea(false);
-      toast.add({ title: "Area creada con exito", type: "success" });
+      toast.add({ title: "Área creada correctamente", type: "success" });
       await utils.area.getAllAreas.invalidate();
     },
     onError: (error) => {
@@ -142,7 +142,7 @@ export default function AreaSetting() {
   return (
     <Card className="w-full rounded-xl shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold">Áreas</CardTitle>
+        <CardTitle>Áreas</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col">
@@ -219,7 +219,7 @@ export default function AreaSetting() {
                 type="submit"
                 disabled={!areaName.trim() || createArea.isPending}
               >
-                {createArea.isPending ? "Guardando..." : "Crear area"}
+                {createArea.isPending ? "Guardando..." : "Crear área"}
               </Button>
               <Button
                 type="button"
@@ -233,7 +233,7 @@ export default function AreaSetting() {
         </div>
         {!isAddingArea && (
           <button
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-[13px] font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border-default py-3 text-small font-medium text-text-tertiary transition-colors hover:bg-surface-hover"
             type="button"
             onClick={() => setIsAddingArea(true)}
           >

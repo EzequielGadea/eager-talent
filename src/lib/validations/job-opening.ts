@@ -5,6 +5,7 @@ import {
   FIRST_STAGE,
   LAST_STAGE,
   REQUIRED_MIDDLE_STAGES,
+  normalizeStageName,
 } from "~/lib/required-stage-types";
 import { getRequiredStageErrors } from "~/lib/validations/required-stages";
 
@@ -199,10 +200,6 @@ type JobOpeningStage = z.infer<typeof jobOpeningStageSchema>;
 
 // Lo que define la estructura del flujo. El color no cuenta como cambio de flujo.
 type JobOpeningStageIdentity = Pick<JobOpeningStage, "id" | "name" | "type">;
-
-function normalizeStageName(name: string) {
-  return name.trim().replace(/\s+/g, " ").toLocaleLowerCase("es");
-}
 
 const REQUIRED_STAGE_NAMES = new Set(
   [FIRST_STAGE, ...REQUIRED_MIDDLE_STAGES, LAST_STAGE].map(normalizeStageName),

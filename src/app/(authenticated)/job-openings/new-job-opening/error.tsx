@@ -46,7 +46,7 @@ export default function JobOpeningError({
           </div>
 
           <div className="space-y-1">
-            <h1 className="text-lg font-semibold text-text-primary">{title}</h1>
+            <h1 className="font-heading text-h3 text-text-primary">{title}</h1>
 
             <p className="text-sm text-text-secondary">{message}</p>
           </div>

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { uploadthingUrlSchema } from "~/lib/validations/uploadthing-url";
+
 import {
   EnglishLevel,
   Source,
@@ -8,6 +10,7 @@ import {
   JobOpeningStatus,
 } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 import { protectedProcedure } from "~/server/api/trpc";
 import { Prisma } from "~/generated/prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -18,8 +21,8 @@ export const createApplicant = protectedProcedure
       name: z.string().min(1),
       lastname: z.string().min(1),
       email: z.string().optional(),
-      phone: z.string().optional(),
-      photo: z.string().optional(),
+      phone: optionalE164PhoneSchema,
+      photo: uploadthingUrlSchema.optional(),
       country: z.string().optional(),
       linkedin: z.string().optional(),
 
@@ -31,8 +34,8 @@ export const createApplicant = protectedProcedure
       academicInstitution: z.string().optional(),
       careerStartYear: z.number().optional(),
       careerEndYear: z.number().optional(),
-      education: z.string().optional(),
-      resume: z.string().optional(),
+      education: uploadthingUrlSchema.optional(),
+      resume: uploadthingUrlSchema.optional(),
 
       roleId: z.string(),
       areaId: z.string().optional(),

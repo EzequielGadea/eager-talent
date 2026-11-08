@@ -5,7 +5,11 @@ import { FaLinkedin } from "react-icons/fa";
 import { TableCell, TableRow } from "~/components/ui/table";
 import { useState } from "react";
 import Image from "next/image";
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { Badge } from "~/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { ApplicantInfo } from "../types";
@@ -40,9 +44,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
   return (
     <TableRow
       onClick={() => handleApplicantClick(props.applicant.id)}
-      className="group cursor-pointer border-b border-dashboard-border transition-colors hover:bg-success-bg last:border-0"
+      className="group cursor-pointer border-b border-border-default transition-colors hover:bg-success-bg last:border-0"
     >
-      {/* Candidato */}
+      {/* Applicant */}
       <TableCell className={`${columns.applicant} py-2 align-middle`}>
         <div className="flex min-w-0 items-center gap-2">
           {photoUrl && photoUrl !== failedPhoto ? (
@@ -57,14 +61,14 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             />
           ) : (
             <div
-              className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${props.applicant.avatarBg}`}
+              className={`flex size-7 shrink-0 items-center justify-center rounded-full text-label font-bold ${props.applicant.avatarBg}`}
             >
               {props.applicant.initials || "-"}
             </div>
           )}
 
           <span
-            className="min-w-0 line-clamp-2 break-words whitespace-normal text-xs font-semibold leading-tight text-dashboard-dark"
+            className="min-w-0 line-clamp-2 wrap-break-word whitespace-normal text-xs font-semibold leading-tight text-text-primary"
             title={props.applicant.name || "-"}
           >
             {props.applicant.name || "-"}
@@ -72,59 +76,113 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
         </div>
       </TableCell>
 
-      {/* Etiquetas */}
+      {/* Tags */}
       <TableCell className={`${columns.tags} py-2 align-middle`}>
         <div className="@container">
-          <div className="flex flex-col items-center gap-1 @[10px]:flex-row @[10px]:flex-wrap @[10px]:justify-center">
+          <div className="flex flex-col items-start gap-1 @[10px]:flex-row @[10px]:flex-wrap">
             {props.applicant.tags.length > 0 ? (
-              props.applicant.tags.map((tag, i) => (
-                <Badge
-                  key={i}
-                  variant="tag"
-                  style={getTagStyles(tag.color ?? "gray")}
-                  title={tag.label || "-"}
-                  className="whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-semibold leading-4"
-                >
-                  {tag.label || "-"}
-                </Badge>
-              ))
+              <>
+                {props.applicant.tags.slice(0, 3).map((tag, i) => (
+                  <Badge
+                    key={i}
+                    variant="tag"
+                    style={getTagStyles(tag.color ?? "gray")}
+                    title={tag.label || "-"}
+                    className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-label font-semibold leading-4 align-middle"
+                  >
+                    {tag.label || "-"}
+                  </Badge>
+                ))}
+
+                {props.applicant.tags.length > 3 && (
+                  <Popover>
+                    <PopoverTrigger
+                      onClick={(e) => e.stopPropagation()}
+                      className="cursor-pointer text-xs text-text-link hover:underline"
+                    >
+                      +{props.applicant.tags.length - 3}
+                    </PopoverTrigger>
+
+                    <PopoverContent
+                      className="w-56 p-3"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <p className="mb-2 text-xs font-semibold text-text-primary">
+                        Otras etiquetas
+                      </p>
+
+                      <div className="flex flex-wrap gap-2">
+                        {props.applicant.tags.slice(3).map((tag, i) => (
+                          <Badge
+                            key={i}
+                            variant="tag"
+                            style={getTagStyles(tag.color ?? "gray")}
+                            title={tag.label || "-"}
+                            className="whitespace-nowrap rounded-full px-2 py-0.5 text-label font-semibold leading-4"
+                          >
+                            {tag.label || "-"}
+                          </Badge>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </>
+
             ) : (
-              <span className="text-sm font-medium text-dashboard-text-muted">
-                -
-              </span>
+              <span className="text-sm font-medium text-text-secondary">-</span>
             )}
           </div>
         </div>
       </TableCell>
 
-      {/* Vacante */}
+      {/* Job-Opening */}
       <TableCell className={`${columns.vacancy} py-2 align-middle`}>
-        <div
-          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
-          title={
-            props.applicant.jobOpening.length <= 1
-              ? ""
-              : props.applicant.jobOpening.join(", ")
-          }
-        >
-          <span className="break-words">
-            {props.applicant.jobOpening[
-              props.applicant.jobOpening.length - 1
-            ] || "-"}
+        <div className="flex flex-wrap items-center gap-1 text-xs leading-tight text-text-secondary">
+          <span className="wrap-break-word">
+            {props.applicant.jobOpening.at(-1) || "-"}
 
-            {props.applicant.jobOpening.length > 1 && (
-              <span className="block">
-                +{props.applicant.jobOpening.length - 1}
-              </span>
-            )}
           </span>
+
+          {props.applicant.jobOpening.length > 1 && (
+            <Popover>
+              <PopoverTrigger
+                onClick={(e) => e.stopPropagation()}
+                className="cursor-pointer text-text-link hover:underline"
+              >
+                +{props.applicant.jobOpening.length - 1}
+              </PopoverTrigger>
+
+              <PopoverContent
+                className="w-56 p-3"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <p className="mb-2 text-xs font-semibold text-text-primary">
+                  Otras vacantes
+                </p>
+
+                <div className="flex flex-col gap-2">
+                  {props.applicant.jobOpening
+                    .slice(0, -1)
+                    .map((vacancy, index) => (
+                      <span
+                        key={`${vacancy}-${index}`}
+                        className="text-sm text-text-secondary"
+                      >
+                        {vacancy}
+                      </span>
+                    ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
       </TableCell>
 
-      {/* Rol */}
+      {/* Role */}
       <TableCell className={`${columns.role} py-2 align-middle`}>
         <div
-          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="wrap-break-word text-xs leading-tight text-text-secondary"
           title={props.applicant.role || "-"}
         >
           {props.applicant.role || "-"}
@@ -132,9 +190,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
       </TableCell>
 
       {/* Seniority */}
-      <TableCell
-        className={`${columns.seniority} py-2 text-center align-middle`}
-      >
+      <TableCell className={`${columns.seniority} py-2 align-middle`}>
         {props.applicant.seniorityName ? (
           <Badge
             style={{
@@ -143,30 +199,28 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             }}
             variant="secondary"
             title={props.applicant.seniorityName}
-            className="whitespace-nowrap rounded-md border-transparent px-2 py-0.5 text-[10px] font-bold leading-4"
+            className="inline-block max-w-30 truncate rounded-full px-2 py-0.5 text-label font-semibold leading-4 align-middle"
           >
             {props.applicant.seniorityName}
           </Badge>
         ) : (
-          <span className="text-sm font-medium text-dashboard-text-muted">
-            -
-          </span>
+          <span className="text-xs leading-tight text-text-secondary">-</span>
         )}
       </TableCell>
 
-      {/* Área */}
+      {/* Area */}
       <TableCell className={`${columns.area} py-2 align-middle`}>
         <div
-          className="break-words text-center text-xs leading-tight text-dashboard-text-muted"
+          className="wrap-break-word text-xs leading-tight text-text-secondary"
           title={props.applicant.area || "-"}
         >
           {props.applicant.area || "-"}
         </div>
       </TableCell>
 
-      {/* Fuente */}
+      {/* Source */}
       <TableCell className={`${columns.source} py-2 align-middle`}>
-        <div className="flex min-w-0 items-center justify-center gap-1 text-center text-sm text-dashboard-text-muted">
+        <div className="flex min-w-0 items-center gap-1 text-sm text-text-secondary">
           {props.applicant.source ? (
             <>
               <span className="shrink-0">
@@ -174,7 +228,7 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
               </span>
 
               <span
-                className="min-w-0 line-clamp-2 break-words leading-tight text-xs"
+                className="min-w-0 line-clamp-2 wrap-break-word leading-tight text-xs"
                 title={sourceTranslations[props.applicant.source]}
               >
                 {sourceTranslations[props.applicant.source]}
@@ -186,9 +240,9 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
         </div>
       </TableCell>
 
-      {/* CV */}
+      {/* Resume */}
       <TableCell
-        className={`${columns.cv} whitespace-nowrap py-2 text-center align-middle`}
+        className={`${columns.cv} whitespace-nowrap py-2 align-middle`}
       >
         {props.applicant.hasCv && props.applicant.cvUrl ? (
           <a
@@ -197,20 +251,18 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             title="Descargar CV"
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-dashboard-text-muted transition-colors hover:bg-dashboard-track hover:text-dashboard-dark"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-text-secondary transition-colors hover:bg-surface-sunken hover:text-text-primary"
           >
             <FileText size={15} />
           </a>
         ) : (
-          <span className="text-sm font-medium text-dashboard-text-muted">
-            -
-          </span>
+          <span className="text-sm font-medium text-text-secondary">-</span>
         )}
       </TableCell>
 
       {/* LinkedIn */}
       <TableCell
-        className={`${columns.linkedin} whitespace-nowrap px-2 py-2 text-center align-middle`}
+        className={`${columns.linkedin} whitespace-nowrap px-2 py-2 align-middle`}
       >
         {props.applicant.hasLinkedin && props.applicant.linkedinUrl ? (
           <a
@@ -219,21 +271,19 @@ export function ApplicantRow(props: { applicant: ApplicantInfo }) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             title="Ver perfil de LinkedIn"
-            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#0a66c2] transition-colors hover:bg-dashboard-track hover:text-[#004182]"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-text-link transition-colors hover:bg-surface-sunken"
           >
             <FaLinkedin size={15} />
           </a>
         ) : (
-          <span className="text-sm font-medium text-dashboard-text-muted">
-            -
-          </span>
+          <span className="text-sm font-medium text-text-secondary">-</span>
         )}
       </TableCell>
 
       {/* Email */}
       <TableCell className={`${columns.email} py-2 align-middle`}>
         <div
-          className="line-clamp-2 break-words whitespace-normal text-center text-xs leading-tight text-dashboard-text-muted [overflow-wrap:anywhere]"
+          className="line-clamp-2 wrap-break-word whitespace-normal text-xs leading-tight text-text-secondary"
           title={props.applicant.email || "-"}
         >
           {props.applicant.email || "-"}

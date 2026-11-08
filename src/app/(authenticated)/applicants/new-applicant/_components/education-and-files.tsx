@@ -33,8 +33,8 @@ export default function EducationAndFiles() {
   const educationFile = educationWatch?.[0];
 
   return (
-    <Card className="w-full rounded-xl shadow-sm">
-      <CardHeader className="pb-3">
+    <Card className="w-full gap-4 rounded-xl shadow-sm [--card-spacing:--spacing(5)]">
+      <CardHeader>
         <CardTitle className="text-sm font-semibold">
           Formación y archivos
         </CardTitle>
@@ -111,7 +111,7 @@ export default function EducationAndFiles() {
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="resume"
-                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-secondary hover:bg-surface-hover"
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-primary hover:bg-surface-hover"
                 >
                   <Upload className="h-4 w-4 shrink-0" />
                   <span className="truncate">
@@ -130,7 +130,7 @@ export default function EducationAndFiles() {
                 )}
               </div>
               {errors.resume && (
-                <p className="text-danger">{errors.resume.message}</p>
+                <p className="text-xs text-danger">{errors.resume.message}</p>
               )}
             </div>
 
@@ -148,7 +148,7 @@ export default function EducationAndFiles() {
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="education"
-                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-secondary hover:bg-surface-hover"
+                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border-default px-3 py-3 text-sm text-text-primary hover:bg-surface-hover"
                 >
                   <Upload className="h-4 w-4 shrink-0" />
                   <span className="truncate">
@@ -167,7 +167,9 @@ export default function EducationAndFiles() {
                 )}
               </div>
               {errors.education && (
-                <p className="text-danger">{errors.education.message}</p>
+                <p className="text-xs text-danger">
+                  {errors.education.message}
+                </p>
               )}
             </div>
           </div>

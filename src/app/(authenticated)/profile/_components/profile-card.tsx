@@ -12,15 +12,15 @@ import { LogoutButton } from "./logout-button";
 const ROLES: Record<string, { label: string; className: string }> = {
   owner: {
     label: "Recruiter",
-    className: "bg-tag-green-bg text-tag-green-fg",
+    className: "bg-tag-purple-bg text-tag-purple-fg",
   },
   recruiter: {
     label: "Recruiter",
-    className: "bg-tag-green-bg text-tag-green-fg",
+    className: "bg-tag-purple-bg text-tag-purple-fg",
   },
   hiringManager: {
     label: "Hiring Manager",
-    className: "bg-tag-purple-bg text-tag-purple-fg",
+    className: "bg-tag-gray-bg text-tag-gray-fg",
   },
   admin: {
     label: "Administrador",
@@ -91,6 +91,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
                 className="shrink-0 cursor-zoom-in rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Image
+                  loading="eager"
                   src={imageSrc}
                   alt={`Foto de ${fullName}`}
                   width={72}
@@ -102,21 +103,21 @@ export function ProfileCard({ user }: ProfileCardProps) {
             ) : (
               <div
                 aria-hidden="true"
-                className={`flex size-18 shrink-0 items-center justify-center rounded-xl font-heading text-2xl font-semibold ${avatar.colorClass}`}
+                className={`flex size-18 shrink-0 items-center justify-center rounded-xl text-h2 ${avatar.colorClass}`}
               >
                 {avatar.initials}
               </div>
             )}
 
             <div className="min-w-0 flex-1 space-y-2">
-              <h2 className="truncate font-heading text-[21px] font-bold leading-tight text-text-primary">
+              <h2 className="truncate font-heading text-h2 text-text-primary">
                 {fullName}
               </h2>
 
               <div className="flex flex-wrap items-center gap-3">
                 {role && (
                   <span
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${role.className}`}
+                    className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${role.className}`}
                   >
                     {role.label}
                   </span>
@@ -159,7 +160,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
         </div>
 
         <section className="space-y-4 rounded-xl border border-border-default bg-surface-card p-6 shadow-sm">
-          <h2 className="text-[11px] font-bold uppercase tracking-wider text-text-tertiary">
+          <h2 className="font-sans text-label font-bold uppercase tracking-wider text-text-tertiary">
             Cuenta
           </h2>
 
@@ -172,7 +173,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 
       {isImageZoomed && imageSrc && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-surface-dark/80 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Foto de perfil ampliada"
@@ -208,7 +209,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 function ProfileField({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 space-y-1">
-      <dt className="text-[11px] font-bold uppercase tracking-wider text-text-tertiary">
+      <dt className="text-label font-bold uppercase tracking-wider text-text-tertiary">
         {label}
       </dt>
       <dd className="truncate text-sm font-semibold text-text-primary">

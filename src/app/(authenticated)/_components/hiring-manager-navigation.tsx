@@ -8,16 +8,21 @@ import { NavigationItem } from "./navigation-item";
 import getAvatar from "~/lib/avatar";
 
 export async function HiringManagerNavigation() {
-  const [jobOpeningsAmount, applicantsAmount, assignedJobOpenings] =
-    await Promise.all([
-      api.jobOpening.getJobOpeningsAmount({}),
-      api.applicant.fetchAmount({}),
-      api.jobOpening.getAllJobOpenings({}),
-    ]);
-
+  const [
+    jobOpeningsAmount,
+    applicantsAmount,
+    sharedApplicants,
+    assignedJobOpenings,
+  ] = await Promise.all([
+    api.jobOpening.getJobOpeningsAmount({}),
+    api.applicant.fetchAmount({}),
+    api.applicant.fetchShared({}),
+    api.jobOpening.getAllJobOpenings({}),
+  ]);
+  const totalApplicants = applicantsAmount + sharedApplicants.total;
   return (
     <>
-      <p className="px-3 pt-3.5 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+      <p className="px-3 pt-3.5 pb-1.5 text-label font-bold uppercase tracking-wider text-text-tertiary">
         PRINCIPAL
       </p>
 
@@ -33,10 +38,10 @@ export async function HiringManagerNavigation() {
         icon={<Users className="size-4.5" aria-hidden="true" />}
         label="Candidatos"
         href="/applicants"
-        count={applicantsAmount}
+        count={totalApplicants}
       />
 
-      <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold tracking-[0.08em] text-text-tertiary">
+      <p className="px-3 pt-4 pb-1.5 text-label font-bold uppercase tracking-wider text-text-tertiary">
         ASIGNADAS A MÍ
       </p>
 
@@ -50,7 +55,7 @@ export async function HiringManagerNavigation() {
             key={jobOpening.id}
             icon={
               <span
-                className={`flex size-5 shrink-0 items-center justify-center rounded-md  text-[10px] ${getAvatar(jobOpening.name, "").colorClass}`}
+                className={`flex size-5 shrink-0 items-center justify-center rounded-md  text-label ${getAvatar(jobOpening.name, "").colorClass}`}
                 aria-hidden="true"
               >
                 {getInitials(jobOpening.name)}

@@ -1,5 +1,7 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 
+import { prisma } from "~/lib/prisma";
 import { Skeleton } from "~/components/ui/skeleton";
 import { InvalidResetLink } from "./_components/invalid-reset-link";
 import { ResetPasswordForm } from "./_components/reset-password-form";
@@ -10,9 +12,21 @@ async function ResetPasswordContent({
 }: {
   searchParamsPromise: Promise<{ token?: string; error?: string }>;
 }) {
+  await connection();
   const { token, error } = await searchParamsPromise;
 
   if (error || !token) return <InvalidResetLink />;
+
+  const verification = await prisma.verification.findFirst({
+    where: {
+      identifier: `reset-password:${token}`,
+    },
+    select: { id: true, expiresAt: true },
+  });
+
+  if (!verification || verification.expiresAt < new Date()) {
+    return <InvalidResetLink />;
+  }
 
   return <ResetPasswordForm token={token} />;
 }
