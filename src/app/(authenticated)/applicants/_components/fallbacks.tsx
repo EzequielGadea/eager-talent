@@ -16,7 +16,7 @@ export function HeaderFallback({
 
       {!isHiringManagerView && (
         <div className="flex items-center gap-2">
-          <Skeleton className="h-8.5 w-8.5 rounded-full md:w-40" />
+          <Skeleton className="h-8.5 w-8.5 rounded-full md:w-56" />
           <Skeleton className="h-8.5 w-8.5 rounded-full md:w-36" />
         </div>
       )}

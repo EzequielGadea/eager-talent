@@ -84,7 +84,9 @@ export function ExportApplicantsDialog() {
             className="h-8.5 w-8.5 gap-2 rounded-full border-border-default bg-surface-card px-0 text-small font-semibold text-text-primary shadow-none hover:bg-surface-hover md:w-auto md:px-4"
           >
             <Download size={16} />
-            <span className="sr-only md:not-sr-only">Exportar candidatos</span>
+            <span className="sr-only md:not-sr-only">
+              Exportar todos los candidatos
+            </span>
           </Button>
         }
       />
