@@ -1,9 +1,12 @@
 "use client";
 
-import { Plus } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { Plus, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Share2 } from "lucide-react";
+
+import { Button } from "~/components/ui/button";
+
+import { ExportApplicantsDialog } from "./export-applicants-dialog";
+
 export function Header(props: {
   countApplicants: number;
   countOpenings: number;
@@ -51,6 +54,7 @@ export function Header(props: {
       )}
       {!props.isHiringManagerView && (
         <div className="flex items-center gap-2">
+          <ExportApplicantsDialog />
           <Button
             size="sm"
             onClick={() => router.push("/applicants/new-applicant")}
