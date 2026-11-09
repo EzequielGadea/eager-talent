@@ -122,6 +122,7 @@ enum JobOpeningStatus {
   Paused
   Closed
   Cancelled
+  Draft
 }
 
 enum InterviewStatus {

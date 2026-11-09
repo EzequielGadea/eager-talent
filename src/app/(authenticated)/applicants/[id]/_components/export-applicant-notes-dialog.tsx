@@ -49,6 +49,10 @@ export function ExportApplicantNotesDialog({
       try {
         downloadCsv(result.csv, result.filename);
         onOpenChange(false);
+        toast.add({
+          type: "success",
+          title: "Notas exportadas correctamente",
+        });
       } catch {
         toast.add({
           type: "error",
@@ -71,7 +75,7 @@ export function ExportApplicantNotesDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Exportar notas del candidato</DialogTitle>
+          <DialogTitle>Exportar notas de candidato</DialogTitle>
           <DialogDescription>
             Se descargará un archivo CSV con las notas de todas las entrevistas
             de {applicantName}.
@@ -95,7 +99,7 @@ export function ExportApplicantNotesDialog({
             {isPending && (
               <Loader2 data-icon="inline-start" className="animate-spin" />
             )}
-            {isPending ? "Exportando..." : "Exportar"}
+            {isPending ? "Exportando..." : "Confirmar"}
           </Button>
         </DialogFooter>
       </DialogContent>

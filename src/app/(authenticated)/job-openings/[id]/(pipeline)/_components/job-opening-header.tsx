@@ -14,6 +14,7 @@ type JobOpeningHeaderProps = {
   status: JobOpeningStatus;
   areaName: string;
   openingDate: Date;
+  hasApplications: boolean;
   canCreateApplication: boolean;
   canUpdateJobOpening: boolean;
 };
@@ -66,6 +67,7 @@ export function JobOpeningHeader({
   status,
   areaName,
   openingDate,
+  hasApplications,
   canCreateApplication,
   canUpdateJobOpening,
 }: JobOpeningHeaderProps) {
@@ -92,6 +94,8 @@ export function JobOpeningHeader({
             <JobOpeningStatusDropdown
               jobOpeningId={jobOpeningId}
               status={status}
+              openingDate={openingDate}
+              hasApplications={hasApplications}
               canUpdate={canUpdateJobOpening && !isLocked}
             />
           </div>

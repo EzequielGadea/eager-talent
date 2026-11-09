@@ -165,6 +165,10 @@ export async function EditJobOpeningContent({
         <JobOpeningDetailsCard
           areaOptions={areas}
           seniorityOptions={seniorities}
+          canSetDraft={
+            jobOpening.status === "Draft" ||
+            (!jobOpening.hasApplications && jobOpening.openingDate > new Date())
+          }
         />
 
         <JobOpeningDatesCard />

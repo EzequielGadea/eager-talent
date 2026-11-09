@@ -90,7 +90,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
     defaultValues: {
       name: "",
       area: "",
-      status: JobOpeningStatus.Open,
+      status: JobOpeningStatus.Draft,
       seniorityIds: [],
       location: "Indiferente",
       openingDate: undefined,
@@ -103,15 +103,14 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
   const { isSubmitting } = methods.formState;
 
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       methods.reset();
       setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
       toast.add({
         title: "Vacante creada correctamente",
         type: "success",
       });
-      // router.push(`/job-openings/${data.id}`); DESCOMENTAR CUANDO ESTE IMPLEMENTADO LA CONSULTA DE VACANTE
-      router.push("/job-openings");
+      router.push(`/job-openings/${data.id}`);
     },
     onError: (error) => {
       console.error("Error creating job opening:", error.message, error.data);

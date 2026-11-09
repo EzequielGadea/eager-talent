@@ -12,12 +12,15 @@ import { shareWithHiringManagers } from "./share-with-hiring-managers";
 import { updateApplicantTags } from "./update-applicant-tags";
 import { deleteApplicant } from "./delete-applicant";
 import { exportInterviewNotes } from "./export-interview-notes";
+import { exportApplicants } from "./export-applicants";
 
 export { getApplicantByIdProcedure };
 
 export { createApplicant };
 export { updateApplicant };
 export { deleteApplicant };
+export { exportApplicants };
+export { exportInterviewNotes };
 
 export const applicantRouter = createTRPCRouter({
   createApplicant,
@@ -25,6 +28,7 @@ export const applicantRouter = createTRPCRouter({
   getById: getApplicantByIdProcedure,
   updateApplicant,
   delete: deleteApplicant,
+  exportApplicants,
   exportInterviewNotes,
   fetchAll,
   fetchAmount,

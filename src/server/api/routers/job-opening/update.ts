@@ -198,7 +198,7 @@ export const updateJobOpening = protectedProcedure
       currentJobOpening,
       area,
       validSeniorityCount,
-      validHiringManagerCount,
+      activeHiringManagers,
     ] = await Promise.all([
       ctx.db.jobOpening.findUnique({
         where: {
@@ -210,6 +210,7 @@ export const updateJobOpening = protectedProcedure
           hasBeenOpened: true,
           openingDate: true,
           stages: true,
+          hiringManagers: { select: { id: true } },
           applications: {
             where: { deletedAt: null },
             select: {
@@ -236,17 +237,14 @@ export const updateJobOpening = protectedProcedure
         },
       }),
 
-      ctx.db.member.count({
+      ctx.db.member.findMany({
         where: {
           organizationId,
           role: "hiringManager",
-          userId: {
-            in: input.hiringManagerIds,
-          },
-          user: {
-            banned: false,
-          },
+          userId: { in: input.hiringManagerIds },
+          user: { banned: false },
         },
+        select: { userId: true },
       }),
     ]);
 
@@ -281,7 +279,20 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
-    if (validHiringManagerCount !== input.hiringManagerIds.length) {
+    // Un HM baneado que ya estaba asignado se tolera (no bloquea la edición),
+    // pero no se puede asignar uno nuevo que esté baneado.
+    const activeHiringManagerIds = new Set(
+      activeHiringManagers.map((member) => member.userId),
+    );
+    const currentHiringManagerIds = new Set(
+      currentJobOpening.hiringManagers.map((manager) => manager.id),
+    );
+    const hasInvalidHiringManager = input.hiringManagerIds.some(
+      (id) =>
+        !activeHiringManagerIds.has(id) && !currentHiringManagerIds.has(id),
+    );
+
+    if (hasInvalidHiringManager) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Uno o más Hiring Managers no son válidos",
@@ -321,6 +332,25 @@ export const updateJobOpening = protectedProcedure
     const isClosing = nextStatus === "Closed";
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
+
+    if (nextStatus === "Draft" && nextStatus !== currentJobOpening.status) {
+      if (currentJobOpening.openingDate <= new Date()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante cuya fecha de apertura ya pasó",
+        });
+      }
+
+      if (currentJobOpening.applications.length > 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante que tiene candidatos en el pipeline",
+        });
+      }
+    }
+
     if (hasBeenOpened && stagesChanged) {
       throw new TRPCError({
         code: "FORBIDDEN",

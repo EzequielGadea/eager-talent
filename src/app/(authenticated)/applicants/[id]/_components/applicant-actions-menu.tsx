@@ -108,7 +108,7 @@ export function ApplicantActionsMenu({
                 }}
               >
                 <Download />
-                <span>Exportar notas del candidato</span>
+                <span>Exportar notas de candidato</span>
               </DropdownMenuItem>
             )}
           </DropdownMenuGroup>
