@@ -24,6 +24,7 @@ const importedNoteSchema = z.object({
 
 const MAX_IMPORT_ROWS = 10_000;
 const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TRANSACTION_RETRIES = 3;
 const importedNotesSchema = z
   .array(importedNoteSchema)
   .min(1)
@@ -284,87 +285,112 @@ export const importPeopleForceNotesProcedure = protectedProcedure
       ...new Set(input.notes.map((note) => note.identification)),
     ];
 
-    const result = await ctx.db.$transaction(async (tx) => {
-      const applicants = await tx.applicant.findMany({
-        where: { peopleForceID: { in: identifications }, deletedAt: null },
-        select: {
-          id: true,
-          peopleForceID: true,
-          note: { select: { content: true } },
-        },
-      });
-      const applicantByPeopleForceId = new Map(
-        applicants.map((applicant) => [applicant.peopleForceID!, applicant]),
-      );
-      const notesByApplicant = new Map<
-        string,
-        (typeof input.notes)[number][]
-      >();
-      for (const note of input.notes) {
-        const applicant = applicantByPeopleForceId.get(note.identification);
-        if (!applicant) continue;
-        const current = notesByApplicant.get(applicant.id) ?? [];
-        current.push(note);
-        notesByApplicant.set(applicant.id, current);
-      }
-
-      for (const [applicantId, notes] of notesByApplicant) {
-        const applicant = applicants.find((item) => item.id === applicantId)!;
-        const importedNodes = notes.map((note) => ({
-          type: "paragraph",
-          attrs: { textAlign: null },
-          content: [
-            {
-              type: "text",
-              text: `[PeopleForce] ${note.content}\nCreado por: ${note.createdBy || "Sin especificar"} · Creado a las: ${note.createdAt || "Sin especificar"}`,
+    const importNotes = () =>
+      ctx.db.$transaction(
+        async (tx) => {
+          const applicants = await tx.applicant.findMany({
+            where: { peopleForceID: { in: identifications }, deletedAt: null },
+            select: {
+              id: true,
+              peopleForceID: true,
+              note: { select: { content: true } },
             },
-          ],
-        }));
-        const previous =
-          applicant.note?.content &&
-          typeof applicant.note.content === "object" &&
-          !Array.isArray(applicant.note.content)
-            ? (applicant.note.content as {
-                type?: string;
-                content?: unknown[];
-              })
-            : null;
-        const content = {
-          type: "doc",
-          content: [...(previous?.content ?? []), ...importedNodes],
-        } as Prisma.InputJsonValue;
+          });
+          const applicantByPeopleForceId = new Map(
+            applicants.map((applicant) => [
+              applicant.peopleForceID!,
+              applicant,
+            ]),
+          );
+          const notesByApplicant = new Map<
+            string,
+            (typeof input.notes)[number][]
+          >();
+          for (const note of input.notes) {
+            const applicant = applicantByPeopleForceId.get(note.identification);
+            if (!applicant) continue;
+            const current = notesByApplicant.get(applicant.id) ?? [];
+            current.push(note);
+            notesByApplicant.set(applicant.id, current);
+          }
 
-        await tx.applicantNote.upsert({
-          where: { applicantId },
-          create: {
-            applicantId,
-            content,
-            lastModifiedById: ctx.session.user.id,
-          },
-          update: {
-            content,
-            lastModifiedById: ctx.session.user.id,
-            deletedAt: null,
-          },
-        });
-        await tx.activity.create({
-          data: {
-            applicantId,
-            jobOpeningId: null,
-            createdById: ctx.session.user.id,
-            description: `importó ${notes.length} nota${notes.length === 1 ? "" : "s"} de PeopleForce`,
-          },
-        });
+          for (const [applicantId, notes] of notesByApplicant) {
+            const applicant = applicants.find(
+              (item) => item.id === applicantId,
+            )!;
+            const importedNodes = notes.map((note) => ({
+              type: "paragraph",
+              attrs: { textAlign: null },
+              content: [
+                {
+                  type: "text",
+                  text: `[PeopleForce] ${note.content}\nCreado por: ${note.createdBy || "Sin especificar"} · Creado a las: ${note.createdAt || "Sin especificar"}`,
+                },
+              ],
+            }));
+            const previous =
+              applicant.note?.content &&
+              typeof applicant.note.content === "object" &&
+              !Array.isArray(applicant.note.content)
+                ? (applicant.note.content as {
+                    type?: string;
+                    content?: unknown[];
+                  })
+                : null;
+            const content = {
+              type: "doc",
+              content: [...(previous?.content ?? []), ...importedNodes],
+            } as Prisma.InputJsonValue;
+
+            await tx.applicantNote.upsert({
+              where: { applicantId },
+              create: {
+                applicantId,
+                content,
+                lastModifiedById: ctx.session.user.id,
+              },
+              update: {
+                content,
+                lastModifiedById: ctx.session.user.id,
+                deletedAt: null,
+              },
+            });
+            await tx.activity.create({
+              data: {
+                applicantId,
+                jobOpeningId: null,
+                createdById: ctx.session.user.id,
+                description: `importó ${notes.length} nota${notes.length === 1 ? "" : "s"} de PeopleForce`,
+              },
+            });
+          }
+
+          return {
+            importedNotes: [...notesByApplicant.values()].reduce(
+              (total, notes) => total + notes.length,
+              0,
+            ),
+            reachedApplicants: notesByApplicant.size,
+          };
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+      );
+
+    for (let attempt = 1; attempt <= MAX_TRANSACTION_RETRIES; attempt++) {
+      try {
+        return await importNotes();
+      } catch (error) {
+        const isSerializationConflict =
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2034";
+        if (!isSerializationConflict || attempt === MAX_TRANSACTION_RETRIES) {
+          throw error;
+        }
       }
+    }
 
-      return {
-        importedNotes: [...notesByApplicant.values()].reduce(
-          (total, notes) => total + notes.length,
-          0,
-        ),
-        reachedApplicants: notesByApplicant.size,
-      };
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "No se pudo completar la importación",
     });
-
-    return result;
   });
