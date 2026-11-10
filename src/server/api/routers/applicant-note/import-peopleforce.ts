@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import Papa from "papaparse";
-import * as XLSX from "xlsx";
+import { readSheet, type SheetData } from "read-excel-file/node";
 import { z } from "zod";
 import { Prisma } from "~/generated/prisma/client";
 import { auth } from "~/lib/auth";
@@ -23,6 +23,7 @@ const importedNoteSchema = z.object({
 });
 
 const MAX_IMPORT_ROWS = 10_000;
+const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
 const importedNotesSchema = z
   .array(importedNoteSchema)
   .min(1)
@@ -110,13 +111,10 @@ function parseCsv(buffer: Buffer) {
   return parseRows(parsed.data);
 }
 
-function parseXlsx(buffer: Buffer) {
-  let workbook: XLSX.WorkBook;
+async function parseXlsx(buffer: Buffer) {
+  let data: SheetData<number | Date>;
   try {
-    workbook = XLSX.read(buffer, {
-      type: "buffer",
-      cellDates: true,
-    });
+    data = await readSheet(buffer, { trim: true });
   } catch {
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -124,27 +122,25 @@ function parseXlsx(buffer: Buffer) {
     });
   }
 
-  const firstSheet = workbook.Sheets[workbook.SheetNames[0] ?? ""];
-  if (!firstSheet) {
+  const [headerRow, ...dataRows] = data;
+  if (!headerRow) {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "El archivo está vacío",
     });
   }
 
-  const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, {
-    defval: "",
-    raw: true,
-  });
-  const columns = XLSX.utils.sheet_to_json<Record<string, unknown>>(
-    firstSheet,
-    { header: 1, defval: "" },
-  )[0] as unknown as unknown[] | undefined;
-  validateColumns(columns ?? []);
+  const columns = headerRow.map(cellToString);
+  validateColumns(columns);
+  const rows = dataRows.map((row) =>
+    Object.fromEntries(
+      columns.map((column, index) => [column, row[index] ?? ""]),
+    ),
+  );
   return parseRows(rows);
 }
 
-function parsePeopleForceFile(base64: string, fileName: string) {
+async function parsePeopleForceFile(base64: string, fileName: string) {
   if (base64.length % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) {
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -153,6 +149,12 @@ function parsePeopleForceFile(base64: string, fileName: string) {
   }
 
   const buffer = Buffer.from(base64, "base64");
+  if (buffer.length > MAX_IMPORT_FILE_BYTES) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "El archivo no puede superar los 10 MB",
+    });
+  }
   const extension = fileName.toLowerCase().split(".").pop();
   const isXlsx = extension === "xlsx";
   const isCsv = extension === "csv";
@@ -225,7 +227,7 @@ export const previewPeopleForceNotesProcedure = protectedProcedure
   )
   .mutation(async ({ ctx, input }) => {
     await assertImportPermission(ctx);
-    const parsed = parsePeopleForceFile(input.file, input.fileName);
+    const parsed = await parsePeopleForceFile(input.file, input.fileName);
     const identifications = [
       ...new Set(parsed.notes.map((note) => note.identification)),
     ];
