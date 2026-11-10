@@ -1,4 +1,7 @@
 import { TRPCError } from "@trpc/server";
+import { TZDate } from "@date-fns/tz";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import Papa from "papaparse";
 import { readSheet, type SheetData } from "read-excel-file/node";
 import { z } from "zod";
@@ -34,6 +37,15 @@ function cellToString(value: unknown): string {
   if (value === null || value === undefined) return "";
   if (value instanceof Date) return value.toISOString();
   return String(value).trim();
+}
+
+function formatCreatedAt(value: string): string {
+  if (!value) return "Creado el Sin especificar";
+
+  const date = new TZDate(value, "America/Montevideo");
+  if (Number.isNaN(date.getTime())) return "Creado el Sin especificar";
+
+  return `Creado el ${format(date, "d MMM yyyy, HH:mm", { locale: es })}`;
 }
 
 function parseRows(rows: Record<string, unknown>[]) {
@@ -326,7 +338,7 @@ export const importPeopleForceNotesProcedure = protectedProcedure
                 content: [
                   {
                     type: "text",
-                    text: `[PeopleForce] ${note.content}\nCreado por: ${note.createdBy || "Sin especificar"} · Creado a las: ${note.createdAt || "Sin especificar"}`,
+                    text: `[PeopleForce] ${note.content}\nCreado por: ${note.createdBy || "Sin especificar"} · ${formatCreatedAt(note.createdAt)}`,
                   },
                 ],
               }));
