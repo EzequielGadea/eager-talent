@@ -317,52 +317,83 @@ export const importPeopleForceNotesProcedure = protectedProcedure
             notesByApplicant.set(applicant.id, current);
           }
 
-          for (const [applicantId, notes] of notesByApplicant) {
-            const applicant = applicantById.get(applicantId)!;
-            const importedNodes = notes.map((note) => ({
-              type: "paragraph",
-              attrs: { textAlign: null },
-              content: [
-                {
-                  type: "text",
-                  text: `[PeopleForce] ${note.content}\nCreado por: ${note.createdBy || "Sin especificar"} · Creado a las: ${note.createdAt || "Sin especificar"}`,
-                },
-              ],
-            }));
-            const previous =
-              applicant.note?.content &&
-              typeof applicant.note.content === "object" &&
-              !Array.isArray(applicant.note.content)
-                ? (applicant.note.content as {
-                    type?: string;
-                    content?: unknown[];
-                  })
-                : null;
-            const content = {
-              type: "doc",
-              content: [...(previous?.content ?? []), ...importedNodes],
-            } as Prisma.InputJsonValue;
+          const noteWrites = [...notesByApplicant].map(
+            ([applicantId, notes]) => {
+              const applicant = applicantById.get(applicantId)!;
+              const importedNodes = notes.map((note) => ({
+                type: "paragraph",
+                attrs: { textAlign: null },
+                content: [
+                  {
+                    type: "text",
+                    text: `[PeopleForce] ${note.content}\nCreado por: ${note.createdBy || "Sin especificar"} · Creado a las: ${note.createdAt || "Sin especificar"}`,
+                  },
+                ],
+              }));
+              const previous =
+                applicant.note?.content &&
+                typeof applicant.note.content === "object" &&
+                !Array.isArray(applicant.note.content)
+                  ? (applicant.note.content as {
+                      type?: string;
+                      content?: unknown[];
+                    })
+                  : null;
+              const content = {
+                type: "doc",
+                content: [...(previous?.content ?? []), ...importedNodes],
+              } as Prisma.InputJsonValue;
 
-            await tx.applicantNote.upsert({
-              where: { applicantId },
-              create: {
+              return { applicant, applicantId, content, notes };
+            },
+          );
+          const newNotes = noteWrites.filter(
+            ({ applicant }) => !applicant.note,
+          );
+          const existingNotes = noteWrites.filter(
+            ({ applicant }) => applicant.note,
+          );
+
+          if (existingNotes.length > 0) {
+            await tx.$executeRaw(
+              Prisma.sql`
+                UPDATE "applicant_note" AS note
+                SET
+                  "content" = updates."content"::jsonb,
+                  "last_modified" = CURRENT_TIMESTAMP,
+                  "last_modified_by_id" = ${ctx.session.user.id},
+                  "deleted_at" = NULL
+                FROM (
+                  VALUES ${Prisma.join(
+                    existingNotes.map(
+                      ({ applicantId, content }) =>
+                        Prisma.sql`(${applicantId}, ${JSON.stringify(content)})`,
+                    ),
+                  )}
+                ) AS updates("applicant_id", "content")
+                WHERE note."applicant_id" = updates."applicant_id"
+              `,
+            );
+          }
+
+          if (newNotes.length > 0) {
+            await tx.applicantNote.createMany({
+              data: newNotes.map(({ applicantId, content }) => ({
                 applicantId,
                 content,
                 lastModifiedById: ctx.session.user.id,
-              },
-              update: {
-                content,
-                lastModifiedById: ctx.session.user.id,
-                deletedAt: null,
-              },
+              })),
             });
-            await tx.activity.create({
-              data: {
+          }
+
+          if (noteWrites.length > 0) {
+            await tx.activity.createMany({
+              data: noteWrites.map(({ applicantId, notes }) => ({
                 applicantId,
                 jobOpeningId: null,
                 createdById: ctx.session.user.id,
                 description: `importó ${notes.length} nota${notes.length === 1 ? "" : "s"} de PeopleForce`,
-              },
+              })),
             });
           }
 
