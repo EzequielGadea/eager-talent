@@ -302,6 +302,9 @@ export const importPeopleForceNotesProcedure = protectedProcedure
               applicant,
             ]),
           );
+          const applicantById = new Map(
+            applicants.map((applicant) => [applicant.id, applicant]),
+          );
           const notesByApplicant = new Map<
             string,
             (typeof input.notes)[number][]
@@ -315,9 +318,7 @@ export const importPeopleForceNotesProcedure = protectedProcedure
           }
 
           for (const [applicantId, notes] of notesByApplicant) {
-            const applicant = applicants.find(
-              (item) => item.id === applicantId,
-            )!;
+            const applicant = applicantById.get(applicantId)!;
             const importedNodes = notes.map((note) => ({
               type: "paragraph",
               attrs: { textAlign: null },
