@@ -1,9 +1,17 @@
 "use client";
 
-import { Plus, Share2 } from "lucide-react";
+import { Download, FileUp, MoreHorizontal, Plus, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 import { ExportApplicantsDialog } from "./export-applicants-dialog";
 import { ImportApplicantsButton } from "./import-applicants-button";
@@ -14,6 +22,7 @@ export function Header(props: {
   isHiringManagerView: boolean;
 }) {
   const router = useRouter();
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
 
   return (
     <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -54,8 +63,6 @@ export function Header(props: {
       )}
       {!props.isHiringManagerView && (
         <div className="flex items-center gap-2">
-          <ExportApplicantsDialog />
-          <ImportApplicantsButton />
           <Button
             size="sm"
             onClick={() => router.push("/applicants/new-applicant")}
@@ -65,6 +72,47 @@ export function Header(props: {
             {/* Icon-only on mobile; the label stays available to screen readers. */}
             <span className="sr-only md:not-sr-only">Nuevo candidato</span>
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Más acciones de candidatos"
+                  className="size-8 rounded-lg hover:bg-muted"
+                />
+              }
+            >
+              <MoreHorizontal className="size-4 text-text-tertiary" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuGroup>
+                <ImportApplicantsButton
+                  renderTrigger={(openFilePicker) => (
+                    <DropdownMenuItem
+                      className="gap-2"
+                      onClick={openFilePicker}
+                    >
+                      <FileUp />
+                      <span>Importar candidatos</span>
+                    </DropdownMenuItem>
+                  )}
+                />
+                <DropdownMenuItem
+                  className="gap-2"
+                  onClick={() => setIsExportDialogOpen(true)}
+                >
+                  <Download />
+                  <span>Exportar todos los candidatos</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <ExportApplicantsDialog
+            open={isExportDialogOpen}
+            onOpenChange={setIsExportDialogOpen}
+          />
         </div>
       )}
     </header>

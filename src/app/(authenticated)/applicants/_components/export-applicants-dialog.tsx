@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { format } from "date-fns";
 import { Download, Loader2 } from "lucide-react";
 
@@ -12,7 +12,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "~/components/ui/dialog";
 import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
@@ -32,8 +31,13 @@ function downloadCsvFile(csvContent: string, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
-export function ExportApplicantsDialog() {
-  const [open, setOpen] = useState(false);
+export function ExportApplicantsDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const [isTransitionPending, startTransition] = useTransition();
 
   const exportMutation = api.applicant.exportApplicants.useMutation({
@@ -54,7 +58,7 @@ export function ExportApplicantsDialog() {
         });
 
         startTransition(() => {
-          setOpen(false);
+          onOpenChange(false);
         });
       } catch {
         toast.add({
@@ -72,25 +76,9 @@ export function ExportApplicantsDialog() {
       open={open}
       onOpenChange={(nextOpen) => {
         if (isPending) return;
-        setOpen(nextOpen);
+        onOpenChange(nextOpen);
       }}
     >
-      <DialogTrigger
-        render={
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-8.5 w-8.5 gap-2 rounded-full border-border-default bg-surface-card px-0 text-small font-semibold text-text-primary shadow-none hover:bg-surface-hover md:w-auto md:px-4"
-          >
-            <Download size={16} />
-            <span className="sr-only md:not-sr-only">
-              Exportar todos los candidatos
-            </span>
-          </Button>
-        }
-      />
-
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Exportar candidatos</DialogTitle>
@@ -106,7 +94,7 @@ export function ExportApplicantsDialog() {
             type="button"
             variant="outline"
             disabled={isPending}
-            onClick={() => setOpen(false)}
+            onClick={() => onOpenChange(false)}
           >
             Cancelar
           </Button>
