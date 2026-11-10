@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, FileUp, MoreHorizontal, Plus, Share2 } from "lucide-react";
+import { Download, MoreHorizontal, Plus, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -88,17 +88,7 @@ export function Header(props: {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuGroup>
-                <ImportApplicantsButton
-                  renderTrigger={(openFilePicker) => (
-                    <DropdownMenuItem
-                      className="gap-2"
-                      onClick={openFilePicker}
-                    >
-                      <FileUp />
-                      <span>Importar candidatos</span>
-                    </DropdownMenuItem>
-                  )}
-                />
+                <ImportApplicantsButton />
                 <DropdownMenuItem
                   className="gap-2"
                   onClick={() => setIsExportDialogOpen(true)}

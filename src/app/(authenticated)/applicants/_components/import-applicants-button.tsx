@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
+import { FileUp } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -11,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
 
 import {
   parseApplicantCsv,
@@ -37,11 +40,7 @@ type ImportResult = {
   errors: ImportError[];
 };
 
-export function ImportApplicantsButton({
-  renderTrigger,
-}: {
-  renderTrigger: (openFilePicker: () => void) => React.ReactNode;
-}) {
+export function ImportApplicantsButton() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [isRefreshing, startTransition] = useTransition();
@@ -62,6 +61,10 @@ export function ImportApplicantsButton({
   const validateMutation = api.applicant.validateImportApplicants.useMutation();
 
   const importMutation = api.applicant.importApplicants.useMutation();
+
+  function openFilePicker() {
+    fileInputRef.current?.click();
+  }
 
   const isLoading =
     isParsing ||
@@ -180,7 +183,10 @@ export function ImportApplicantsButton({
         aria-label="Seleccionar archivo CSV de candidatos"
       />
 
-      {renderTrigger(() => fileInputRef.current?.click())}
+      <DropdownMenuItem className="gap-2" onClick={openFilePicker}>
+        <FileUp />
+        <span>Importar candidatos</span>
+      </DropdownMenuItem>
 
       <Dialog
         open={open}
