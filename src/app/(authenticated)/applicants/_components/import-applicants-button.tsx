@@ -278,14 +278,16 @@ export function ImportApplicantsButton({
                   "No se pudo importar ningún candidato."
                 ) : importResult.failed > 0 ? (
                   <>
-                    Se importaron {importResult.imported} de{" "}
-                    {importResult.total} candidatos. Los otros{" "}
-                    {importResult.failed} no pudieron importarse.
+                    Se {importResult.imported === 1 ? "importó" : "importaron"}{" "}
+                    {importResult.imported} de {importResult.total}{" "}
+                    {importResult.total === 1 ? "candidato" : "candidatos"}. Los
+                    otros {importResult.failed} no pudieron importarse.
                   </>
                 ) : (
                   <>
-                    Se importaron correctamente {importResult.imported}{" "}
-                    candidatos.
+                    Se {importResult.imported === 1 ? "importó" : "importaron"}{" "}
+                    correctamente {importResult.imported}{" "}
+                    {importResult.imported === 1 ? "candidato" : "candidatos"}.
                   </>
                 )}
               </p>
@@ -319,7 +321,9 @@ export function ImportApplicantsButton({
                     onClick={handleConfirmImport}
                   >
                     Importar {validationResult.validApplicants.length}{" "}
-                    candidatos
+                    {validationResult.validApplicants.length === 1
+                      ? "candidato"
+                      : "candidatos"}
                   </Button>
                 )}
               </>
