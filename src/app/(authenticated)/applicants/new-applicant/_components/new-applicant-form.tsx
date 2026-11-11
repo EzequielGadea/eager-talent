@@ -296,9 +296,7 @@ export default function NewApplicantForm() {
       tagIds: data.tags,
 
       jobOpeningId: data.jobOpening || undefined,
-      desiredSalary: data.desiredSalary
-        ? String(data.desiredSalary)
-        : undefined,
+      desiredSalary: data.desiredSalary || undefined,
       currency: data.currency || undefined,
       availability: data.availability,
     });
