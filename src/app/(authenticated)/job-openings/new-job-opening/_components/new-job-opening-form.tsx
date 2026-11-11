@@ -114,6 +114,12 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
     },
     onError: (error) => {
       console.error("Error creating job opening:", error.message, error.data);
+      if (error.data?.code === "FORBIDDEN") {
+        toast.add({
+          title: error.message,
+          type: "error",
+        });
+      }
     },
   });
 

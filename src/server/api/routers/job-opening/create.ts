@@ -52,6 +52,15 @@ export const createJobOpening = protectedProcedure
         message: "FORBIDDEN",
       });
     }
+    if (
+      input.status === JobOpeningStatus.Closed &&
+      input.openingDate > new Date()
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No se puede cerrar una vacante antes de su fecha de inicio",
+      });
+    }
     try {
       // creating the job opening
       const jobOpening = await ctx.db.$transaction(async (tx) => {
