@@ -165,6 +165,8 @@ function getRecordStartLines(csv: string, delimiter: string): number[] {
 
     if (char === '"') {
       if (inQuotes && csv[i + 1] === '"') {
+        // An escaped quote is field content; opening and closing quotes are not.
+        recordHasContent = true;
         i++;
       } else if (inQuotes) {
         inQuotes = false;
@@ -172,13 +174,11 @@ function getRecordStartLines(csv: string, delimiter: string): number[] {
         inQuotes = true;
       }
 
-      recordHasContent = true;
       atFieldStart = false;
       continue;
     }
 
     if (!inQuotes && char === delimiter) {
-      recordHasContent = true;
       atFieldStart = true;
       continue;
     }

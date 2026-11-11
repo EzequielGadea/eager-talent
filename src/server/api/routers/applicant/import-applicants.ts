@@ -276,15 +276,15 @@ export const importApplicants = protectedProcedure
             });
 
             if (!seniority) {
-              const lastSeniority = await tx.seniority.findFirst({
-                orderBy: { order: "desc" },
+              const firstSeniority = await tx.seniority.findFirst({
+                orderBy: { order: "asc" },
                 select: { order: true },
               });
 
               seniority = await tx.seniority.create({
                 data: {
                   name: seniorityName,
-                  order: (lastSeniority?.order ?? 0) + 1,
+                  order: firstSeniority ? firstSeniority.order - 1 : 1,
                   color: "#94A3B8",
                 },
                 select: { id: true },

@@ -52,8 +52,13 @@ function getImportErrorMessage(error: unknown): string {
   return "No se pudo procesar el archivo CSV o XLSX. Verificá el formato e intentá nuevamente.";
 }
 
-export function ImportNotesButton() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export function ImportNotesButton({
+  fileInputRef: externalFileInputRef,
+}: {
+  fileInputRef?: React.RefObject<HTMLInputElement | null>;
+} = {}) {
+  const internalFileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = externalFileInputRef ?? internalFileInputRef;
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -102,8 +107,13 @@ export function ImportNotesButton() {
     if (!preview) return;
     try {
       const result = await importMutation.mutateAsync({ notes: preview.notes });
+      const notesCount = result.importedNotes;
+      const candidatesCount = result.reachedApplicants;
+      const notesLabel = notesCount === 1 ? "1 nota" : `${notesCount} notas`;
+      const candidatesLabel =
+        candidatesCount === 1 ? "1 candidato" : `${candidatesCount} candidatos`;
       toast.add({
-        title: `Se importaron ${result.importedNotes} notas de ${result.reachedApplicants} candidatos`,
+        title: `Se ${notesCount === 1 ? "importó" : "importaron"} correctamente ${notesLabel} de ${candidatesLabel}`,
         type: "success",
       });
       setOpen(false);
@@ -133,17 +143,19 @@ export function ImportNotesButton() {
         onChange={handleFileChange}
         aria-label="Seleccionar archivo CSV o XLSX de notas de PeopleForce"
       />
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        onClick={() => fileInputRef.current?.click()}
-        className="h-8.5 gap-2 rounded-full px-3 text-small font-semibold md:px-4"
-      >
-        <FileUp data-icon="inline-start" />
-        <span className="hidden md:inline">Importar notas</span>
-        <span className="sr-only md:hidden">Importar notas de PeopleForce</span>
-      </Button>
+      {!externalFileInputRef && (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => fileInputRef.current?.click()}
+          className="h-8.5 gap-2 rounded-full px-3 text-small font-semibold md:px-4"
+        >
+          <FileUp data-icon="inline-start" />
+          <span className="hidden md:inline">Importar notas</span>
+          <span className="sr-only md:hidden">Importar notas de PeopleForce</span>
+        </Button>
+      )}
 
       <Dialog
         open={open}

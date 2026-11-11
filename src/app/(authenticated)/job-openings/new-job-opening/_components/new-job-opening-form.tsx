@@ -18,8 +18,6 @@ import OpeningDate from "./opening-date";
 
 import OpeningStage from "./opening-stage";
 
-import { Card, CardContent } from "~/components/ui/card";
-
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
 import OpeningHiring from "./opening-hiring";
@@ -90,7 +88,7 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
     defaultValues: {
       name: "",
       area: "",
-      status: JobOpeningStatus.Open,
+      status: JobOpeningStatus.Draft,
       seniorityIds: [],
       location: "Indiferente",
       openingDate: undefined,
@@ -103,15 +101,14 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
   const { isSubmitting } = methods.formState;
 
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       methods.reset();
       setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
       toast.add({
         title: "Vacante creada correctamente",
         type: "success",
       });
-      // router.push(`/job-openings/${data.id}`); DESCOMENTAR CUANDO ESTE IMPLEMENTADO LA CONSULTA DE VACANTE
-      router.push("/job-openings");
+      router.push(`/job-openings/${data.id}`);
     },
     onError: (error) => {
       console.error("Error creating job opening:", error.message, error.data);
@@ -163,21 +160,24 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
           requiredStageKeys={requiredStageKeys}
         />
         <OpeningHiring />
-        <Card className="w-full items-end rounded-xl shadow-sm">
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isSubmitting || createJobOpeningMutation.isPending}
-                onClick={() => setIsCancelConfirmOpen(true)}
-              >
-                Cancelar
-              </Button>
-              <NewJobOpeningButtonProps disabled={isSubmitting} />
-            </div>
-          </CardContent>
-        </Card>
+
+        <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-text-secondary">
+            Podés modificar los datos de la vacante más tarde desde el pipeline.
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting || createJobOpeningMutation.isPending}
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
+              Cancelar
+            </Button>
+            <NewJobOpeningButtonProps disabled={isSubmitting} />
+          </div>
+        </footer>
       </form>
 
       <Dialog

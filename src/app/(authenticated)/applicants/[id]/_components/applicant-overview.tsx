@@ -17,21 +17,29 @@ export async function ApplicantOverview({
   const applicant = await applicantPromise;
   const requestHeaders = await headers();
 
-  const [canUpdateApplicant, canDeleteApplicant, canCreateApplication] =
-    await Promise.all([
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { applicant: ["update"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { applicant: ["delete"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { application: ["create"] } },
-      }),
-    ]);
+  const [
+    canUpdateApplicant,
+    canDeleteApplicant,
+    canCreateApplication,
+    canExportNotes,
+  ] = await Promise.all([
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { applicant: ["update"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { applicant: ["delete"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { application: ["create"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { interviewNote: ["read"] } },
+    }),
+  ]);
 
   return (
     <ApplicantOverviewCard
@@ -40,6 +48,7 @@ export async function ApplicantOverview({
       canUpdateApplicant={canUpdateApplicant.success}
       canDeleteApplicant={canDeleteApplicant.success}
       canCreateApplication={canCreateApplication.success}
+      canExportNotes={canExportNotes.success}
     />
   );
 }

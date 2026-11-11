@@ -122,6 +122,7 @@ enum JobOpeningStatus {
   Paused
   Closed
   Cancelled
+  Draft
 }
 
 enum InterviewStatus {
@@ -297,6 +298,7 @@ model Application {
   interviews             Interview[]
   activities             Activity[]
   publicLinks            PublicLink[]
+  
 
   @@id([applicantId, jobOpeningId])
   @@index([jobOpeningId, active, currentStageId])

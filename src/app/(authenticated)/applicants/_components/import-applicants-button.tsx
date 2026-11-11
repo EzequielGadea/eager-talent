@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
 
 import {
   parseApplicantCsv,
@@ -39,8 +40,13 @@ type ImportResult = {
   errors: ImportError[];
 };
 
-export function ImportApplicantsButton() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export function ImportApplicantsButton({
+  fileInputRef: externalFileInputRef,
+}: {
+  fileInputRef?: React.RefObject<HTMLInputElement | null>;
+} = {}) {
+  const internalFileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = externalFileInputRef ?? internalFileInputRef;
   const router = useRouter();
   const [isRefreshing, startTransition] = useTransition();
 
@@ -60,6 +66,10 @@ export function ImportApplicantsButton() {
   const validateMutation = api.applicant.validateImportApplicants.useMutation();
 
   const importMutation = api.applicant.importApplicants.useMutation();
+
+  function openFilePicker() {
+    fileInputRef.current?.click();
+  }
 
   const isLoading =
     isParsing ||
@@ -178,17 +188,12 @@ export function ImportApplicantsButton() {
         aria-label="Seleccionar archivo CSV de candidatos"
       />
 
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        onClick={() => fileInputRef.current?.click()}
-        className="h-8.5 gap-2 rounded-full px-3 text-small font-semibold md:px-4"
-      >
-        <FileUp size={16} />
-        <span className="hidden md:inline">Importar candidatos</span>
-        <span className="sr-only md:hidden">Importar candidatos desde CSV</span>
-      </Button>
+      {!externalFileInputRef && (
+        <DropdownMenuItem className="gap-2" onClick={openFilePicker}>
+          <FileUp />
+          <span>Importar candidatos</span>
+        </DropdownMenuItem>
+      )}
 
       <Dialog
         open={open}
@@ -273,14 +278,16 @@ export function ImportApplicantsButton() {
                   "No se pudo importar ningún candidato."
                 ) : importResult.failed > 0 ? (
                   <>
-                    Se importaron {importResult.imported} de{" "}
-                    {importResult.total} candidatos. Los otros{" "}
-                    {importResult.failed} no pudieron importarse.
+                    Se {importResult.imported === 1 ? "importó" : "importaron"}{" "}
+                    {importResult.imported} de {importResult.total}{" "}
+                    {importResult.total === 1 ? "candidato" : "candidatos"}. Los
+                    otros {importResult.failed} no pudieron importarse.
                   </>
                 ) : (
                   <>
-                    Se importaron correctamente {importResult.imported}{" "}
-                    candidatos.
+                    Se {importResult.imported === 1 ? "importó" : "importaron"}{" "}
+                    correctamente {importResult.imported}{" "}
+                    {importResult.imported === 1 ? "candidato" : "candidatos"}.
                   </>
                 )}
               </p>
@@ -314,7 +321,9 @@ export function ImportApplicantsButton() {
                     onClick={handleConfirmImport}
                   >
                     Importar {validationResult.validApplicants.length}{" "}
-                    candidatos
+                    {validationResult.validApplicants.length === 1
+                      ? "candidato"
+                      : "candidatos"}
                   </Button>
                 )}
               </>

@@ -207,8 +207,9 @@ export default function JobOpeningsList({
 
           <p className="mt-1 text-sm text-text-secondary">
             {jobOpeningsAmount.open} activas · {jobOpeningsAmount.paused}{" "}
-            pausadas · {jobOpeningsAmount.closed} cerradas ·{" "}
-            {jobOpeningsAmount.cancelled} canceladas
+            pausadas · {jobOpeningsAmount.draft} en borrador ·{" "}
+            {jobOpeningsAmount.closed} cerradas · {jobOpeningsAmount.cancelled}{" "}
+            canceladas
           </p>
         </div>
 
