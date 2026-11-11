@@ -40,8 +40,13 @@ type ImportResult = {
   errors: ImportError[];
 };
 
-export function ImportApplicantsButton() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export function ImportApplicantsButton({
+  fileInputRef: externalFileInputRef,
+}: {
+  fileInputRef?: React.RefObject<HTMLInputElement | null>;
+} = {}) {
+  const internalFileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = externalFileInputRef ?? internalFileInputRef;
   const router = useRouter();
   const [isRefreshing, startTransition] = useTransition();
 
@@ -183,10 +188,12 @@ export function ImportApplicantsButton() {
         aria-label="Seleccionar archivo CSV de candidatos"
       />
 
-      <DropdownMenuItem className="gap-2" onClick={openFilePicker}>
-        <FileUp />
-        <span>Importar candidatos</span>
-      </DropdownMenuItem>
+      {!externalFileInputRef && (
+        <DropdownMenuItem className="gap-2" onClick={openFilePicker}>
+          <FileUp />
+          <span>Importar candidatos</span>
+        </DropdownMenuItem>
+      )}
 
       <Dialog
         open={open}

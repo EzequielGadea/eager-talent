@@ -1,8 +1,8 @@
 "use client";
 
-import { Download, MoreHorizontal, Plus, Share2 } from "lucide-react";
+import { Download, FileUp, MoreHorizontal, Plus, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -23,6 +23,7 @@ export function Header(props: {
 }) {
   const router = useRouter();
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const importFileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -88,7 +89,13 @@ export function Header(props: {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuGroup>
-                <ImportApplicantsButton />
+                <DropdownMenuItem
+                  className="gap-2"
+                  onClick={() => importFileInputRef.current?.click()}
+                >
+                  <FileUp />
+                  <span>Importar candidatos</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   className="gap-2"
                   onClick={() => setIsExportDialogOpen(true)}
@@ -103,6 +110,7 @@ export function Header(props: {
             open={isExportDialogOpen}
             onOpenChange={setIsExportDialogOpen}
           />
+          <ImportApplicantsButton fileInputRef={importFileInputRef} />
         </div>
       )}
     </header>
