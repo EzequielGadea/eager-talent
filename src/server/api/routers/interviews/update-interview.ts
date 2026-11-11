@@ -117,6 +117,31 @@ export const updateInterviewProcedure = protectedProcedure
     const addedInterviewerIds = input.interviewerIds.filter(
       (id) => !currentInterviewerIds.has(id),
     );
+    const uniqueAddedInterviewerIds = [...new Set(addedInterviewerIds)];
+
+    if (uniqueAddedInterviewerIds.length > 0) {
+      const eligibleInterviewers = await ctx.db.user.findMany({
+        where: {
+          id: { in: uniqueAddedInterviewerIds },
+          banned: false,
+          deletedAt: null,
+          members: {
+            some: {
+              role: "hiringManager",
+            },
+          },
+        },
+        select: { id: true },
+      });
+
+      if (eligibleInterviewers.length !== uniqueAddedInterviewerIds.length) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Todos los entrevistadores deben ser Hiring Managers activos.",
+        });
+      }
+    }
     const interviewName = getInterviewName(
       {
         exploratoryName: interview.jobOpeningId

@@ -27,6 +27,7 @@ type ApplicantOverviewCardProps = {
   canUpdateApplicant: boolean;
   canDeleteApplicant: boolean;
   canCreateApplication: boolean;
+  canExportNotes: boolean;
 };
 
 export function ApplicantOverviewCard({
@@ -35,6 +36,7 @@ export function ApplicantOverviewCard({
   canUpdateApplicant,
   canDeleteApplicant,
   canCreateApplication,
+  canExportNotes,
 }: ApplicantOverviewCardProps) {
   const {
     id,
@@ -53,7 +55,10 @@ export function ApplicantOverviewCard({
   } = applicant;
 
   const canShowActions =
-    canUpdateApplicant || canDeleteApplicant || canCreateApplication;
+    canUpdateApplicant ||
+    canDeleteApplicant ||
+    canCreateApplication ||
+    canExportNotes;
   const linkedinUrl = getSafeExternalUrl(linkedin);
   const linkedinLabel = linkedinUrl
     ?.replace(/^https?:\/\//, "")
@@ -131,6 +136,7 @@ export function ApplicantOverviewCard({
                 applicant={applicant}
                 canDeleteApplicant={canDeleteApplicant}
                 canCreateApplication={canCreateApplication}
+                canExportNotes={canExportNotes}
                 defaultShow={false}
               />
             )}

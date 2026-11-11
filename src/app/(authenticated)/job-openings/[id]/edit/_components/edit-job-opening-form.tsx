@@ -15,7 +15,6 @@ import { api } from "~/lib/trpc/react";
 import { toast } from "~/components/ui/toast";
 
 import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -138,37 +137,40 @@ export function EditJobOpeningForm({
         noValidate
       >
         {children}
-        <footer className="pb-6">
-          <Card className="w-full rounded-xl py-5 shadow-sm">
-            <CardContent className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={isSaving}
-                onClick={() => setIsCancelConfirmOpen(true)}
-              >
-                Cancelar
-              </Button>
 
-              <Button type="submit" disabled={isSaving}>
-                {isSaving ? (
-                  <>
-                    <LoaderCircle
-                      data-icon="inline-start"
-                      aria-hidden="true"
-                      className="animate-spin"
-                    />
-                    Guardando...
-                  </>
-                ) : (
-                  <>
-                    Guardar cambios
-                    <ArrowRight data-icon="inline-end" aria-hidden="true" />
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+        <footer className="flex flex-col gap-3 border-t pt-4 pb-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-text-secondary">
+            Modificá los datos de la vacante y guardá los cambios.
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSaving}
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
+              Cancelar
+            </Button>
+
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <LoaderCircle
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                    className="animate-spin"
+                  />
+                  Guardando...
+                </>
+              ) : (
+                <>
+                  Guardar cambios
+                  <ArrowRight data-icon="inline-end" aria-hidden="true" />
+                </>
+              )}
+            </Button>
+          </div>
         </footer>
       </form>
 

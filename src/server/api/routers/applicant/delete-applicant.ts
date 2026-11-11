@@ -26,7 +26,7 @@ export const deleteApplicant = protectedProcedure
 
     const applicant = await ctx.db.applicant.findUnique({
       where: { id: input.id, deletedAt: null },
-      select: { id: true, email: true },
+      select: { id: true, email: true, peopleForceID: true },
     });
 
     if (!applicant) {
@@ -48,6 +48,7 @@ export const deleteApplicant = protectedProcedure
           ...(applicant.email && {
             email: `deleted+${applicant.id}@deleted.invalid`,
           }),
+          ...(applicant.peopleForceID && { peopleForceID: null }),
         },
       });
 

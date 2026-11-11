@@ -326,7 +326,10 @@ function PipelineChart({
     },
   );
 
-  const pipeline = pipelineQuery.data;
+  const pipeline =
+    closedOpenings.length > 0 && !pipelineQuery.isError
+      ? pipelineQuery.data
+      : undefined;
   const isRefreshing = pipelineQuery.isPlaceholderData;
   const firstStage = pipeline?.stages[0];
   const lastStage = pipeline?.stages.at(-1);

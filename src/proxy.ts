@@ -95,6 +95,6 @@ export const config = {
   matcher: [
     // The upload route is listed explicitly because the general pattern excludes /api.
     "/api/files/upload",
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|icon.svg).*)",
   ],
 };
