@@ -9,6 +9,7 @@ import {
 
 import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
+import { cn } from "~/lib/utils";
 
 type TimeMetrics = {
   averageClosingDays: number | null;
@@ -17,6 +18,16 @@ type TimeMetrics = {
   onTimeCount: number;
   totalClosed: number;
   totalConsidered: number;
+};
+
+type StageDeviation = {
+  averageDeviationDays: number | null;
+  count: number;
+};
+
+type StageDeviations = {
+  hr: StageDeviation;
+  technical: StageDeviation;
 };
 
 function formatDays(value: number) {
@@ -34,12 +45,14 @@ function MetricCard({
   value,
   detail,
   highlighted = false,
+  valueClassName = "text-text-primary",
 }: {
   icon: ReactNode;
   label: string;
   value: string | null;
   detail?: string;
   highlighted?: boolean;
+  valueClassName?: string;
 }) {
   return (
     <Card
@@ -57,7 +70,7 @@ function MetricCard({
             No hay datos para este filtro
           </p>
         ) : (
-          <p className="text-h2 text-text-primary tabular-nums">{value}</p>
+          <p className={cn("text-h2 tabular-nums", valueClassName)}>{value}</p>
         )}
         {detail ? (
           <p className="text-sm text-text-secondary">{detail}</p>
@@ -67,30 +80,36 @@ function MetricCard({
   );
 }
 
-function PendingMetricCard({
-  icon,
-  label,
-}: {
-  icon: ReactNode;
-  label: string;
-}) {
-  return (
-    <Card aria-label={`${label}: próximamente`}>
-      <CardContent className="flex min-h-40 flex-col justify-center gap-2">
-        <div className="text-text-tertiary">{icon}</div>
-        <p className="text-sm font-medium text-text-secondary">{label}</p>
-        <Skeleton className="h-8 w-24" />
-        <p className="text-xs font-medium text-text-tertiary">Próximamente</p>
-      </CardContent>
-    </Card>
-  );
+// Same colors as the job opening deviations chart: late in red, on time in green.
+function getStageDeviationClassName(deviation: StageDeviation) {
+  if (deviation.averageDeviationDays === null) return undefined;
+
+  return deviation.averageDeviationDays > 0
+    ? "text-danger"
+    : "text-accent-green-strong";
+}
+
+function formatStageDeviation(deviation: StageDeviation) {
+  return deviation.averageDeviationDays === null
+    ? null
+    : formatSignedDays(deviation.averageDeviationDays);
+}
+
+function formatStageDeviationDetail(deviation: StageDeviation) {
+  if (deviation.count === 0) return undefined;
+
+  return `Promedio de ${deviation.count} ${
+    deviation.count === 1 ? "vacante" : "vacantes"
+  }`;
 }
 
 export function MetricsSummaryCards({
   metrics,
+  stageDeviations,
   isPending,
 }: {
   metrics: TimeMetrics;
+  stageDeviations: StageDeviations;
   isPending: boolean;
 }) {
   if (isPending) {
@@ -137,13 +156,19 @@ export function MetricsSummaryCards({
             : formatSignedDays(metrics.averageDeviationDays)
         }
       />
-      <PendingMetricCard
+      <MetricCard
         icon={<UserRound className="size-5" aria-hidden="true" />}
         label="Desvío desde HR"
+        value={formatStageDeviation(stageDeviations.hr)}
+        detail={formatStageDeviationDetail(stageDeviations.hr)}
+        valueClassName={getStageDeviationClassName(stageDeviations.hr)}
       />
-      <PendingMetricCard
+      <MetricCard
         icon={<CodeXml className="size-5" aria-hidden="true" />}
         label="Desvío resp. técnica"
+        value={formatStageDeviation(stageDeviations.technical)}
+        detail={formatStageDeviationDetail(stageDeviations.technical)}
+        valueClassName={getStageDeviationClassName(stageDeviations.technical)}
       />
       <MetricCard
         icon={

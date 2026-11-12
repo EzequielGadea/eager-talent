@@ -3,15 +3,20 @@ import { z } from "zod";
 
 import { TRPCError } from "@trpc/server";
 
+import type { Prisma } from "~/generated/prisma/client";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { stageClosingsSchema } from "~/lib/validations/stage-metrics";
 import { protectedProcedure } from "~/server/api/trpc";
+import { getClosingStages } from "./stage-metrics-utils";
 
 export const updateStatus = protectedProcedure
   .input(
     z.object({
       jobOpeningId: z.string(),
       status: z.enum(JobOpeningStatus),
+      // Closing dates of the metric stages still open when closing.
+      stageClosings: stageClosingsSchema.optional(),
     }),
   )
   .mutation(async ({ ctx, input }) => {
@@ -47,6 +52,7 @@ export const updateStatus = protectedProcedure
             },
           },
         },
+        stages: true,
       },
     });
 
@@ -90,7 +96,9 @@ export const updateStatus = protectedProcedure
     }
 
     const isClosing = input.status === JobOpeningStatus.Closed;
-
+    const closingStages = isClosing
+      ? await getClosingStages(ctx, jobOpening, input.stageClosings)
+      : undefined;
     const hasBeenOpened =
       jobOpening.hasBeenOpened ||
       jobOpening.status === "Open" ||
@@ -107,6 +115,9 @@ export const updateStatus = protectedProcedure
         status: input.status,
         hasBeenOpened,
         ...(isClosing ? { closingDate: new Date() } : {}),
+        ...(closingStages
+          ? { stages: closingStages as Prisma.InputJsonValue }
+          : {}),
       },
     });
 

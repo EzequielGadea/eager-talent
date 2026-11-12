@@ -9,6 +9,8 @@ import {
   getRequiredStageErrors,
   getRequiredStageTypeErrors,
 } from "~/lib/validations/required-stages";
+import { getMetricStages } from "~/lib/stage-metrics";
+import { stageTargetDaysSchema } from "~/lib/validations/stage-metrics";
 
 export const createJobOpening = protectedProcedure
   .input(
@@ -76,6 +78,24 @@ export const createJobOpening = protectedProcedure
         message: "Uno o más Hiring Managers no son válidos",
       });
     }
+
+    const stageWithoutTarget = getMetricStages(input.stages).find(
+      (stage) => !stageTargetDaysSchema.safeParse(stage.targetDays).success,
+    );
+
+    if (stageWithoutTarget) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: `Definí una cantidad válida de días objetivo para la etapa ${stageWithoutTarget.name}`,
+      });
+    }
+
+    // Stages always start open; they are closed later from the pipeline.
+    const stages = input.stages.map((stage) => ({
+      ...stage,
+      closedAt: undefined,
+    }));
+
     try {
       // creating the job opening
       const jobOpening = await ctx.db.$transaction(async (tx) => {
@@ -87,7 +107,7 @@ export const createJobOpening = protectedProcedure
             name: input.name,
             status: input.status,
             //seniority: input.seniority,
-            stages: input.stages,
+            stages,
             location: input.location,
             openingDate: input.openingDate,
             targetClosingDate: input.closingDate,

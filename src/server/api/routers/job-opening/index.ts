@@ -13,6 +13,9 @@ import { updateStatus } from "./update-status";
 import { createJobOpening } from "./create";
 import { fetchDisqualifiedApplications } from "./fetch-disqualified-applications";
 import { getSelectionPipeline } from "./get-selection-pipeline";
+import { closeStage } from "./close-stage";
+import { reopenStage } from "./reopen-stage";
+import { getStageMetrics } from "./get-stage-metrics";
 
 export { fetchById };
 export { fetchPipelineCandidates };
@@ -26,6 +29,9 @@ export { updateJobOpening };
 export { updateStatus };
 export { createJobOpening };
 export { fetchDisqualifiedApplications };
+export { closeStage };
+export { reopenStage };
+export { getStageMetrics };
 
 export const jobOpeningRouter = createTRPCRouter({
   getAllJobOpenings,
@@ -41,4 +47,7 @@ export const jobOpeningRouter = createTRPCRouter({
   createJobOpening,
   listAssignableUsers,
   update: updateJobOpening,
+  closeStage,
+  reopenStage,
+  getStageMetrics,
 });

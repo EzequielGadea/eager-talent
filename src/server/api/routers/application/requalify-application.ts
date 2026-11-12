@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { parseStages } from "~/lib/validations/job-opening";
+import { getClosedStageError } from "~/lib/stage-metrics";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -46,6 +47,17 @@ export const requalifyApplication = protectedProcedure
         code: "BAD_REQUEST",
         message: "La postulación no está descalificada",
       });
+    }
+
+    // Requalifying returns the application to its stage, which may be closed now.
+    const closedStageError = getClosedStageError(
+      parseStages(application.jobOpening.stages).find(
+        (stage) => stage.key === application.currentStageId,
+      ),
+    );
+
+    if (closedStageError) {
+      throw new TRPCError({ code: "CONFLICT", message: closedStageError });
     }
 
     return ctx.db.$transaction(async (tx) => {

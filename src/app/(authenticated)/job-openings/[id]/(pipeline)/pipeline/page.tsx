@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { TRPCError } from "@trpc/server";
 
 import { auth } from "~/lib/auth";
+import { toIsoDate } from "~/lib/stage-metrics";
 import { api } from "~/lib/trpc/server";
 import JobOpeningNotFound from "~/app/(authenticated)/job-openings/[id]/not-found";
 
@@ -89,6 +90,12 @@ async function PipelineContent({ params, searchParams }: PipelinePageProps) {
         jobOpeningName={jobOpening.name}
         stages={stages}
         search={search}
+        openingDate={toIsoDate(jobOpening.openingDate)}
+        canManageStageClosures={
+          canUpdateJobOpening.success &&
+          jobOpening.status !== "Closed" &&
+          jobOpening.status !== "Cancelled"
+        }
       />
     </main>
   );

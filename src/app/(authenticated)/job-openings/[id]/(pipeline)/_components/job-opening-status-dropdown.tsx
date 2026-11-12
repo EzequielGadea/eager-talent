@@ -25,6 +25,8 @@ import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { api } from "~/lib/trpc/react";
 import { statusConfig } from "../../../constants";
 
+import { StageMetricsClosingForm } from "../../_components/stage-metrics-closing-form";
+
 type JobOpeningStatusDropdownProps = {
   jobOpeningId: string;
   status: JobOpeningStatus;
@@ -198,27 +200,38 @@ export function JobOpeningStatusDropdown({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isBusy}
-              onClick={() => setIsConfirmOpen(false)}
-            >
-              Volver
-            </Button>
-            <Button
-              type="button"
-              disabled={isBusy}
-              onClick={handleConfirmTerminalStatus}
-            >
-              {isBusy
-                ? "Confirmando..."
-                : isClosing
-                  ? "Cerrar vacante"
-                  : "Cancelar vacante"}
-            </Button>
-          </DialogFooter>
+          {isClosing ? (
+            <StageMetricsClosingForm
+              jobOpeningId={jobOpeningId}
+              isBusy={isBusy}
+              onCancel={() => setIsConfirmOpen(false)}
+              onConfirm={(stageClosings) =>
+                updateStatusMutation.mutate({
+                  jobOpeningId,
+                  status: JobOpeningStatus.Closed,
+                  stageClosings,
+                })
+              }
+            />
+          ) : (
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isBusy}
+                onClick={() => setIsConfirmOpen(false)}
+              >
+                Volver
+              </Button>
+              <Button
+                type="button"
+                disabled={isBusy}
+                onClick={handleConfirmTerminalStatus}
+              >
+                {isBusy ? "Confirmando..." : "Cancelar vacante"}
+              </Button>
+            </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
     </>
