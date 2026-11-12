@@ -1,4 +1,4 @@
-import * as XLSX from "xlsx";
+import { readSheet, type SheetData } from "read-excel-file/browser";
 
 import type {
   ImportedApplicant,
@@ -63,6 +63,11 @@ function normalizeHeader(header: string): string {
 
 function cellToString(value: unknown): string {
   if (value === null || value === undefined) return "";
+  if (typeof value === "number") {
+    return Number.isFinite(value)
+      ? value.toLocaleString("fullwide", { useGrouping: false })
+      : "";
+  }
   return String(value).trim();
 }
 
@@ -135,35 +140,20 @@ function parseLinkedin(value: string): string | null {
 export async function parseApplicantXlsx(
   file: File,
 ): Promise<ApplicantCsvParseResult> {
-  let workbook: XLSX.WorkBook;
+  let rows: SheetData<string>;
 
   try {
-    const buffer = await file.arrayBuffer();
-
-    workbook = XLSX.read(buffer, {
-      type: "array",
+    rows = await readSheet(file, {
+      trim: true,
+      parseNumber: (value) => value,
     });
   } catch {
     throw new Error("El archivo XLSX no es válido o no se puede leer.");
   }
 
-  // Read the first worksheet.
-  const firstSheetName = workbook.SheetNames[0];
-  const firstSheet = firstSheetName
-    ? workbook.Sheets[firstSheetName]
-    : undefined;
-
-  if (!firstSheet) {
+  if (rows.length === 0) {
     throw new Error("El archivo XLSX está vacío.");
   }
-
-  // Read rows as arrays to preserve their original positions.
-  const rows = XLSX.utils.sheet_to_json<unknown[]>(firstSheet, {
-    header: 1,
-    defval: "",
-    raw: false,
-    blankrows: true,
-  });
 
   const headers = (rows[0] ?? []).map(cellToString);
 
@@ -173,6 +163,8 @@ export async function parseApplicantXlsx(
   // Detect duplicate headers.
   for (const header of headers) {
     const normalized = normalizeHeader(header);
+    if (!normalized) continue;
+
     const matches = normalizedHeaders.get(normalized) ?? [];
 
     matches.push(header);

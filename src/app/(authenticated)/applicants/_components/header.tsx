@@ -1,6 +1,13 @@
 "use client";
 
-import { Download, FileUp, MoreHorizontal, Plus, Share2 } from "lucide-react";
+import {
+  Download,
+  FileText,
+  FileUp,
+  MoreHorizontal,
+  Plus,
+  Share2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
@@ -15,6 +22,8 @@ import {
 
 import { ExportApplicantsDialog } from "./export-applicants-dialog";
 import { ImportApplicantsButton } from "./import-applicants-button";
+import { ImportNotesButton } from "./import-notes-button";
+
 export function Header(props: {
   countApplicants: number;
   countOpenings: number;
@@ -24,6 +33,7 @@ export function Header(props: {
   const router = useRouter();
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const importFileInputRef = useRef<HTMLInputElement>(null);
+  const importNotesFileInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -98,6 +108,13 @@ export function Header(props: {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="gap-2"
+                  onClick={() => importNotesFileInputRef.current?.click()}
+                >
+                  <FileText />
+                  <span>Importar notas</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="gap-2"
                   onClick={() => setIsExportDialogOpen(true)}
                 >
                   <Download />
@@ -111,6 +128,7 @@ export function Header(props: {
             onOpenChange={setIsExportDialogOpen}
           />
           <ImportApplicantsButton fileInputRef={importFileInputRef} />
+          <ImportNotesButton fileInputRef={importNotesFileInputRef} />
         </div>
       )}
     </header>

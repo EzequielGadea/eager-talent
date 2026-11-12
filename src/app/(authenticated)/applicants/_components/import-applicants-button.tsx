@@ -135,7 +135,7 @@ export function ImportApplicantsButton({
       }
 
       if (parsed.data.length === 0) {
-        setGeneralError("El archivo CSV no contiene candidatos.");
+        setGeneralError("El archivo no contiene candidatos.");
         return;
       }
 
@@ -213,7 +213,7 @@ export function ImportApplicantsButton({
           <DialogHeader>
             <DialogTitle>Importar candidatos</DialogTitle>
             <DialogDescription>
-              {fileName || "Importación desde archivo CSV"}
+              {fileName || "Importación desde archivo CSV o XLSX"}
             </DialogDescription>
           </DialogHeader>
 

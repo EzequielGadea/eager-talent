@@ -245,6 +245,8 @@ export async function parseApplicantCsv(
 
   for (const header of headers) {
     const normalized = normalizeHeader(header);
+    if (!normalized) continue;
+
     const matches = normalizedHeaders.get(normalized) ?? [];
 
     matches.push(header);
