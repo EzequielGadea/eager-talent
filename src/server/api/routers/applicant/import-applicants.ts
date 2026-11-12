@@ -16,7 +16,7 @@ import { normalizeImportPhone } from "~/lib/csv/normalize-import-phone";
 export const importedApplicantSchema = z.object({
   rowNumber: z.number().int().positive(),
 
-  email: z.string().trim().toLowerCase().pipe(z.email()),
+  email: z.string().trim().min(1).toLowerCase().pipe(z.email()),
   name: z.string().trim().min(1),
   lastName: z.string().trim().min(1),
   role: z.string().trim().min(1),
@@ -368,7 +368,7 @@ export const importApplicants = protectedProcedure
               applicantId: createdApplicant.id,
               jobOpeningId: null,
               createdById: ctx.session.user.id,
-              description: "creó el candidato",
+              description: "importó el candidato",
             },
           });
         });

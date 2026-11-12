@@ -44,6 +44,10 @@ function getValidationIssueMessage(issue: z.core.$ZodIssue): string {
   const fieldName = fieldNames[field] ?? "El dato";
 
   if (field === "email") {
+    if (issue.code === "too_small") {
+      return "El email es obligatorio.";
+    }
+
     return issue.code === "invalid_format"
       ? "El email no tiene un formato válido."
       : "El email es obligatorio y debe ser texto.";
@@ -181,7 +185,7 @@ export const validateImportApplicants = protectedProcedure
             equals: normalizedEmail,
             mode: "insensitive",
           },
-          //deletedAt: null, ------------------- REVISAR !!!!!!!!!!!!!!!! -------------------------
+          deletedAt: null,
         },
         select: { id: true },
       });
@@ -199,7 +203,7 @@ export const validateImportApplicants = protectedProcedure
         const existingApplicantID = await ctx.db.applicant.findFirst({
           where: {
             peopleForceID: peopleForceId,
-            //  deletedAt: null
+            deletedAt: null,
           },
           select: { id: true },
         });
