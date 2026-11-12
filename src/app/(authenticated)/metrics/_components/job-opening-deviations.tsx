@@ -1,10 +1,17 @@
 "use client";
 
 import { CheckCircle2, CircleAlert } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { ListPagination } from "~/components/list-pagination";
 import { Skeleton } from "~/components/ui/skeleton";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "~/components/ui/empty";
 import {
   Tooltip,
   TooltipContent,
@@ -34,7 +41,8 @@ type DeviationsData = {
 type JobOpeningDeviationsProps = {
   data: DeviationsData;
   isLoading: boolean;
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
+  pageInUrl?: boolean;
 };
 
 function formatDays(days: number) {
@@ -62,7 +70,10 @@ export function JobOpeningDeviations({
   data,
   isLoading,
   onPageChange,
+  pageInUrl = false,
 }: JobOpeningDeviationsProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const highestDeviation = data.highestDeviation;
 
   return (
@@ -74,7 +85,7 @@ export function JobOpeningDeviations({
         </p>
       </CardHeader>
 
-      <CardContent className="space-y-6">
+      <CardContent className={cn("space-y-6", isLoading && "pb-4")}>
         {!isLoading && highestDeviation ? (
           highestDeviation.deviationDays > 0 ? (
             <div className="flex items-start gap-3 border-l-4 border-danger bg-danger-bg px-4 py-3 text-sm text-tag-red-fg">
@@ -122,9 +133,14 @@ export function JobOpeningDeviations({
         {isLoading ? (
           <DeviationRowsSkeleton />
         ) : data.items.length === 0 ? (
-          <div className="flex min-h-36 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-            No hay datos para este filtro
-          </div>
+          <Empty className="min-h-36 border-0">
+            <EmptyHeader>
+              <EmptyTitle>No hay datos para mostrar</EmptyTitle>
+              <EmptyDescription>
+                No hay desvíos para este filtro.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
           <TooltipProvider>
             <div className="space-y-5">
@@ -217,7 +233,12 @@ export function JobOpeningDeviations({
               pageSize={data.pageSize}
               currentPage={data.page}
               itemLabel="vacantes"
-              onPageChange={onPageChange}
+              onPageChange={(nextPage) => {
+                if (!pageInUrl) return onPageChange?.(nextPage);
+                const params = new URLSearchParams(searchParams.toString());
+                params.set("page", String(nextPage));
+                router.push(`?${params.toString()}`);
+              }}
             />
           </div>
         ) : null}
