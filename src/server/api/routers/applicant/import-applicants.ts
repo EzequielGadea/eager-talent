@@ -368,7 +368,7 @@ export const importApplicants = protectedProcedure
               applicantId: createdApplicant.id,
               jobOpeningId: null,
               createdById: ctx.session.user.id,
-              description: "creó el candidato",
+              description: "importó el candidato",
             },
           });
         });

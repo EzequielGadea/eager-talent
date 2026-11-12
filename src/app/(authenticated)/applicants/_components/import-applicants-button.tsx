@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { DropdownMenuItem } from "~/components/ui/dropdown-menu";
-
+import { parseApplicantXlsx } from "~/lib/xlsx/parse-applicants-xlsx";
 import {
   parseApplicantCsv,
   type ImportedApplicant,
@@ -104,15 +104,19 @@ export function ImportApplicantsButton({
     setFileName(file.name);
     setOpen(true);
 
-    if (!file.name.toLowerCase().endsWith(".csv")) {
-      setGeneralError("El archivo debe tener formato CSV.");
+    const fileName = file.name.toLowerCase();
+
+    if (!fileName.endsWith(".csv") && !fileName.endsWith(".xlsx")) {
+      setGeneralError("El archivo debe tener formato CSV o XLSX.");
       return;
     }
 
     setIsParsing(true);
 
     try {
-      const parsed = await parseApplicantCsv(file);
+      const parsed = file.name.toLowerCase().endsWith(".xlsx")
+        ? await parseApplicantXlsx(file)
+        : await parseApplicantCsv(file);
 
       const parseErrors: string[] = [
         ...parsed.headerErrors,
@@ -182,10 +186,10 @@ export function ImportApplicantsButton({
       <input
         ref={fileInputRef}
         type="file"
-        accept=".csv,text/csv"
+        accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         className="hidden"
         onChange={handleFileChange}
-        aria-label="Seleccionar archivo CSV de candidatos"
+        aria-label="Seleccionar archivo CSV o XLSX de candidatos"
       />
 
       {!externalFileInputRef && (
