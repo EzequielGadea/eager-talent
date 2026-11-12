@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { TZDate } from "@date-fns/tz";
-import { format } from "date-fns";
+import { tz } from "@date-fns/tz";
+import { format, isValid, parse, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import Papa from "papaparse";
 import { readSheet, type SheetData } from "read-excel-file/node";
@@ -16,6 +16,28 @@ const REQUIRED_COLUMNS = [
   "Creado a las",
   "Notas",
 ] as const;
+
+// Keep dates without a time zone independent of daylight-saving transitions.
+const unzonedDateContext = { in: tz("UTC") };
+const montevideoDateContext = { in: tz("America/Montevideo") };
+const ISO_NOTE_DATE_TIME =
+  /^\d{4}-\d{2}-\d{2}[T ](?:[01]\d|2[0-3]):\d{2}(?::\d{2}(?:[.,]\d+)?)?(Z|[+-](?:[01]\d|2[0-3])(?::?\d{2})?)?$/;
+const NOTE_DATE_FORMATS = [
+  "d/M/yyyy HH:mm:ss",
+  "d/M/yyyy HH:mm",
+  "d/M/yyyy h:mm:ss a",
+  "d/M/yyyy h:mm a",
+  "d/M/yyyy",
+  "d-M-yyyy HH:mm:ss",
+  "d-M-yyyy HH:mm",
+  "d-M-yyyy",
+  "yyyy-MM-dd HH:mm:ss",
+  "yyyy-MM-dd HH:mm",
+  "yyyy-MM-dd",
+  "yyyy/MM/dd HH:mm:ss",
+  "yyyy/MM/dd HH:mm",
+  "yyyy/MM/dd",
+];
 
 const importedNoteSchema = z.object({
   identification: z.string().min(1),
@@ -35,15 +57,36 @@ const importedNotesSchema = z
 
 function cellToString(value: unknown): string {
   if (value === null || value === undefined) return "";
-  if (value instanceof Date) return value.toISOString();
+  if (value instanceof Date) return isValid(value) ? value.toISOString() : "";
   return String(value).trim();
 }
 
-function formatCreatedAt(value: string): string {
-  if (!value) return "Creado el Sin especificar";
+function parseCreatedAt(value: string): Date | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
 
-  const date = new TZDate(value, "America/Montevideo");
-  if (Number.isNaN(date.getTime())) return "Creado el Sin especificar";
+  const isoMatch = ISO_NOTE_DATE_TIME.exec(trimmed);
+  if (isoMatch) {
+    const [, offset] = isoMatch;
+    const date = parseISO(
+      trimmed,
+      offset ? montevideoDateContext : unzonedDateContext,
+    );
+    return isValid(date) ? date : null;
+  }
+
+  const referenceDate = new Date(0);
+  for (const dateFormat of NOTE_DATE_FORMATS) {
+    const date = parse(trimmed, dateFormat, referenceDate, unzonedDateContext);
+    if (isValid(date)) return date;
+  }
+
+  return null;
+}
+
+function formatCreatedAt(value: string): string {
+  const date = parseCreatedAt(value);
+  if (!date) return "Creado el Sin especificar";
 
   return `Creado el ${format(date, "d MMM yyyy, HH:mm", { locale: es })}`;
 }
@@ -74,12 +117,16 @@ function parseRows(rows: Record<string, unknown>[]) {
       return [];
     }
     if (!content) return [];
+    const dateCell = row["Creado a las"];
+    const createdAt = cellToString(dateCell);
+
     return [
       {
         identification,
         name: cellToString(row["Nombre"]),
         createdBy: cellToString(row["Creado por"]),
-        createdAt: cellToString(row["Creado a las"]),
+        // The XLSX reader represents the cell's time as UTC, even though Excel stores no time zone.
+        createdAt: dateCell instanceof Date ? createdAt.slice(0, -1) : createdAt,
         content,
       },
     ];
@@ -251,7 +298,7 @@ export const previewPeopleForceNotesProcedure = protectedProcedure
         peopleForceID: true,
         name: true,
         lastName: true,
-        note: { select: { id: true } },
+        note: { select: { id: true, content: true, deletedAt: true } },
       },
     });
     const applicantByPeopleForceId = new Map(
@@ -261,7 +308,14 @@ export const previewPeopleForceNotesProcedure = protectedProcedure
       applicantByPeopleForceId.has(note.identification),
     );
     const existingNoteApplicants = applicants
-      .filter((applicant) => applicant.note)
+      .filter((applicant) => {
+        if (!applicant.note?.content || applicant.note.deletedAt) return false;
+        const contentStr =
+          typeof applicant.note.content === "string"
+            ? applicant.note.content
+            : JSON.stringify(applicant.note.content);
+        return contentStr.includes("[PeopleForce]");
+      })
       .map((applicant) => `${applicant.name} ${applicant.lastName}`.trim());
     const omittedApplicantNames = [
       ...new Set([
