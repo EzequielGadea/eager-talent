@@ -39,6 +39,15 @@ export const getSelectionPipeline = protectedProcedure.query(
       },
     });
 
+    // Los colores del pipeline del dashboard salen del flujo por defecto.
+    const defaultTemplate = await ctx.db.stageTemplate.findFirst({
+      select: { stages: true },
+    });
+    const defaultColorByName = new Map(
+      (defaultTemplate ? parseStages(defaultTemplate.stages) : []).map(
+        (stage) => [normalizeStageName(stage.name), stage.color],
+      ),
+    );
     const stagesByName = new Map<
       string,
       { name: string; color: string; count: number }
@@ -55,7 +64,8 @@ export const getSelectionPipeline = protectedProcedure.query(
         if (!stagesByName.has(key)) {
           stagesByName.set(key, {
             name: stage.name,
-            color: stage.color,
+            // Color del flujo por defecto; si no existe, el de la vacante.
+            color: defaultColorByName.get(key) ?? stage.color,
             count: 0,
           });
         }

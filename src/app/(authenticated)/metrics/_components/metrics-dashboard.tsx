@@ -294,7 +294,7 @@ function SourcesChart({
   );
 }
 
-// Stage colors follow the mockup order, with the tertiary text color as a fallback.
+// Fallback por si una etapa no trae color propio.
 const STAGE_COLORS = [
   "var(--accent-green)",
   "var(--info)",
@@ -395,8 +395,9 @@ function PipelineChart({
         {/* Subtitle */}
         {pipeline && firstStage && (
           <p
-            className={`mb-5 text-small text-text-secondary transition-opacity ${isRefreshing ? "opacity-50" : ""
-              }`}
+            className={`mb-5 text-small text-text-secondary transition-opacity ${
+              isRefreshing ? "opacity-50" : ""
+            }`}
           >
             Conversión de punta a punta:{" "}
             <strong
@@ -439,12 +440,14 @@ function PipelineChart({
         ) : (
           <div
             aria-busy={isRefreshing}
-            className={`flex flex-col gap-1.5 transition-opacity ${isRefreshing ? "opacity-50" : ""
-              }`}
+            className={`flex flex-col gap-1.5 transition-opacity ${
+              isRefreshing ? "opacity-50" : ""
+            }`}
           >
             {pipeline.stages.map((stage, index) => {
               const nextStage = pipeline.stages[index + 1];
-              const color = STAGE_COLORS[index % STAGE_COLORS.length];
+              const color =
+                stage.color || STAGE_COLORS[index % STAGE_COLORS.length];
 
               const reached = reachedCounts[index] ?? 0;
               const reachedNext = reachedCounts[index + 1] ?? 0;
@@ -480,12 +483,14 @@ function PipelineChart({
                     <div className="grid grid-cols-[118px_1fr_40px]">
                       <span />
                       <span
-                        className={`inline-flex items-center gap-1.5 py-px text-label font-semibold ${advances ? "text-tag-green-fg" : "text-tag-red-fg"
-                          }`}
+                        className={`inline-flex items-center gap-1.5 py-px text-label font-semibold ${
+                          advances ? "text-tag-green-fg" : "text-tag-red-fg"
+                        }`}
                       >
                         <span
-                          className={`h-3 w-0.75 rounded-xs ${advances ? "bg-success" : "bg-danger"
-                            }`}
+                          className={`h-3 w-0.75 rounded-xs ${
+                            advances ? "bg-success" : "bg-danger"
+                          }`}
                         />
                         {Math.round(advancePercentage)}% avanza
                       </span>
@@ -560,55 +565,54 @@ export function MetricsDashboard({
     window.print();
   }
   return (
-      <section className="metrics-print flex flex-col gap-6 [&_[data-slot=card]]:rounded-lg">
-        <style>{PRINT_STYLES}</style>
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="font-heading text-balance text-h1 text-text-primary">
-            Métricas
-          </h1>
-          <Button
-            type="button"
-            onClick={downloadMetrics}
-            className="print:hidden"
-          >
-            <Download aria-hidden="true" />
-            Exportar a PDF
-          </Button>
-        </header>
+    <section className="metrics-print flex flex-col gap-6 [&_[data-slot=card]]:rounded-lg">
+      <style>{PRINT_STYLES}</style>
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="font-heading text-balance text-h1 text-text-primary">
+          Métricas
+        </h1>
+        <Button
+          type="button"
+          onClick={downloadMetrics}
+          className="print:hidden"
+        >
+          <Download aria-hidden="true" />
+          Exportar a PDF
+        </Button>
+      </header>
 
-        <MetricsFilters
-          period={period}
-          areaId={areaId}
-          areas={areas}
-          onPeriodChange={changePeriod}
-          onAreaChange={changeArea}
-        />
+      <MetricsFilters
+        period={period}
+        areaId={areaId}
+        areas={areas}
+        onPeriodChange={changePeriod}
+        onAreaChange={changeArea}
+      />
 
-        <MetricsSummaryCards
-          metrics={timeMetrics}
-          isPending={
-            timeMetricsQuery.isPending || timeMetricsQuery.isPlaceholderData
-          }
-        />
+      <MetricsSummaryCards
+        metrics={timeMetrics}
+        isPending={
+          timeMetricsQuery.isPending || timeMetricsQuery.isPlaceholderData
+        }
+      />
 
-        <JobOpeningDeviations
-          data={deviations}
-          isLoading={
-            deviationsQuery.isPending || deviationsQuery.isPlaceholderData
-          }
-          onPageChange={setPage}
-        />
+      <JobOpeningDeviations
+        data={deviations}
+        isLoading={
+          deviationsQuery.isPending || deviationsQuery.isPlaceholderData
+        }
+        onPageChange={setPage}
+      />
 
-        <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
-          <DisqualificationChart motives={summary.disqualificationMotives} />
-          <SourcesChart sources={summary.applicationSources} />
-        </div>
+      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
+        <DisqualificationChart motives={summary.disqualificationMotives} />
+        <SourcesChart sources={summary.applicationSources} />
+      </div>
 
-        <PipelineChart closedOpenings={closedOpenings} />
-      </section>
+      <PipelineChart closedOpenings={closedOpenings} />
+    </section>
   );
 }
-
 
 const PRINT_STYLES = `
   @media print {

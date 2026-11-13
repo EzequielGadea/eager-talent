@@ -94,6 +94,14 @@ export function JobOpeningStatusDropdown({
       return;
     }
 
+    if (nextStatus === JobOpeningStatus.Closed && openingDate > new Date()) {
+      toast.add({
+        title: "No se puede cerrar una vacante antes de su fecha de inicio",
+        type: "error",
+      });
+      return;
+    }
+
     if (isTerminalStatus(nextStatus)) {
       setPendingConfirmationStatus(nextStatus);
       setIsConfirmOpen(true);

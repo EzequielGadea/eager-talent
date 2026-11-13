@@ -330,6 +330,12 @@ export const updateJobOpening = protectedProcedure
     // Estado y ubicación son opcionales: si no llegan, se conservan.
     const nextStatus = input.status ?? currentJobOpening.status;
     const isClosing = nextStatus === "Closed";
+    if (isClosing && currentJobOpening.openingDate > new Date()) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No se puede cerrar una vacante antes de su fecha de inicio",
+      });
+    }
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
 

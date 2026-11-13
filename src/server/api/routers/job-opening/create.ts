@@ -52,6 +52,16 @@ export const createJobOpening = protectedProcedure
         message: "FORBIDDEN",
       });
     }
+    if (
+      input.status === JobOpeningStatus.Closed &&
+      input.openingDate > new Date()
+    ) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No se puede cerrar una vacante antes de su fecha de inicio",
+      });
+    }
+
     const organizationId = ctx.session.session.activeOrganizationId;
 
     if (!organizationId) {
