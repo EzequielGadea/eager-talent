@@ -22,7 +22,7 @@ import {
 import { api } from "~/lib/trpc/react";
 import { toast } from "~/components/ui/toast";
 
-import type { PendingMove, PipelineCandidate } from "./types";
+import type { PendingMove, PipelineApplicant } from "./types";
 import { restrictToPipeline } from "./pipeline-drag-modifier";
 
 const dragModifiers = [restrictToPipeline];
@@ -128,7 +128,7 @@ export function PipelineDndProvider({
 
   function handleDragEnd(event: DragEndEvent) {
     const data = event.active.data.current as
-      { candidate: PipelineCandidate; stageId: string } | undefined;
+      { candidate: PipelineApplicant; stageId: string } | undefined;
 
     const targetStageId = event.over ? String(event.over.id) : null;
 

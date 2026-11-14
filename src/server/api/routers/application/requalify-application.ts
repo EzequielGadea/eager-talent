@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { parseStages } from "~/lib/validations/job-opening";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -33,7 +34,7 @@ export const requalifyApplication = protectedProcedure
       select: {
         active: true,
         currentStageId: true,
-        jobOpening: { select: { stages: true } },
+        jobOpening: { select: { status: true, stages: true } },
       },
     });
 
@@ -48,6 +49,14 @@ export const requalifyApplication = protectedProcedure
       });
     }
 
+    if (application.jobOpening.status !== JobOpeningStatus.Open) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "No se puede recalificar un candidato en una vacante que no está abierta",
+      });
+    }
+
     return ctx.db.$transaction(async (tx) => {
       const { count } = await tx.application.updateMany({
         where: {
@@ -55,6 +64,9 @@ export const requalifyApplication = protectedProcedure
           jobOpeningId: input.jobOpeningId,
           currentStageId: application.currentStageId,
           active: false,
+          jobOpening: {
+            status: JobOpeningStatus.Open,
+          },
         },
         data: {
           active: true,

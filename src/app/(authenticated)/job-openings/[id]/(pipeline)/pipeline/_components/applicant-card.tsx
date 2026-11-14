@@ -37,7 +37,7 @@ import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 import { interviewTypeTranslations } from "~/lib/enum-translations";
 
-import type { PipelineCandidate } from "./types";
+import type { PipelineApplicant } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
 
@@ -61,8 +61,8 @@ function formatInterviewDateTime(date: Date) {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
-type CandidateCardProps = {
-  candidate: PipelineCandidate;
+type ApplicantCardProps = {
+  candidate: PipelineApplicant;
   jobOpeningId: string;
   jobOpeningName: string;
   currentStageId: string;
@@ -74,7 +74,7 @@ type CandidateCardProps = {
   canDeleteInterview: boolean;
 };
 
-export function CandidateCard({
+export function ApplicantCard({
   candidate,
   jobOpeningId,
   jobOpeningName,
@@ -85,7 +85,7 @@ export function CandidateCard({
   canUpdateApplication,
   canCreateInterview,
   canDeleteInterview,
-}: CandidateCardProps) {
+}: ApplicantCardProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
