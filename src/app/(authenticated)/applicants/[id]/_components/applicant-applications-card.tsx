@@ -213,7 +213,7 @@ export function ApplicantApplicationsCard({
         { label: "Salario pretendido", value: desiredSalary || "—" },
         {
           label: "Disponibilidad",
-          value: app.availability?.trim() || "Sin información",
+          value: app.availability?.trim() || "—",
         },
       ]
     : [];

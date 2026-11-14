@@ -42,7 +42,7 @@ export const applicantLinkedinSchema = z
   .pipe(z.httpUrl("Debe ingresar una URL válida"))
   .refine((value) => {
     const host = hostOf(value);
-    return host === "linkedin.com" || host.endsWith(".linkedin.com");
+    return host === "linkedin.com" || host === "www.linkedin.com";
   }, "Debe ingresar una URL de LinkedIn válida")
   .or(z.literal(""));
 

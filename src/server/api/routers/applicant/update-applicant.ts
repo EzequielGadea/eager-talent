@@ -1,6 +1,16 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { auth } from "~/lib/auth";
+import {
+  applicantCountrySchema,
+  applicantEmailSchema,
+  applicantLinkedinSchema,
+  applicantNameSchema,
+  applicantTagIdsSchema,
+  careerYearSchema,
+  shortTextSchema,
+  validateCareerYears,
+} from "~/lib/validations/applicant";
 import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 
 import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
@@ -11,37 +21,41 @@ import { uploadthingUrlSchema } from "~/lib/validations/uploadthing-url";
 
 export const updateApplicant = protectedProcedure
   .input(
-    z.object({
-      id: z.string().min(1),
+    z
+      .object({
+        id: z.string().min(1),
 
-      name: z.string().min(1),
-      lastname: z.string().min(1),
-      email: z.string().optional(),
-      phone: optionalE164PhoneSchema,
+        name: applicantNameSchema("El nombre"),
+        lastname: applicantNameSchema("El apellido"),
+        email: applicantEmailSchema.optional(),
+        phone: optionalE164PhoneSchema,
 
-      photo: uploadthingUrlSchema.nullable().optional(),
+        photo: uploadthingUrlSchema.nullable().optional(),
 
-      country: z.string().optional(),
-      linkedin: z.string().optional(),
+        country: applicantCountrySchema.optional(),
+        linkedin: applicantLinkedinSchema.optional(),
 
-      englishLevel: z.enum(EnglishLevel).nullable().optional(),
-      source: z.enum(Source).nullable().optional(),
-      hearAboutUs: z.enum(HearAboutUs).nullable().optional(),
+        englishLevel: z.enum(EnglishLevel).nullable().optional(),
+        source: z.enum(Source).nullable().optional(),
+        hearAboutUs: z.enum(HearAboutUs).nullable().optional(),
 
-      title: z.string().optional(),
-      academicInstitution: z.string().optional(),
-      careerStartYear: z.number().nullable().optional(),
-      careerEndYear: z.number().nullable().optional(),
+        title: shortTextSchema("El título", 100).optional(),
+        academicInstitution: shortTextSchema("La institución", 150).optional(),
+        careerStartYear: careerYearSchema.nullable().optional(),
+        careerEndYear: careerYearSchema.nullable().optional(),
 
-      education: uploadthingUrlSchema.nullable().optional(),
-      resume: uploadthingUrlSchema.nullable().optional(),
+        education: uploadthingUrlSchema.nullable().optional(),
+        resume: uploadthingUrlSchema.nullable().optional(),
 
-      roleId: z.string().min(1),
-      areaId: z.string().nullable().optional(),
-      seniorityId: z.string().nullable().optional(),
+        roleId: z.string().min(1),
+        areaId: z.string().min(1).nullable().optional(),
+        seniorityId: z.string().min(1).nullable().optional(),
 
-      tagIds: z.array(z.string()),
-    }),
+        tagIds: applicantTagIdsSchema,
+      })
+      .superRefine((data, ctx) => {
+        validateCareerYears(data, ctx);
+      }),
   )
   .mutation(async ({ ctx, input }) => {
     const permission = await auth.api.hasPermission({
@@ -71,6 +85,38 @@ export const updateApplicant = protectedProcedure
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Candidato no encontrado",
+          });
+        }
+
+        const [role, area, seniority, tagsCount] = await Promise.all([
+          tx.jobRole.findUnique({
+            where: { id: input.roleId },
+            select: { id: true },
+          }),
+          input.areaId
+            ? tx.area.findUnique({
+                where: { id: input.areaId },
+                select: { id: true },
+              })
+            : Promise.resolve(true),
+          input.seniorityId
+            ? tx.seniority.findUnique({
+                where: { id: input.seniorityId },
+                select: { id: true },
+              })
+            : Promise.resolve(true),
+          tx.tag.count({ where: { id: { in: input.tagIds } } }),
+        ]);
+
+        if (
+          !role ||
+          !area ||
+          !seniority ||
+          tagsCount !== input.tagIds.length
+        ) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "El rol, área, seniority o tags seleccionados no existen",
           });
         }
 

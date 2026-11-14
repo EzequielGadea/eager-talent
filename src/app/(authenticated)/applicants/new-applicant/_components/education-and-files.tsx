@@ -77,6 +77,11 @@ export default function EducationAndFiles() {
                     value === "" ? undefined : Number(value),
                 })}
               />
+              {errors.careerStartYear && (
+                <p className="text-xs text-danger">
+                  {errors.careerStartYear.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-1">
@@ -93,6 +98,11 @@ export default function EducationAndFiles() {
                     value === "" ? undefined : Number(value),
                 })}
               />
+              {errors.careerEndYear && (
+                <p className="text-xs text-danger">
+                  {errors.careerEndYear.message}
+                </p>
+              )}
             </div>
           </div>
 
