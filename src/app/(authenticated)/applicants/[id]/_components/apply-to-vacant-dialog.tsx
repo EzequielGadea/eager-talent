@@ -36,7 +36,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/toast";
-import { Loader2, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const applicationFormSchema = z
   .object({
@@ -45,13 +45,13 @@ const applicationFormSchema = z
     desiredSalary: z.preprocess(
       (value) => (value === "" ? undefined : value),
       z.coerce
-        .number()
-        .positive({
-          error: "El salario debe ser mayor a 0",
-        })
+        .number({ error: "Debe indicar un salario válido." })
+        .positive("El salario debe ser mayor a 0.")
         .optional(),
     ),
-    currency: z.enum(SalaryCurrency).optional(),
+    currency: z
+      .enum(SalaryCurrency, { error: "Debe elegir una moneda." })
+      .optional(),
     availability: z
       .string(
         /* Este campo es opcional
@@ -338,8 +338,10 @@ export function ApplyToVacantDialog({
                     render={({ field, fieldState }) => (
                       <div className="grid gap-1">
                         <Select
-                          value={field.value ?? null}
-                          onValueChange={field.onChange}
+                          value={field.value ?? ""}
+                          onValueChange={(value) =>
+                            field.onChange(value || undefined)
+                          }
                           disabled={!isJobOpeningSelected}
                         >
                           <SelectTrigger
@@ -347,34 +349,17 @@ export function ApplyToVacantDialog({
                             aria-invalid={
                               fieldState.invalid && !!isJobOpeningSelected
                             }
-                            className="w-full disabled:bg-input/50 dark:disabled:bg-input/80"
+                            className="disabled:bg-input/50 dark:disabled:bg-input/80"
                           >
                             <SelectValue placeholder="Moneda">
                               {field.value
                                 ? salaryCurrencyTranslations[field.value]
                                 : undefined}
                             </SelectValue>
-                            {field.value && (
-                              <span
-                                role="button"
-                                tabIndex={isJobOpeningSelected ? 0 : -1}
-                                onPointerDown={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  field.onChange(undefined);
-                                }}
-                                aria-label="Quitar moneda"
-                                className="ml-auto rounded-sm p-1 text-muted-foreground hover:text-foreground"
-                              >
-                                <X className="h-4 w-4" />
-                              </span>
-                            )}
                           </SelectTrigger>
 
                           <SelectContent>
+                            <SelectItem value="">Sin seleccionar</SelectItem>
                             {Object.values(SalaryCurrency).map((currency) => (
                               <SelectItem key={currency} value={currency}>
                                 {salaryCurrencyTranslations[currency]}

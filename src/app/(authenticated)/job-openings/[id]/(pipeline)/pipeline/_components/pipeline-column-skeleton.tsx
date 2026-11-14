@@ -1,6 +1,6 @@
 import { Skeleton } from "~/components/ui/skeleton";
 
-import { CandidateCardSkeleton } from "./candidate-card-skeleton";
+import { ApplicantCardSkeleton } from "./applicant-card-skeleton";
 
 export function PipelineColumnSkeleton() {
   return (
@@ -13,9 +13,9 @@ export function PipelineColumnSkeleton() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <CandidateCardSkeleton />
-        <CandidateCardSkeleton />
-        <CandidateCardSkeleton />
+        <ApplicantCardSkeleton />
+        <ApplicantCardSkeleton />
+        <ApplicantCardSkeleton />
       </div>
     </section>
   );
