@@ -10,6 +10,7 @@ import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -48,6 +49,7 @@ type Interviewer = {
   id: string;
   name: string;
   lastName: string;
+  image?: string | null;
   role?: string;
 };
 
@@ -467,19 +469,18 @@ export function EditInterviewDialog({
                                   }}
                                   className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-hover focus-visible:bg-surface-hover"
                                 >
-                                  <span
-                                    className={`flex size-7 items-center justify-center rounded-full text-label font-semibold ${
-                                      getAvatar(
-                                        interviewer.name,
-                                        interviewer.lastName,
-                                      ).colorClass
-                                    }`}
-                                  >
-                                    {initialsOf(
-                                      interviewer.name,
-                                      interviewer.lastName,
+                                  <Avatar className="size-7">
+                                    {interviewer.image && (
+                                      <AvatarImage src={interviewer.image} alt="" />
                                     )}
-                                  </span>
+                                    <AvatarFallback
+                                      className={`text-label font-semibold ${
+                                        getAvatar(interviewer.name, interviewer.lastName).colorClass
+                                      }`}
+                                    >
+                                      {initialsOf(interviewer.name, interviewer.lastName)}
+                                    </AvatarFallback>
+                                  </Avatar>
                                   <span className="flex min-w-0 flex-1 items-center gap-2">
                                     <span className="truncate text-sm text-text-primary">
                                       {interviewer.name} {interviewer.lastName}
@@ -517,19 +518,18 @@ export function EditInterviewDialog({
                               key={interviewer.id}
                               className="flex items-center gap-2 rounded-full border border-border-default bg-surface-subtle py-1 pr-1 pl-1"
                             >
-                              <span
-                                className={`flex size-6 items-center justify-center rounded-full text-label font-semibold ${
-                                  getAvatar(
-                                    interviewer.name,
-                                    interviewer.lastName,
-                                  ).colorClass
-                                }`}
-                              >
-                                {initialsOf(
-                                  interviewer.name,
-                                  interviewer.lastName,
+                              <Avatar className="size-6">
+                                {interviewer.image && (
+                                  <AvatarImage src={interviewer.image} alt="" />
                                 )}
-                              </span>
+                                <AvatarFallback
+                                  className={`text-label font-semibold ${
+                                    getAvatar(interviewer.name, interviewer.lastName).colorClass
+                                  }`}
+                                >
+                                  {initialsOf(interviewer.name, interviewer.lastName)}
+                                </AvatarFallback>
+                              </Avatar>
                               <span className="text-sm text-text-primary">
                                 {interviewer.name} {interviewer.lastName}
                               </span>
