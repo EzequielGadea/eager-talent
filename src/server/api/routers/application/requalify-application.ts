@@ -3,6 +3,8 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { parseStages } from "~/lib/validations/job-opening";
+import { getClosedStageError } from "~/lib/stage-metrics";
+import { assertStageAcceptsCandidates } from "~/server/api/routers/job-opening/stage-metrics-utils";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -57,7 +59,26 @@ export const requalifyApplication = protectedProcedure
       });
     }
 
+    // Requalifying returns the application to its stage, which may be closed now.
+    const closedStageError = getClosedStageError(
+      parseStages(application.jobOpening.stages).find(
+        (stage) => stage.key === application.currentStageId,
+      ),
+    );
+
+    if (closedStageError) {
+      throw new TRPCError({ code: "CONFLICT", message: closedStageError });
+    }
+
     return ctx.db.$transaction(async (tx) => {
+      // Checked again with the job opening locked: the stage may have been
+      // closed after the check above.
+      await assertStageAcceptsCandidates(
+        tx,
+        input.jobOpeningId,
+        application.currentStageId,
+      );
+
       const { count } = await tx.application.updateMany({
         where: {
           applicantId: input.applicantId,

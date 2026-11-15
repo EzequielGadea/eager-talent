@@ -16,6 +16,11 @@ import { JobOpeningDeviations } from "./_components/job-opening-deviations";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
+const EMPTY_STAGE_DEVIATIONS = {
+  hr: { averageDeviationDays: null, count: 0 },
+  technical: { averageDeviationDays: null, count: 0 },
+};
+
 export default function MetricsPage({
   searchParams,
 }: {
@@ -113,8 +118,19 @@ async function TimeMetricsSection({
 }: {
   filters: { period: MetricsPeriod; areaId?: string };
 }) {
-  const metrics = await api.metrics.getTimeMetrics(filters);
-  return <MetricsSummaryCards metrics={metrics} isPending={false} />;
+  const [metrics, stageDeviations] = await Promise.all([
+    api.metrics.getTimeMetrics(filters),
+    // A failure here only affects the two stage cards, which show an error.
+    api.metrics.getStageDeviations(filters).catch(() => null),
+  ]);
+  return (
+    <MetricsSummaryCards
+      metrics={metrics}
+      stageDeviations={stageDeviations ?? EMPTY_STAGE_DEVIATIONS}
+      stageDeviationsFailed={stageDeviations === null}
+      isPending={false}
+    />
+  );
 }
 
 async function DeviationsSection({

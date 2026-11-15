@@ -12,6 +12,7 @@ import {
   type UpdateJobOpeningInput,
 } from "~/lib/validations/job-opening";
 import { api } from "~/lib/trpc/react";
+import { getMutationErrorMessage } from "~/lib/trpc/error-message";
 import { toast } from "~/components/ui/toast";
 
 import { Button } from "~/components/ui/button";
@@ -23,6 +24,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import type { StageClosing } from "~/lib/validations/stage-metrics";
+
+import { StageMetricsClosingForm } from "../../_components/stage-metrics-closing-form";
 
 type EditJobOpeningFormProps = {
   defaultValues: UpdateJobOpeningInput;
@@ -77,10 +81,13 @@ export function EditJobOpeningForm({
       }
 
       toast.add({
-        title: error.message,
+        title: getMutationErrorMessage(error),
         type: "error",
       });
     },
+    // Fail right away when offline instead of waiting (and staying on
+    // "Confirmando...") until the connection comes back.
+    networkMode: "always",
   });
 
   const isSaving =
@@ -98,12 +105,15 @@ export function EditJobOpeningForm({
     await updateJobOpening.mutateAsync(values);
   }
 
-  async function handleConfirmTerminalSubmit() {
+  async function handleConfirmTerminalSubmit(stageClosings?: StageClosing[]) {
     if (!pendingSubmitValues || isSaving) {
       return;
     }
 
-    await updateJobOpening.mutateAsync(pendingSubmitValues);
+    await updateJobOpening.mutateAsync({
+      ...pendingSubmitValues,
+      stageClosings,
+    });
   }
 
   function handleInvalidSubmit(errors: FieldErrors<UpdateJobOpeningInput>) {
@@ -199,27 +209,35 @@ export function EditJobOpeningForm({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isSaving}
-              onClick={() => setIsConfirmOpen(false)}
-            >
-              Volver
-            </Button>
-            <Button
-              type="button"
-              disabled={isSaving}
-              onClick={() => void handleConfirmTerminalSubmit()}
-            >
-              {isSaving
-                ? "Confirmando..."
-                : isClosing
-                  ? "Cerrar vacante"
-                  : "Cancelar vacante"}
-            </Button>
-          </DialogFooter>
+          {isClosing ? (
+            <StageMetricsClosingForm
+              jobOpeningId={defaultValues.id}
+              pendingStageTargets={pendingSubmitValues?.stageTargets}
+              isBusy={isSaving}
+              onCancel={() => setIsConfirmOpen(false)}
+              onConfirm={(stageClosings) =>
+                void handleConfirmTerminalSubmit(stageClosings)
+              }
+            />
+          ) : (
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isSaving}
+                onClick={() => setIsConfirmOpen(false)}
+              >
+                Volver
+              </Button>
+              <Button
+                type="button"
+                disabled={isSaving}
+                onClick={() => void handleConfirmTerminalSubmit()}
+              >
+                {isSaving ? "Confirmando..." : "Cancelar vacante"}
+              </Button>
+            </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
 

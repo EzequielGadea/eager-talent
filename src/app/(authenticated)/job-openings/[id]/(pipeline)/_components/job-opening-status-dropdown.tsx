@@ -23,7 +23,10 @@ import {
 import { toast } from "~/components/ui/toast";
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { api } from "~/lib/trpc/react";
+import { getMutationErrorMessage } from "~/lib/trpc/error-message";
 import { statusConfig } from "../../../constants";
+
+import { StageMetricsClosingForm } from "../../_components/stage-metrics-closing-form";
 
 type JobOpeningStatusDropdownProps = {
   jobOpeningId: string;
@@ -76,10 +79,13 @@ export function JobOpeningStatusDropdown({
     },
     onError: (error) => {
       toast.add({
-        title: error.message,
+        title: getMutationErrorMessage(error),
         type: "error",
       });
     },
+    // Fail right away when offline instead of waiting (and staying on
+    // "Confirmando...") until the connection comes back.
+    networkMode: "always",
   });
 
   const isBusy = updateStatusMutation.isPending || isRefreshing;
@@ -206,27 +212,38 @@ export function JobOpeningStatusDropdown({
             </DialogDescription>
           </DialogHeader>
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={isBusy}
-              onClick={() => setIsConfirmOpen(false)}
-            >
-              Volver
-            </Button>
-            <Button
-              type="button"
-              disabled={isBusy}
-              onClick={handleConfirmTerminalStatus}
-            >
-              {isBusy
-                ? "Confirmando..."
-                : isClosing
-                  ? "Cerrar vacante"
-                  : "Cancelar vacante"}
-            </Button>
-          </DialogFooter>
+          {isClosing ? (
+            <StageMetricsClosingForm
+              jobOpeningId={jobOpeningId}
+              isBusy={isBusy}
+              onCancel={() => setIsConfirmOpen(false)}
+              onConfirm={(stageClosings) =>
+                updateStatusMutation.mutate({
+                  jobOpeningId,
+                  status: JobOpeningStatus.Closed,
+                  stageClosings,
+                })
+              }
+            />
+          ) : (
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isBusy}
+                onClick={() => setIsConfirmOpen(false)}
+              >
+                Volver
+              </Button>
+              <Button
+                type="button"
+                disabled={isBusy}
+                onClick={handleConfirmTerminalStatus}
+              >
+                {isBusy ? "Confirmando..." : "Cancelar vacante"}
+              </Button>
+            </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
     </>

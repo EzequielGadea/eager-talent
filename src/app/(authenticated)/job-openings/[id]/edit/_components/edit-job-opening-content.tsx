@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { TRPCError } from "@trpc/server";
 
+import { getMetricStages } from "~/lib/stage-metrics";
 import {
   jobOpeningStageTypeSchema,
+  parseStages,
   PERSISTED_TO_FORM_STAGE_TYPE,
   persistedStageTypeSchema,
   type JobOpeningStageType,
@@ -150,6 +152,13 @@ export async function EditJobOpeningContent({
     stages: normalizeStages(jobOpening.stages),
     hiringManagerIds: jobOpening.hiringManagers.map(
       (hiringManager) => hiringManager.id,
+    ),
+    // A missing target shows as an empty, required field.
+    stageTargets: getMetricStages(parseStages(jobOpening.stages)).map(
+      (stage) => ({
+        stageKey: stage.key,
+        targetDays: stage.targetDays ?? Number.NaN,
+      }),
     ),
   };
 
