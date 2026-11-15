@@ -9,6 +9,10 @@ import { z } from "zod";
 
 import { SalaryCurrency } from "~/generated/prisma/enums";
 import { salaryCurrencyTranslations } from "~/lib/enum-translations";
+import {
+  getDesiredSalaryIssues,
+  toDesiredSalaryAmount,
+} from "~/lib/validations/desired-salary";
 import { api } from "~/lib/trpc/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -29,10 +33,7 @@ import type { AvailableApplicant } from "./add-applicant-types";
 
 const addApplicantApplicationSchema = z
   .object({
-    desiredSalary: z
-      .number({ error: "Ingresá un salario válido." })
-      .positive("El salario debe ser mayor a 0.")
-      .optional(),
+    desiredSalary: z.string().optional(),
 
     currency: z
       .enum(SalaryCurrency, { error: "Seleccioná una moneda." })
@@ -41,24 +42,24 @@ const addApplicantApplicationSchema = z
     availability: z.string(),
   })
   .superRefine((data, ctx) => {
-    if (data.desiredSalary !== undefined && data.currency === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["currency"],
-        message: "Seleccioná una moneda.",
-      });
+    for (const issue of getDesiredSalaryIssues(data, {
+      invalid: "Ingresá un salario válido.",
+      notPositive: "El salario debe ser mayor a 0.",
+      currencyRequired: "Seleccioná una moneda.",
+      salaryRequired: "Ingresá el salario deseado.",
+    })) {
+      ctx.addIssue({ code: "custom", ...issue, path: [issue.path] });
     }
+  })
+  .transform((data) => ({
+    ...data,
+    desiredSalary: toDesiredSalaryAmount(data.desiredSalary),
+  }));
 
-    if (data.currency !== undefined && data.desiredSalary === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["desiredSalary"],
-        message: "Ingresá el salario deseado.",
-      });
-    }
-  });
-
-type AddApplicantApplicationFormValues = z.infer<
+type AddApplicantApplicationFormInput = z.input<
+  typeof addApplicantApplicationSchema
+>;
+type AddApplicantApplicationFormValues = z.output<
   typeof addApplicantApplicationSchema
 >;
 
@@ -78,10 +79,14 @@ export function AddApplicantApplicationForm({
   const router = useRouter();
   const [isTransitionPending, startTransition] = useTransition();
 
-  const methods = useForm<AddApplicantApplicationFormValues>({
+  const methods = useForm<
+    AddApplicantApplicationFormInput,
+    unknown,
+    AddApplicantApplicationFormValues
+  >({
     resolver: zodResolver(addApplicantApplicationSchema),
     defaultValues: {
-      desiredSalary: undefined,
+      desiredSalary: "",
       currency: undefined,
       availability: "",
     },
@@ -210,14 +215,12 @@ export function AddApplicantApplicationForm({
             <div className="grid gap-1">
               <Input
                 id="desired-salary"
-                type="number"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
                 placeholder="Ej. 85000"
                 aria-invalid={!!errors.desiredSalary}
-                {...register("desiredSalary", {
-                  setValueAs: (value) =>
-                    value === "" ? undefined : Number(value),
-                })}
+                {...register("desiredSalary")}
               />
 
               {errors.desiredSalary && (
