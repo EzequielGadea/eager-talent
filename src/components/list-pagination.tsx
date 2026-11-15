@@ -65,17 +65,7 @@ export function ListPagination(props: {
                 className="h-7.5 w-7.5 text-text-secondary"
               />
             ) : (
-              <PaginationItem
-                key={entry}
-                // On small screens only the current page ±1 and the edges fit.
-                className={
-                  Math.abs(entry - currentPage) > 1 &&
-                  entry !== 1 &&
-                  entry !== totalPages
-                    ? "max-sm:hidden"
-                    : undefined
-                }
-              >
+              <PaginationItem key={entry}>
                 <PageLinkButton
                   page={entry}
                   isActive={entry === currentPage}

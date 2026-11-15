@@ -6,7 +6,9 @@ export function parseDesiredSalary(raw: string): number | null {
 
   if (!SALARY_REGEX.test(value)) return null;
 
-  return Number(value.replace(",", "."));
+  const amount = Number(value.replace(",", "."));
+
+  return Number.isFinite(amount) ? amount : null;
 }
 
 type SalaryIssueMessages = {
