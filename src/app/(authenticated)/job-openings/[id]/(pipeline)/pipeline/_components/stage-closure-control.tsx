@@ -29,6 +29,7 @@ import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/toast";
 import {
   getStageClosingDateError,
+  getStageClosingDateRange,
   getTodayIsoDate,
   type MetricStageData,
 } from "~/lib/stage-metrics";
@@ -75,6 +76,13 @@ export function StageClosureMenu({
   const [isRefreshing, startTransition] = useTransition();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const today = getTodayIsoDate();
+  // e.g. the technical stage can't close before HR did.
+  const closingDateRange = getStageClosingDateRange({
+    stages,
+    stageKey,
+    openingDate,
+    today,
+  });
 
   const formSchema = z
     .object({ closedAt: closeStageSchema.shape.closedAt })
@@ -94,7 +102,7 @@ export function StageClosureMenu({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { closedAt: today },
+    defaultValues: { closedAt: closingDateRange.maxValue },
   });
 
   const closeStage = api.jobOpening.closeStage.useMutation({
@@ -129,7 +137,7 @@ export function StageClosureMenu({
   const errors = form.formState.errors;
 
   function openCloseDialog() {
-    form.reset({ closedAt: today });
+    form.reset({ closedAt: closingDateRange.maxValue });
     setIsDialogOpen(true);
   }
 
@@ -224,8 +232,8 @@ export function StageClosureMenu({
                     onChange={field.onChange}
                     onBlur={field.onBlur}
                     ref={field.ref}
-                    minValue={openingDate}
-                    maxValue={today}
+                    minValue={closingDateRange.minValue}
+                    maxValue={closingDateRange.maxValue}
                     isInvalid={!!errors.closedAt}
                   />
                 )}

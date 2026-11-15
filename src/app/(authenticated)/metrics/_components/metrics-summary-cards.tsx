@@ -11,6 +11,8 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import { cn } from "~/lib/utils";
 
+import { StageDeviationsError } from "./stage-deviations-error";
+
 type TimeMetrics = {
   averageClosingDays: number | null;
   averageDeviationDays: number | null;
@@ -46,7 +48,7 @@ function MetricCard({
   detail,
   highlighted = false,
   valueClassName = "text-text-primary",
-  errorMessage,
+  error,
 }: {
   icon: ReactNode;
   label: string;
@@ -54,9 +56,23 @@ function MetricCard({
   detail?: string;
   highlighted?: boolean;
   valueClassName?: string;
-  // Shown instead of the value when its data could not be loaded.
-  errorMessage?: string;
+  // Shown instead of the value (which stays hidden) when its data could not be
+  // loaded.
+  error?: ReactNode;
 }) {
+  if (error) {
+    return (
+      <Card className="ring-foreground/10">
+        <CardContent className="flex min-h-40 flex-col items-center justify-center gap-3">
+          <p className="self-start text-sm font-medium text-text-secondary">
+            {label}
+          </p>
+          {error}
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card
       className={
@@ -68,18 +84,14 @@ function MetricCard({
       <CardContent className="flex min-h-40 flex-col justify-center gap-2">
         <div className="text-text-secondary">{icon}</div>
         <p className="text-sm font-medium text-text-secondary">{label}</p>
-        {errorMessage ? (
-          <p role="alert" className="text-sm text-danger">
-            {errorMessage}
-          </p>
-        ) : value === null ? (
+        {value === null ? (
           <p className="text-sm text-text-tertiary">
             No hay datos para este filtro
           </p>
         ) : (
           <p className={cn("text-h2 tabular-nums", valueClassName)}>{value}</p>
         )}
-        {detail && !errorMessage ? (
+        {detail ? (
           <p className="text-sm text-text-secondary">{detail}</p>
         ) : null}
       </CardContent>
@@ -123,9 +135,9 @@ export function MetricsSummaryCards({
   stageDeviationsFailed: boolean;
   isPending: boolean;
 }) {
-  const stageDeviationsError = stageDeviationsFailed
-    ? "No se pudo cargar esta métrica. Recargá la página para intentar de nuevo."
-    : undefined;
+  const stageDeviationsError = stageDeviationsFailed ? (
+    <StageDeviationsError />
+  ) : undefined;
 
   if (isPending) {
     return (
@@ -177,7 +189,7 @@ export function MetricsSummaryCards({
         value={formatStageDeviation(stageDeviations.hr)}
         detail={formatStageDeviationDetail(stageDeviations.hr)}
         valueClassName={getStageDeviationClassName(stageDeviations.hr)}
-        errorMessage={stageDeviationsError}
+        error={stageDeviationsError}
       />
       <MetricCard
         icon={<CodeXml className="size-5" aria-hidden="true" />}
@@ -185,7 +197,7 @@ export function MetricsSummaryCards({
         value={formatStageDeviation(stageDeviations.technical)}
         detail={formatStageDeviationDetail(stageDeviations.technical)}
         valueClassName={getStageDeviationClassName(stageDeviations.technical)}
-        errorMessage={stageDeviationsError}
+        error={stageDeviationsError}
       />
       <MetricCard
         icon={

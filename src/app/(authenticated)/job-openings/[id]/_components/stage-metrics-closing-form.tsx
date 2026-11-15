@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { CircleAlert } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -12,7 +12,11 @@ import { Button } from "~/components/ui/button";
 import { DatePicker } from "~/components/ui/date-picker";
 import { DialogFooter } from "~/components/ui/dialog";
 import { Skeleton } from "~/components/ui/skeleton";
-import { getStageClosingDateError, getTodayIsoDate } from "~/lib/stage-metrics";
+import {
+  getStageClosingDateError,
+  getStageClosingDateRange,
+  getTodayIsoDate,
+} from "~/lib/stage-metrics";
 import { api } from "~/lib/trpc/react";
 import {
   stageClosingsSchema,
@@ -58,20 +62,23 @@ export function StageMetricsClosingForm({
   const pendingStages = stages.filter((stage) => !stage.closedAt);
   const today = getTodayIsoDate();
 
+  // The stages with the dates entered in this dialog, so each stage is
+  // checked against the others (HR before the technical stage).
+  function withEnteredDates(closings: readonly StageClosing[]) {
+    return stages.map((stage) => ({
+      ...stage,
+      closedAt:
+        stage.closedAt ??
+        closings.find(({ stageKey }) => stageKey === stage.key)?.closedAt,
+    }));
+  }
+
   const formSchema = z
     .object({ closings: stageClosingsSchema })
     .superRefine((values, ctx) => {
       if (!data) return;
 
-      // Validate with the dates entered for the other stages too (HR before
-      // the technical stage).
-      const stagesWithEnteredDates = stages.map((stage) => ({
-        ...stage,
-        closedAt:
-          stage.closedAt ??
-          values.closings.find(({ stageKey }) => stageKey === stage.key)
-            ?.closedAt,
-      }));
+      const stagesWithEnteredDates = withEnteredDates(values.closings);
 
       values.closings.forEach((closing, index) => {
         const message = getStageClosingDateError({
@@ -97,6 +104,10 @@ export function StageMetricsClosingForm({
     defaultValues: { closings: [] },
   });
   const errors = form.formState.errors;
+  // Recomputed as dates are picked: the HR date entered here limits the
+  // technical stage's calendar.
+  const enteredClosings = useWatch({ control: form.control, name: "closings" });
+  const stagesWithEnteredDates = withEnteredDates(enteredClosings ?? []);
 
   useEffect(() => {
     if (!data) return;
@@ -147,13 +158,22 @@ export function StageMetricsClosingForm({
               closingIndex >= 0
                 ? errors.closings?.[closingIndex]?.closedAt?.message
                 : undefined;
+            const closingDateRange = data
+              ? getStageClosingDateRange({
+                  stages: stagesWithEnteredDates,
+                  stageKey: stage.key,
+                  openingDate: data.openingDate,
+                  today,
+                })
+              : undefined;
 
             return (
               <div
                 key={stage.key}
                 className="flex flex-col gap-2 rounded-lg border border-border-default px-3 py-2"
               >
-                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                {/* Fixed vertical order: name, target, closing date. */}
+                <div className="flex flex-col gap-0.5">
                   <p className="text-sm font-medium text-text-primary">
                     {stage.name}
                   </p>
@@ -196,8 +216,8 @@ export function StageMetricsClosingForm({
                           onChange={field.onChange}
                           onBlur={field.onBlur}
                           ref={field.ref}
-                          minValue={data?.openingDate}
-                          maxValue={today}
+                          minValue={closingDateRange?.minValue}
+                          maxValue={closingDateRange?.maxValue}
                           isInvalid={!!closingError}
                           isDisabled={isBusy}
                         />

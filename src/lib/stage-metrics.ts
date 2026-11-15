@@ -91,6 +91,38 @@ export function getStageClosingDateError({
   return undefined;
 }
 
+// Dates the calendar lets you pick for a stage's closing date, following the
+// same rules as getStageClosingDateError (which still runs on submit and on
+// the server): from the opening date or the previous stage's closing date
+// (same day allowed), up to today or the next stage's closing date.
+export function getStageClosingDateRange({
+  stages,
+  stageKey,
+  openingDate,
+  today,
+}: {
+  stages: readonly MetricStageData[];
+  stageKey: string;
+  openingDate: string;
+  today: string;
+}) {
+  const metricStages = getMetricStages(stages);
+  const index = metricStages.findIndex((stage) => stage.key === stageKey);
+  const previousClosedAt =
+    index > 0 ? metricStages[index - 1]?.closedAt : undefined;
+  const nextClosedAt =
+    index >= 0 ? metricStages[index + 1]?.closedAt : undefined;
+
+  return {
+    // ISO dates (yyyy-MM-dd) compare correctly as strings.
+    minValue:
+      previousClosedAt && previousClosedAt > openingDate
+        ? previousClosedAt
+        : openingDate,
+    maxValue: nextClosedAt && nextClosedAt < today ? nextClosedAt : today,
+  };
+}
+
 // A closed metric stage does not accept candidates until it is reopened.
 export function getClosedStageError(
   stage: { name: string; closedAt?: string | null } | undefined,
