@@ -6,6 +6,11 @@ import { useState, useTransition } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { api } from "~/lib/trpc/react";
+import {
+  applicantLinkedinSchema,
+  careerYearSchema,
+  validateCareerYears,
+} from "~/lib/validations/applicant";
 import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 
 import { Button } from "~/components/ui/button";
@@ -70,22 +75,19 @@ export const applicantFormSchema = z
       )
       .optional(),
 
-    linkedin: z
-      .string()
-      .url("Debe ingresar una URL válida")
-      .refine(
-        (url) => url.includes("linkedin.com"),
-        "Debe ingresar una URL de LinkedIn válida",
-      )
-      .optional()
-      .or(z.literal("")),
+    linkedin: applicantLinkedinSchema.optional(),
 
     role: z.string().min(1, "El rol es obligatorio"),
     jobOpening: z.string(),
     seniority: z.string(),
     area: z.string(),
 
-    desiredSalary: z.number().positive().optional().or(z.literal("")),
+    desiredSalary: z
+      .number({ error: "Ingresá un salario válido" })
+      .positive("El salario debe ser mayor a 0")
+      .max(1_000_000_000, "El salario es demasiado alto")
+      .optional()
+      .or(z.literal("")),
     currency: z.union([z.enum(SalaryCurrency), z.literal("")]),
 
     availability: z.string(),
@@ -128,10 +130,12 @@ export const applicantFormSchema = z
     academicInstitution: z.string(),
 
     title: z.string(),
-    careerStartYear: z.number().optional(),
-    careerEndYear: z.number().optional(),
+    careerStartYear: careerYearSchema.optional(),
+    careerEndYear: careerYearSchema.optional(),
   })
   .superRefine((data, ctx) => {
+    validateCareerYears(data, ctx);
+
     if (data.desiredSalary !== undefined && !data.currency) {
       ctx.addIssue({
         code: "custom",
@@ -296,9 +300,7 @@ export default function NewApplicantForm() {
       tagIds: data.tags,
 
       jobOpeningId: data.jobOpening || undefined,
-      desiredSalary: data.desiredSalary
-        ? String(data.desiredSalary)
-        : undefined,
+      desiredSalary: data.desiredSalary || undefined,
       currency: data.currency || undefined,
       availability: data.availability,
     });

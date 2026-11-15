@@ -2,6 +2,10 @@
 
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { api } from "~/lib/trpc/react";
+import {
+  applicantLinkedinSchema,
+  validateCareerYears,
+} from "~/lib/validations/applicant";
 import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 import { useParams } from "next/navigation";
 
@@ -42,15 +46,7 @@ export const applicantFormSchema = z.object({
     )
     .optional(),
 
-  linkedin: z
-    .string()
-    .url("Debe ingresar una URL válida")
-    .refine(
-      (url) => url.includes("linkedin.com"),
-      "Debe ingresar una URL de LinkedIn válida",
-    )
-    .optional()
-    .or(z.literal("")),
+  linkedin: applicantLinkedinSchema.optional(),
 
   role: z.string().min(1, "El rol es obligatorio"),
 
@@ -88,6 +84,8 @@ export const applicantFormSchema = z.object({
   title: z.string(),
   careerStartYear: z.number().int().min(1900).max(2100).nullable().optional(),
   careerEndYear: z.number().int().min(1900).max(2100).nullable().optional(),
+}).superRefine((data, ctx) => {
+  validateCareerYears(data, ctx);
 });
 
 export type ApplicantFormValues = z.infer<typeof applicantFormSchema>;

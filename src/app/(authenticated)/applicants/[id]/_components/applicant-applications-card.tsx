@@ -217,7 +217,10 @@ export function ApplicantApplicationsCard({
             : "—",
         },
         { label: "Salario pretendido", value: desiredSalary || "—" },
-        { label: "Disponibilidad", value: app.availability || "Inmediata" },
+        {
+          label: "Disponibilidad",
+          value: app.availability?.trim() || "—",
+        },
       ]
     : [];
 
