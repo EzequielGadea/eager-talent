@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "use-debounce";
 
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import {
   Command,
   CommandEmpty,
@@ -195,9 +196,14 @@ export function GlobalSearch() {
                       onSelect={() => goToApplicant(applicant.id)}
                       title={applicant.name}
                       icon={
-                        <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-tag-amber-bg text-xs font-semibold text-tag-amber-fg">
-                          {applicant.initials}
-                        </div>
+                        <Avatar className="size-9">
+                          {applicant.photo && (
+                            <AvatarImage src={applicant.photo} alt="" />
+                          )}
+                          <AvatarFallback className="bg-tag-amber-bg text-xs font-semibold text-tag-amber-fg">
+                            {applicant.initials}
+                          </AvatarFallback>
+                        </Avatar>
                       }
                       meta={[
                         { text: applicant.role },
