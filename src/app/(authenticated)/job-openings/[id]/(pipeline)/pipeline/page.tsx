@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { toIsoDate } from "~/lib/stage-metrics";
 import { api } from "~/lib/trpc/server";
 import JobOpeningNotFound from "~/app/(authenticated)/job-openings/[id]/not-found";
 
@@ -85,7 +86,7 @@ async function PipelineContent({ params, searchParams }: PipelinePageProps) {
       />
 
       <JobOpeningTabs jobOpeningId={jobOpening.id} />
-      
+
       <Suspense fallback={<PipelineSkeleton />}>
         <Pipeline
           jobOpeningId={jobOpening.id}
@@ -93,8 +94,14 @@ async function PipelineContent({ params, searchParams }: PipelinePageProps) {
           stages={stages}
           search={search}
           isJobOpeningOpen={jobOpening.status === JobOpeningStatus.Open}
+          openingDate={toIsoDate(jobOpening.openingDate)}
+          canManageStageClosures={
+            canUpdateJobOpening.success &&
+            jobOpening.status !== "Closed" &&
+            jobOpening.status !== "Cancelled"
+          }
         />
       </Suspense>
-          </main>
+    </main>
   );
 }

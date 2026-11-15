@@ -5,6 +5,8 @@ import { z } from "zod";
 
 import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { getClosedStageError } from "~/lib/stage-metrics";
+import { assertStageAcceptsCandidates } from "~/server/api/routers/job-opening/stage-metrics-utils";
 import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -108,11 +110,25 @@ export const moveApplicationToStage = protectedProcedure
       return application;
     }
 
+    const closedStageError = getClosedStageError(targetStage);
+
+    if (closedStageError) {
+      throw new TRPCError({ code: "CONFLICT", message: closedStageError });
+    }
+
     const fromStageId = application.currentStageId;
     const fromStageName =
       stages.find((stage) => stage.key === fromStageId)?.name ?? fromStageId;
 
     return ctx.db.$transaction(async (tx) => {
+      // Checked again with the job opening locked: the stage may have been
+      // closed after the check above.
+      await assertStageAcceptsCandidates(
+        tx,
+        input.jobOpeningId,
+        targetStage.key,
+      );
+
       // Conditional update: only succeeds if the application is still active
       // and still in the stage we read, so the activity logs the real change.
       const { count } = await tx.application.updateMany({

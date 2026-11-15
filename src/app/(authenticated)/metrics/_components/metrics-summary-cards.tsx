@@ -9,6 +9,7 @@ import {
 
 import { Card, CardContent } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
+import { cn } from "~/lib/utils";
 
 type TimeMetrics = {
   averageClosingDays: number | null;
@@ -17,6 +18,16 @@ type TimeMetrics = {
   onTimeCount: number;
   totalClosed: number;
   totalConsidered: number;
+};
+
+type StageDeviation = {
+  averageDeviationDays: number | null;
+  count: number;
+};
+
+type StageDeviations = {
+  hr: StageDeviation;
+  technical: StageDeviation;
 };
 
 function formatDays(value: number) {
@@ -34,12 +45,17 @@ function MetricCard({
   value,
   detail,
   highlighted = false,
+  valueClassName = "text-text-primary",
+  errorMessage,
 }: {
   icon: ReactNode;
   label: string;
   value: string | null;
   detail?: string;
   highlighted?: boolean;
+  valueClassName?: string;
+  // Shown instead of the value when its data could not be loaded.
+  errorMessage?: string;
 }) {
   return (
     <Card
@@ -52,14 +68,18 @@ function MetricCard({
       <CardContent className="flex min-h-40 flex-col justify-center gap-2">
         <div className="text-text-secondary">{icon}</div>
         <p className="text-sm font-medium text-text-secondary">{label}</p>
-        {value === null ? (
+        {errorMessage ? (
+          <p role="alert" className="text-sm text-danger">
+            {errorMessage}
+          </p>
+        ) : value === null ? (
           <p className="text-sm text-text-tertiary">
             No hay datos para este filtro
           </p>
         ) : (
-          <p className="text-h2 text-text-primary tabular-nums">{value}</p>
+          <p className={cn("text-h2 tabular-nums", valueClassName)}>{value}</p>
         )}
-        {detail ? (
+        {detail && !errorMessage ? (
           <p className="text-sm text-text-secondary">{detail}</p>
         ) : null}
       </CardContent>
@@ -67,32 +87,46 @@ function MetricCard({
   );
 }
 
-function PendingMetricCard({
-  icon,
-  label,
-}: {
-  icon: ReactNode;
-  label: string;
-}) {
-  return (
-    <Card aria-label={`${label}: próximamente`}>
-      <CardContent className="flex min-h-40 flex-col justify-center gap-2">
-        <div className="text-text-tertiary">{icon}</div>
-        <p className="text-sm font-medium text-text-secondary">{label}</p>
-        <Skeleton className="h-8 w-24" />
-        <p className="text-xs font-medium text-text-tertiary">Próximamente</p>
-      </CardContent>
-    </Card>
-  );
+// Same colors as the job opening deviations chart: late in red, on time in green.
+function getStageDeviationClassName(deviation: StageDeviation) {
+  if (deviation.averageDeviationDays === null) return undefined;
+
+  return deviation.averageDeviationDays > 0
+    ? "text-danger"
+    : "text-accent-green-strong";
+}
+
+function formatStageDeviation(deviation: StageDeviation) {
+  return deviation.averageDeviationDays === null
+    ? null
+    : formatSignedDays(deviation.averageDeviationDays);
+}
+
+function formatStageDeviationDetail(deviation: StageDeviation) {
+  if (deviation.count === 0) return undefined;
+
+  return `Promedio de ${deviation.count} ${
+    deviation.count === 1 ? "vacante" : "vacantes"
+  }`;
 }
 
 export function MetricsSummaryCards({
   metrics,
+  stageDeviations,
+  stageDeviationsFailed,
   isPending,
 }: {
   metrics: TimeMetrics;
+  stageDeviations: StageDeviations;
+  // The stage deviations of the current filter could not be loaded, so the
+  // values at hand belong to another filter and must not be shown.
+  stageDeviationsFailed: boolean;
   isPending: boolean;
 }) {
+  const stageDeviationsError = stageDeviationsFailed
+    ? "No se pudo cargar esta métrica. Recargá la página para intentar de nuevo."
+    : undefined;
+
   if (isPending) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
@@ -137,13 +171,21 @@ export function MetricsSummaryCards({
             : formatSignedDays(metrics.averageDeviationDays)
         }
       />
-      <PendingMetricCard
+      <MetricCard
         icon={<UserRound className="size-5" aria-hidden="true" />}
         label="Desvío desde HR"
+        value={formatStageDeviation(stageDeviations.hr)}
+        detail={formatStageDeviationDetail(stageDeviations.hr)}
+        valueClassName={getStageDeviationClassName(stageDeviations.hr)}
+        errorMessage={stageDeviationsError}
       />
-      <PendingMetricCard
+      <MetricCard
         icon={<CodeXml className="size-5" aria-hidden="true" />}
         label="Desvío resp. técnica"
+        value={formatStageDeviation(stageDeviations.technical)}
+        detail={formatStageDeviationDetail(stageDeviations.technical)}
+        valueClassName={getStageDeviationClassName(stageDeviations.technical)}
+        errorMessage={stageDeviationsError}
       />
       <MetricCard
         icon={
