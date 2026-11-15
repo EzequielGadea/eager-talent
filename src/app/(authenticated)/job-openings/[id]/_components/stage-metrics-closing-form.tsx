@@ -153,11 +153,11 @@ export function StageMetricsClosingForm({
                 key={stage.key}
                 className="flex flex-col gap-2 rounded-lg border border-border-default px-3 py-2"
               >
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="truncate text-sm font-medium text-text-primary">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                  <p className="text-sm font-medium text-text-primary">
                     {stage.name}
                   </p>
-                  <p className="shrink-0 text-xs text-text-secondary">
+                  <p className="text-xs text-text-secondary">
                     Objetivo:{" "}
                     {stage.targetDays
                       ? `${formatDays(stage.targetDays)} desde la apertura`
