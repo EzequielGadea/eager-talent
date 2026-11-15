@@ -163,6 +163,7 @@ export function PipelineDndProvider({
   return (
     <PipelineMovesContext.Provider value={{ moves, clearMove }}>
       <DndContext
+        id={`pipeline-${jobOpeningId}`}
         sensors={sensors}
         modifiers={dragModifiers}
         collisionDetection={closestCenter}

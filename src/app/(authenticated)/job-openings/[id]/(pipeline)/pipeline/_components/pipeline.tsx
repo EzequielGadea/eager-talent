@@ -7,7 +7,7 @@ import { PipelineHorizontalScroll } from "../../_components/pipeline-horizontal-
 import { PipelineColumn } from "./pipeline-column";
 import { PipelineColumnSkeleton } from "./pipeline-column-skeleton";
 import type { PipelineStage } from "./types";
-import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
+import { PipelineDndProvider } from "./pipeline-dnd-provider";
 
 type PipelineProps = {
   jobOpeningId: string;
@@ -56,7 +56,7 @@ export async function Pipeline({
 
   return (
     <PipelineHorizontalScroll>
-      <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
+      <PipelineDndProvider jobOpeningId={jobOpeningId}>
         <div
           data-pipeline-board
           className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row"
@@ -82,7 +82,7 @@ export async function Pipeline({
             </Suspense>
           ))}
         </div>
-      </PipelineDndProviderClient>
+      </PipelineDndProvider>
     </PipelineHorizontalScroll>
   );
 }
