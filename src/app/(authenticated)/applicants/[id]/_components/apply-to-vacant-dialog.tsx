@@ -32,6 +32,10 @@ import { z } from "zod";
 import { api } from "~/lib/trpc/react";
 import { SalaryCurrency } from "~/generated/prisma/enums";
 import { salaryCurrencyTranslations } from "~/lib/enum-translations";
+import {
+  getDesiredSalaryIssues,
+  toDesiredSalaryAmount,
+} from "~/lib/validations/desired-salary";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
@@ -42,13 +46,7 @@ const applicationFormSchema = z
   .object({
     applicantId: z.string({ error: "Debe indicar a quién postula" }),
     jobOpeningId: z.string({ error: "Debe indicar la vacante" }),
-    desiredSalary: z.preprocess(
-      (value) => (value === "" ? undefined : value),
-      z.coerce
-        .number({ error: "Debe indicar un salario válido." })
-        .positive("El salario debe ser mayor a 0.")
-        .optional(),
-    ),
+    desiredSalary: z.string().optional(),
     currency: z
       .enum(SalaryCurrency, { error: "Debe elegir una moneda." })
       .optional(),
@@ -62,22 +60,19 @@ const applicationFormSchema = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.desiredSalary !== undefined && data.currency === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["currency"],
-        message: "Debe elegir una moneda si ingresa salario.",
-      });
+    for (const issue of getDesiredSalaryIssues(data, {
+      invalid: "Debe indicar un salario válido.",
+      notPositive: "El salario debe ser mayor a 0.",
+      currencyRequired: "Debe elegir una moneda si ingresa salario.",
+      salaryRequired: "Debe indicar el salario deseado si ingresa moneda.",
+    })) {
+      ctx.addIssue({ code: "custom", ...issue, path: [issue.path] });
     }
-
-    if (data.currency !== undefined && data.desiredSalary === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["desiredSalary"],
-        message: "Debe indicar el salario deseado si ingresa moneda.",
-      });
-    }
-  });
+  })
+  .transform((data) => ({
+    ...data,
+    desiredSalary: toDesiredSalaryAmount(data.desiredSalary),
+  }));
 
 export function ApplyToVacantDialog({
   showDialog,
@@ -309,18 +304,16 @@ export function ApplyToVacantDialog({
                       <div className="grid gap-1">
                         <Input
                           id="apply-desired-salary"
-                          type="number"
-                          step="0.01"
+                          type="text"
+                          inputMode="decimal"
+                          autoComplete="off"
                           placeholder="Ej. 3500"
                           disabled={!isJobOpeningSelected}
-                          min={0}
                           aria-invalid={
                             fieldState.invalid && !!isJobOpeningSelected
                           }
                           {...field}
-                          value={
-                            (field.value as string | number | undefined) ?? ""
-                          }
+                          value={field.value ?? ""}
                         />
 
                         {fieldState.invalid && isJobOpeningSelected && (

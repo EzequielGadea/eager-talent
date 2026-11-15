@@ -57,7 +57,7 @@ export const getInterviewByIdProcedure = protectedProcedure
           },
         },
         interviewers: {
-          select: { id: true, name: true, lastName: true },
+          select: { id: true, name: true, lastName: true, image: true },
           orderBy: { name: "asc" },
         },
         assignments: {

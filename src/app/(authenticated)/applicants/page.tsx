@@ -96,6 +96,10 @@ async function ProtectedApplicantsPage(props: {
 
   const searchParams = props.searchParams ?? Promise.resolve({});
 
+  // Keying the list boundaries by the query forces their fallback to show again
+  // when filters or pagination change, instead of freezing the previous result.
+  const listKey = JSON.stringify(await searchParams);
+
   const normalized = searchParams.then((rawParams) => {
     const params = applicantsSearchParamsSchema.parse(rawParams);
 
@@ -186,6 +190,7 @@ async function ProtectedApplicantsPage(props: {
       </div>
 
       <Suspense
+        key={`list-${listKey}`}
         fallback={
           <div className="w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
             <ApplicantCardListFallback />
@@ -222,6 +227,7 @@ async function ProtectedApplicantsPage(props: {
 
       {isHiringManagerView && sharedData && (
         <Suspense
+          key={`shared-${listKey}`}
           fallback={
             <div className="mt-4 w-full overflow-hidden rounded-xl border border-border-default bg-surface-card shadow-sm">
               <ApplicantCardListFallback />

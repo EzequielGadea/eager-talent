@@ -39,6 +39,7 @@ export const listInterviewers = protectedProcedure.query(async ({ ctx }) => {
           id: true,
           name: true,
           lastName: true,
+          image: true,
         },
       },
     },

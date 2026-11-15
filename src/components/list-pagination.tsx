@@ -9,6 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "~/components/ui/pagination";
+import { getPaginationEntries } from "~/lib/pagination";
 
 const controlClassName =
   "h-7.5 w-7.5 rounded-lg border border-border-default bg-surface-card p-0 text-text-secondary shadow-none hover:bg-surface-sunken hover:text-text-primary";
@@ -31,9 +32,7 @@ export function ListPagination(props: {
   const startItem =
     props.totalItems === 0 ? 0 : (currentPage - 1) * props.pageSize + 1;
   const endItem = Math.min(currentPage * props.pageSize, props.totalItems);
-  const start = Math.max(1, currentPage - 2);
-  const end = Math.min(totalPages, currentPage + 2);
-  const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  const entries = getPaginationEntries(currentPage, totalPages);
 
   return (
     <div className="flex flex-col items-center gap-3 border-t border-border-default px-4 py-3 sm:flex-row sm:justify-between">
@@ -59,38 +58,21 @@ export function ListPagination(props: {
             />
           </PaginationItem>
 
-          {currentPage >= 4 && (
-            <>
-              <PageLink page={1} onSelect={goToPage} />
-              <PaginationEllipsis className="h-7.5 w-7.5 text-text-secondary" />
-            </>
-          )}
-
-          {pages.map((page) => (
-            <PaginationItem
-              key={page}
-              // On small screens only the current page ±1 and the edges fit.
-              className={
-                Math.abs(page - currentPage) > 1 &&
-                page !== 1 &&
-                page !== totalPages
-                  ? "max-sm:hidden"
-                  : undefined
-              }
-            >
-              <PageLinkButton
-                page={page}
-                isActive={page === currentPage}
-                onSelect={goToPage}
+          {entries.map((entry, index) =>
+            entry === "ellipsis" ? (
+              <PaginationEllipsis
+                key={`ellipsis-${index}`}
+                className="h-7.5 w-7.5 text-text-secondary"
               />
-            </PaginationItem>
-          ))}
-
-          {currentPage <= totalPages - 3 && (
-            <>
-              <PaginationEllipsis className="h-7.5 w-7.5 text-text-secondary" />
-              <PageLink page={totalPages} onSelect={goToPage} />
-            </>
+            ) : (
+              <PaginationItem key={entry}>
+                <PageLinkButton
+                  page={entry}
+                  isActive={entry === currentPage}
+                  onSelect={goToPage}
+                />
+              </PaginationItem>
+            ),
           )}
 
           <PaginationItem>
@@ -110,18 +92,6 @@ export function ListPagination(props: {
         </PaginationContent>
       </Pagination>
     </div>
-  );
-}
-
-function PageLink(props: { page: number; onSelect: (page: number) => void }) {
-  return (
-    <PaginationItem>
-      <PageLinkButton
-        page={props.page}
-        isActive={false}
-        onSelect={props.onSelect}
-      />
-    </PaginationItem>
   );
 }
 

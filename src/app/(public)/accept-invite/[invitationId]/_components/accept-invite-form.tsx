@@ -151,7 +151,11 @@ export function AcceptInviteForm({
       }
     }
 
-    router.push("/");
+    const isHiringManager = (accepted?.member?.role ?? "")
+      .split(",")
+      .some((role) => role.trim() === "hiringManager");
+
+    router.push(isHiringManager ? "/job-openings" : "/dashboard");
     router.refresh();
   }
 
