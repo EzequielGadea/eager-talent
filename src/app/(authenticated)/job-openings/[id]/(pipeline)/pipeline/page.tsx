@@ -11,6 +11,7 @@ import { JobOpeningHeader } from "../_components/job-opening-header";
 import { JobOpeningLayoutSkeleton } from "../_components/job-opening-layout-skeleton";
 import { JobOpeningTabs } from "../_components/job-opening-tabs";
 import { Pipeline } from "./_components/pipeline";
+import { PipelineSkeleton } from "./_components/pipeline-skeleton";
 import type { PipelineStage } from "./_components/types";
 
 type PipelinePageProps = {
@@ -84,14 +85,16 @@ async function PipelineContent({ params, searchParams }: PipelinePageProps) {
       />
 
       <JobOpeningTabs jobOpeningId={jobOpening.id} />
-
-      <Pipeline
-        jobOpeningId={jobOpening.id}
-        jobOpeningName={jobOpening.name}
-        stages={stages}
-        search={search}
-        isJobOpeningOpen={jobOpening.status === JobOpeningStatus.Open}
-      />
-    </main>
+      
+      <Suspense fallback={<PipelineSkeleton />}>
+        <Pipeline
+          jobOpeningId={jobOpening.id}
+          jobOpeningName={jobOpening.name}
+          stages={stages}
+          search={search}
+          isJobOpeningOpen={jobOpening.status === JobOpeningStatus.Open}
+        />
+      </Suspense>
+          </main>
   );
 }
