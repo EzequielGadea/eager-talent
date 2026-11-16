@@ -40,6 +40,7 @@ export async function ApplicantAwaiterHeader(props: {
   promiseCountOpenings: ReturnType<typeof api.jobOpening.getAllJobOpenings>;
   promiseSharedData: SharedApplicantsPromise | null;
   isHiringManagerView: boolean;
+  canExportNotes: boolean;
 }) {
   const countApplicants = await props.promiseCountApplicants;
   const countOpenings = (await props.promiseCountOpenings)?.length;
@@ -54,6 +55,7 @@ export async function ApplicantAwaiterHeader(props: {
       countOpenings={countOpenings}
       countSharedApplicants={countSharedApplicants}
       isHiringManagerView={props.isHiringManagerView}
+      canExportNotes={props.canExportNotes}
     />
   );
 }

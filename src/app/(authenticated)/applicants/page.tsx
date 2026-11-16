@@ -83,6 +83,31 @@ async function ProtectedApplicantsPage(props: {
     },
   });
 
+  const [
+    canReadApplicantNotesResult,
+    canReadAssignedApplicantNotesResult,
+    canReadInterviewNotesResult,
+    canReadAssignedInterviewNotesResult,
+  ] =
+    await Promise.all([
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { applicantNote: ["read"] } },
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { applicantNote: ["readAssigned"] } },
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { interviewNote: ["read"] } },
+      }),
+      auth.api.hasPermission({
+        headers: requestHeaders,
+        body: { permissions: { interviewNote: ["readAssigned"] } },
+      }),
+    ]);
+
   if (!canReadAllResult.success && !canReadAssignedResult.success) {
     return (
       <AccessDenied
@@ -168,6 +193,12 @@ async function ProtectedApplicantsPage(props: {
           promiseCountOpenings={jobOpeningData}
           promiseSharedData={sharedData}
           isHiringManagerView={isHiringManagerView}
+          canExportNotes={
+            canReadApplicantNotesResult.success ||
+            canReadAssignedApplicantNotesResult.success ||
+            canReadInterviewNotesResult.success ||
+            canReadAssignedInterviewNotesResult.success
+          }
         />
       </Suspense>
 

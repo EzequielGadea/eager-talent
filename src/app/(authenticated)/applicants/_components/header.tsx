@@ -29,6 +29,7 @@ export function Header(props: {
   countOpenings: number;
   countSharedApplicants: number;
   isHiringManagerView: boolean;
+  canExportNotes: boolean;
 }) {
   const router = useRouter();
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
