@@ -2,7 +2,9 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import { TRPCError } from "@trpc/server";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { toIsoDate } from "~/lib/stage-metrics";
 import { api } from "~/lib/trpc/server";
 import JobOpeningNotFound from "~/app/(authenticated)/job-openings/[id]/not-found";
 
@@ -10,6 +12,7 @@ import { JobOpeningHeader } from "../_components/job-opening-header";
 import { JobOpeningLayoutSkeleton } from "../_components/job-opening-layout-skeleton";
 import { JobOpeningTabs } from "../_components/job-opening-tabs";
 import { Pipeline } from "./_components/pipeline";
+import { PipelineSkeleton } from "./_components/pipeline-skeleton";
 import type { PipelineStage } from "./_components/types";
 
 type PipelinePageProps = {
@@ -77,18 +80,28 @@ async function PipelineContent({ params, searchParams }: PipelinePageProps) {
         status={jobOpening.status}
         areaName={jobOpening.area.name}
         openingDate={jobOpening.openingDate}
+        hasApplications={jobOpening.hasApplications}
         canCreateApplication={canCreateApplication.success}
         canUpdateJobOpening={canUpdateJobOpening.success}
       />
 
       <JobOpeningTabs jobOpeningId={jobOpening.id} />
 
-      <Pipeline
-        jobOpeningId={jobOpening.id}
-        jobOpeningName={jobOpening.name}
-        stages={stages}
-        search={search}
-      />
+      <Suspense fallback={<PipelineSkeleton />}>
+        <Pipeline
+          jobOpeningId={jobOpening.id}
+          jobOpeningName={jobOpening.name}
+          stages={stages}
+          search={search}
+          isJobOpeningOpen={jobOpening.status === JobOpeningStatus.Open}
+          openingDate={toIsoDate(jobOpening.openingDate)}
+          canManageStageClosures={
+            canUpdateJobOpening.success &&
+            jobOpening.status !== "Closed" &&
+            jobOpening.status !== "Cancelled"
+          }
+        />
+      </Suspense>
     </main>
   );
 }

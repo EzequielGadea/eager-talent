@@ -3,7 +3,10 @@ import { headers } from "next/headers";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { getClosedStageError } from "~/lib/stage-metrics";
+import { assertStageAcceptsCandidates } from "~/server/api/routers/job-opening/stage-metrics-utils";
 import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -54,6 +57,7 @@ export const advanceApplicationStage = protectedProcedure
         },
         select: {
           id: true,
+          status: true,
           stages: true,
         },
       }),
@@ -77,6 +81,14 @@ export const advanceApplicationStage = protectedProcedure
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Job opening not found",
+      });
+    }
+
+    if (jobOpening.status !== JobOpeningStatus.Open) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "No se puede modificar el pipeline de una vacante que no está abierta",
       });
     }
 
@@ -110,7 +122,17 @@ export const advanceApplicationStage = protectedProcedure
       });
     }
 
+    const closedStageError = getClosedStageError(nextStage);
+
+    if (closedStageError) {
+      throw new TRPCError({ code: "CONFLICT", message: closedStageError });
+    }
+
     return ctx.db.$transaction(async (tx) => {
+      // Checked again with the job opening locked: the stage may have been
+      // closed after the check above.
+      await assertStageAcceptsCandidates(tx, input.jobOpeningId, nextStage.key);
+
       // Conditional update: only succeeds if the application is still active
       // and still in the stage we read, so the activity logs the real change.
       const { count } = await tx.application.updateMany({
@@ -119,6 +141,9 @@ export const advanceApplicationStage = protectedProcedure
           jobOpeningId: input.jobOpeningId,
           currentStageId: input.currentStageId,
           active: true,
+          jobOpening: {
+            status: JobOpeningStatus.Open,
+          },
         },
         data: {
           currentStageId: nextStage.key,

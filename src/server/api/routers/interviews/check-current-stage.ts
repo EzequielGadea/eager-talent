@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -36,6 +37,11 @@ export const checkInterviewCurrentStageProcedure = protectedProcedure
             jobOpeningId: true,
             active: true,
             currentStageId: true,
+            jobOpening: {
+              select: {
+                status: true,
+              },
+            },
           },
         },
       },
@@ -51,6 +57,7 @@ export const checkInterviewCurrentStageProcedure = protectedProcedure
     const application = interview.application;
     const isCurrentStage =
       application?.active === true &&
+      application.jobOpening.status === JobOpeningStatus.Open &&
       interview.stageId !== null &&
       interview.stageId === application.currentStageId;
 

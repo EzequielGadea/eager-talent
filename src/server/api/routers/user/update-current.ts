@@ -1,15 +1,11 @@
-import { z } from "zod";
-
 import { protectedProcedure } from "~/server/api/trpc";
 import { profileSchema } from "~/lib/validations/profile";
+import { uploadthingUrlSchema } from "~/lib/validations/uploadthing-url";
 
 export const updateCurrent = protectedProcedure
   .input(
     profileSchema.extend({
-      image: z
-        .httpUrl("La imagen debe ser una URL válida.")
-        .nullable()
-        .optional(),
+      image: uploadthingUrlSchema.nullable().optional(),
     }),
   )
   .mutation(({ ctx, input }) =>

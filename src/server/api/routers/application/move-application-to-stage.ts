@@ -3,7 +3,10 @@ import { headers } from "next/headers";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { getClosedStageError } from "~/lib/stage-metrics";
+import { assertStageAcceptsCandidates } from "~/server/api/routers/job-opening/stage-metrics-utils";
 import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
 
@@ -28,7 +31,7 @@ export const moveApplicationToStage = protectedProcedure
     if (!permission.success) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "User does not have application:update permission",
+        message: "No tenés permiso para mover postulaciones.",
       });
     }
 
@@ -55,6 +58,7 @@ export const moveApplicationToStage = protectedProcedure
         },
         select: {
           id: true,
+          status: true,
           stages: true,
         },
       }),
@@ -63,21 +67,29 @@ export const moveApplicationToStage = protectedProcedure
     if (!application) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Application not found",
+        message: "No se encontró la postulación.",
       });
     }
 
     if (!application.active) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Application is not active",
+        message: "Esta postulación ya no está activa y no se puede mover.",
       });
     }
 
     if (!jobOpening) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Job opening not found",
+        message: "No se encontró la vacante.",
+      });
+    }
+
+    if (jobOpening.status !== JobOpeningStatus.Open) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "No se puede modificar el pipeline de una vacante que no está abierta",
       });
     }
 
@@ -90,7 +102,7 @@ export const moveApplicationToStage = protectedProcedure
     if (!targetStage) {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Target stage was not found",
+        message: "No se encontró la etapa de destino.",
       });
     }
 
@@ -98,11 +110,25 @@ export const moveApplicationToStage = protectedProcedure
       return application;
     }
 
+    const closedStageError = getClosedStageError(targetStage);
+
+    if (closedStageError) {
+      throw new TRPCError({ code: "CONFLICT", message: closedStageError });
+    }
+
     const fromStageId = application.currentStageId;
     const fromStageName =
       stages.find((stage) => stage.key === fromStageId)?.name ?? fromStageId;
 
     return ctx.db.$transaction(async (tx) => {
+      // Checked again with the job opening locked: the stage may have been
+      // closed after the check above.
+      await assertStageAcceptsCandidates(
+        tx,
+        input.jobOpeningId,
+        targetStage.key,
+      );
+
       // Conditional update: only succeeds if the application is still active
       // and still in the stage we read, so the activity logs the real change.
       const { count } = await tx.application.updateMany({
@@ -111,6 +137,9 @@ export const moveApplicationToStage = protectedProcedure
           jobOpeningId: input.jobOpeningId,
           currentStageId: fromStageId,
           active: true,
+          jobOpening: {
+            status: JobOpeningStatus.Open,
+          },
         },
         data: {
           currentStageId: targetStage.key,
@@ -121,7 +150,7 @@ export const moveApplicationToStage = protectedProcedure
       if (count !== 1) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Application stage has changed",
+          message: "La etapa de la postulación cambió. Intentá nuevamente.",
         });
       }
 

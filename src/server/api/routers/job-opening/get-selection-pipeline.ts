@@ -39,25 +39,47 @@ export const getSelectionPipeline = protectedProcedure.query(
       },
     });
 
+    if (jobOpenings.length === 0) {
+      return [];
+    }
+
+    // Las etapas y colores del pipeline del dashboard salen del flujo por defecto.
+    const defaultTemplate = await ctx.db.stageTemplate.findFirst({
+      where: { deletedAt: null },
+      select: { stages: true },
+    });
+    const defaultStages = defaultTemplate
+      ? parseStages(defaultTemplate.stages)
+      : [];
     const stagesByName = new Map<
       string,
       { name: string; color: string; count: number }
-    >();
+    >(
+      defaultStages.map((stage) => [
+        normalizeStageName(stage.name),
+        {
+          name: stage.name,
+          color: stage.color,
+          count: 0,
+        },
+      ]),
+    );
 
     for (const jobOpening of jobOpenings) {
-      const stages = parseStages(jobOpening.stages).filter((stage) =>
-        isRequiredStageName(stage.name),
-      );
+      const stages = parseStages(jobOpening.stages);
       const stageById = new Map(stages.map((stage) => [stage.key, stage]));
 
-      for (const stage of stages) {
-        const key = normalizeStageName(stage.name);
-        if (!stagesByName.has(key)) {
-          stagesByName.set(key, {
-            name: stage.name,
-            color: stage.color,
-            count: 0,
-          });
+      if (defaultStages.length === 0) {
+        for (const stage of stages) {
+          if (!isRequiredStageName(stage.name)) continue;
+          const key = normalizeStageName(stage.name);
+          if (!stagesByName.has(key)) {
+            stagesByName.set(key, {
+              name: stage.name,
+              color: stage.color,
+              count: 0,
+            });
+          }
         }
       }
 

@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 import { TRPCError } from "@trpc/server";
 
+import { getMetricStages } from "~/lib/stage-metrics";
 import {
   jobOpeningStageTypeSchema,
+  parseStages,
   PERSISTED_TO_FORM_STAGE_TYPE,
   persistedStageTypeSchema,
   type JobOpeningStageType,
@@ -151,12 +153,19 @@ export async function EditJobOpeningContent({
     hiringManagerIds: jobOpening.hiringManagers.map(
       (hiringManager) => hiringManager.id,
     ),
+    // A missing target shows as an empty, required field.
+    stageTargets: getMetricStages(parseStages(jobOpening.stages)).map(
+      (stage) => ({
+        stageKey: stage.key,
+        targetDays: stage.targetDays ?? Number.NaN,
+      }),
+    ),
   };
 
   return (
     <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5">
       <header>
-        <h1 className="font-heading text-h1 text-text-primary">
+        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
           Editar vacante
         </h1>
       </header>
@@ -165,6 +174,10 @@ export async function EditJobOpeningContent({
         <JobOpeningDetailsCard
           areaOptions={areas}
           seniorityOptions={seniorities}
+          canSetDraft={
+            jobOpening.status === "Draft" ||
+            (!jobOpening.hasApplications && jobOpening.openingDate > new Date())
+          }
         />
 
         <JobOpeningDatesCard />

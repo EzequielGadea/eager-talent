@@ -5,7 +5,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import Image from "next/image";
 import type { Dispatch, SetStateAction } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
@@ -30,6 +30,8 @@ import { paises as countries } from "~/lib/countries";
 
 import type { ApplicantFormValues } from "./new-applicant-form";
 
+const MAX_PHOTO_SIZE = 4_000_000;
+
 type PersonalDataProps = {
   photoPreview?: string;
   setPhotoPreview: Dispatch<SetStateAction<string | undefined>>;
@@ -43,8 +45,14 @@ export default function PersonalData({
     register,
     control,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useFormContext<ApplicantFormValues>();
+
+  // Local error state: react-hook-form can wipe errors set with setError
+  // when it revalidates, so the size error lives outside of it.
+  const [photoSizeError, setPhotoSizeError] = useState<string>();
+  const photoError = photoSizeError ?? errors.photo?.message;
 
   useEffect(() => {
     return () => {
@@ -57,6 +65,8 @@ export default function PersonalData({
   const photoField = register("photo");
 
   function handleRemovePhoto() {
+    setPhotoSizeError(undefined);
+
     setValue("photo", undefined, {
       shouldDirty: true,
       shouldValidate: true,
@@ -80,19 +90,33 @@ export default function PersonalData({
             <input
               id="photo"
               type="file"
-              accept=".jpg,.jpeg,.png"
+              accept=".jpg,.jpeg,.png,.webp,.gif"
               className="hidden"
               {...photoField}
               onChange={(event) => {
-                photoField.onChange(event);
+                // Discard any previous error when a new file is picked: both
+                // the local one and the one the server left in react-hook-form.
+                setPhotoSizeError(undefined);
+                clearErrors("photo");
 
                 const file = event.target.files?.[0];
 
                 if (!file) {
+                  photoField.onChange(event);
                   setPhotoPreview(undefined);
                   return;
                 }
 
+                if (file.size > MAX_PHOTO_SIZE) {
+                  // Reset the input so the oversized file is never attached.
+                  event.target.value = "";
+                  photoField.onChange(event);
+                  setPhotoPreview(undefined);
+                  setPhotoSizeError("La foto no puede superar los 4 MB");
+                  return;
+                }
+
+                photoField.onChange(event);
                 setPhotoPreview(URL.createObjectURL(file));
               }}
             />
@@ -135,8 +159,10 @@ export default function PersonalData({
             </Attachment>
 
             <span className="mt-1 text-xs text-text-secondary">Foto</span>
-            {errors.photo && (
-              <p className="text-xs text-danger">{errors.photo.message}</p>
+            {photoError && (
+              <p className="mt-2 w-32 wrap-break-word text-xs text-danger">
+                {photoError}
+              </p>
             )}
           </div>
 

@@ -14,7 +14,12 @@ export function HeaderFallback({
         <Skeleton className="mt-2 h-4 w-96 max-w-full" />
       </div>
 
-      {!isHiringManagerView && <Skeleton className="h-8.5 w-36 rounded-full" />}
+      {!isHiringManagerView && (
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8.5 w-8.5 rounded-full md:w-56" />
+          <Skeleton className="h-8.5 w-8.5 rounded-full md:w-36" />
+        </div>
+      )}
     </header>
   );
 }

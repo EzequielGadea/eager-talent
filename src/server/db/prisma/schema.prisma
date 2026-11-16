@@ -122,6 +122,7 @@ enum JobOpeningStatus {
   Paused
   Closed
   Cancelled
+  Draft
 }
 
 enum InterviewStatus {
@@ -162,6 +163,7 @@ model Applicant {
   areaId              String?       @map("area_id")
   seniorityId         String?       @map("seniority_id")
   deletedAt           DateTime?     @map("deleted_at")
+  peopleForceID       String?       @unique @map("peopleforce_id")
 
   role           JobRole        @relation(fields: [roleId], references: [id], onDelete: Restrict)
   area           Area?          @relation(fields: [areaId], references: [id], onDelete: Restrict)
@@ -296,6 +298,7 @@ model Application {
   interviews             Interview[]
   activities             Activity[]
   publicLinks            PublicLink[]
+  
 
   @@id([applicantId, jobOpeningId])
   @@index([jobOpeningId, active, currentStageId])

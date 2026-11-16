@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition, type ReactNode } from "react";
-import Link from "next/link";
 import { ArrowRight, LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -13,10 +12,10 @@ import {
   type UpdateJobOpeningInput,
 } from "~/lib/validations/job-opening";
 import { api } from "~/lib/trpc/react";
+import { getMutationErrorMessage } from "~/lib/trpc/error-message";
 import { toast } from "~/components/ui/toast";
 
 import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +24,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import type { StageClosing } from "~/lib/validations/stage-metrics";
+
+import { StageMetricsClosingForm } from "../../_components/stage-metrics-closing-form";
 
 type EditJobOpeningFormProps = {
   defaultValues: UpdateJobOpeningInput;
@@ -38,6 +40,7 @@ export function EditJobOpeningForm({
   const router = useRouter();
   const [isNavigationPending, startTransition] = useTransition();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
   const [pendingSubmitValues, setPendingSubmitValues] =
     useState<UpdateJobOpeningInput | null>(null);
 
@@ -78,10 +81,13 @@ export function EditJobOpeningForm({
       }
 
       toast.add({
-        title: error.message,
+        title: getMutationErrorMessage(error),
         type: "error",
       });
     },
+    // Fail right away when offline instead of waiting (and staying on
+    // "Confirmando...") until the connection comes back.
+    networkMode: "always",
   });
 
   const isSaving =
@@ -99,12 +105,15 @@ export function EditJobOpeningForm({
     await updateJobOpening.mutateAsync(values);
   }
 
-  async function handleConfirmTerminalSubmit() {
+  async function handleConfirmTerminalSubmit(stageClosings?: StageClosing[]) {
     if (!pendingSubmitValues || isSaving) {
       return;
     }
 
-    await updateJobOpening.mutateAsync(pendingSubmitValues);
+    await updateJobOpening.mutateAsync({
+      ...pendingSubmitValues,
+      stageClosings,
+    });
   }
 
   function handleInvalidSubmit(errors: FieldErrors<UpdateJobOpeningInput>) {
@@ -122,8 +131,10 @@ export function EditJobOpeningForm({
     });
   }
 
-  function handleCancel() {
+  function handleConfirmCancel() {
     form.reset(defaultValues);
+    setIsCancelConfirmOpen(false);
+    router.push(`/job-openings/${defaultValues.id}/pipeline`);
   }
 
   const isClosing = pendingSubmitValues?.status === "Closed";
@@ -136,41 +147,40 @@ export function EditJobOpeningForm({
         noValidate
       >
         {children}
-        <footer className="pb-6">
-          <Card className="w-full rounded-xl py-5 shadow-sm">
-            <CardContent className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
-              <Button
-                nativeButton={false}
-                variant="outline"
-                render={
-                  <Link
-                    href={`/job-openings/${defaultValues.id}/pipeline`}
-                    onClick={handleCancel}
-                  />
-                }
-              >
-                Cancelar
-              </Button>
 
-              <Button type="submit" disabled={isSaving}>
-                {isSaving ? (
-                  <>
-                    <LoaderCircle
-                      data-icon="inline-start"
-                      aria-hidden="true"
-                      className="animate-spin"
-                    />
-                    Guardando...
-                  </>
-                ) : (
-                  <>
-                    Guardar cambios
-                    <ArrowRight data-icon="inline-end" aria-hidden="true" />
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
+        <footer className="flex flex-col gap-3 border-t pt-4 pb-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-text-secondary">
+            Modificá los datos de la vacante y guardá los cambios.
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSaving}
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
+              Cancelar
+            </Button>
+
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <LoaderCircle
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                    className="animate-spin"
+                  />
+                  Guardando...
+                </>
+              ) : (
+                <>
+                  Guardar cambios
+                  <ArrowRight data-icon="inline-end" aria-hidden="true" />
+                </>
+              )}
+            </Button>
+          </div>
         </footer>
       </form>
 
@@ -199,25 +209,65 @@ export function EditJobOpeningForm({
             </DialogDescription>
           </DialogHeader>
 
+          {isClosing ? (
+            <StageMetricsClosingForm
+              jobOpeningId={defaultValues.id}
+              pendingStageTargets={pendingSubmitValues?.stageTargets}
+              isBusy={isSaving}
+              onCancel={() => setIsConfirmOpen(false)}
+              onConfirm={(stageClosings) =>
+                void handleConfirmTerminalSubmit(stageClosings)
+              }
+            />
+          ) : (
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isSaving}
+                onClick={() => setIsConfirmOpen(false)}
+              >
+                Volver
+              </Button>
+              <Button
+                type="button"
+                disabled={isSaving}
+                onClick={() => void handleConfirmTerminalSubmit()}
+              >
+                {isSaving ? "Confirmando..." : "Cancelar vacante"}
+              </Button>
+            </DialogFooter>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSaving) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar edición?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los cambios que no hayas
+              guardado.
+            </DialogDescription>
+          </DialogHeader>
+
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              disabled={isSaving}
-              onClick={() => setIsConfirmOpen(false)}
+              onClick={() => setIsCancelConfirmOpen(false)}
             >
-              Volver
+              Seguir editando
             </Button>
-            <Button
-              type="button"
-              disabled={isSaving}
-              onClick={() => void handleConfirmTerminalSubmit()}
-            >
-              {isSaving
-                ? "Confirmando..."
-                : isClosing
-                  ? "Cerrar vacante"
-                  : "Cancelar vacante"}
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
             </Button>
           </DialogFooter>
         </DialogContent>

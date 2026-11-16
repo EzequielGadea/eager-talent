@@ -1,28 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { useDroppable } from "@dnd-kit/core";
 
 import { api } from "~/lib/trpc/react";
 
-import { CandidateCard } from "./candidate-card";
-import { LoadMoreCandidates } from "./load-more-candidates";
+import { ApplicantCard } from "./applicant-card";
+import { LoadMoreApplicants } from "./load-more-applicants";
 import { usePipelineMoves } from "./pipeline-dnd-provider";
-import type { PipelineCandidate } from "./types";
+import type { PipelineApplicant } from "./types";
 
 type PipelineColumnClientProps = {
   jobOpeningId: string;
   jobOpeningName: string;
   stageId: string;
   stageName: string;
-  initialCandidates: PipelineCandidate[];
+  initialCandidates: PipelineApplicant[];
   total: number;
   isLastStage: boolean;
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
   canDeleteInterview: boolean;
   search?: string;
+  stageStatus?: ReactNode;
+  headerAction?: ReactNode;
 };
 
 export function PipelineColumnClient({
@@ -37,14 +39,17 @@ export function PipelineColumnClient({
   canCreateInterview,
   canDeleteInterview,
   search,
+  stageStatus,
+  headerAction,
 }: PipelineColumnClientProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: stageId,
+    disabled: !canUpdateApplication,
   });
 
   const { moves, clearMove } = usePipelineMoves();
 
-  const [loadedCandidates, setLoadedCandidates] = useState<PipelineCandidate[]>(
+  const [loadedCandidates, setLoadedCandidates] = useState<PipelineApplicant[]>(
     [],
   );
 
@@ -203,8 +208,8 @@ export function PipelineColumnClient({
 
   return (
     <>
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <header className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
           <h2 className="font-sans text-sm font-semibold text-text-primary">
             {stageName}
           </h2>
@@ -212,7 +217,11 @@ export function PipelineColumnClient({
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
             {Math.max(0, effectiveTotal)}
           </span>
+
+          {stageStatus}
         </div>
+
+        {headerAction}
       </header>
 
       <div
@@ -222,7 +231,7 @@ export function PipelineColumnClient({
         }`}
       >
         {candidates.map((candidate) => (
-          <CandidateCard
+          <ApplicantCard
             key={candidate.applicantId}
             candidate={candidate}
             jobOpeningId={jobOpeningId}
@@ -238,7 +247,7 @@ export function PipelineColumnClient({
         ))}
 
         {hasMore && (
-          <LoadMoreCandidates
+          <LoadMoreApplicants
             remaining={remaining}
             loading={fetchMore.isFetching}
             onLoadMore={handleLoadMore}

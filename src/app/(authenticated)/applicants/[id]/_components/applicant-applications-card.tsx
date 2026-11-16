@@ -24,7 +24,11 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { Separator } from "~/components/ui/separator";
-import type { InterviewType, SalaryCurrency } from "~/generated/prisma/enums";
+import type {
+  InterviewType,
+  JobOpeningStatus,
+  SalaryCurrency,
+} from "~/generated/prisma/enums";
 import {
   interviewTypeTranslations,
   salaryCurrencyTranslations,
@@ -60,7 +64,7 @@ export type ApplicationSummary = {
   desiredSalaryAmount?: string | null;
   desiredSalaryCurrency?: SalaryCurrency | null;
   availability?: string | null;
-  jobOpening: { id: string; name: string };
+  jobOpening: { id: string; name: string; status?: JobOpeningStatus };
   interviews: Interview[];
 };
 
@@ -115,21 +119,29 @@ export function ApplicantApplicationsCard({
   const router = useRouter();
   const utils = api.useUtils();
   const [, startTransition] = useTransition();
+
   const [selection, setSelection] = useState<ApplicationSelection | undefined>(
     () => getInitialSelection(applications),
   );
+
   const [showApplyDialog, setShowApplyDialog] = useState(false);
 
   function refreshApplicantData() {
     void utils.activity.getByApplicantId.invalidate({ applicantId });
-    router.refresh();
+    startTransition(() => {
+      router.refresh();
+    });
   }
+
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInterviewDialog, setShowInterviewDialog] = useState(false);
   const [showDisqualifyDialog, setShowDisqualifyDialog] = useState(false);
   const [showRequalifyDialog, setShowRequalifyDialog] = useState(false);
+
   const effectiveSelection = selection ?? getInitialSelection(applications);
+
   const isExploration = effectiveSelection?.type === "exploration";
+
   const app =
     effectiveSelection?.type === "application"
       ? (applications.find(
@@ -173,11 +185,16 @@ export function ApplicantApplicationsCard({
   const interviews = isExploration
     ? explorationInterviews
     : (app?.interviews ?? []);
+
+  const jobOpening = app?.jobOpening;
+  const isJobOpeningOpen = !jobOpening?.status || jobOpening.status === "Open";
   const canScheduleInterview =
     canCreateInterview &&
-    (isExploration || Boolean(app?.active && app.canScheduleInterview));
-  const jobOpening = app?.jobOpening;
+    (isExploration ||
+      Boolean(app?.active && isJobOpeningOpen && app.canScheduleInterview));
+  const canModifyApplication = canUpdateApplication && isJobOpeningOpen;
   const headerStatus = app ? getHeaderApplicationStatus(app) : null;
+
   const desiredSalary = app
     ? [
         app.desiredSalaryCurrency &&
@@ -200,7 +217,10 @@ export function ApplicantApplicationsCard({
             : "—",
         },
         { label: "Salario pretendido", value: desiredSalary || "—" },
-        { label: "Disponibilidad", value: app.availability || "Inmediata" },
+        {
+          label: "Disponibilidad",
+          value: app.availability?.trim() || "—",
+        },
       ]
     : [];
 
@@ -238,6 +258,7 @@ export function ApplicantApplicationsCard({
               {headerStatus.label}
             </Badge>
           )}
+
           {isExploration && (
             <Badge className="shrink-0 border-transparent bg-tag-purple-bg text-tag-purple-fg">
               <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-tag-purple-fg" />
@@ -258,7 +279,7 @@ export function ApplicantApplicationsCard({
 
         {!isExploration &&
           jobOpening &&
-          (canCreatePublicLink || canUpdateApplication) && (
+          (canCreatePublicLink || canModifyApplication) && (
             <div className="flex basis-full flex-wrap items-center justify-start gap-2.5 pt-2">
               {canCreatePublicLink && (
                 <Button
@@ -270,7 +291,8 @@ export function ApplicantApplicationsCard({
                   <Share2 className="h-3.5 w-3.5" /> Compartir
                 </Button>
               )}
-              {canUpdateApplication && app?.active && (
+
+              {canModifyApplication && app?.active && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -283,7 +305,8 @@ export function ApplicantApplicationsCard({
                   Descalificar
                 </Button>
               )}
-              {canUpdateApplication && app && !app.active && (
+
+              {canModifyApplication && app && !app.active && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -325,7 +348,7 @@ export function ApplicantApplicationsCard({
         />
       )}
 
-      {canUpdateApplication && app?.active && (
+      {canModifyApplication && app?.active && (
         <DisqualifyApplicantDialog
           key={`disqualify-${app.jobOpeningId}`}
           open={showDisqualifyDialog}
@@ -339,7 +362,7 @@ export function ApplicantApplicationsCard({
         />
       )}
 
-      {canUpdateApplication && app && !app.active && (
+      {canModifyApplication && app && !app.active && (
         <RequalifyApplicantDialog
           key={`requalify-${app.jobOpeningId}`}
           open={showRequalifyDialog}
@@ -371,6 +394,7 @@ export function ApplicantApplicationsCard({
           <h3 className="min-w-0 text-h3 text-text-primary">
             Historial de entrevistas
           </h3>
+
           {canScheduleInterview && (
             <Button
               type="button"
@@ -384,9 +408,11 @@ export function ApplicantApplicationsCard({
             </Button>
           )}
         </div>
+
         {canCreateInterview &&
           app &&
           app.active &&
+          isJobOpeningOpen &&
           !app.canScheduleInterview && (
             <p className="mb-4 text-sm text-text-tertiary">
               Solo se pueden agendar entrevistas cuando la etapa actual es de
@@ -430,6 +456,7 @@ export function ApplicantApplicationsCard({
                 <TableHead className="w-1/6 pb-4">Resumen</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {interviews.map((interview) => (
                 <TableRow

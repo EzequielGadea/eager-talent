@@ -1,15 +1,3 @@
 "use client";
-
-import {
-  generateReactHelpers,
-  generateUploadButton,
-  generateUploadDropzone,
-} from "@uploadthing/react";
-
-import type { OurFileRouter } from "~/app/api/uploadthing/core";
-
-export const UploadButton = generateUploadButton<OurFileRouter>();
-
-export const UploadDropzone = generateUploadDropzone<OurFileRouter>();
-
-export const { useUploadThing } = generateReactHelpers<OurFileRouter>();
+// Replace UploadThing's client-side helpers with our custom hook to route file uploads through our server API.
+export { useUploadThing } from "~/lib/uploadthing";

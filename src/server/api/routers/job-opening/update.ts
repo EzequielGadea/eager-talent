@@ -15,7 +15,14 @@ import {
   type JobOpeningStageType,
 } from "~/lib/validations/job-opening";
 import { getRequiredStageTypeErrors } from "~/lib/validations/required-stages";
+import type { Prisma } from "~/generated/prisma/client";
 import { protectedProcedure } from "~/server/api/trpc";
+import {
+  applyStageTargets,
+  getClosingStages,
+  lockJobOpening,
+  STAGES_CHANGED_MESSAGE,
+} from "./stage-metrics-utils";
 
 type CurrentStage = {
   id: string;
@@ -198,7 +205,7 @@ export const updateJobOpening = protectedProcedure
       currentJobOpening,
       area,
       validSeniorityCount,
-      validHiringManagerCount,
+      activeHiringManagers,
     ] = await Promise.all([
       ctx.db.jobOpening.findUnique({
         where: {
@@ -210,6 +217,7 @@ export const updateJobOpening = protectedProcedure
           hasBeenOpened: true,
           openingDate: true,
           stages: true,
+          hiringManagers: { select: { id: true } },
           applications: {
             where: { deletedAt: null },
             select: {
@@ -236,17 +244,14 @@ export const updateJobOpening = protectedProcedure
         },
       }),
 
-      ctx.db.member.count({
+      ctx.db.member.findMany({
         where: {
           organizationId,
           role: "hiringManager",
-          userId: {
-            in: input.hiringManagerIds,
-          },
-          user: {
-            banned: false,
-          },
+          userId: { in: input.hiringManagerIds },
+          user: { banned: false },
         },
+        select: { userId: true },
       }),
     ]);
 
@@ -281,7 +286,20 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
-    if (validHiringManagerCount !== input.hiringManagerIds.length) {
+    // Un HM baneado que ya estaba asignado se tolera (no bloquea la edición),
+    // pero no se puede asignar uno nuevo que esté baneado.
+    const activeHiringManagerIds = new Set(
+      activeHiringManagers.map((member) => member.userId),
+    );
+    const currentHiringManagerIds = new Set(
+      currentJobOpening.hiringManagers.map((manager) => manager.id),
+    );
+    const hasInvalidHiringManager = input.hiringManagerIds.some(
+      (id) =>
+        !activeHiringManagerIds.has(id) && !currentHiringManagerIds.has(id),
+    );
+
+    if (hasInvalidHiringManager) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Uno o más Hiring Managers no son válidos",
@@ -319,8 +337,33 @@ export const updateJobOpening = protectedProcedure
     // Estado y ubicación son opcionales: si no llegan, se conservan.
     const nextStatus = input.status ?? currentJobOpening.status;
     const isClosing = nextStatus === "Closed";
+    if (isClosing && currentJobOpening.openingDate > new Date()) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No se puede cerrar una vacante antes de su fecha de inicio",
+      });
+    }
     const hasBeenOpened =
       currentJobOpening.hasBeenOpened || currentJobOpening.status === "Open";
+
+    if (nextStatus === "Draft" && nextStatus !== currentJobOpening.status) {
+      if (currentJobOpening.openingDate <= new Date()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante cuya fecha de apertura ya pasó",
+        });
+      }
+
+      if (currentJobOpening.applications.length > 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "No se puede pasar a borrador una vacante que tiene candidatos en el pipeline",
+        });
+      }
+    }
+
     if (hasBeenOpened && stagesChanged) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -382,35 +425,91 @@ export const updateJobOpening = protectedProcedure
       });
     }
 
+    // Unchanged stages are not rewritten.
+    const rewrittenStages =
+      stagesChanged || colorsChanged
+        ? input.stages.map((stage) =>
+            toPersistedStage(stage, persistedStagesById.get(stage.id)),
+          )
+        : undefined;
+    // Target days of the metric stages can be edited at any time.
+    const targetedStages = input.stageTargets?.length
+      ? applyStageTargets(
+          (rewrittenStages ?? currentJobOpening.stages) as Prisma.JsonValue,
+          input.stageTargets,
+        )
+      : rewrittenStages;
     return ctx.db.$transaction(async (tx) => {
+      // Closing also stores the closing dates of the still-open metric
+      // stages; the row lock keeps candidates out of them meanwhile.
+      if (isClosing) {
+        await lockJobOpening(tx, currentJobOpening.id);
+      }
+
+      const nextStages = isClosing
+        ? await getClosingStages(
+            tx,
+            {
+              id: currentJobOpening.id,
+              openingDate: currentJobOpening.openingDate,
+              stages: (targetedStages ??
+                currentJobOpening.stages) as Prisma.JsonValue,
+            },
+            input.stageClosings,
+          )
+        : targetedStages;
+
       const { count } = await tx.jobOpening.updateMany({
         where: {
           id: input.id,
           status: {
             notIn: ["Closed", "Cancelled"],
           },
+          // The new stages are built from the ones read above: don't overwrite
+          // a stage closed/reopened or a target edited meanwhile.
+          ...(nextStages
+            ? {
+                stages: {
+                  equals: currentJobOpening.stages as Prisma.InputJsonValue,
+                },
+              }
+            : {}),
         },
         data: {
           name: input.name,
           status: nextStatus,
           hasBeenOpened: hasBeenOpened || nextStatus === "Open",
           ...(isClosing ? { closingDate: new Date() } : {}),
+
           location: input.location,
           targetClosingDate: nextTargetClosingDate,
           areaId: input.areaId,
 
-          // Unchanged stages are not rewritten.
-          ...(stagesChanged || colorsChanged
-            ? {
-                stages: input.stages.map((stage) =>
-                  toPersistedStage(stage, persistedStagesById.get(stage.id)),
-                ),
-              }
+          ...(nextStages
+            ? { stages: nextStages as Prisma.InputJsonValue }
             : {}),
         },
       });
 
       if (count !== 1) {
+        const current = nextStages
+          ? await tx.jobOpening.findUnique({
+              where: { id: input.id },
+              select: { status: true },
+            })
+          : null;
+
+        if (
+          current &&
+          current.status !== "Closed" &&
+          current.status !== "Cancelled"
+        ) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: STAGES_CHANGED_MESSAGE,
+          });
+        }
+
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "No se puede modificar una vacante cerrada o cancelada",

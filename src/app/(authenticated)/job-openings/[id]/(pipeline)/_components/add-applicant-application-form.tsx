@@ -3,11 +3,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { SalaryCurrency } from "~/generated/prisma/enums";
 import { salaryCurrencyTranslations } from "~/lib/enum-translations";
+import {
+  getDesiredSalaryIssues,
+  toDesiredSalaryAmount,
+} from "~/lib/validations/desired-salary";
 import { api } from "~/lib/trpc/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
@@ -20,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { toast } from "~/components/ui/toast";
 
 import getAvatar from "~/lib/avatar";
 
@@ -27,34 +33,33 @@ import type { AvailableApplicant } from "./add-applicant-types";
 
 const addApplicantApplicationSchema = z
   .object({
-    desiredSalary: z
-      .number()
-      .positive("El salario debe ser mayor a 0.")
-      .optional(),
+    desiredSalary: z.string().optional(),
 
-    currency: z.enum(SalaryCurrency).optional(),
+    currency: z
+      .enum(SalaryCurrency, { error: "Seleccioná una moneda." })
+      .optional(),
 
     availability: z.string(),
   })
   .superRefine((data, ctx) => {
-    if (data.desiredSalary !== undefined && data.currency === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["currency"],
-        message: "Seleccioná una moneda.",
-      });
+    for (const issue of getDesiredSalaryIssues(data, {
+      invalid: "Ingresá un salario válido.",
+      notPositive: "El salario debe ser mayor a 0.",
+      currencyRequired: "Seleccioná una moneda.",
+      salaryRequired: "Ingresá el salario deseado.",
+    })) {
+      ctx.addIssue({ code: "custom", ...issue, path: [issue.path] });
     }
+  })
+  .transform((data) => ({
+    ...data,
+    desiredSalary: toDesiredSalaryAmount(data.desiredSalary),
+  }));
 
-    if (data.currency !== undefined && data.desiredSalary === undefined) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["desiredSalary"],
-        message: "Ingresá el salario deseado.",
-      });
-    }
-  });
-
-type AddApplicantApplicationFormValues = z.infer<
+type AddApplicantApplicationFormInput = z.input<
+  typeof addApplicantApplicationSchema
+>;
+type AddApplicantApplicationFormValues = z.output<
   typeof addApplicantApplicationSchema
 >;
 
@@ -72,10 +77,17 @@ export function AddApplicantApplicationForm({
   onSuccess,
 }: AddApplicantApplicationFormProps) {
   const router = useRouter();
+  const [isTransitionPending, startTransition] = useTransition();
 
-  const methods = useForm<AddApplicantApplicationFormValues>({
+  const methods = useForm<
+    AddApplicantApplicationFormInput,
+    unknown,
+    AddApplicantApplicationFormValues
+  >({
     resolver: zodResolver(addApplicantApplicationSchema),
     defaultValues: {
+      desiredSalary: "",
+      currency: undefined,
       availability: "",
     },
   });
@@ -90,8 +102,14 @@ export function AddApplicantApplicationForm({
   const createApplicationMutation =
     api.application.createApplication.useMutation({
       onSuccess: () => {
-        router.refresh();
-        onSuccess();
+        startTransition(() => {
+          onSuccess();
+          router.refresh();
+        });
+        toast.add({
+          title: "Candidato postulado correctamente",
+          type: "success",
+        });
       },
       onError: (error) => {
         if (error.data?.code === "PRECONDITION_FAILED") {
@@ -197,14 +215,12 @@ export function AddApplicantApplicationForm({
             <div className="grid gap-1">
               <Input
                 id="desired-salary"
-                type="number"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
                 placeholder="Ej. 85000"
                 aria-invalid={!!errors.desiredSalary}
-                {...register("desiredSalary", {
-                  setValueAs: (value) =>
-                    value === "" ? undefined : Number(value),
-                })}
+                {...register("desiredSalary")}
               />
 
               {errors.desiredSalary && (
@@ -222,7 +238,7 @@ export function AddApplicantApplicationForm({
                   <Select
                     value={field.value ?? ""}
                     onValueChange={(value) =>
-                      field.onChange(value ?? undefined)
+                      field.onChange(value || undefined)
                     }
                   >
                     <SelectTrigger aria-invalid={!!errors.currency}>
@@ -234,6 +250,7 @@ export function AddApplicantApplicationForm({
                     </SelectTrigger>
 
                     <SelectContent>
+                      <SelectItem value="">Sin seleccionar</SelectItem>
                       {Object.values(SalaryCurrency).map((currency) => (
                         <SelectItem key={currency} value={currency}>
                           {salaryCurrencyTranslations[currency]}
@@ -285,13 +302,15 @@ export function AddApplicantApplicationForm({
             type="button"
             variant="outline"
             onClick={onBack}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isTransitionPending}
           >
             Volver
           </Button>
 
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+          <Button type="submit" disabled={isSubmitting || isTransitionPending}>
+            {(isSubmitting || isTransitionPending) && (
+              <Loader2 className="size-4 animate-spin" />
+            )}
             Postular
           </Button>
         </div>

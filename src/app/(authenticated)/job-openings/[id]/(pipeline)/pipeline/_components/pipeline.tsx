@@ -2,18 +2,23 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 
 import { auth } from "~/lib/auth";
+import { getMetricStages } from "~/lib/stage-metrics";
 
 import { PipelineHorizontalScroll } from "../../_components/pipeline-horizontal-scroll";
 import { PipelineColumn } from "./pipeline-column";
 import { PipelineColumnSkeleton } from "./pipeline-column-skeleton";
 import type { PipelineStage } from "./types";
-import { PipelineDndProviderClient } from "./pipeline-dnd-provider-client";
+import { PipelineDndProvider } from "./pipeline-dnd-provider";
 
 type PipelineProps = {
   jobOpeningId: string;
   jobOpeningName: string;
   stages: PipelineStage[];
   search?: string;
+  isJobOpeningOpen: boolean;
+  // yyyy-MM-dd
+  openingDate: string;
+  canManageStageClosures: boolean;
 };
 
 export async function Pipeline({
@@ -21,7 +26,16 @@ export async function Pipeline({
   jobOpeningName,
   stages,
   search,
+  isJobOpeningOpen,
+  openingDate,
+  canManageStageClosures,
 }: PipelineProps) {
+  const stageClosure = {
+    openingDate,
+    stages: getMetricStages(stages),
+    canManage: canManageStageClosures,
+  };
+
   const requestHeaders = await headers();
 
   const [canUpdateApplication, canCreateInterview, canDeleteInterview] =
@@ -54,8 +68,11 @@ export async function Pipeline({
 
   return (
     <PipelineHorizontalScroll>
-      <PipelineDndProviderClient jobOpeningId={jobOpeningId}>
-        <div className="flex min-w-max gap-4 pb-4">
+      <PipelineDndProvider jobOpeningId={jobOpeningId}>
+        <div
+          data-pipeline-board
+          className="flex flex-col gap-4 pb-4 sm:min-w-max sm:flex-row"
+        >
           {stages.map((stage, index) => (
             <Suspense key={stage.name} fallback={<PipelineColumnSkeleton />}>
               <PipelineColumn
@@ -64,14 +81,21 @@ export async function Pipeline({
                 stage={stage}
                 isLastStage={index === stages.length - 1}
                 search={search}
-                canUpdateApplication={canUpdateApplication.success}
-                canCreateInterview={canCreateInterview.success}
-                canDeleteInterview={canDeleteInterview.success}
+                canUpdateApplication={
+                  canUpdateApplication.success && isJobOpeningOpen
+                }
+                canCreateInterview={
+                  canCreateInterview.success && isJobOpeningOpen
+                }
+                canDeleteInterview={
+                  canDeleteInterview.success && isJobOpeningOpen
+                }
+                stageClosure={stageClosure}
               />
             </Suspense>
           ))}
         </div>
-      </PipelineDndProviderClient>
+      </PipelineDndProvider>
     </PipelineHorizontalScroll>
   );
 }

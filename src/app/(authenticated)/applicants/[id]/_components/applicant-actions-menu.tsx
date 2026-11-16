@@ -3,17 +3,25 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Briefcase, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import {
+  Briefcase,
+  Download,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { api } from "~/lib/trpc/server";
 import { Button } from "~/components/ui/button";
 import { ApplyToVacantDialog } from "./apply-to-vacant-dialog";
 import { DeleteApplicantDialog } from "./delete-applicant-dialog";
 import { useState } from "react";
+import { ExportApplicantNotesDialog } from "./export-applicant-notes-dialog";
 
 type Applicant = Awaited<ReturnType<typeof api.applicant.getById>>;
 
@@ -25,16 +33,20 @@ export function ApplicantActionsMenu({
   applicant,
   canDeleteApplicant,
   canCreateApplication,
+  canExportNotes,
   defaultShow,
 }: {
   canUpdateApplicant: boolean;
   applicant: Applicant;
   canDeleteApplicant: boolean;
   canCreateApplication: boolean;
+  canExportNotes: boolean;
   defaultShow: boolean;
 }) {
   const [showDialog, setShowDialog] = useState(defaultShow ?? false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const applicantName = `${applicant.name} ${applicant.lastName}`.trim();
 
   return (
     <>
@@ -51,47 +63,67 @@ export function ApplicantActionsMenu({
           <MoreHorizontal className="size-4 text-text-tertiary" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-64">
-          {canUpdateApplicant && (
-            <DropdownMenuItem
-              render={
-                <Link href={`/applicants/${applicant.id}/edit-applicant`} />
-              }
-              className="gap-2"
-            >
-              <Pencil className="size-4" />
-              <span>Editar datos del candidato</span>
-            </DropdownMenuItem>
-          )}
-          {canCreateApplication && (
-            <DropdownMenuItem
-              className="gap-2"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowDialog(true);
-              }}
-              onSelect={(e) => {
-                e.preventDefault();
-                setShowDialog(true);
-              }}
-            >
-              <Briefcase className="size-4" />
-              <span>
-                {applicant._count.applications > 0
-                  ? "Postular a otra vacante"
-                  : "Postular a una vacante"}
-              </span>
-            </DropdownMenuItem>
-          )}
-          {(canUpdateApplicant || canCreateApplication) &&
+          <DropdownMenuGroup>
+            {canUpdateApplicant && (
+              <DropdownMenuItem
+                render={
+                  <Link href={`/applicants/${applicant.id}/edit-applicant`} />
+                }
+                className="gap-2"
+              >
+                <Pencil />
+                <span>Editar datos del candidato</span>
+              </DropdownMenuItem>
+            )}
+            {canCreateApplication && (
+              <DropdownMenuItem
+                className="gap-2"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setShowDialog(true);
+                }}
+                onSelect={(event) => {
+                  event.preventDefault();
+                  setShowDialog(true);
+                }}
+              >
+                <Briefcase />
+                <span>
+                  {applicant._count.applications > 0
+                    ? "Postular a otra vacante"
+                    : "Postular a una vacante"}
+                </span>
+              </DropdownMenuItem>
+            )}
+            {canExportNotes && (
+              <DropdownMenuItem
+                className="gap-2"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setShowExportDialog(true);
+                }}
+                onSelect={(event) => {
+                  event.preventDefault();
+                  setShowExportDialog(true);
+                }}
+              >
+                <Download />
+                <span>Exportar notas de candidato</span>
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuGroup>
+          {(canUpdateApplicant || canCreateApplication || canExportNotes) &&
             canDeleteApplicant && <DropdownMenuSeparator />}
           {canDeleteApplicant && (
-            <DropdownMenuItem
-              className={dangerItemClassName}
-              onClick={() => setShowDeleteDialog(true)}
-            >
-              <Trash2 className="size-4" />
-              <span>Eliminar candidato</span>
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className={dangerItemClassName}
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 />
+                <span>Eliminar candidato</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
@@ -107,7 +139,16 @@ export function ApplicantActionsMenu({
           open={showDeleteDialog}
           onOpenChange={setShowDeleteDialog}
           applicantId={applicant.id}
-          applicantName={`${applicant.name} ${applicant.lastName}`.trim()}
+          applicantName={applicantName}
+        />
+      )}
+
+      {canExportNotes && (
+        <ExportApplicantNotesDialog
+          open={showExportDialog}
+          onOpenChange={setShowExportDialog}
+          applicantId={applicant.id}
+          applicantName={applicantName}
         />
       )}
     </>

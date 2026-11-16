@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { parseStages } from "~/lib/validations/job-opening";
 import { protectedProcedure } from "~/server/api/trpc";
@@ -36,7 +37,7 @@ export const disqualifyApplication = protectedProcedure
       select: {
         active: true,
         currentStageId: true,
-        jobOpening: { select: { stages: true } },
+        jobOpening: { select: { status: true, stages: true } },
       },
     });
 
@@ -48,6 +49,14 @@ export const disqualifyApplication = protectedProcedure
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "La postulación ya está inactiva",
+      });
+    }
+
+    if (application.jobOpening.status !== JobOpeningStatus.Open) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message:
+          "No se puede descalificar un candidato en una vacante que no está abierta",
       });
     }
 
@@ -77,6 +86,9 @@ export const disqualifyApplication = protectedProcedure
           jobOpeningId: input.jobOpeningId,
           currentStageId: application.currentStageId,
           active: true,
+          jobOpening: {
+            status: JobOpeningStatus.Open,
+          },
         },
         data: {
           active: false,

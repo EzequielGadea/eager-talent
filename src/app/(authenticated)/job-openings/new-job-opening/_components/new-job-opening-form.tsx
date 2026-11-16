@@ -18,16 +18,24 @@ import OpeningDate from "./opening-date";
 
 import OpeningStage from "./opening-stage";
 
-import { Card, CardContent } from "~/components/ui/card";
-
 import NewJobOpeningButtonProps from "./new-job-opening-button";
 
 import OpeningHiring from "./opening-hiring";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { toast } from "~/components/ui/toast";
 import { hasDuplicatedNames, Template } from "../utils";
 import { isRequiredStage } from "~/lib/required-stage-types";
 import { persistedStageSchema } from "~/lib/validations/job-opening";
+import { getMetricStages } from "~/lib/stage-metrics";
+import { stageTargetsSchema } from "~/lib/validations/stage-metrics";
 import {
   getRequiredStageErrors,
   getRequiredStageTypeErrors,
@@ -46,6 +54,7 @@ export const jobOpeningFormSchema = z
     openingDate: z.date({ error: "La fecha de apertura es obligatoria" }),
     closingDate: z.date({ error: "La fecha de cierre es obligatoria" }),
     hiringManagerIds: z.array(z.string()),
+    metricStageTargets: stageTargetsSchema,
     stages: z.array(persistedStageSchema).superRefine((stages, ctx) => {
       const errors = [
         ...getRequiredStageErrors(stages),
@@ -82,12 +91,15 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
     defaultValues: {
       name: "",
       area: "",
-      status: JobOpeningStatus.Open,
+      status: JobOpeningStatus.Draft,
       seniorityIds: [],
       location: "Indiferente",
       openingDate: undefined,
       closingDate: undefined,
       hiringManagerIds: [],
+      metricStageTargets: getMetricStages(props.templateStages.stages).map(
+        (stage) => ({ stageKey: stage.key, targetDays: undefined }),
+      ),
       stages: props.templateStages.stages,
     },
   });
@@ -95,18 +107,23 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
   const { isSubmitting } = methods.formState;
 
   const createJobOpeningMutation = api.jobOpening.createJobOpening.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       methods.reset();
       setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
       toast.add({
         title: "Vacante creada correctamente",
         type: "success",
       });
-      // router.push(`/job-openings/${data.id}`); DESCOMENTAR CUANDO ESTE IMPLEMENTADO LA CONSULTA DE VACANTE
-      router.push("/job-openings");
+      router.push(`/job-openings/${data.id}`);
     },
     onError: (error) => {
       console.error("Error creating job opening:", error.message, error.data);
+      if (error.data?.code === "FORBIDDEN") {
+        toast.add({
+          title: error.message,
+          type: "error",
+        });
+      }
     },
   });
 
@@ -120,16 +137,24 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
       openingDate: data.openingDate,
       closingDate: data.closingDate,
       hiringManagerIds: data.hiringManagerIds,
-      stages: data.stages,
+      stages: data.stages.map((stage) => {
+        const target = data.metricStageTargets.find(
+          ({ stageKey }) => stageKey === stage.key,
+        );
+
+        return target ? { ...stage, targetDays: target.targetDays } : stage;
+      }),
     });
   }
-  function handleCancel() {
+  function handleConfirmCancel() {
     methods.reset();
     setStages(props.templateStages.stages.map((stage) => ({ ...stage })));
+    setIsCancelConfirmOpen(false);
     router.push("/job-openings");
   }
 
   const [stages, setStages] = useState(props.templateStages.stages);
+  const [isCancelConfirmOpen, setIsCancelConfirmOpen] = useState(false);
 
   // Required stages as loaded from the template, by key, so typing one of
   // those names in a new stage does not lock it.
@@ -153,17 +178,57 @@ export default function NewJobOpeningForm(props: { templateStages: Template }) {
           requiredStageKeys={requiredStageKeys}
         />
         <OpeningHiring />
-        <Card className="w-full items-end rounded-xl shadow-sm">
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" onClick={handleCancel}>
-                Cancelar
-              </Button>
-              <NewJobOpeningButtonProps disabled={isSubmitting} />
-            </div>
-          </CardContent>
-        </Card>
+
+        <footer className="flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-text-secondary">
+            Podés modificar los datos de la vacante más tarde desde el pipeline.
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isSubmitting || createJobOpeningMutation.isPending}
+              onClick={() => setIsCancelConfirmOpen(true)}
+            >
+              Cancelar
+            </Button>
+            <NewJobOpeningButtonProps disabled={isSubmitting} />
+          </div>
+        </footer>
       </form>
+
+      <Dialog
+        open={isCancelConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting && !createJobOpeningMutation.isPending) {
+            setIsCancelConfirmOpen(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>¿Cancelar creación?</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que querés cancelar? Se perderán los datos que hayas
+              ingresado.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsCancelConfirmOpen(false)}
+            >
+              Seguir editando
+            </Button>
+            <Button type="button" onClick={handleConfirmCancel}>
+              Descartar cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </FormProvider>
   );
 }

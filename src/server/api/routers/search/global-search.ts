@@ -59,6 +59,7 @@ export const globalSearch = protectedProcedure
               id: true,
               name: true,
               lastName: true,
+              photo: true,
               role: { select: { name: true } },
               seniority: { select: { name: true, color: true } },
               tags: { select: { name: true, color: true } },
@@ -106,6 +107,7 @@ export const globalSearch = protectedProcedure
           applicant.name && applicant.lastName
             ? `${applicant.name[0]}${applicant.lastName[0]}`.toUpperCase()
             : "-",
+        photo: applicant.photo,
         role: applicant.role.name,
         seniority: applicant.seniority
           ? { name: applicant.seniority.name, color: applicant.seniority.color }

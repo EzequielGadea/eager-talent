@@ -2,6 +2,10 @@
 
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { api } from "~/lib/trpc/react";
+import {
+  applicantLinkedinSchema,
+  validateCareerYears,
+} from "~/lib/validations/applicant";
 import { optionalE164PhoneSchema } from "~/lib/validations/phone";
 import { useParams } from "next/navigation";
 
@@ -12,7 +16,7 @@ import { EnglishLevel, Source, HearAboutUs } from "~/generated/prisma/enums";
 import ApplicantEditFormContent from "./edit-applicant-form-content";
 import { EditApplicantPageSkeleton } from "./edit-applicant-skeleton";
 
-const MAX_PHOTO_SIZE = 4 * 1024 * 1024;
+const MAX_PHOTO_SIZE = 4_000_000;
 
 export const applicantFormSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -26,10 +30,14 @@ export const applicantFormSchema = z.object({
       (files) =>
         !files ||
         files.length === 0 ||
-        files[0].type === "image/png" ||
-        files[0].type === "image/jpeg" ||
-        files[0].type === "image/jpg",
-      "El archivo debe ser una imagen PNG, JPEG o JPG",
+        [
+          "image/png",
+          "image/jpeg",
+          "image/jpg",
+          "image/webp",
+          "image/gif",
+        ].includes(files[0].type),
+      "El archivo debe ser una imagen PNG, JPG, WEBP o GIF",
     )
     .refine(
       (files) =>
@@ -38,15 +46,7 @@ export const applicantFormSchema = z.object({
     )
     .optional(),
 
-  linkedin: z
-    .string()
-    .url("Debe ingresar una URL válida")
-    .refine(
-      (url) => url.includes("linkedin.com"),
-      "Debe ingresar una URL de LinkedIn válida",
-    )
-    .optional()
-    .or(z.literal("")),
+  linkedin: applicantLinkedinSchema.optional(),
 
   role: z.string().min(1, "El rol es obligatorio"),
 
@@ -84,6 +84,8 @@ export const applicantFormSchema = z.object({
   title: z.string(),
   careerStartYear: z.number().int().min(1900).max(2100).nullable().optional(),
   careerEndYear: z.number().int().min(1900).max(2100).nullable().optional(),
+}).superRefine((data, ctx) => {
+  validateCareerYears(data, ctx);
 });
 
 export type ApplicantFormValues = z.infer<typeof applicantFormSchema>;
@@ -141,12 +143,14 @@ export default function EditApplicantForm() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-210">
-      <h1 className="mb-5.5 font-heading text-h1 text-text-primary">
-        Editar candidato
-      </h1>
+    <>
+      <div className="mx-auto mb-0 flex w-full max-w-[1440px] flex-col gap-4 p-4">
+        <h1 className="font-heading text-[30px] font-bold leading-[1.2] tracking-[-0.02em] text-text-primary">
+          Editar candidato
+        </h1>
+      </div>
 
       <ApplicantEditFormContent applicant={applicant} />
-    </div>
+    </>
   );
 }

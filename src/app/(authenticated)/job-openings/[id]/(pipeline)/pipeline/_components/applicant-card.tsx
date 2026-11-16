@@ -4,13 +4,14 @@ import {
   ArrowRight,
   CalendarDays,
   CircleX,
+  GripVertical,
   Loader2,
   MoreHorizontal,
   Trash2,
   UserRound,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition, type PointerEvent } from "react";
 import { format, isToday, isTomorrow } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -32,10 +33,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 import { interviewTypeTranslations } from "~/lib/enum-translations";
 
-import type { PipelineCandidate } from "./types";
+import type { PipelineApplicant } from "./types";
 import { ScheduleInterviewDialog } from "~/app/(authenticated)/job-openings/[id]/(pipeline)/pipeline/_components/schedule-interview-dialog";
 import { DisqualifyApplicantDialog } from "~/components/disqualify-applicant-dialog";
 
@@ -59,8 +61,8 @@ function formatInterviewDateTime(date: Date) {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
-type CandidateCardProps = {
-  candidate: PipelineCandidate;
+type ApplicantCardProps = {
+  candidate: PipelineApplicant;
   jobOpeningId: string;
   jobOpeningName: string;
   currentStageId: string;
@@ -72,7 +74,7 @@ type CandidateCardProps = {
   canDeleteInterview: boolean;
 };
 
-export function CandidateCard({
+export function ApplicantCard({
   candidate,
   jobOpeningId,
   jobOpeningName,
@@ -83,8 +85,9 @@ export function CandidateCard({
   canUpdateApplication,
   canCreateInterview,
   canDeleteInterview,
-}: CandidateCardProps) {
+}: ApplicantCardProps) {
   const router = useRouter();
+  const [, startTransition] = useTransition();
 
   const [isDisqualifyDialogOpen, setIsDisqualifyDialogOpen] = useState(false);
   const [isScheduleInterviewDialogOpen, setIsScheduleInterviewDialogOpen] =
@@ -95,13 +98,25 @@ export function CandidateCard({
     name: string;
   } | null>(null);
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    isDragging,
+  } = useDraggable({
     id: candidate.applicantId,
     data: { candidate, stageId: currentStageId },
     disabled: !canUpdateApplication,
   });
 
-  const dragProps = canUpdateApplication ? { ...listeners, ...attributes } : {};
+  function handleCardPointerDown(event: PointerEvent<HTMLDivElement>) {
+    // Touch gestures outside the handle keep the page scrollable.
+    if (event.pointerType !== "touch") {
+      listeners?.onPointerDown?.(event);
+    }
+  }
 
   const advanceApplicationStageMutation =
     api.application.advanceApplicationStage.useMutation({
@@ -111,20 +126,32 @@ export function CandidateCard({
       },
       onError: (error) => {
         console.error("Error al avanzar etapa:", error);
+
+        // e.g. the next stage is closed for the stage metrics.
+        if (error.data?.code === "CONFLICT") {
+          toast.add({ title: error.message, type: "error" });
+        }
       },
     });
 
   const deleteInterviewMutation = api.interview.delete.useMutation({
     onSuccess: () => {
+      toast.add({
+        title: "Entrevista eliminada correctamente",
+        type: "success",
+      });
+
       if (candidate.scheduledInterviews.length <= 1) {
         setIsInterviewsDialogOpen(false);
       }
 
       setInterviewToDelete(null);
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     },
     onError: (error) => {
-      console.error("Error al eliminar la entrevista:", error);
+      toast.add({ title: error.message, type: "error" });
     },
   });
 
@@ -154,8 +181,9 @@ export function CandidateCard({
       <Card
         ref={setNodeRef}
         data-pipeline-candidate
-        {...dragProps}
+        onPointerDown={canUpdateApplication ? handleCardPointerDown : undefined}
         style={{
+          zIndex: isDragging ? 10 : undefined,
           transform: transform
             ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
             : undefined,
@@ -167,6 +195,26 @@ export function CandidateCard({
         }`}
       >
         <div className="flex items-center gap-3">
+          {canUpdateApplication && (
+            <Button
+              ref={setActivatorNodeRef}
+              type="button"
+              variant="ghost"
+              size="icon"
+              {...attributes}
+              {...listeners}
+              aria-label={`Arrastrar ${candidate.name} ${candidate.lastName}`}
+              title="Arrastrar candidato"
+              className="shrink-0 touch-none cursor-grab p-0 active:cursor-grabbing"
+              onPointerDown={(event) => {
+                event.stopPropagation();
+                listeners?.onPointerDown?.(event);
+              }}
+            >
+              <GripVertical aria-hidden="true" />
+            </Button>
+          )}
+
           <Avatar className="size-9 shrink-0">
             <AvatarImage
               src={candidate.photo ?? undefined}
@@ -400,7 +448,11 @@ export function CandidateCard({
           candidateName={`${candidate.name} ${candidate.lastName}`}
           jobOpeningName={jobOpeningName}
           stageName={currentStageName}
-          onSuccess={() => router.refresh()}
+          onSuccess={() =>
+            startTransition(() => {
+              router.refresh();
+            })
+          }
         />
       )}
 
@@ -411,7 +463,11 @@ export function CandidateCard({
           applicantId={candidate.applicantId}
           jobOpeningId={jobOpeningId}
           candidateName={`${candidate.name} ${candidate.lastName}`}
-          onSuccess={() => router.refresh()}
+          onSuccess={() =>
+            startTransition(() => {
+              router.refresh();
+            })
+          }
         />
       )}
     </>

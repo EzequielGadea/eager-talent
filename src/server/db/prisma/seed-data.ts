@@ -12,6 +12,7 @@ import {
   startOfYear,
   subDays,
 } from "date-fns";
+import { toIsoDate } from "~/lib/stage-metrics";
 import { getTagColor } from "~/lib/tags/get-tag-color";
 import type {
   PrismaClient,
@@ -435,6 +436,43 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     return stage.key;
   };
 
+  // Stage deviation metrics data stored in the job opening stages JSON.
+  const withStageMetrics = (metrics: {
+    hrTargetDays: number;
+    technicalTargetDays: number;
+    hrClosedAt?: Date;
+    technicalClosedAt?: Date;
+  }) =>
+    defaultStages.map((stage) => {
+      if (stage.key === stageKey("Entrevista HR")) {
+        return {
+          ...stage,
+          targetDays: metrics.hrTargetDays,
+          ...(metrics.hrClosedAt
+            ? { closedAt: toIsoDate(metrics.hrClosedAt) }
+            : {}),
+        };
+      }
+
+      if (stage.key === stageKey("Entrevista técnica")) {
+        return {
+          ...stage,
+          targetDays: metrics.technicalTargetDays,
+          ...(metrics.technicalClosedAt
+            ? { closedAt: toIsoDate(metrics.technicalClosedAt) }
+            : {}),
+        };
+      }
+
+      return stage;
+    });
+
+  // Same default target days as the backfill migration (HR 7, technical 14).
+  const defaultStagesWithTargets = withStageMetrics({
+    hrTargetDays: 7,
+    technicalTargetDays: 14,
+  });
+
   await prisma.stageTemplate.create({
     data: {
       stages: defaultStages,
@@ -444,6 +482,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
 
   const nowInUruguay = new TZDate(seedNow, "America/Montevideo");
   // Vacancy dates represent calendar days in UTC; interviews are local instants.
+
   const seedDateFromToday = (daysOffset: number) =>
     new Date(
       Date.UTC(
@@ -458,10 +497,15 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Senior Full Stack Developer (Rails & React) - US Partner",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      // Both metric stages open: they still have candidates.
+      stages: withStageMetrics({
+        hrTargetDays: 10,
+        technicalTargetDays: 14,
+      }),
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: seedDateFromToday(-45),
       targetClosingDate: seedDateFromToday(-7),
+
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm1.id }, { id: hm2.id }] },
@@ -473,10 +517,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Backend Developer (Ruby on Rails) - Fintech Startup",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-20),
       targetClosingDate: seedDateFromToday(0),
+
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: {
         connect: [
@@ -493,7 +538,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "QA Automation Engineer - HealthTech Platform",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido)",
       openingDate: seedDateFromToday(-15),
       targetClosingDate: seedDateFromToday(45),
@@ -508,10 +553,11 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "DevOps & Cloud Engineer (AWS) - Cloud Infrastructure",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Remoto (Uruguay)",
       openingDate: seedDateFromToday(-10),
       targetClosingDate: seedDateFromToday(-2),
+
       areaId: areas["Infraestructura Cloud & DevOps"].id,
       seniorities: { connect: [{ id: seniorities["Senior"].id }] },
       hiringManagers: { connect: [{ id: hm3.id }, { id: hm5.id }] },
@@ -523,9 +569,10 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Frontend Developer (React / Next.js) - E-Commerce Platform",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
       openingDate: seedDateFromToday(-18),
+
       targetClosingDate: seedDateFromToday(35),
       areaId: areas["Ingeniería Web & Mobile"].id,
       seniorities: { connect: [{ id: seniorities["Semi Senior"].id }] },
@@ -538,7 +585,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "AI Solutions & Full Stack Engineer (Python & React) - GenAI Studio",
       status: "Open" as JobOpeningStatus,
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido Cordón / Remoto)",
       openingDate: seedDateFromToday(-5),
       targetClosingDate: seedDateFromToday(40),
@@ -558,7 +605,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       name: "Mobile Developer (React Native) - EagerWorks Delivery",
       status: "Open",
       hasBeenOpened: true,
-      stages: defaultStages,
+      stages: defaultStagesWithTargets,
       location: "Montevideo, Uruguay (Híbrido Cordón)",
       openingDate: seedDateFromToday(0),
       targetClosingDate: seedDateFromToday(21),
@@ -657,15 +704,32 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
     },
   ];
   const closedOpenings = [];
-  for (const definition of closedOpeningDefs) {
+  for (const [index, definition] of closedOpeningDefs.entries()) {
+    const openingDate = subDays(definition.closing, definition.duration);
+    // Mix of on-time and late stages for the stage deviation metrics.
+    // Both targets count from the opening date.
+    const hrTargetDays = Math.round(definition.duration * 0.25);
+    const technicalStageDays = Math.round(definition.duration * 0.35);
+    const technicalTargetDays = hrTargetDays + technicalStageDays;
+    const hrClosedAt = addDays(openingDate, hrTargetDays + (index % 5) - 2);
+    const technicalClosedAt = addDays(
+      hrClosedAt,
+      technicalStageDays + (index % 4) - 1,
+    );
+
     const opening = await prisma.jobOpening.create({
       data: {
         name: definition.name,
         status: "Closed",
         hasBeenOpened: true,
-        stages: defaultStages,
+        stages: withStageMetrics({
+          hrTargetDays,
+          technicalTargetDays,
+          hrClosedAt,
+          technicalClosedAt,
+        }),
         location: "Montevideo, Uruguay (Híbrido / Remoto)",
-        openingDate: subDays(definition.closing, definition.duration),
+        openingDate,
         targetClosingDate: subDays(definition.closing, definition.deviation),
         closingDate: definition.closing,
         areaId: areas[definition.area].id,
@@ -685,7 +749,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
             : "Product Designer - Proyecto cancelado",
         status,
         hasBeenOpened: true,
-        stages: defaultStages,
+        stages: defaultStagesWithTargets,
         location: "Remoto (Uruguay)",
         openingDate: seedDateFromToday(-14),
         targetClosingDate: seedDateFromToday(14),
@@ -708,7 +772,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "federico.valverde@eagerworks.uy",
       phone: "+59899150815",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImJt88e7duWENHGaTLgeYFv7r2dZABOCXKpxQ3",
+        "https://utfs.io/f/VhAxbky2qk3hS7DqKQ5YM7tyGVwXUhg0CpjeTif489HFoEk5",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/federico-valverde-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -881,7 +945,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "darwin.nunez@eagerworks.uy",
       phone: "+59898210999",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWIm1Et5K6jFocWOCMilxSKvI6ygLh3w5ubHNEZa",
+        "https://utfs.io/f/VhAxbky2qk3hkYvYoX3XdzP1NJlRHcF3DtjxfyqubTOC9UwZ",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/darwin-nunez-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -939,7 +1003,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "sergio.rochet@eagerworks.uy",
       phone: "+59891330001",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImVY1SU8NEPatwQzNrSK9G6WUHpdAuIx7knmCs",
+        "https://utfs.io/f/VhAxbky2qk3h8BkUtDVdIEjDRhr3Yz6UXPeATNBvqZyca1sS",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/sergio-rochet-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -982,7 +1046,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "ronald.araujo@eagerworks.uy",
       phone: "+59899444333",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImm5e42wQ3HCd9j6AlTfn0bFLrExghtROmV4oQ",
+        "https://utfs.io/f/VhAxbky2qk3hEFgyl9UC7dLf3W4TEAvkoq8lcuNxaeYHzR9S",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/ronald-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1057,7 +1121,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "manuel.ugarte@eagerworks.uy",
       phone: "+59894555123",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImfFzhXOSfu8Kth6YjTSgR72dGzlyXbwqoIaPe",
+        "https://utfs.io/f/VhAxbky2qk3hY1GsOMeQXvDzslnLwk9IaYdoxtTWEqGVAmM1",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/manuel-ugarte-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1124,7 +1188,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "rodrigo.bentancur@eagerworks.uy",
       phone: "+59899777888",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImQv9jFwhjHLUiJaSAu37prKRqVDtfBbxPIg9O",
+        "https://utfs.io/f/VhAxbky2qk3hF5T75zRWYAcky6ed9mqzOE25xsvSGp7lrCwQ",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/rodrigo-bentancur-uy/",
       englishLevel: "Native" as EnglishLevel,
@@ -1202,7 +1266,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "facundo.pellistri@eagerworks.uy",
       phone: "+59892444333",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImViU69cBNEPatwQzNrSK9G6WUHpdAuIx7knmC",
+        "https://utfs.io/f/VhAxbky2qk3hxZ39eZHctJ7nl52QYgGXioHpreFd9Vkw8SLE",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/facundo-pellistri-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1268,7 +1332,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "nicolas.delacruz@eagerworks.uy",
       phone: "+59898111222",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImTduAftczqbAuclI6LrEMdvGJaHT2gYfNeD97",
+        "https://utfs.io/f/VhAxbky2qk3h6uzQMw8sL9ThuagzKURZvq2iw5dGmtANW7XE",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/nicolas-delacruz-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1325,7 +1389,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "mathias.olivera@eagerworks.uy",
       phone: "+59899666555",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImL7hwMPv5WnhSyidITwVUm73A0KlDjR8ekaHJ",
+        "https://utfs.io/f/VhAxbky2qk3hb3iHOh9qiFzhLjlwE21Z5JSCyDsKr7o8e09B",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/mathias-olivera-uy/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1382,7 +1446,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "maxi.araujo@eagerworks.uy",
       phone: "+59891888999",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImLJiQNsv5WnhSyidITwVUm73A0KlDjR8ekaHJ",
+        "https://utfs.io/f/VhAxbky2qk3hj1a6hotpb6XPDqKdmk3ASGB5Uc1V4i2YHElv",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/maxi-araujo-uy/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1447,7 +1511,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "ferran.torres@eagerworks.uy",
       phone: "+34612345678",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImHhb13cEm6P0IYWAc5JoVdwyXaKQZESumLf87",
+        "https://utfs.io/f/VhAxbky2qk3hfgekFqp0uHCs47vntZDgTcPNoGhXaOEJSQzj",
       country: "España",
       linkedin: "https://www.linkedin.com/in/ferran-torres/",
       englishLevel: "Intermediate" as EnglishLevel,
@@ -1532,7 +1596,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "anthony.gordon@eagerworks.uy",
       phone: "+447700900123",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImeW38mUIrBaxbc3UnuwtRP6K92fSCLpE5DdGj",
+        "https://utfs.io/f/VhAxbky2qk3hILwDe406oLm35rVec4ExMlU7JanGFtpukD8s",
       country: "Reino Unido",
       linkedin: "https://www.linkedin.com/in/anthony-gordon/",
       englishLevel: "Native" as EnglishLevel,
@@ -1600,7 +1664,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "cristiano.ronaldo@eagerworks.uy",
       phone: "+351912345678",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImrJaXOo8bsQ056OqKNWVH1zT9JPCL2F48aoXh",
+        "https://utfs.io/f/VhAxbky2qk3hJSBO6qKxCloiza6nN0m9qyMsXHQWYpEvx38V",
       country: "Portugal",
       linkedin: "https://www.linkedin.com/in/cristiano-ronaldo/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1686,7 +1750,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "julian.alvarez@eagerworks.uy",
       phone: "+5491123456789",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImn1zAAatBlvSoOUGZk97AQs2P03wdbX6itycE",
+        "https://utfs.io/f/VhAxbky2qk3hpCdelFcquTlk7rY1FIR3XSa4EtVLB2mWD0qh",
       country: "Argentina",
       linkedin: "https://www.linkedin.com/in/julian-alvarez/",
       englishLevel: "Advanced" as EnglishLevel,
@@ -1755,7 +1819,7 @@ export async function seedDatabase(prisma: PrismaClient): Promise<void> {
       email: "fernando.muslera@eagerworks.uy",
       phone: "+59899123456",
       photo:
-        "https://utfs.io/f/hR8lYSLGKWImT1x2nYczqbAuclI6LrEMdvGJaHT2gYfNeD97",
+        "https://utfs.io/f/VhAxbky2qk3hm9bA7960OcI1GqZb2moKAUtwz7uEeFnXxV8D",
       country: "Uruguay",
       linkedin: "https://www.linkedin.com/in/fernando-muslera-uy/",
       englishLevel: "Advanced" as EnglishLevel,

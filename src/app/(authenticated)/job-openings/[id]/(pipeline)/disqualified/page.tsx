@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import { TRPCError } from "@trpc/server";
 
+import { JobOpeningStatus } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
 import { api } from "~/lib/trpc/server";
 import JobOpeningNotFound from "~/app/(authenticated)/job-openings/[id]/not-found";
@@ -93,6 +94,7 @@ async function DisqualifiedContent({
         status={jobOpening.status}
         areaName={jobOpening.area.name}
         openingDate={jobOpening.openingDate}
+        hasApplications={jobOpening.hasApplications}
         canCreateApplication={canCreateApplication.success}
         canUpdateJobOpening={canUpdateJobOpening.success}
       />
@@ -103,7 +105,9 @@ async function DisqualifiedContent({
         jobOpeningId={id}
         stages={stages}
         applications={applications}
-        canRequalify={canRequalify.success}
+        canRequalify={
+          canRequalify.success && jobOpening.status === JobOpeningStatus.Open
+        }
       />
     </main>
   );

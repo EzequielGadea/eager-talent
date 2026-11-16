@@ -1,7 +1,9 @@
 import { api } from "~/lib/trpc/server";
 import { stageAllowsInterview } from "~/lib/validations/job-opening";
+import { isMetricStage, type MetricStageData } from "~/lib/stage-metrics";
 
 import { PipelineColumnClient } from "./pipeline-column-client";
+import { StageClosureBadge, StageClosureMenu } from "./stage-closure-control";
 import type { PipelineStage } from "./types";
 
 type PipelineColumnProps = {
@@ -13,6 +15,12 @@ type PipelineColumnProps = {
   canUpdateApplication: boolean;
   canCreateInterview: boolean;
   canDeleteInterview: boolean;
+  stageClosure: {
+    // yyyy-MM-dd
+    openingDate: string;
+    stages: MetricStageData[];
+    canManage: boolean;
+  };
 };
 
 export async function PipelineColumn({
@@ -24,6 +32,7 @@ export async function PipelineColumn({
   canUpdateApplication,
   canCreateInterview,
   canDeleteInterview,
+  stageClosure,
 }: PipelineColumnProps) {
   const data = await api.jobOpening.fetchPipelineCandidates({
     jobOpeningId,
@@ -37,7 +46,7 @@ export async function PipelineColumn({
 
   return (
     <section
-      className="flex w-80 shrink-0 flex-col gap-3 border-t-4 border-border-default pt-3"
+      className="flex w-full shrink-0 flex-col gap-3 border-t-4 border-border-default pt-3 sm:w-80"
       style={{ borderTopColor: stage.color || undefined }}
     >
       <PipelineColumnClient
@@ -52,6 +61,24 @@ export async function PipelineColumn({
         canCreateInterview={canCreateInterview && canScheduleInterviewInStage}
         canDeleteInterview={canDeleteInterview}
         search={search}
+        stageStatus={
+          isMetricStage(stage) ? (
+            <StageClosureBadge closedAt={stage.closedAt ?? null} />
+          ) : undefined
+        }
+        headerAction={
+          isMetricStage(stage) && stageClosure.canManage ? (
+            <StageClosureMenu
+              jobOpeningId={jobOpeningId}
+              stageKey={stage.key}
+              stageName={stage.name}
+              closedAt={stage.closedAt ?? null}
+              openingDate={stageClosure.openingDate}
+              stages={stageClosure.stages}
+              hasCandidates={data.total > 0}
+            />
+          ) : undefined
+        }
       />
     </section>
   );

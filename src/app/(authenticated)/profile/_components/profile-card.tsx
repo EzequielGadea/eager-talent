@@ -91,6 +91,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
                 className="shrink-0 cursor-zoom-in rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Image
+                  loading="eager"
                   src={imageSrc}
                   alt={`Foto de ${fullName}`}
                   width={72}

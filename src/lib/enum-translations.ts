@@ -37,6 +37,7 @@ export const jobOpeningStatusTranslations = {
   Paused: "Pausada",
   Closed: "Cerrada",
   Cancelled: "Cancelada",
+  Draft: "Borrador",
 } satisfies Record<JobOpeningStatus, string>;
 
 export const interviewStatusTranslations = {
