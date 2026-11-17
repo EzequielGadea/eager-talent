@@ -1,10 +1,10 @@
 "use client";
 
-import JSZip from "jszip";
+import { TZDate } from "@date-fns/tz";
+import { format } from "date-fns";
 import { Download, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import writeXlsxFile from "write-excel-file/browser";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -22,6 +22,7 @@ import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 
 const sourceValues = ["Inbound", "Outbound", "Referral"] as const;
+const MONTEVIDEO_TIME_ZONE = "America/Montevideo";
 type Source = (typeof sourceValues)[number];
 type ExportFormat = "xlsx" | "csv";
 
@@ -88,12 +89,13 @@ export function ExportNotesDialog({
         return;
       }
 
+      const { default: JSZip } = await import("jszip");
       const zip = new JSZip();
       files.forEach((file) => zip.file(file.name, file.data));
       const blob = await zip.generateAsync({ type: "blob" });
       downloadBlob(
         blob,
-        `notas-de-candidatos-${new Date().toISOString().slice(0, 10)}.zip`,
+        `notas-de-candidatos-${format(new TZDate(new Date(), MONTEVIDEO_TIME_ZONE), "yyyy-MM-dd")}.zip`,
       );
 
       if (files.length < 2) {
@@ -214,9 +216,10 @@ export function ExportNotesDialog({
 async function createWorkbook(
   rows: Array<Record<string, string>>,
 ): Promise<Blob> {
+  const { default: writeXlsxFile } = await import("write-excel-file/browser");
   const columns = Object.keys(rows[0] ?? {}).map((key) => ({
     header: key,
-    cell: (row: Record<string, string>) => row[key],
+    cell: (row: Record<string, string>) => ({ value: row[key] }),
   }));
 
   return writeXlsxFile(rows, { columns }).toBlob();
