@@ -6,8 +6,6 @@ import { z } from "zod";
 import type { Prisma } from "~/generated/prisma/client";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
-import { isHiringManagerAssignedToApplicant } from "~/server/api/procedures/is-hiring-manager-assigned-to-applicant";
-import { isHiringManagerAssignedToInterview } from "~/server/api/procedures/is-hiring-manager-assigned-to-interview";
 import { protectedProcedure } from "~/server/api/trpc";
 import { getApplicantSearchWhere } from "./search-where";
 
@@ -27,46 +25,45 @@ const exportNotesInput = z.object({
 export const exportNotes = protectedProcedure
   .input(exportNotesInput)
   .mutation(async ({ ctx, input }) => {
-    const [
-      canReadApplicants,
-      canReadAssignedApplicants,
-      canReadApplicantNotes,
-      canReadAssignedApplicantNotes,
-      canReadInterviewNotes,
-      canReadAssignedInterviewNotes,
-    ] = await Promise.all([
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { applicant: ["read"] } },
-      }),
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { applicant: ["readAssigned"] } },
-      }),
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { applicantNote: ["read"] } },
-      }),
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { applicantNote: ["readAssigned"] } },
-      }),
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { interviewNote: ["read"] } },
-      }),
-      auth.api.hasPermission({
-        headers: ctx.headers,
-        body: { permissions: { interviewNote: ["readAssigned"] } },
-      }),
-    ]);
+    const organizationId = ctx.session.session.activeOrganizationId;
+    const member = organizationId
+      ? await ctx.db.member.findUnique({
+          where: {
+            organizationId_userId: {
+              organizationId,
+              userId: ctx.session.user.id,
+            },
+          },
+          select: { role: true },
+        })
+      : null;
+
+    if (member?.role !== "recruiter") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No tenés permiso para exportar notas",
+      });
+    }
+
+    const [canReadApplicants, canReadApplicantNotes, canReadInterviewNotes] =
+      await Promise.all([
+        auth.api.hasPermission({
+          headers: ctx.headers,
+          body: { permissions: { applicant: ["read"] } },
+        }),
+        auth.api.hasPermission({
+          headers: ctx.headers,
+          body: { permissions: { applicantNote: ["read"] } },
+        }),
+        auth.api.hasPermission({
+          headers: ctx.headers,
+          body: { permissions: { interviewNote: ["read"] } },
+        }),
+      ]);
 
     if (
-      (!canReadApplicants.success && !canReadAssignedApplicants.success) ||
-      (!canReadApplicantNotes.success &&
-        !canReadAssignedApplicantNotes.success &&
-        !canReadInterviewNotes.success &&
-        !canReadAssignedInterviewNotes.success)
+      !canReadApplicants.success ||
+      (!canReadApplicantNotes.success && !canReadInterviewNotes.success)
     ) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -74,10 +71,6 @@ export const exportNotes = protectedProcedure
       });
     }
 
-    const applicantAccessWhere: Prisma.ApplicantWhereInput =
-      canReadApplicants.success
-        ? {}
-        : isHiringManagerAssignedToApplicant(ctx.session.user.id);
     const filtersWhere: Prisma.ApplicantWhereInput = {
       ...getApplicantSearchWhere(input.search),
       ...(input.roleId.length > 0 && { roleId: { in: input.roleId } }),
@@ -99,7 +92,7 @@ export const exportNotes = protectedProcedure
     const applicants = await ctx.db.applicant.findMany({
       where: {
         deletedAt: null,
-        AND: [applicantAccessWhere, filtersWhere],
+        AND: [filtersWhere],
       },
       orderBy: [{ lastName: "asc" }, { name: "asc" }, { id: "asc" }],
       select: {
@@ -118,9 +111,6 @@ export const exportNotes = protectedProcedure
           where: {
             deletedAt: null,
             note: { is: { deletedAt: null } },
-            ...(canReadInterviewNotes.success
-              ? {}
-              : isHiringManagerAssignedToInterview(ctx.session.user.id)),
           },
           orderBy: [
             { date: { sort: "desc", nulls: "last" } },
@@ -142,7 +132,7 @@ export const exportNotes = protectedProcedure
     return {
       candidateNotes: applicants.flatMap((applicant) => {
         const notes =
-          (canReadApplicantNotes.success || canReadAssignedApplicantNotes.success) &&
+          canReadApplicantNotes.success &&
           !applicant.note?.deletedAt
             ? extractNoteText(applicant.note?.content)
             : null;
@@ -161,7 +151,7 @@ export const exportNotes = protectedProcedure
           : [];
       }),
       interviewNotes: applicants.flatMap((applicant) =>
-        canReadInterviewNotes.success || canReadAssignedInterviewNotes.success
+        canReadInterviewNotes.success
           ? applicant.interviews.flatMap((interview) => {
               const notes =
                 !interview.note?.deletedAt

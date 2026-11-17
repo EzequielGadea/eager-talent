@@ -83,31 +83,6 @@ async function ProtectedApplicantsPage(props: {
     },
   });
 
-  const [
-    canReadApplicantNotesResult,
-    canReadAssignedApplicantNotesResult,
-    canReadInterviewNotesResult,
-    canReadAssignedInterviewNotesResult,
-  ] =
-    await Promise.all([
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { applicantNote: ["read"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { applicantNote: ["readAssigned"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { interviewNote: ["read"] } },
-      }),
-      auth.api.hasPermission({
-        headers: requestHeaders,
-        body: { permissions: { interviewNote: ["readAssigned"] } },
-      }),
-    ]);
-
   if (!canReadAllResult.success && !canReadAssignedResult.success) {
     return (
       <AccessDenied
@@ -117,6 +92,21 @@ async function ProtectedApplicantsPage(props: {
     );
   }
 
+  const [
+    canReadApplicantNotesResult,
+    canReadInterviewNotesResult,
+    currentUser,
+  ] = await Promise.all([
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { applicantNote: ["read"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { interviewNote: ["read"] } },
+    }),
+    api.user.getCurrent(),
+  ]);
   const isHiringManagerView = !canReadAllResult.success;
 
   const searchParams = props.searchParams ?? Promise.resolve({});
@@ -194,10 +184,10 @@ async function ProtectedApplicantsPage(props: {
           promiseSharedData={sharedData}
           isHiringManagerView={isHiringManagerView}
           canExportNotes={
-            canReadApplicantNotesResult.success ||
-            canReadAssignedApplicantNotesResult.success ||
-            canReadInterviewNotesResult.success ||
-            canReadAssignedInterviewNotesResult.success
+            currentUser.role === "recruiter" &&
+            canReadAllResult.success &&
+            (canReadApplicantNotesResult.success ||
+              canReadInterviewNotesResult.success)
           }
         />
       </Suspense>
