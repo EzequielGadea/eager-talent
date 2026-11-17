@@ -23,6 +23,7 @@ import {
 import { ExportApplicantsDialog } from "./export-applicants-dialog";
 import { ImportApplicantsButton } from "./import-applicants-button";
 import { ImportNotesButton } from "./import-notes-button";
+import { ExportNotesButton } from "./export-notes-button";
 
 export function Header(props: {
   countApplicants: number;
@@ -75,6 +76,7 @@ export function Header(props: {
       )}
       {!props.isHiringManagerView && (
         <div className="flex items-center gap-2">
+          {props.canExportNotes && <ExportNotesButton />}
           <Button
             size="sm"
             onClick={() => router.push("/applicants/new-applicant")}
