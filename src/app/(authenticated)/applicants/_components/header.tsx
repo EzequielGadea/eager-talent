@@ -21,9 +21,9 @@ import {
 } from "~/components/ui/dropdown-menu";
 
 import { ExportApplicantsDialog } from "./export-applicants-dialog";
+import { ExportNotesDialog } from "./export-notes-dialog";
 import { ImportApplicantsButton } from "./import-applicants-button";
 import { ImportNotesButton } from "./import-notes-button";
-import { ExportNotesButton } from "./export-notes-button";
 
 export function Header(props: {
   countApplicants: number;
@@ -34,6 +34,7 @@ export function Header(props: {
 }) {
   const router = useRouter();
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [isExportNotesDialogOpen, setIsExportNotesDialogOpen] = useState(false);
   const importFileInputRef = useRef<HTMLInputElement>(null);
   const importNotesFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -76,7 +77,6 @@ export function Header(props: {
       )}
       {!props.isHiringManagerView && (
         <div className="flex items-center gap-2">
-          {props.canExportNotes && <ExportNotesButton />}
           <Button
             size="sm"
             onClick={() => router.push("/applicants/new-applicant")}
@@ -123,6 +123,15 @@ export function Header(props: {
                   <Download />
                   <span>Exportar todos los candidatos</span>
                 </DropdownMenuItem>
+                {props.canExportNotes && (
+                  <DropdownMenuItem
+                    className="gap-2"
+                    onClick={() => setIsExportNotesDialogOpen(true)}
+                  >
+                    <Download />
+                    <span>Exportar notas</span>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -130,6 +139,12 @@ export function Header(props: {
             open={isExportDialogOpen}
             onOpenChange={setIsExportDialogOpen}
           />
+          {props.canExportNotes && (
+            <ExportNotesDialog
+              open={isExportNotesDialogOpen}
+              onOpenChange={setIsExportNotesDialogOpen}
+            />
+          )}
           <ImportApplicantsButton fileInputRef={importFileInputRef} />
           <ImportNotesButton fileInputRef={importNotesFileInputRef} />
         </div>

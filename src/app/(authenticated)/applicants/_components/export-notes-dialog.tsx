@@ -1,19 +1,23 @@
 "use client";
 
 import JSZip from "jszip";
-import { ChevronDown, Download, Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import writeXlsxFile from "write-excel-file/browser";
 
 import { Button } from "~/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
+import { FieldLegend, FieldSet } from "~/components/ui/field";
+import { Label } from "~/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/toast";
 import { api } from "~/lib/trpc/react";
 
@@ -21,10 +25,16 @@ const sourceValues = ["Inbound", "Outbound", "Referral"] as const;
 type Source = (typeof sourceValues)[number];
 type ExportFormat = "xlsx" | "csv";
 
-export function ExportNotesButton() {
+export function ExportNotesDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const searchParams = useSearchParams();
-  const [isExporting, setIsExporting] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>("xlsx");
+  const [isExporting, setIsExporting] = useState(false);
   const exportMutation = api.applicant.exportNotes.useMutation();
 
   async function exportNotes() {
@@ -74,6 +84,7 @@ export function ExportNotesButton() {
           description:
             "Los candidatos seleccionados no tienen notas registradas.",
         });
+        onOpenChange(false);
         return;
       }
 
@@ -95,6 +106,7 @@ export function ExportNotesButton() {
       } else {
         toast.add({ type: "success", title: "Notas exportadas correctamente" });
       }
+      onOpenChange(false);
     } catch (error) {
       toast.add({
         type: "error",
@@ -110,53 +122,92 @@ export function ExportNotesButton() {
   }
 
   return (
-    <div className="inline-flex items-center">
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={exportNotes}
-        disabled={isExporting}
-        className="relative h-8.5 gap-2 rounded-l-full rounded-r-none px-3 text-small font-semibold focus-visible:z-10"
-      >
-        {isExporting ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : (
-          <Download className="size-4" />
-        )}
-        <span>
-          {isExporting
-            ? "Exportando..."
-            : `Exportar notas (${exportFormat.toUpperCase()})`}
-        </span>
-      </Button>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isExporting) return;
+        onOpenChange(nextOpen);
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Exportar notas</DialogTitle>
+          <DialogDescription>
+            Elegí el formato del archivo para descargar las notas de los
+            candidatos seleccionados.
+          </DialogDescription>
+        </DialogHeader>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          disabled={isExporting}
-          render={
-            <Button
-              size="sm"
-              variant="outline"
-              aria-label="Formato de exportación"
-              className="relative -ml-px h-8.5 rounded-l-none rounded-r-full px-2 focus-visible:z-10"
-            />
-          }
-        >
-          <ChevronDown className="size-4" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuRadioGroup
+        <FieldSet className="gap-3">
+          <FieldLegend variant="label">Formato de salida</FieldLegend>
+          <RadioGroup
             value={exportFormat}
             onValueChange={(value) => {
               if (value === "xlsx" || value === "csv") setExportFormat(value);
             }}
           >
-            <DropdownMenuRadioItem value="xlsx">XLSX</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="csv">CSV</DropdownMenuRadioItem>
-          </DropdownMenuRadioGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+            <Label
+              htmlFor="export-notes-xlsx"
+              className="flex items-start gap-3 rounded-lg border border-border p-3 has-data-checked:border-primary has-data-checked:bg-primary/5 hover:bg-muted/50"
+            >
+              <RadioGroupItem
+                id="export-notes-xlsx"
+                value="xlsx"
+                className="mt-0.5"
+                disabled={isExporting}
+              />
+              <span className="grid gap-0.5">
+                <span className="text-sm font-medium">Excel (.xlsx)</span>
+                <span className="text-sm text-text-secondary">
+                  Recomendado para trabajar con las notas en una planilla.
+                </span>
+              </span>
+            </Label>
+            <Label
+              htmlFor="export-notes-csv"
+              className="flex items-start gap-3 rounded-lg border border-border p-3 has-data-checked:border-primary has-data-checked:bg-primary/5 hover:bg-muted/50"
+            >
+              <RadioGroupItem
+                id="export-notes-csv"
+                value="csv"
+                className="mt-0.5"
+                disabled={isExporting}
+              />
+              <span className="grid gap-0.5">
+                <span className="text-sm font-medium">CSV (.csv)</span>
+                <span className="text-sm text-text-secondary">
+                  Compatible con la mayoría de las planillas y sistemas.
+                </span>
+              </span>
+            </Label>
+          </RadioGroup>
+        </FieldSet>
+
+        <DialogFooter>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isExporting}
+          >
+            Cancelar
+          </Button>
+          <Button type="button" onClick={exportNotes} disabled={isExporting}>
+            {isExporting ? (
+              <>
+                <Loader2 data-icon="inline-start" className="animate-spin" />
+                Exportando...
+              </>
+            ) : (
+              <>
+                <Download data-icon="inline-start" />
+                Exportar notas
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
