@@ -19,6 +19,7 @@ import { FieldLegend, FieldSet } from "~/components/ui/field";
 import { Label } from "~/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/toast";
+import { escapeCsvCell } from "~/lib/csv/escape-csv-cell";
 import { api } from "~/lib/trpc/react";
 
 const sourceValues = ["Inbound", "Outbound", "Referral"] as const;
@@ -235,10 +236,6 @@ function createCsv(rows: Array<Record<string, string>>): Blob {
     .join("\r\n");
 
   return new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
-}
-
-function escapeCsvCell(value: string): string {
-  return `"${value.replaceAll('"', '""')}"`;
 }
 
 function downloadBlob(blob: Blob, filename: string): void {
