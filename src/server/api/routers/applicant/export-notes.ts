@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { Prisma } from "~/generated/prisma/client";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { canExportNotes } from "~/lib/auth/can-export-notes";
 import { protectedProcedure } from "~/server/api/trpc";
 import { getApplicantSearchWhere } from "./search-where";
 
@@ -38,7 +39,7 @@ export const exportNotes = protectedProcedure
         })
       : null;
 
-    if (member?.role !== "recruiter") {
+    if (!canExportNotes(member?.role)) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "No tenés permiso para exportar notas",

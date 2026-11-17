@@ -8,6 +8,7 @@ import { AccessDenied } from "~/components/access-denied";
 import { Table, TableBody } from "~/components/ui/table";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { canExportNotes } from "~/lib/auth/can-export-notes";
 import { api } from "~/lib/trpc/server";
 
 import {
@@ -184,7 +185,7 @@ async function ProtectedApplicantsPage(props: {
           promiseSharedData={sharedData}
           isHiringManagerView={isHiringManagerView}
           canExportNotes={
-            currentUser.role === "recruiter" &&
+            canExportNotes(currentUser.role) &&
             canReadAllResult.success &&
             (canReadApplicantNotesResult.success ||
               canReadInterviewNotesResult.success)
