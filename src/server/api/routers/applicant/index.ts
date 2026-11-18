@@ -14,6 +14,7 @@ import { deleteApplicant } from "./delete-applicant";
 import { exportInterviewNotes } from "./export-interview-notes";
 import { exportApplicants } from "./export-applicants";
 
+import { exportNotes } from "./export-notes";
 import { importApplicants } from "./import-applicants";
 import { validateImportApplicants } from "./validate-import-applicants";
 export { getApplicantByIdProcedure };
@@ -32,6 +33,7 @@ export const applicantRouter = createTRPCRouter({
   delete: deleteApplicant,
   exportApplicants,
   exportInterviewNotes,
+  exportNotes,
   fetchAll,
   fetchAmount,
   fetchShared,

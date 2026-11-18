@@ -8,6 +8,7 @@ import { AccessDenied } from "~/components/access-denied";
 import { Table, TableBody } from "~/components/ui/table";
 import { Source } from "~/generated/prisma/enums";
 import { auth } from "~/lib/auth";
+import { canExportNotes } from "~/lib/auth/can-export-notes";
 import { api } from "~/lib/trpc/server";
 
 import {
@@ -92,6 +93,21 @@ async function ProtectedApplicantsPage(props: {
     );
   }
 
+  const [
+    canReadApplicantNotesResult,
+    canReadInterviewNotesResult,
+    currentUser,
+  ] = await Promise.all([
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { applicantNote: ["read"] } },
+    }),
+    auth.api.hasPermission({
+      headers: requestHeaders,
+      body: { permissions: { interviewNote: ["read"] } },
+    }),
+    api.user.getCurrent(),
+  ]);
   const isHiringManagerView = !canReadAllResult.success;
 
   const searchParams = props.searchParams ?? Promise.resolve({});
@@ -168,6 +184,12 @@ async function ProtectedApplicantsPage(props: {
           promiseCountOpenings={jobOpeningData}
           promiseSharedData={sharedData}
           isHiringManagerView={isHiringManagerView}
+          canExportNotes={
+            canExportNotes(currentUser.role) &&
+            canReadAllResult.success &&
+            (canReadApplicantNotesResult.success ||
+              canReadInterviewNotesResult.success)
+          }
         />
       </Suspense>
 
