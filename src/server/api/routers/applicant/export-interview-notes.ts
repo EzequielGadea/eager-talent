@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { z } from "zod";
 
 import { auth } from "~/lib/auth";
+import { escapeCsvCell } from "~/lib/csv/escape-csv-cell";
 import { protectedProcedure } from "~/server/api/trpc";
 
 const CSV_SEPARATOR = ";";
@@ -15,7 +16,6 @@ const CSV_HEADERS = [
   "notes",
 ] as const;
 const MONTEVIDEO_TIME_ZONE = "America/Montevideo";
-const SPREADSHEET_FORMULA_PREFIX = /^[=+\-@]/;
 
 export const exportInterviewNotes = protectedProcedure
   .input(
@@ -125,14 +125,6 @@ export const exportInterviewNotes = protectedProcedure
       filename: `notas-${candidateSlug}-${currentDate}.csv`,
     };
   });
-
-function escapeCsvCell(value: string): string {
-  const safeValue = SPREADSHEET_FORMULA_PREFIX.test(value.trimStart())
-    ? `'${value}`
-    : value;
-
-  return `"${safeValue.replaceAll('"', '""')}"`;
-}
 
 function slugify(value: string): string {
   return (
