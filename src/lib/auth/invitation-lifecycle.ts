@@ -1,4 +1,6 @@
-import type { AuthContext } from "better-auth";
+import { APIError, type AuthContext } from "better-auth";
+
+import { INVITATION_ALREADY_ACCEPTED } from "./invitation-errors";
 
 type InvitationAuthContext = {
   adapter: Pick<AuthContext["adapter"], "findOne" | "deleteMany">;
@@ -12,6 +14,16 @@ export async function revokeUnacceptedInvitation(
   context: InvitationAuthContext,
   invitation: { email: string; status: string },
 ) {
+  // Cancelling would overwrite the status of an invitation that already
+  // produced an active member.
+  if (invitation.status === "accepted") {
+    throw new APIError("BAD_REQUEST", {
+      message:
+        "La invitación ya fue aceptada y el usuario es miembro activo. No se canceló.",
+      code: INVITATION_ALREADY_ACCEPTED,
+    });
+  }
+
   // A repeated cancellation must not revoke a newer invitation for this email.
   if (invitation.status !== "pending") return;
 
