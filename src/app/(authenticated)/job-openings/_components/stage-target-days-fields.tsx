@@ -41,11 +41,9 @@ export function StageTargetDaysFields({
             </Label>
             <Input
               id={`metric-stage-target-${field.stageKey}`}
-              type="number"
+              type="text"
               inputMode="numeric"
-              min={1}
-              max={365}
-              step={1}
+              autoComplete="off"
               placeholder="Ej: 7"
               errorMessage={field.error}
               {...field.inputProps}

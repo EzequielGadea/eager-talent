@@ -86,8 +86,7 @@ export const applicantFormSchema = z
       .number({ error: "Ingresá un salario válido" })
       .positive("El salario debe ser mayor a 0")
       .max(1_000_000_000, "El salario es demasiado alto")
-      .optional()
-      .or(z.literal("")),
+      .optional(),
     currency: z.union([z.enum(SalaryCurrency), z.literal("")]),
 
     availability: z.string(),
