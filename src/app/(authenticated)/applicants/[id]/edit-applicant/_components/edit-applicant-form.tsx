@@ -4,6 +4,7 @@ import { AlertCircle, RefreshCw } from "lucide-react";
 import { api } from "~/lib/trpc/react";
 import {
   applicantLinkedinSchema,
+  careerYearSchema,
   validateCareerYears,
 } from "~/lib/validations/applicant";
 import { optionalE164PhoneSchema } from "~/lib/validations/phone";
@@ -82,8 +83,8 @@ export const applicantFormSchema = z.object({
   academicInstitution: z.string(),
 
   title: z.string(),
-  careerStartYear: z.number().int().min(1900).max(2100).nullable().optional(),
-  careerEndYear: z.number().int().min(1900).max(2100).nullable().optional(),
+  careerStartYear: careerYearSchema.nullable().optional(),
+  careerEndYear: careerYearSchema.nullable().optional(),
 }).superRefine((data, ctx) => {
   validateCareerYears(data, ctx);
 });

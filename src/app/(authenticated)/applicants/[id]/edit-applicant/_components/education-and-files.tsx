@@ -6,6 +6,7 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
+import { parseNumberInput } from "~/lib/form-number";
 import { Label } from "~/components/ui/label";
 
 import type { ApplicantFormValues } from "./edit-applicant-form";
@@ -82,12 +83,12 @@ export default function EducationAndFiles({
 
               <Input
                 id="careerStartYear"
-                type="number"
-                max="2100"
-                min="1900"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
                 placeholder="Ej. 2020"
                 {...register("careerStartYear", {
-                  setValueAs: (value) => (value === "" ? null : Number(value)),
+                  setValueAs: (value) => parseNumberInput(value, null),
                 })}
               />
               {errors.careerStartYear && (
@@ -102,12 +103,12 @@ export default function EducationAndFiles({
 
               <Input
                 id="careerEndYear"
-                type="number"
-                max="2100"
-                min="1900"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
                 placeholder="Ej. 2024"
                 {...register("careerEndYear", {
-                  setValueAs: (value) => (value === "" ? null : Number(value)),
+                  setValueAs: (value) => parseNumberInput(value, null),
                 })}
               />
               {errors.careerEndYear && (

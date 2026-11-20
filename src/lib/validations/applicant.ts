@@ -49,7 +49,11 @@ export const applicantLinkedinSchema = z
 export const shortTextSchema = (label: string, max: number) =>
   z.string().trim().max(max, `${label} no puede superar ${max} caracteres`);
 
-export const careerYearSchema = z.number().int().min(1900).max(2100);
+export const careerYearSchema = z
+  .number({ error: "Ingresá un año válido" })
+  .int("Ingresá un año válido")
+  .min(1900, "El año debe ser 1900 o posterior")
+  .max(2100, "El año no puede superar 2100");
 
 export const availabilitySchema = shortTextSchema("La disponibilidad", 100);
 

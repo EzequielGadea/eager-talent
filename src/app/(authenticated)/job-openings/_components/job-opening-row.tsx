@@ -100,7 +100,7 @@ export default function JobOpeningRow({
       onClick={() => router.push(`/job-openings/${jobOpening.id}`)}
       className="group cursor-pointer border-b border-border-default transition-colors last:border-b-0 hover:bg-success-bg"
     >
-      <TableCell className="px-4 py-3">
+      <TableCell className="w-[14rem] min-w-[14rem] px-4 py-3">
         <span className="font-semibold text-text-primary">
           {jobOpening.name}
         </span>
