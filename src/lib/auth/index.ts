@@ -107,9 +107,14 @@ export const rejectAcceptedInvitationCancelHook = createAuthMiddleware(
 
     const invitation = await prisma.invitation.findUnique({
       where: { id: invitationId },
-      select: { status: true },
+      select: { status: true, email: true },
     });
-    if (invitation) assertInvitationNotAccepted(invitation);
+    if (
+      invitation &&
+      invitation.email.toLowerCase() === session.user.email.toLowerCase()
+    ) {
+      assertInvitationNotAccepted(invitation);
+    }
   },
 );
 

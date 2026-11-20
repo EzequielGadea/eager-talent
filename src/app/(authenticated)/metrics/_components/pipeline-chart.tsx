@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from "react";
 import { Briefcase } from "lucide-react";
+import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardTitle } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
@@ -119,6 +120,23 @@ export function PipelineChart({
         )}
         {closedOpenings.length === 0 ? (
           <EmptyChart message="No hay vacantes cerradas disponibles." />
+        ) : pipelineQuery.isError && !pipeline ? (
+          <div
+            className="flex min-h-56 flex-col items-center justify-center gap-3 text-center"
+            role="alert"
+          >
+            <p className="text-small text-text-secondary">
+              No pudimos cargar el pipeline de esta vacante. Revisá tu conexión
+              e intentá de nuevo, o seleccioná otra vacante.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => void pipelineQuery.refetch()}
+            >
+              Reintentar
+            </Button>
+          </div>
         ) : !pipeline ? (
           <div
             className="flex min-h-56 flex-col justify-center gap-4"
