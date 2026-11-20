@@ -1,7 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Fragment, useState } from "react";
 import { Briefcase } from "lucide-react";
 import { Card, CardContent, CardTitle } from "~/components/ui/card";
 import { Skeleton } from "~/components/ui/skeleton";
@@ -15,6 +14,7 @@ import {
 } from "~/components/ui/select";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "~/server/api/root";
+import { api } from "~/lib/trpc/react";
 import { EmptyChart } from "./disqualification-chart";
 
 type ClosedOpening =
@@ -30,16 +30,21 @@ const STAGE_COLORS = [
 
 export function PipelineChart({
   closedOpenings,
-  selectedOpeningId,
-  pipeline,
+  initialPipeline,
 }: {
   closedOpenings: ClosedOpening[];
-  selectedOpeningId?: string;
-  pipeline?: Pipeline;
+  initialPipeline?: Pipeline;
 }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const selectedId = selectedOpeningId ?? "";
+  const firstOpeningId = closedOpenings[0]?.id ?? "";
+  const [selectedId, setSelectedId] = useState(firstOpeningId);
+  const pipelineQuery = api.metrics.getPipeline.useQuery(
+    { jobOpeningId: selectedId },
+    {
+      enabled: selectedId !== "",
+      initialData: selectedId === firstOpeningId ? initialPipeline : undefined,
+    },
+  );
+  const pipeline = pipelineQuery.data;
   const stages = pipeline?.stages ?? [];
   const reachedCounts = stages.map((_, index) =>
     stages.slice(index).reduce((sum, stage) => sum + stage.count, 0),
@@ -67,11 +72,7 @@ export function PipelineChart({
               <Select
                 value={selectedId}
                 onValueChange={(value) => {
-                  if (typeof value === "string") {
-                    const params = new URLSearchParams(searchParams.toString());
-                    params.set("openingId", value);
-                    router.push(`?${params.toString()}`);
-                  }
+                  if (typeof value === "string") setSelectedId(value);
                 }}
                 items={closedOpenings.map((opening) => ({
                   value: opening.id,

@@ -237,7 +237,7 @@ export function JobOpeningDeviations({
                 if (!pageInUrl) return onPageChange?.(nextPage);
                 const params = new URLSearchParams(searchParams.toString());
                 params.set("page", String(nextPage));
-                router.push(`?${params.toString()}`);
+                router.push(`?${params.toString()}`, { scroll: false });
               }}
             />
           </div>
