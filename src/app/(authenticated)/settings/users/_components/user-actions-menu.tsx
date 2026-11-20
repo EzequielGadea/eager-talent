@@ -6,6 +6,7 @@ import {
   CircleX,
   KeyRound,
   Loader2,
+  RotateCw,
   LockKeyhole,
   LockOpen,
   MoreHorizontal,
@@ -29,6 +30,7 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { toast } from "~/components/ui/toast";
 import { authClient } from "~/lib/auth/client";
+import { cn } from "~/lib/utils";
 import { INVITATION_ALREADY_ACCEPTED } from "~/lib/auth/invitation-errors";
 
 import { BanUserDialog } from "./ban-user-dialog";
@@ -45,6 +47,11 @@ type InviteRole = "recruiter" | "hiringManager";
 
 const CANCEL_NETWORK_ERROR =
   "No se pudo cancelar la invitación. Revisá tu conexión e intentá nuevamente.";
+
+const RETRY_MIN_DURATION_MS = 2000;
+
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 const dangerItemClassName =
   "text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!";
@@ -67,16 +74,19 @@ export function UserActionsMenu({ user }: Props) {
 
     if (!invitationId) return;
 
-    setCancelError(null);
+    const isRetry = cancelError !== null;
 
     startTransition(async () => {
       let error: { message?: string; code?: string } | null;
 
       try {
-        ({ error } = await authClient.organization.cancelInvitation({
-          invitationId,
-        }));
+        // On retries, keep the spinner visible long enough to read as a new attempt.
+        [{ error }] = await Promise.all([
+          authClient.organization.cancelInvitation({ invitationId }),
+          isRetry ? wait(RETRY_MIN_DURATION_MS) : undefined,
+        ]);
       } catch {
+        if (isRetry) await wait(RETRY_MIN_DURATION_MS);
         error = { message: CANCEL_NETWORK_ERROR };
       }
 
@@ -280,11 +290,17 @@ export function UserActionsMenu({ user }: Props) {
               onClick={handleCancelInvitation}
               disabled={isPending}
             >
-              {isPending && <Loader2 className="size-4 animate-spin" />}
-              {isPending
-                ? "Cancelando..."
-                : cancelError
-                  ? "Reintentar"
+              {cancelError ? (
+                <RotateCw
+                  className={cn("size-4", isPending && "animate-spin")}
+                />
+              ) : (
+                isPending && <Loader2 className="size-4 animate-spin" />
+              )}
+              {cancelError
+                ? "Reintentar"
+                : isPending
+                  ? "Cancelando..."
                   : "Cancelar invitación"}
             </Button>
           </DialogFooter>
