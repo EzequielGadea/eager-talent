@@ -10,10 +10,7 @@ type InvitationAuthContext = {
   >;
 };
 
-export async function revokeUnacceptedInvitation(
-  context: InvitationAuthContext,
-  invitation: { email: string; status: string },
-) {
+export function assertInvitationNotAccepted(invitation: { status: string }) {
   // Cancelling would overwrite the status of an invitation that already
   // produced an active member.
   if (invitation.status === "accepted") {
@@ -23,6 +20,13 @@ export async function revokeUnacceptedInvitation(
       code: INVITATION_ALREADY_ACCEPTED,
     });
   }
+}
+
+export async function revokeUnacceptedInvitation(
+  context: InvitationAuthContext,
+  invitation: { email: string; status: string },
+) {
+  assertInvitationNotAccepted(invitation);
 
   // A repeated cancellation must not revoke a newer invitation for this email.
   if (invitation.status !== "pending") return;
