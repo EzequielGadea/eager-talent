@@ -31,8 +31,7 @@ export function MetricsDashboard({
     if (next.clearArea) params.delete("areaId");
     else if (next.areaId) params.set("areaId", next.areaId);
     params.delete("page");
-    params.delete("openingId");
-    router.push(`?${params.toString()}`);
+    router.push(`?${params.toString()}`, { scroll: false });
   }
 
   return (

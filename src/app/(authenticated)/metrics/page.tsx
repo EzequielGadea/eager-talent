@@ -57,8 +57,6 @@ async function MetricsContent({
   const areaId = typeof params.areaId === "string" ? params.areaId : undefined;
   const pageNumber = Number(params.page);
   const page = Number.isInteger(pageNumber) && pageNumber > 0 ? pageNumber : 1;
-  const openingId =
-    typeof params.openingId === "string" ? params.openingId : undefined;
   const filters = { period, areaId };
   const areas = await api.area.getAllAreas({});
 
@@ -87,10 +85,10 @@ async function MetricsContent({
         <SummarySection filters={filters} />
       </Suspense>
       <Suspense
-        key={`pipeline-${period}-${areaId ?? "all"}-${openingId ?? "first"}`}
+        key={`pipeline-${period}-${areaId ?? "all"}`}
         fallback={<PipelineFallback />}
       >
-        <PipelineSection filters={filters} selectedOpeningId={openingId} />
+        <PipelineSection filters={filters} />
       </Suspense>
     </MetricsDashboard>
   );
@@ -163,23 +161,18 @@ async function SummarySection({
 
 async function PipelineSection({
   filters,
-  selectedOpeningId,
 }: {
   filters: { period: MetricsPeriod; areaId?: string };
-  selectedOpeningId?: string;
 }) {
   const closedOpenings = await api.metrics.getClosedOpenings(filters);
-  const selected =
-    closedOpenings.find((opening) => opening.id === selectedOpeningId) ??
-    closedOpenings[0];
-  const pipeline = selected
-    ? await api.metrics.getPipeline({ jobOpeningId: selected.id })
+  const firstOpening = closedOpenings[0];
+  const initialPipeline = firstOpening
+    ? await api.metrics.getPipeline({ jobOpeningId: firstOpening.id })
     : undefined;
   return (
     <PipelineChart
       closedOpenings={closedOpenings}
-      selectedOpeningId={selected?.id}
-      pipeline={pipeline}
+      initialPipeline={initialPipeline}
     />
   );
 }

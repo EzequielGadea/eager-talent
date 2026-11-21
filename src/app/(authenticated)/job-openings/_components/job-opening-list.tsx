@@ -251,7 +251,9 @@ export default function JobOpeningsList({
           <Table className="min-w-[900px]">
             <TableHeader>
               <TableRow className="h-9.75 border-b border-border-default bg-surface-subtle hover:bg-surface-subtle">
-                <TableHead className="h-9.75 px-4 py-0">Vacante</TableHead>
+                <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0">
+                  Vacante
+                </TableHead>
 
                 <TableHead className="h-9.75 w-[14rem] min-w-[14rem] px-4 py-0">
                   Área

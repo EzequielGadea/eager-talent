@@ -10,10 +10,13 @@ import nodemailer from "nodemailer";
 import { ConfirmEmail } from "~/emails/activation";
 import { PasswordResetEmail } from "~/emails/password-reset";
 import { createElement } from "react";
-import { createAuthMiddleware } from "better-auth/api";
+import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { revokeUnacceptedInvitation } from "./invitation-lifecycle";
+import {
+  assertInvitationNotAccepted,
+  revokeUnacceptedInvitation,
+} from "./invitation-lifecycle";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MAX_LENGTH,
@@ -87,6 +90,33 @@ export const validatePasswordHook = createAuthMiddleware(async (ctx) => {
     issues,
   });
 });
+
+// When the invitee accepts in the same browser, the cookie session of the
+// inviter's tab becomes the invitee's, so the permission check would reject the
+// cancellation first. Report the real reason before that happens.
+export const rejectAcceptedInvitationCancelHook = createAuthMiddleware(
+  async (ctx) => {
+    if (ctx.path !== "/organization/cancel-invitation") return;
+
+    const invitationId = (ctx.body as { invitationId?: unknown } | undefined)
+      ?.invitationId;
+    if (typeof invitationId !== "string") return;
+
+    const session = await getSessionFromCtx(ctx);
+    if (!session) return;
+
+    const invitation = await prisma.invitation.findUnique({
+      where: { id: invitationId },
+      select: { status: true, email: true },
+    });
+    if (
+      invitation &&
+      invitation.email.toLowerCase() === session.user.email.toLowerCase()
+    ) {
+      assertInvitationNotAccepted(invitation);
+    }
+  },
+);
 
 export const auth = betterAuth({
   baseURL: {
@@ -252,7 +282,10 @@ export const auth = betterAuth({
     nextCookies(),
   ],
   hooks: {
-    before: validatePasswordHook,
+    before: createAuthMiddleware(async (ctx) => {
+      await validatePasswordHook(ctx);
+      await rejectAcceptedInvitationCancelHook(ctx);
+    }),
   },
   databaseHooks: {
     session: {

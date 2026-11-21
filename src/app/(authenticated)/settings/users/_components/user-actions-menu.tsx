@@ -6,6 +6,7 @@ import {
   CircleX,
   KeyRound,
   Loader2,
+  RotateCw,
   LockKeyhole,
   LockOpen,
   MoreHorizontal,
@@ -29,6 +30,8 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { toast } from "~/components/ui/toast";
 import { authClient } from "~/lib/auth/client";
+import { cn } from "~/lib/utils";
+import { INVITATION_ALREADY_ACCEPTED } from "~/lib/auth/invitation-errors";
 
 import { BanUserDialog } from "./ban-user-dialog";
 import { DeleteUserDialog } from "./delete-user-dialog";
@@ -42,6 +45,14 @@ type Props = {
 
 type InviteRole = "recruiter" | "hiringManager";
 
+const CANCEL_NETWORK_ERROR =
+  "No se pudo cancelar la invitación. Revisá tu conexión e intentá nuevamente.";
+
+const RETRY_MIN_DURATION_MS = 2000;
+
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 const dangerItemClassName =
   "text-danger! hover:text-danger! focus:text-danger! data-highlighted:text-danger! [&_svg]:text-danger! hover:[&_svg]:text-danger! focus:[&_svg]:text-danger! data-highlighted:[&_svg]:text-danger!";
 
@@ -54,6 +65,7 @@ export function UserActionsMenu({ user }: Props) {
   const [dialog, setDialog] = useState<
     "ban" | "delete" | "reset" | "cancelInvitation" | null
   >(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   const fullName = `${user.name} ${user.lastName}`.trim() || user.email;
 
@@ -62,17 +74,37 @@ export function UserActionsMenu({ user }: Props) {
 
     if (!invitationId) return;
 
-    startTransition(async () => {
-      const { error } = await authClient.organization.cancelInvitation({
-        invitationId,
-      });
+    const isRetry = cancelError !== null;
 
-      if (error) {
+    startTransition(async () => {
+      let error: { message?: string; code?: string } | null;
+
+      try {
+        // On retries, keep the spinner visible long enough to read as a new attempt.
+        [{ error }] = await Promise.all([
+          authClient.organization.cancelInvitation({ invitationId }),
+          isRetry ? wait(RETRY_MIN_DURATION_MS) : undefined,
+        ]);
+      } catch {
+        if (isRetry) await wait(RETRY_MIN_DURATION_MS);
+        error = { message: CANCEL_NETWORK_ERROR };
+      }
+
+      if (error?.code === INVITATION_ALREADY_ACCEPTED) {
+        // The invitation is stale: close the dialog and show the real state.
+        setDialog(null);
+        router.refresh();
         toast.add({
           type: "error",
-          title: "Error",
-          description: error.message ?? "No se pudo cancelar la invitación",
+          title: "No se canceló la invitación",
+          description: error.message,
         });
+
+        return;
+      }
+
+      if (error) {
+        setCancelError(error.message ?? "No se pudo cancelar la invitación");
 
         return;
       }
@@ -185,7 +217,10 @@ export function UserActionsMenu({ user }: Props) {
 
               <DropdownMenuItem
                 className={dangerItemClassName}
-                onClick={() => setDialog("cancelInvitation")}
+                onClick={() => {
+                  setCancelError(null);
+                  setDialog("cancelInvitation");
+                }}
                 disabled={isPending}
               >
                 <CircleX className="size-4" />
@@ -221,6 +256,7 @@ export function UserActionsMenu({ user }: Props) {
         open={dialog === "cancelInvitation"}
         onOpenChange={(open) => {
           if (isPending) return;
+          setCancelError(null);
           setDialog(open ? "cancelInvitation" : null);
         }}
       >
@@ -232,6 +268,12 @@ export function UserActionsMenu({ user }: Props) {
               El enlace de invitación dejará de funcionar.
             </DialogDescription>
           </DialogHeader>
+
+          {cancelError && (
+            <p role="alert" className="text-sm text-danger">
+              {cancelError}
+            </p>
+          )}
 
           <DialogFooter>
             <Button
@@ -248,8 +290,18 @@ export function UserActionsMenu({ user }: Props) {
               onClick={handleCancelInvitation}
               disabled={isPending}
             >
-              {isPending && <Loader2 className="size-4 animate-spin" />}
-              {isPending ? "Cancelando..." : "Cancelar invitación"}
+              {cancelError ? (
+                <RotateCw
+                  className={cn("size-4", isPending && "animate-spin")}
+                />
+              ) : (
+                isPending && <Loader2 className="size-4 animate-spin" />
+              )}
+              {cancelError
+                ? "Reintentar"
+                : isPending
+                  ? "Cancelando..."
+                  : "Cancelar invitación"}
             </Button>
           </DialogFooter>
         </DialogContent>

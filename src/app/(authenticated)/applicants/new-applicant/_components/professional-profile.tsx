@@ -7,6 +7,8 @@ import { api } from "~/lib/trpc/react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 import { Input } from "~/components/ui/input";
+import { parseNumberInput } from "~/lib/form-number";
+import { parseDesiredSalary } from "~/lib/validations/desired-salary";
 import { Label } from "~/components/ui/label";
 import { Skeleton } from "~/components/ui/skeleton";
 
@@ -244,11 +246,15 @@ export default function ProfessionalProfile() {
                   <div className="flex-1">
                     <Input
                       id="desiredSalary"
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
+                      autoComplete="off"
                       placeholder="Ej. 3.500"
                       {...register("desiredSalary", {
                         setValueAs: (value) =>
-                          value === "" ? undefined : Number(value),
+                          parseNumberInput(value, undefined) === undefined
+                            ? undefined
+                            : (parseDesiredSalary(String(value)) ?? Number.NaN),
                       })}
                     />
                   </div>

@@ -3,6 +3,7 @@
 import type { UseFormRegisterReturn } from "react-hook-form";
 
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
 
 type StageTargetDaysField = {
   stageKey: string;
@@ -34,19 +35,20 @@ export function StageTargetDaysFields({
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {fields.map((field) => (
-          <Input
-            key={field.stageKey}
-            id={`metric-stage-target-${field.stageKey}`}
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={365}
-            step={1}
-            label={`${field.stageName} (días) *`}
-            placeholder="Ej: 7"
-            errorMessage={field.error}
-            {...field.inputProps}
-          />
+          <div key={field.stageKey} className="space-y-1.5">
+            <Label htmlFor={`metric-stage-target-${field.stageKey}`}>
+              {field.stageName} (días) <span className="text-danger">*</span>
+            </Label>
+            <Input
+              id={`metric-stage-target-${field.stageKey}`}
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="Ej: 7"
+              errorMessage={field.error}
+              {...field.inputProps}
+            />
+          </div>
         ))}
       </div>
     </div>
